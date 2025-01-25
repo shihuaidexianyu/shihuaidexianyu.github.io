@@ -1,0 +1,5 @@
+# git应当忽略的文件
+# 默认情况下，VitePress 将其开发服务器缓存存储在 .vitepress/cache 中，并将生产构建输出存储在 .vitepress/dist 中。
+core/.vitepress/dist
+core/.vitepress/cache
+node_modules

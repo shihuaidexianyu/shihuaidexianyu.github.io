@@ -1,0 +1,15 @@
+{
+  "name": "shihuaidexianyu.github.io",
+  "version": "1.0.0",
+  "description": "Personal blog",
+  "scripts": {
+    "docs:dev": "vitepress dev core",
+    "docs:build": "vitepress build core",
+    "docs:preview": "vitepress preview core"
+  },
+  "devDependencies": {
+    "vitepress": "^1.0.0-rc.44",
+    "markdown-it-mathjax3": "^4.3.2",
+    "vue": "^3.4.21"
+  }
+}
