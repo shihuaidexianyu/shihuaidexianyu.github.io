@@ -10,6 +10,7 @@
   "devDependencies": {
     "vitepress": "^1.0.0-rc.44",
     "markdown-it-mathjax3": "^4.3.2",
-    "vue": "^3.4.21"
+    "vue": "^3.4.21",
+    "@nolebase/vitepress-plugin-enhanced-readabilities": "latest",
   }
 }
