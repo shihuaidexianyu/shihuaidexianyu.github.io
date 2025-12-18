@@ -1,0 +1,48 @@
+site_name: My Notes
+
+theme:
+  name: material
+  features:
+    - content.code.copy
+
+plugins:
+  - search
+  - callouts
+
+markdown_extensions:
+  # Callouts / Admonition
+  - admonition
+  - pymdownx.details
+
+  # Code blocks & highlighting
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      use_pygments: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+  # MathJax (LaTeX)
+  - pymdownx.arithmatex:
+      generic: true
+
+  # Typora 的 ==highlight==
+  - pymdownx.mark
+
+  # Typora 常用：表格/脚注/任务列表
+  - tables
+  - footnotes
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+  # Optional: attributes { .class }
+  - attr_list
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js

@@ -1,0 +1,22 @@
+[project]
+name = "notes-site"
+version = "0.1.0"
+description = "MkDocs Material site for Typora-style notes"
+requires-python = ">=3.10"
+dependencies = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocs-callouts",
+    "pymdown-extensions",
+]
+
+[dependency-groups]
+dev = [
+    "mdformat",
+    "mdformat-gfm",
+    "mdformat-frontmatter",
+    "mdformat-footnote",
+    "mdformat-gfm-alerts",
+    "mdformat-mkdocs",
+    "pre-commit",
+]
