@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>计算机组成与体系结构</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="计算机组成与体系结构"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="计算机组成与体系结构"/><meta name="twitter:description" content="导论 冯诺依曼结构 现代计算机的共同理论基础 A."/><meta property="og:description" content="导论 冯诺依曼结构 现代计算机的共同理论基础 A."/><meta property="og:image:alt" content="导论 冯诺依曼结构 现代计算机的共同理论基础 A."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/Archive/计算机组成与体系结构/计算机组成与体系结构"/><meta property="twitter:url" content="https://localhost/Archive/计算机组成与体系结构/计算机组成与体系结构"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="导论 冯诺依曼结构 现代计算机的共同理论基础 A."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="Archive/计算机组成与体系结构/计算机组成与体系结构"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-17"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-17" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Archive/">Archive</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../Archive/计算机组成与体系结构/">计算机组成与体系结构</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>计算机组成与体系结构</a></div></nav><h1 class="article-title">计算机组成与体系结构</h1><p show-comma="true" class="content-meta"><time datetime="2026-03-18T11:35:59.866Z">Mar 18, 2026</time><span>60 min read</span></p></div></div><article class="popover-hint"><h2 id="导论">导论<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#导论" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="冯诺依曼结构">冯诺依曼结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#冯诺依曼结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote>
+<p>现代计算机的共同理论基础</p>
+</blockquote>
+<p>A. 两大核心设计思想</p>
+<ul>
+<li><strong>存储程序</strong>：这是最重要的思想。它指出，计算机的指令（程序）和数据都应以<strong>二进制</strong>的形式不加区别地存放在存储器中 。计算机工作时，能自动从存储器中取出指令并执行 。</li>
+<li><strong>采用二进制</strong> ：所有指令和数据都使用二进制代码表示，这极大地简化了计算机的逻辑电路设计 。</li>
+</ul>
+<p>B. 计算机的五大基本组成</p>
+<ul>
+<li>运算器 (CA)：负责执行算术运算（如加减乘除）和逻辑运算（如与或非） 。</li>
+<li>控制器 (CC)：负责指挥和协调计算机各部件的工作，是计算机的 ” 指挥中心 ” 。
+<ul>
+<li><strong>寄存器</strong> = <strong>运算器和控制器</strong>的一部分</li>
+</ul>
+</li>
+<li>存储器 (M)：用于存放程序和数据 。
+<ul>
+<li>CPU (运算器 + 控制器) 可以直接高速访问它，从中读取指令和数据进行执行（比方说内存条）</li>
+</ul>
+</li>
+<li>输入设备 (I)：用于向计算机输入信息（如程序和数据） 。</li>
+<li>输出设备 (O)：用于将计算机的处理结果展示给用户 。</li>
+</ul>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>硬盘是外部存储介质 R，通过 io 与计算机相连，不属于 5 个部分之一</p>
+</div>
+</blockquote>
+<h3 id="南北桥演变">南北桥演变<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#南北桥演变" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>计算机主板架构经历了从<strong>三芯片</strong>（CPU+ 北桥 + 南桥）向<strong>两芯片</strong>（CPU+PCH）的高度集成演变。</p>
+<p><strong>阶段一</strong>，<strong>北桥</strong>作为核心枢纽全权掌管内存控制器与显卡/PCIe 接口，南桥仅负责低速 I/O；</p>
+<p><strong>阶段二（过渡期）</strong>，CPU 率先集成了内存控制器，导致北桥功能削弱，仅保留对显卡/PCIe 的管理；</p>
+<p><strong>阶段三（现代架构）</strong>，CPU 彻底吞并了北桥的所有功能（包括显卡/PCIe 控制器），致使北桥物理消失，而原南桥则演变为<strong>PCH（平台控制器中枢）</strong>，在接管剩余 I/O 功能的同时直接与 CPU 通信。</p>
+<h3 id="gpu-结构">GPU 结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#gpu-结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th><strong>组件</strong></th><th><strong>CPU (延迟导向)</strong></th><th><strong>GPU (吞吐量导向)</strong></th></tr></thead><tbody><tr><td><strong>ALU (计算单元)</strong></td><td>少而强 (Powerful)，低延迟</td><td><strong>多而简</strong>，高并发，重流水线</td></tr><tr><td><strong>Control (控制单元)</strong></td><td>复杂 (Sophisticated)，擅长逻辑控制</td><td><strong>简单</strong>，无分支预测，省空间</td></tr><tr><td><strong>Cache (缓存)</strong></td><td>大 (Large)，用于降低延迟</td><td><strong>小</strong>，用于提升带宽</td></tr><tr><td><strong>DRAM (显存)</strong></td><td>关注低延迟访问</td><td>关注<strong>高带宽</strong>吞吐</td></tr></tbody></table></div>
+<h2 id="isa">ISA<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#isa" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="x86-体系结构">X86 体系结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#x86-体系结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>x86 是一个典型的<strong>CISC (复杂指令系统计算机)</strong> 架构。</p>
+<h4 id="21-发展演变从-16-位到-64-位">2.1 发展演变：从 16 位到 64 位<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#21-发展演变从-16-位到-64-位" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>x86-16 (IA-16):</strong>(<strong>实模式</strong>)
+<ul>
+<li>始于 1978 年的 Intel 8086 处理器。</li>
+<li>内部通用寄存器为 16 位。</li>
+<li>对外有 16 根数据线和 20 根地址线。</li>
+<li>可寻址内存空间为 1MByte (<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">20</span></span></span></span></span></span></span></span></span></span></span></span>)。</li>
+</ul>
+</li>
+<li><strong>IA-32 (x86-32):</strong>（<strong>虚拟 8086 模式，保护模式</strong>）
+<ul>
+<li>始于 1985 年的 Intel 80386 处理器。</li>
+<li>是 x86 系列中第一款 32 位微处理器。</li>
+<li>提供 32 位通用寄存器。</li>
+<li>地址总线扩展到 32 位，可寻址 4GB 内存空间。</li>
+</ul>
+</li>
+<li><strong>x86-64:</strong>
+<ul>
+<li>始于 2003 年的 AMD Opteron 处理器。</li>
+<li>这是 x86 扩展到 64 位的第一款微处理器。</li>
+<li>可以访问高于 4GB 的存储器。</li>
+<li><strong>重要特性:</strong> 兼容 32 位 x86 程序，且不降低性能。</li>
+</ul>
+</li>
+</ul>
+<h4 id="三种工作模式">三种工作模式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#三种工作模式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>实模式 (Real Mode):</strong>
+<ul>
+<li>80286 及以上的处理器采用的 8086 工作模式。</li>
+<li>所有 x86 处理器在加电或复位后首先进入实模式，以保持兼容。</li>
+</ul>
+</li>
+<li><strong>保护模式 (Protected Mode):</strong>
+<ul>
+<li>80286 引入，80386 改进。</li>
+<li>是 80386 及以上微处理器的主要工作模式。</li>
+<li>支持<span class="text-highlight">多任务、设置特权级和访问权限检查</span>。</li>
+<li>引入了虚拟存储器概念。</li>
+<li>可以访问 4GB 的物理存储空间</li>
+<li><strong>设置 PE=1</strong>(保护模式允许)</li>
+</ul>
+</li>
+<li><strong>虚拟 8086 模式 (Virtual 8086 Mode，v86):</strong>
+<ul>
+<li>80386 增加的模式。</li>
+<li>它实际上是保护模式下的一种特殊工作状态，用于模拟运行多个 8086 微处理器。</li>
+<li>与实模式的区别是<strong>对中断/异常的响应处理</strong></li>
+<li>中断异常会返回到保护模式</li>
+</ul>
+</li>
+<li><strong>x86-64 模式:</strong>
+<ul>
+<li>x86-64 引入了 ” 长模式 (Long mode)“，它包含 64 位模式和兼容模式（用于运行 32 位程序）。
+<ul>
+<li>64 位模式需要重新编译，其他模式不需要重新编译</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph LR\n    Start(加电启动) --> Real[实模式]\n    Real -- 设置 PE=1 --> Protected[保护模式]\n    \n    subgraph 运行中\n        Protected -- 任务切换/中断返回 --> V86[虚拟8086模式]\n        V86 -- 中断/异常 --> Protected\n    end\n\n    Real -- 复位 --> Start\n    Protected -- 复位 --> Start\n    V86 -- 复位 --> Start&quot;">graph LR
+    Start(加电启动) --> Real[实模式]
+    Real -- 设置 PE=1 --> Protected[保护模式]
+    
+    subgraph 运行中
+        Protected -- 任务切换/中断返回 --> V86[虚拟8086模式]
+        V86 -- 中断/异常 --> Protected
+    end
+
+    Real -- 复位 --> Start
+    Protected -- 复位 --> Start
+    V86 -- 复位 --> Start
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th><strong>运行模式</strong></th><th><strong>运行子模式</strong></th><th><strong>操作系统</strong></th><th><strong>已有程序的支持</strong></th></tr></thead><tbody><tr><td>长模式 (Long mode)</td><td><strong>64 位模式</strong> (64-bit mode)</td><td>64 位</td><td><strong>需重新编译</strong></td></tr><tr><td></td><td><strong>兼容模式</strong> (Compatibility mode)</td><td>64 位</td><td>不需要重新编译</td></tr><tr><td>传统模式 (Legacy mode)</td><td><strong>保护模式</strong> (Protected mode)</td><td>32 位或 16 位</td><td>不需要重新编译</td></tr><tr><td></td><td><strong>虚拟 8086 模式</strong> (Virtual 8086 mode)</td><td>32 位或 16 位</td><td>不需要重新编译</td></tr><tr><td></td><td><strong>实模式</strong> (Real mode)</td><td>16 位</td><td>不需要重新编译</td></tr></tbody></table></div>
+<h4 id="寄存器模型的演变">寄存器模型的演变<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#寄存器模型的演变" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>8086 (16 位):</strong>
+<ul>
+<li><strong>通用寄存器:</strong> 4 个 16 位数据寄存器 (AX, BX, CX, DX)，均可分为 2 个 8 位寄存器 (如 AH/AL) 。</li>
+<li><strong>指针和变址寄存器:</strong> 4 个 16 位寄存器 (SP, BP, SI, DI)。</li>
+<li><strong>指令指针:</strong> 16 位 IP。</li>
+<li><strong>标志寄存器:</strong> 16 位 FLAGS。
+<ul>
+<li>状态标志 反映 CPU 的工作状态</li>
+<li>控制标志 对 CPU 的运行起特定控制作用</li>
+</ul>
+</li>
+<li><strong>段寄存器:</strong> 4 个 16 位寄存器 (CS, DS, ES, SS)。</li>
+</ul>
+</li>
+<li><strong>IA-32 (32 位):</strong>
+<ul>
+<li>所有 16 位寄存器扩展为 32 位，加 “E” 前缀 (如 EAX, EBX, ESI, EDI, EIP, EFLAGS)。</li>
+<li>新增 2 个 16 位段寄存器: FS 和 GS。</li>
+<li>标志寄存器也在扩充</li>
+</ul>
+</li>
+<li><strong>x86-64 (64 位):</strong>
+<ul>
+<li>通用寄存器扩展为 64 位，加 “R” 前缀 (如 RAX, RBX, RIP)。</li>
+<li>新增 8 个 64 位通用寄存器 (R8 至 R15)。</li>
+</ul>
+</li>
+</ul>
+<h4 id="存储器寻址方式的演变">存储器寻址方式的演变<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#存储器寻址方式的演变" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>8086 (实模式): ” 段加偏移 ”</strong>
+<ul>
+<li>物理地址的形成采用 ” 段加偏移 ” 方式。</li>
+<li><strong>物理地址 (20 位) = 段基值 (16 位) × 16 + 偏移量 (16 位)</strong>。</li>
+<li>段基值来自段寄存器 (如 CS, DS)。
+<ul>
+<li>注意<strong>操作数</strong>默认放在<strong>DS</strong>指向的数据段中</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<h3 id="实例mov-ax-3000h-的执行过程">实例：<code>MOV AX, [3000H]</code> 的执行过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#实例mov-ax-3000h-的执行过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这个例子展示了在实模式下，如何通过 ” 段基址 + 偏移量 ” 的方式计算出物理地址，并将内存中的数据读入寄存器。</p>
+<h4 id="1-初始条件">1. 初始条件<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-初始条件" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>汇编指令</strong>：<code>MOV AX, [3000H]</code>
+<ul>
+<li>这意味着将内存地址偏移量为 <code>3000H</code> 处的数据移动到 <code>AX</code> 寄存器中。</li>
+</ul>
+</li>
+<li><strong>段寄存器</strong>：默认使用数据段寄存器 <code>DS</code>。
+<ul>
+<li>设：<code>DS = 2000H</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="2-物理地址计算">2. 物理地址计算<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-物理地址计算" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>8086 实模式下的计算公式为：<strong>物理地址 = 段基址 × 16 + 偏移地址</strong></p>
+<ul>
+<li>
+<p><strong>段基址</strong>：<code>2000H</code></p>
+</li>
+<li>
+<p><strong>偏移量</strong>：<code>3000H</code></p>
+</li>
+<li>
+<p>计算过程：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord">2000</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">10</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord cjk_fallback">即</span><span class="mord">16</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">3000</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span></span>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord">20000</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">3000</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span></span>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord"><span class="mord mathbf">23000H</span></span></span></span></span></span>
+</li>
+</ul>
+<h4 id="3-读取数据与结果">3. 读取数据与结果<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-读取数据与结果" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>由于目标寄存器 <code>AX</code> 是 <strong>16 位</strong> 的，CPU 会从物理地址 <code>23000H</code> 开始读取两个字节，遵循**小端序（Little-Endian）**原则（低地址存低位，高地址存高位）：</p>
+<ul>
+<li><strong>低地址 (23000H)</strong> 中的数据是 <code>10H</code> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 存入 <code>AL</code> (AX 的低 8 位)</li>
+<li><strong>高地址 (23001H)</strong> 中的数据是 <code>20H</code> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 存入 <code>AH</code> (AX 的高 8 位)</li>
+</ul>
+<p><strong>最终结果</strong>：<code>AX</code> 寄存器中的值为 <strong><code>2010H</code></strong>。</p>
+</blockquote>
+<ul>
+<li><strong>IA-32 (保护模式): 描述符表</strong>
+<ul>
+<li>段基址不再直接存放在 CS 等段寄存器中，而是存放在内存的 ” 描述符 ” 中。</li>
+<li>CPU 通过 <code>GDTR</code> 寄存器找到 ” 全局描述符表 (GDT)“，再通过段寄存器 (CS) 中的索引查表，获得段基址、界限和权限。
+<ul>
+<li>GDTR 存储 GDT 在内存中的起始位置</li>
+<li>CS 存储目标行 (描述符) 在 GDT 的索引</li>
+<li>检查权限，检查是否越界（检查 EIP&lt;段界限），然后线性组合（段基址 +EIP）得到真实地址</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TD\n     连线逻辑\n    GDTR --\&quot;定位 GDT 基址\&quot;--> GDT_Table\n    CS --\&quot;提供索引 (Index)\&quot;--> GDT_Table\n    GDT_Table -.-> Target_Desc\n\n    Target_Desc --\&quot;取出信息\&quot;--> Check\n    EIP --\&quot;提供偏移量\&quot;--> Check\n\n    Check --\&quot;验证通过\&quot;--> Add\n    Add --> Result&quot;">graph TD
+     连线逻辑
+    GDTR --&quot;定位 GDT 基址&quot;--> GDT_Table
+    CS --&quot;提供索引 (Index)&quot;--> GDT_Table
+    GDT_Table -.-> Target_Desc
+
+    Target_Desc --&quot;取出信息&quot;--> Check
+    EIP --&quot;提供偏移量&quot;--> Check
+
+    Check --&quot;验证通过&quot;--> Add
+    Add --> Result
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<ul>
+<li><strong>x86-64 (长模式): 扁平寻址</strong>
+<ul>
+<li>在 64 位模式下，描述符中不再有段基址和段界限。</li>
+<li><strong>所有的代码段都从地址 0 开始</strong>，实现了 ” 扁平 (Flat)” 的存储器模型。</li>
+</ul>
+</li>
+</ul>
+<h4 id="x86-指令简介">X86 指令简介<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#x86-指令简介" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>x86 指令集非常庞大，指令长度可变，功能复杂。</p>
+<p><span class="text-highlight">最长的命令 15 字节，最短的命令 1 字节</span></p>
+<ul>
+<li><strong>主要指令类别:</strong>
+<ul>
+<li><strong>传送指令:</strong> <code>MOV</code> (传送), <code>PUSH</code> (压栈), <code>POP</code> (弹栈), <code>XCHG</code> (交换), <code>LEA</code> (装入有效地址)。</li>
+<li><strong>算术运算指令:</strong> <code>ADD</code> (加), <code>SUB</code> (减), <code>INC</code> (加 1), <code>DEC</code> (减 1), <code>CMP</code> (比较), <code>MUL</code> (乘)。</li>
+<li><strong>逻辑运算和移位指令:</strong> <code>NOT</code> (逻辑非), <code>AND</code> (逻辑与), <code>OR</code> (逻辑或), <code>SHL</code> (逻辑左移), <code>SAR</code> (算术右移)。</li>
+<li><strong>转移指令:</strong> <code>JMP</code> (无条件转移), <code>JZ/JE</code> (为零/相等时转移), <code>JNC</code> (无进位时转移)。</li>
+<li><strong>处理器控制指令:</strong> <code>CLC</code> (清进位标志), <code>HLT</code> (暂停), <code>NOP</code> (空操作)。</li>
+</ul>
+</li>
+<li><strong>重点指令说明:</strong>
+<ul>
+<li><strong><code>MOV</code> (传送):</strong> 格式为 <code>MOV DST, SRC</code> 。
+<ul>
+<li><strong>限制:</strong> 两个操作数不能同时为存储器单元 (存储器之间不能直接传送)。CS 寄存器不能作为目的寄存器。立即数不能直接送段寄存器。</li>
+</ul>
+</li>
+<li><strong><code>LEA</code> (装入有效地址):</strong> 格式为 <code>LEA REG, SRC</code>。
+<ul>
+<li><strong>功能:</strong> 把源操作数 <code>SRC</code> 的<strong>有效地址 (即偏移地址)</strong> 装入目的寄存器 <code>REG</code>，而不是传送 <code>SRC</code> 的内容。</li>
+</ul>
+</li>
+<li><strong><code>CMP</code> (比较):</strong> 格式为 <code>CMP DST, SRC</code>。
+<ul>
+<li><strong>功能:</strong> 执行 <code>DST - SRC</code> 的减法操作，但不保存结果，仅根据结果影响标志位（如 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span></span></span></span>）。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>1. 控制转移指令 (Control Transfer)</strong></p>
+<p><strong>A. 无条件转移指令 (JMP)</strong></p>
+<ul>
+<li><strong>短转移 (Short Jump):</strong> <code>JMP SHORT LABEL</code>
+<ul>
+<li><strong>操作:</strong> <code>IP ← IP + 8位位移量</code></li>
+<li><strong>范围:</strong> -128 ~ +127 字节。</li>
+</ul>
+</li>
+<li><strong>近转移 (Near Jump):</strong> <code>JMP NEAR PTR LABEL</code>
+<ul>
+<li><strong>操作:</strong> <code>IP ← IP + 16位位移量</code></li>
+<li><strong>范围:</strong> ±32KB。</li>
+<li><em>注：位移量是带符号数，计算目标地址与当前 IP 之差。</em></li>
+</ul>
+</li>
+<li><strong>远转移 (Far Jump - 直接):</strong> <code>JMP FAR PTR LABEL</code>
+<ul>
+<li><strong>操作:</strong> 直接修改 CS 和 IP。<code>IP ← LABEL的偏移地址</code>，<code>CS ← LABEL的段基值</code>。</li>
+</ul>
+</li>
+<li><strong>段间间接转移 (Far Indirect Jump):</strong> <code>JMP DWORD PTR OPR</code>
+<ul>
+<li><strong>格式:</strong> 寻址一个内存地址（双字，32 位）。</li>
+<li><strong>执行逻辑:</strong>
+<ol>
+<li><strong>低字 (Low Word):</strong> 送入 <strong>IP</strong> 寄存器。</li>
+<li><strong>高字 (High Word):</strong> 送入 <strong>CS</strong> 寄存器。</li>
+</ol>
+</li>
+<li><em>实例：</em> <code>JMP DWORD PTR [BX]</code>
+<ul>
+<li>若 <code>[BX]</code> 指向内存 <code>81020H</code>，且内容为 <code>06 30 00 40</code> (小端序)。</li>
+<li>则 <code>IP ← 3006H</code>，<code>CS ← 4000H</code>。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>B. 循环控制指令</strong></p>
+<ul>
+<li><strong>LOOPNE/LOOPNZ (不为零/不相等时循环)</strong>
+<ul>
+<li><strong>格式:</strong> <code>LOOPNE LABEL</code> 或 <code>LOOPNZ LABEL</code></li>
+<li>一般放在代码段底部。</li>
+<li><strong>操作逻辑 (两步验证):</strong>
+<ol>
+<li><strong>计数更新:</strong> <code>CX ← CX - 1</code></li>
+<li><strong>判断:</strong> 若 <strong>CX ≠ 0</strong> 且 <strong>ZF = 0</strong> (即结果不相等)，则跳转至 <code>LABEL</code>；否则结束循环，向下执行。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<p><strong>2. 数据传送指令 (Data Transfer)</strong></p>
+<p><strong>A. 换码/查表指令 (XLAT)</strong></p>
+<ul>
+<li><strong>格式:</strong> <code>XLAT</code></li>
+<li><strong>用途:</strong> 将 <code>AL</code> 中的值作为索引，转换成表中的对应值。</li>
+<li><strong>操作步骤:</strong>
+<ol>
+<li><strong>表基址:</strong> 预先在数据段定义字节表，偏移地址存入 <strong>BX</strong>。</li>
+<li><strong>索引:</strong> 表项索引值存入 <strong>AL</strong>。</li>
+<li><strong>查表:</strong> 计算物理地址 <code>DS:[BX + AL]</code>。</li>
+<li><strong>回填:</strong> 将查找到的字节内容送回 <strong>AL</strong>。</li>
+</ol>
+</li>
+</ul>
+<p><strong>B. 交换指令 (XCHG)</strong></p>
+<ul>
+<li><strong>格式:</strong> <code>XCHG OPR1, OPR2</code></li>
+<li><strong>操作:</strong> <code>OPR1</code> 与 <code>OPR2</code> 内容互换。</li>
+<li><strong>限制细节:</strong>
+<ul>
+<li>两个操作数<strong>位宽必须相同</strong>（同为 8 位或 16 位）。</li>
+<li>操作数类型组合：寄存器/存储器、存储器/寄存器、寄存器/寄存器。</li>
+<li><strong>禁止:</strong> 也就是<strong>不允许使用段寄存器</strong>参与交换。</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<p><strong>3. 算术运算指令 (Arithmetic)</strong></p>
+<p><strong>A. 加法十进制调整 (Data)</strong></p>
+<ul>
+<li><strong>格式:</strong> <code>DAA</code> (Decimal Adjust for Addition)</li>
+<li><strong>前提:</strong> 必须紧跟在二进制加法 (<code>ADD/ADC</code>) 指令之后。</li>
+<li><strong>功能:</strong> 将 <code>AL</code> 中的二进制 ” 和 ” 调整为<strong>压缩 BCD 码</strong>格式。</li>
+<li><strong>结果:</strong> 调整后的值存回 <code>AL</code>。</li>
+</ul>
+<hr/>
+<p><strong>4. 处理器控制指令 (Processor Control)</strong></p>
+<p>这类指令用于直接控制 CPU 状态或标志位：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th><strong>分组</strong></th><th><strong>助记符</strong></th><th><strong>功能描述</strong></th><th><strong>涉及标志位</strong></th></tr></thead><tbody><tr><td><strong>标志操作</strong></td><td><strong>STC</strong> / <strong>CLC</strong> / <strong>CMC</strong></td><td>置位 / 清零 / 取反</td><td><strong>CF</strong> (进位标志)</td></tr><tr><td></td><td><strong>STD</strong> / <strong>CLD</strong></td><td>置 1 (减量) / 清 0 (增量)</td><td><strong>DF</strong> (方向标志)</td></tr><tr><td></td><td><strong>STI</strong> / <strong>CLI</strong></td><td>开中断 (置 1) / 关中断 (清 0)</td><td><strong>IF</strong> (中断标志)</td></tr><tr><td><strong>外同步</strong></td><td><strong>HLT</strong></td><td>暂停 CPU，直到中断或复位</td><td>-</td></tr><tr><td></td><td><strong>WAIT</strong></td><td>等待</td><td>-</td></tr><tr><td></td><td><strong>ESC</strong></td><td>交权 (协处理器指令接口)</td><td>-</td></tr><tr><td></td><td><strong>LOCK</strong></td><td>封锁总线 (用于指令前缀，原子操作)</td><td>-</td></tr><tr><td><strong>空操作</strong></td><td><strong>NOP</strong></td><td>消耗时钟周期，不执行操作</td><td>-</td></tr></tbody></table></div>
+<blockquote>
+<p>MOVSB 指令将 <strong>DS:SI</strong> 指向的源字节复制到 <strong>ES:DI</strong> 指向的目的地，随后依据 DF (方向标志位) 自动调整地址指针：</p>
+<p>若通过 CLD 令 DF=0，则 SI/DI 自动递增（从低向高处理）;</p>
+<p>若通过 STD 令 DF=1，则 SI/DI 自动递减（从高向低处理）;</p>
+<p>这种机制能有效避免源与目的内存区域重叠时的被覆盖错误；</p>
+<p>当配合 REP 前缀使用时，CPU 会循环执行上述搬运并递减 CX 计数器，直至 CX 归零，从而实现连续内存块的高效拷贝。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n Start((\&quot;开始: REP MOVSB\&quot;)) --> CheckCX{\&quot;CX = 0 ?\&quot;}\n\n  传送后更新地址\n Transfer --> CheckDF{\&quot;检查 DF 标志位\&quot;}\n\n  扣除计数\n IncPtr --> DecCX[\&quot;计数器递减: &lt;br>CX ← CX - 1\&quot;]\n DecPtr --> DecCX\n\n  定义样式&quot;">flowchart TD
+ Start((&quot;开始: REP MOVSB&quot;)) --> CheckCX{&quot;CX = 0 ?&quot;}
+
+  传送后更新地址
+ Transfer --> CheckDF{&quot;检查 DF 标志位&quot;}
+
+  扣除计数
+ IncPtr --> DecCX[&quot;计数器递减: &lt;br>CX ← CX - 1&quot;]
+ DecPtr --> DecCX
+
+  定义样式
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+</blockquote>
+<pre><code>  classDef process fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+</code></pre>
+<pre><code>  classDef decision fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+  classDef terminator fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,rx:10,ry:10;
+  classDef update fill:#fce4ec,stroke:#880e4f,stroke-width:2px;
+
+  Start((开始: CPU取指)) --> Lookup[查询 BTB Lookup]
+  Lookup --> CheckHit{BTB 命中 Hit?}
+
+   预测 Taken
+  Predict -- Yes --> SetTarget[Next PC = BTB 目标地址]
+
+   未命中 (Miss) 的处理流程
+  CheckHit -- No --> Default[默认普通指令处理]
+  Default --> SetSeq
+
+   更新逻辑
+  CheckUpdate -- &quot;BTB信息有误 / 预测失败 / 新分支&quot; --> UpdateBTB[更新 BTB 表项]
+  CheckUpdate -- &quot;预测正确 &amp; 信息无误&quot; --> Continue((继续下一周期))
+  UpdateBTB --> Continue
+
+   样式定义
+classDef pred fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+classDef action fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+classDef write fill:#fce4ec,stroke:#880e4f,stroke-width:2px;
+classDef term fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,rx:5,ry:5;
+
+ 连接点
+P_Taken --> Execute[&quot;执行指令&quot;]
+P_NT --> Execute
+
+ 分支 1: 实际跳转 (Taken)
+    RealRes -- &quot;实际跳转 (Taken)&quot; --> UpTaken[&quot;动作: 增强历史位&quot;]:::write
+    UpTaken --> CheckAlloc{&quot;在 BTB 中?&quot;}
+
+    CheckAlloc -- &quot;是 (已存在)&quot; --> Done1((&quot;更新结束&quot;)):::term
+    CheckAlloc -- &quot;否 (不存在)&quot; --> Alloc[&quot;分配新条目&lt;br/>(若满则 LRU 替换)&quot;]:::write
+    Alloc --> Done1
+
+     定义样式以增强可读性
+classDef callFlow fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
+classDef retFlow fill:#fff3e0,stroke:#ef6c00,stroke-width:2px;
+classDef rasHardware fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,rx:5,ry:5;
+
+ 中间：RAS 硬件
+RAS[(&quot;RAS&lt;br/>(返回地址栈)&quot;)]:::rasHardware
+
+ 连接关系
+Step1 --> Step2 --> Step3
+Step3 -.->|&quot;写入地址&quot;| RAS
+RAS -.->|&quot;读取地址&quot;| Step5
+Step4 --> Step5 --> Step6
+</code></pre>
+<pre><code>
+> [!note]
+> 
+>
+> 取指阶段用 RAS 里的地址先跑（为了快），执行阶段用通用栈里的地址核对（为了对），若 RAS 猜错则回滚并以通用栈为准。
+
+## 存储器
+
+### 存储层次结构概况
+
+#### 冯·诺依曼结构中的存储器
+
+在冯·诺依曼计算机结构中，存储器（Memory）是核心部件之一，用于存放指令和数据。现代计算机系统根据速度、容量和成本的平衡，构建了层次化的存储结构。
+
+#### 存储层次金字塔
+
+从上至下，速度由快变慢，容量由小变大，单位成本由高变低：
+
+1. **优势** 位于 CPU 内部，速度最快，容量极小（Byte 量级）。
+2. **通用寄存器 (Registers)：** 通常由 SRAM 构成，速度极快，容量较小（KB~MB 量级），用于缓解 CPU 与主存的速度差异。
+3. **高速缓存 (Cache)：** 通常由 DRAM 构成，速度适中，容量较大（MB~GB 量级），CPU 可直接访问。
+4. **主存储器 (Main Memory)：** 如硬盘（Disk），速度慢，容量大（GB~TB 量级），具有非易失性。
+
+#### 性能瓶颈
+
+- **本地二级存储 (Local Secondary Storage)：** 随着技术发展，处理器性能的增长速度远超存储器（DRAM）性能的增长速度。
+- **CPU 与存储器的性能剪刀差：** 导致了 &quot; 存储墙 &quot; 问题，即 CPU 经常需要等待存储器的数据，限制了整体性能。
+
+---
+
+### 存储容量的计算与单位标准
+
+#### 容量计算的歧义
+
+在计算机领域，关于存储容量的单位前缀（K, M, G, T）存在两种不同的定义标准，常导致硬件标称容量与操作系统显示容量不一致。
+
+1. **后果：**
+	- 采用 **国际单位制 (SI) / 硬件厂商标准：** 进位。
+	- $1 \text{kB} = 1000 \text{ Bytes}$
+	- $1 \text{MB} = 1000^2 \text{ Bytes}$
+	- $1 \text{GB} = 1000^3 \text{ Bytes}$
+	- 常用于：硬盘、U 盘、网络==传输速率==（如 100Mbps）、==CPU 主频==。
+
+2. **10 进制**
+	- 采用 **二进制标准 (IEC/ANSI) / 操作系统标准：** 进位。
+	- $1 \text{KB} (1 \text{KiB}) = 1024 \text{ Bytes} = 2^{10} \text{ Bytes}$
+	- $1 \text{MB} (1 \text{MiB}) = 1024^2 \text{ Bytes} = 2^{20} \text{ Bytes}$
+	- $1 \text{GB} (1 \text{GiB}) = 1024^3 \text{ Bytes} = 2^{30} \text{ Bytes}$
+	- 常用于：==内存容量（RAM）==、==操作系统显示的文件/磁盘大小==。
+
+#### 常见换算差异
+
+- **2 进制** 标称 4GB 的 U 盘，实际字节数为 $4 \times 1000^3$。在操作系统中除以 $1024^3$，显示约为 **硬盘示例：**。
+- **3.72 GB** 标称 4GB 的内存条，实际字节数就是 $4 \times 1024^3$，系统显示即为 **内存示例：**。
+
+---
+
+### DRAM 和 SRAM 技术对比
+
+#### DRAM (动态随机存取存储器)
+
+- **4.00 GB** 1 个晶体管 + 1 个电容 (1T1C)。
+- **存储单元：** 利用电容存储电荷来表示逻辑 &quot;1&quot; 或 &quot;0&quot;。
+- **工作原理：** 由于电容存在漏电效应，电荷会流失，必须定期进行刷新（补充电荷）以保持数据。
+- **刷新 (Refresh)：**
+  - **特点：** 单元结构简单，相同面积下容量大。
+  - **集成度高：** 相比 SRAM。
+  - **功耗较低：** 充放电及刷新需要时间。
+  - **速度较慢：** 适合做主存储器（内存）。
+
+#### SRAM (静态随机存取存储器)
+
+- **成本低：** 6 个晶体管 (6T)，构成双稳态触发器结构。
+- **存储单元：** 利用触发器的两个稳定状态存储数据，只要不断电，数据即可长久保持。
+- **工作原理：**
+  - **特点：** 数据稳定性好。
+  - **无需刷新：** 无需复杂的充放电和刷新过程。
+  - **速度极快：** 单元面积大。
+  - **集成度低：** 适合做高速缓存（Cache）。
+
+| 特性         | DRAM (主存) | SRAM (Cache) |
+| :----------- | :---------- | :----------- |
+| **功耗较高、成本高：** | 电容        | 双稳态触发器 |
+| **核心元件**   | 高          | 低           |
+| **集成度**     | 慢          | 快           |
+| **速度**     | 低          | 高           |
+| **成本** | 需要        | 不需要       |
+
+---
+
+### 主存（SDRAM）的工作原理
+
+#### 内部结构
+
+DRAM 芯片内部是一个存储阵列（Memory Array），通过**刷新需求**和**行地址**进行寻址。主要部件包括：行/列解码器、读写放大器（Sense Amplifiers）、数据缓存等。
+
+#### 访问流程 (以读操作为例)
+
+1. **列地址** 内存控制器向内存发送请求。
+2. **总线请求 (Bus Request)：**
+	- 发送行地址和激活命令（ACT）。
+	- 行解码器选中特定行（Word Line）。
+	- 该行数据被送入读写放大器（Sense Amplifiers）。
+	- **行激活 (Row Access / Activate)：** 从行选中到可以发送列地址之间的延迟。
+3. **延迟参数 tRCD (Row to Column Delay)：**
+	- 发送列地址和读/写命令（READ/WRITE）。
+	- 从读写放大器中选出特定列的数据。
+	- **列读写 (Column Access)：** 从发送列地址到数据真正输出的延迟周期数。
+4. **延迟参数 CL (CAS Latency)：** 数据通过数据总线传回 CPU。
+5. **数据传输 (Data Transmission)：**
+	- 在访问新的一行之前，必须关闭当前行并对位线进行预充电。
+	- **预充电 (Precharge)：** 行预充电（关闭行）所需的延迟时间。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant CPU as 动作 (命令)
+    participant Time as 等待时间 (延迟参数)
+
+    Note over CPU, Time: 🟢 周期开始
+
+     2. 选列 -> 等待 -> 数据
+    CPU->>Time: 2. 选中列 (CAS / READ)
+    rect rgb(255, 255, 230)
+        Note right of Time: ⏳ CL &lt;br/>(列选通 -> 数据输出)
+    end
+
+     4. 预充电 -> 等待 -> 下一次
+    CPU->>Time: 4. 预充电/关闭行 (PRE)
+    rect rgb(240, 240, 255)
+        Note right of Time: ⏳ tRP &lt;br/>(关闭当前 -> 下次开启)
+    end
+
+    Note over CPU, Time: 🔴 准备好读下一行
+</code></pre>
+<h4 id="关键时序参数总结">关键时序参数总结<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#关键时序参数总结" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>延迟参数 tRP (RAS Precharge)：</strong> 行选通到列选通的延迟。
+<ul>
+<li>PC133 标准：2~3 个时钟周期，约 15~23ns</li>
+</ul>
+</li>
+<li><strong>tRCD：</strong> 列选通到数据输出的延迟。
+<ul>
+<li>PC133 标准：2~3 个时钟周期，约 15~23ns</li>
+</ul>
+</li>
+<li><strong>CL：</strong> 行预充电时间（关闭当前行准备打开新行的时间）。
+<ul>
+<li>PC133 标准：2~3 个时钟周期，约 15~23ns</li>
+</ul>
+</li>
+<li>常见的模式
+<ul>
+<li><code>tRCD+n*CL+tRP</code></li>
+<li>n 为同一行需要读取的数据量</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h3 id="主存技术的发展-sdram-到-ddr">主存技术的发展 (SDRAM 到 DDR)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#主存技术的发展-sdram-到-ddr" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="sdram-同步动态随机存取存储器">SDRAM (同步动态随机存取存储器)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#sdram-同步动态随机存取存储器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>时钟与系统总线同步。</li>
+<li><strong>tRP：</strong> 一个时钟周期只传输一次数据（上升沿传输）。</li>
+</ul>
+<h4 id="ddr-sdram-双倍速率-sdram">DDR SDRAM (双倍速率 SDRAM)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ddr-sdram-双倍速率-sdram" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>SDR (Single Data Rate)：</strong> 在时钟信号的<strong>基本原理：<strong>和</strong>上升沿</strong>各传输一次数据，使得在时钟频率不变的情况下，数据传输率翻倍。</li>
+<li><strong>下降沿</strong>
+<ul>
+<li><strong>预取技术 (Prefetch)：</strong> 2bit 预取。</li>
+<li><strong>DDR (DDR1)：</strong> 4bit 预取。</li>
+<li><strong>DDR2：</strong> 8bit 预取。</li>
+<li><strong>DDR3：</strong> 8bit 预取（但在分组架构上优化）。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>DDR4 **DDR4：**采用 16n 预取，仍然保持了 <strong>并没有</strong>。</p>
+<p><em>原因</em>：如果采用 16n，每次读出的数据量（粒度）太大（例如 16 × 64bit = 1024bit = 128 字节），这通常超过了 CPU Cache Line（通常是 64 字节）的大小，会导致大量无用的数据传输，浪费带宽。</p>
+</blockquote>
+<blockquote>
+<p>DDR4 的核心改进在于把内存内部划分为 4 个独立的<strong>8n 预取</strong>。</p>
+<ul>
+<li><strong>Bank Group (BG)</strong>：有一条<strong>Bank Group 内部</strong> (Local I/O)。</li>
+<li><strong>私有小路</strong>：有一条通往外部的<strong>整个芯片</strong> (Global I/O)。</li>
+</ul>
+<p>一切延迟的区别，都在于<strong>公共大路</strong>。</p>
+<hr/>
+<h3 id="1-tccd_l-long同组访问--抢占私有路权">1. tCCD_L (Long)：同组访问 = 抢占私有路权<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-tccd_l-long同组访问--抢占私有路权" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>当你连续两次访问<strong>你是不是在抢那条 ” 私有小路 ”</strong> 下的 Bank（比如先访问 Group A 的 Bank 0，再访问 Group A 的 Bank 1）：</p>
+<ul>
+<li><strong>同一个 Bank Group</strong>：虽然它们是不同的 Bank，但它们共享 Group A 的 <strong>冲突点</strong>。</li>
+<li><strong>Local I/O（私有小路）</strong>：
+<ol>
+<li>第一笔数据占用私有小路传输出去。</li>
+<li>私有小路必须复位、预充电，才能传下一笔。</li>
+</ol>
+</li>
+<li><strong>过程</strong>：你必须等私有小路腾空。这就是 <strong>结果</strong> 延迟。</li>
+<li><strong>Long</strong>：数据总线上会出现空隙（气泡），带宽跑不满。</li>
+</ul>
+<h3 id="2-tccd_s-short跨组访问--并行流水线">2. tCCD_S (Short)：跨组访问 = 并行流水线<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-tccd_s-short跨组访问--并行流水线" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>当你连续两次访问<strong>现象</strong>（比如先访问 Group A，再访问 Group B）：</p>
+<ul>
+<li>
+<p><strong>不同的 Bank Group</strong>：Group A 用它的私有小路，Group B 用它的私有小路。互不干扰。</p>
+</li>
+<li>
+<p><strong>无冲突</strong>：</p>
+<ol>
+<li>Group A 的数据正在通过公共大路传输出去。</li>
+<li>此时，Group B 的数据已经在自己的私有小路上准备好了。</li>
+<li>Group A 刚传完，Group B 立刻接上。</li>
+</ol>
+</li>
+<li>
+<p><strong>过程</strong>：不需要等私有小路复位。这就是 <strong>结果</strong> 延迟。</p>
+</li>
+<li>
+<p><strong>Short</strong>：数据总线无缝连接，<strong>现象</strong>。</p>
+</li>
+</ul>
+<p>这个图展示了为什么 ” 跨组 ” 可以无缝，而 ” 同组 ” 必须等待。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    autonumber\n    participant CPU\n    participant BG_A as Bank Group A (私有路)\n    participant BG_B as Bank Group B (私有路)\n    participant Bus as 数据总线 (公共路)\n\n    Note over CPU, Bus: 🔴 场景一：同组访问 (tCCD_L) - 堵车\n    CPU->>BG_A: 读指令 1\n    BG_A->>Bus: 输出数据 1\n    Note right of BG_A: 🔒 私有路忙/复位中...\n    CPU->>BG_A: 读指令 2 (同组)\n    BG_A--xBus: ❌ 必须等待私有路空闲\n    Note over Bus: ⚠️ 空闲间隙 (带宽浪费)\n    BG_A->>Bus: 输出数据 2\n\n    Note over CPU, Bus: 🟢 场景二：跨组访问 (tCCD_S) - 接力\n    CPU->>BG_A: 读指令 1\n    BG_A->>Bus: 输出数据 1\n    Note right of BG_A: 🔒 私有路忙\n\n    CPU->>BG_B: 读指令 2 (异组)\n    Note right of BG_B: ✅ 我的私有路是空的！\n    BG_B->>Bus: ⚡️ 紧接着输出数据 2\n    Note over Bus: ✅ 满载 (无间隙)&quot;">sequenceDiagram
+    autonumber
+    participant CPU
+    participant BG_A as Bank Group A (私有路)
+    participant BG_B as Bank Group B (私有路)
+    participant Bus as 数据总线 (公共路)
+
+    Note over CPU, Bus: 🔴 场景一：同组访问 (tCCD_L) - 堵车
+    CPU->>BG_A: 读指令 1
+    BG_A->>Bus: 输出数据 1
+    Note right of BG_A: 🔒 私有路忙/复位中...
+    CPU->>BG_A: 读指令 2 (同组)
+    BG_A--xBus: ❌ 必须等待私有路空闲
+    Note over Bus: ⚠️ 空闲间隙 (带宽浪费)
+    BG_A->>Bus: 输出数据 2
+
+    Note over CPU, Bus: 🟢 场景二：跨组访问 (tCCD_S) - 接力
+    CPU->>BG_A: 读指令 1
+    BG_A->>Bus: 输出数据 1
+    Note right of BG_A: 🔒 私有路忙
+
+    CPU->>BG_B: 读指令 2 (异组)
+    Note right of BG_B: ✅ 我的私有路是空的！
+    BG_B->>Bus: ⚡️ 紧接着输出数据 2
+    Note over Bus: ✅ 满载 (无间隙)
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+</blockquote>
+<h4 id="频率与带宽计算">频率与带宽计算<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#频率与带宽计算" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>
+<p><strong>带宽 100% 跑满</strong>：
+这三种频率构成了内存 ” 快不快 ” 的层级结构，从内部核心到外部传输：</p>
+<ul>
+<li><strong>1. 速度维度：三种频率体系</strong>
+<ul>
+<li><strong>核心频率 (Core Frequency)</strong>：存储单元内部实际工作的物理时钟频率。</li>
+<li><strong>定义</strong>：这是内存颗粒内部电容进行充放电、读写数据的物理极限速度。</li>
+<li><strong>本质</strong>：受到物理材料限制，提升非常困难，几十年来长期停留在 <strong>现状</strong> 之间（它是 ” 慢速的搬砖工人 ”）。</li>
+</ul>
+</li>
+<li><strong>133MHz 到 400MHz</strong>
+<ul>
+<li><strong>I/O 频率 (I/O Frequency)</strong>：外部接口传输数据的频率（传输总线的时钟频率）。</li>
+<li><strong>定义</strong>：决定了内存条上的数据引脚（Pin）每秒钟能跳变多少次信号周期（它是 ” 高速的运输车队 ”）。</li>
+</ul>
+</li>
+<li><strong>作用</strong>
+<ul>
+<li><strong>等效频率 (Effective Frequency) / 数据传输率</strong>：也就是我们买内存时看到的数字（如 3200）。因为采用了 <strong>定义</strong>（Double Data Rate）技术，在一个时钟周期的<strong>DDR</strong>和<strong>上升沿</strong>都能传输数据。</li>
+<li><strong>下降沿</strong>：等效频率通常是 I/O 频率的 <strong>关系</strong>。</li>
+<li><strong>2 倍</strong>：数据传输率 = I/O 频率 × 2</li>
+</ul>
+</li>
+</ul>
+<hr/>
+</li>
+<li>
+<p><strong>计算公式</strong>：
+预取技术是连接 ” 慢速核心 ” 与 ” 高速接口 ” 的桥梁，解决核心跑不快的问题。</p>
+<ul>
+<li><strong>2. 桥梁技术：预取 (Prefetch)</strong>：核心虽然慢，但力气大，一次并行抓取多份数据（2bit/4bit/8bit…）放入缓冲区，供高速 I/O 接口慢慢发送。</li>
+<li><strong>原理</strong>： 预取位数 = (I/O 频率 ÷ 核心频率) × 2 <em>(注：这里的 “×2” 是因为 DDR 的双倍速率机制)</em></li>
+</ul>
+<hr/>
+</li>
+<li>
+<p><strong>计算公式</strong>车道数量**。</p>
+<ul>
+<li><strong>3. 空间维度：位宽 (Bus Width)：
+如果说频率决定了车速，位宽则决定了</strong>：内存控制器与内存条之间，一次传输能并行通过的二进制位数。</li>
+<li><strong>定义</strong>：
+<ul>
+<li>普通台式机/笔记本内存条（DIMM）：固定为 <strong>标准数值</strong>。</li>
+<li>开启双通道模式：<strong>64 位 (64-bit)</strong>。</li>
+</ul>
+</li>
+<li><strong>128 位 (128-bit)</strong>：
+<ul>
+<li>单颗 DRAM 芯片通常无法独立提供 64 位（通常只有 8 位 或 16 位）。</li>
+<li><strong>物理实现（拼图原理/Rank）</strong>：内存条将 <strong>交互方式</strong>（假设每颗 8 位）组成一组（称为一个 Rank）。当 CPU 需要数据时，这 8 颗芯片 <strong>8 颗芯片</strong>，每颗芯片吐出 8 位数据，瞬间在总线上拼凑出完整的 <strong>同时并行工作</strong> 数据包。</li>
+</ul>
+</li>
+<li><strong>64 位</strong>：位宽是带宽的<strong>作用</strong>。在频率不变的情况下，位宽越宽，单次吞吐量越大。</li>
+</ul>
+<hr/>
+</li>
+<li>
+<p><strong>倍增器</strong>：
+带宽代表内存的数据吞吐总量，是衡量内存性能的<strong>4. 最终性能：带宽 (Bandwidth)</strong>。</p>
+<ul>
+<li><strong>最终指标</strong>： 带宽 (总量) = 数据传输率 (速度) × 位宽 (车道数)</li>
+<li><strong>基本概念</strong>： 带宽 = 等效频率 × 位宽 ÷ 8 <em>(注：÷8 是为了将 ” 位/bit” 转换为电脑常用的 ” 字节/Byte”，因为 1 Byte = 8 bits)</em></li>
+</ul>
+<hr/>
+</li>
+<li>
+<p><strong>计算公式</strong>：
+以常见的 <strong>5. 综合计算示例</strong> 内存条为例：</p>
+<ul>
+<li><strong>DDR3-1600</strong>：
+<ul>
+<li><strong>参数拆解</strong>：1600 MHz (即数据传输率 1600 MT/s)</li>
+<li><strong>等效频率</strong>：64 bit (这是由 8 颗 x8 的芯片并联撑起来的宽度)</li>
+</ul>
+</li>
+<li><strong>位宽</strong>： 带宽 = 1600 (速度) × 64 (车道) ÷ 8 (换算单位)</li>
+<li><strong>计算过程</strong>： = 12,800 MB/s = <strong>结果</strong></li>
+</ul>
+</li>
+</ul>
+<h4 id="发展趋势">发展趋势<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#发展趋势" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>随着 DDR 代数的增加，<strong>12.8 GB/s</strong>提升并不明显（受限于物理材质），主要通过提高<strong>核心频率</strong>和<strong>I/O 频率</strong>来提升带宽。</li>
+<li><strong>预取位数</strong> 的绝对时间（纳秒）并未显著降低，甚至有所增加，但由于频率提升，以时钟周期计算的数值变大了。</li>
+</ul>
+<hr/>
+<h3 id="高速缓存-cache-的工作原理">高速缓存 (Cache) 的工作原理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#高速缓存-cache-的工作原理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="局部性原理-principle-of-locality">局部性原理 (Principle of Locality)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#局部性原理-principle-of-locality" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Cache 有效的基础在于程序的局部性：</p>
+<ol>
+<li><strong>时序参数（CL, tRCD 等）</strong> 刚才访问过的数据，很快可能再次被访问（如循环变量）。</li>
+<li><strong>时间局部性 (Temporal Locality)：</strong> 刚访问过的数据，其相邻地址的数据很快可能被访问（如数组遍历）。
+<ul>
+<li><em>利用：</em> Cache 从主存取数据时，是以<strong>空间局部性 (Spatial Locality)：</strong> 为单位，一次取回多个连续字节。</li>
+</ul>
+</li>
+</ol>
+<h4 id="cache-的访问过程">Cache 的访问过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cache-的访问过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>CPU 发出物理地址进行访问：</p>
+<ol>
+<li><strong>块 (Block/Line)</strong> 数据在 Cache 中。
+<ul>
+<li>直接从 Cache 读取，速度极快（命中时间 Hit Time）。</li>
+</ul>
+</li>
+<li><strong>Cache 命中 (Hit)：</strong> 数据不在 Cache 中。
+<ul>
+<li>CPU 流水线暂停或挂起。</li>
+<li>向主存发起读取请求。</li>
+<li><strong>Cache 失效 (Miss)：</strong> 从主存拉取整个数据块到 Cache，并返回请求数据给 CPU。</li>
+</ul>
+</li>
+</ol>
+<h4 id="cache-的写策略">Cache 的写策略<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cache-的写策略" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ol>
+<li><strong>失效代价 (Miss Penalty)：</strong>
+<ul>
+<li><strong>命中时的策略：</strong> 数据同时写入 Cache 和主存。安全性高，但速度慢。</li>
+<li><strong>写穿透 (Write Through)：</strong> 数据只写入 Cache，标记为 ” 脏（Dirty）“。只有当该块被替换出 Cache 时，才写回主存。效率高。</li>
+</ul>
+</li>
+<li><strong>写返回 (Write Back)：</strong>
+<ul>
+<li><strong>失效时的策略：</strong> 先把数据块调入 Cache，再写入。通常配合 ” 写返回 ” 使用。</li>
+<li><strong>写分配 (Write Allocate)：</strong> 直接写入主存，不调入 Cache。通常配合 ” 写穿透 ” 使用。</li>
+</ul>
+</li>
+</ol>
+<hr/>
+<h3 id="高速缓存的设计要点">高速缓存的设计要点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#高速缓存的设计要点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="平均访存时间-amat">平均访存时间 (AMAT)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#平均访存时间-amat" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>评估存储系统性能的核心指标：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">AMAT</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord text"><span class="mord">Hit Time</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord text"><span class="mord">Miss Rate</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Miss Penalty</span></span></span></span></span></span>
+<ul>
+<li><strong>写不分配 (Write Non-Allocate)：</strong> 在 Cache 中找到并读取数据的时间。</li>
+<li><strong>Hit Time (命中时间)：</strong> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">Hit Rate</span></span></span></span></span>。</li>
+<li><strong>Miss Rate (失效率)：</strong> 访问主存并填充 Cache 的时间。</li>
+<li><strong>Miss Penalty (失效代价)：</strong> 降低 Hit Time、降低 Miss Rate、减少 Miss Penalty。</li>
+</ul>
+<h4 id="cache-失效的原因-3c-模型">Cache 失效的原因 (3C 模型)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#cache-失效的原因-3c-模型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ol>
+<li><strong>优化目标：</strong> 第一次访问数据，Cache 中必然没有。<span class="text-highlight">> 无法避免。</span></li>
+<li><strong>义务失效 / 冷启动失效 (Compulsory / Cold Start Miss)：</strong> Cache 容量太小，无法容纳程序所需的所有工作集。 <span class="text-highlight">> 增加缓存容量</span></li>
+<li><strong>容量失效 (Capacity Miss)：</strong> 多对一映射导致某些位置竞争激烈，即使 Cache 还有空闲空间也发生替换。<span class="text-highlight">> 更改相联度</span></li>
+</ol>
+<h4 id="映射策略-mapping-strategies">映射策略 (Mapping Strategies)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#映射策略-mapping-strategies" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ol>
+<li><strong>冲突失效 (Conflict Miss)：</strong> 主存中的每个块只能映射到 Cache 中的唯一特定位置。
+<ul>
+<li><em>优点：</em> 硬件简单，成本低。</li>
+<li><em>缺点：</em> 冲突失效高。</li>
+</ul>
+</li>
+<li><strong>直接映射 (Direct Mapped)：</strong> 主存块可以映射到 Cache 的任意位置。
+<ul>
+<li><em>优点：</em> 冲突率最低。（不可能冲突不命中）</li>
+<li><em>缺点：</em> 硬件比较电路复杂，速度慢，成本高。</li>
+</ul>
+</li>
+<li><strong>全相联 (Fully Associative)：</strong> 折中方案。将 Cache 分组，主存块映射到特定组，组内任意位置。
+<ul>
+<li>现代 CPU 多采用 4 路、8 路或 16 路组相联。</li>
+</ul>
+</li>
+</ol>
+<h4 id="替换算法-replacement-algorithms">替换算法 (Replacement Algorithms)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#替换算法-replacement-algorithms" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>当 Cache 满了需要调入新块时，决定替换哪一块：</p>
+<ul>
+<li><strong>组相联 (Set Associative)：</strong> 硬件实现简单，性能不可控。</li>
+<li><strong>随机 (Random)：</strong> 按顺序替换，类似 FIFO。</li>
+<li><strong>轮转 (Round-Robin)：</strong> 替换最长时间未被访问的块。利用了时间局部性，性能通常最好，但硬件记录历史信息的开销大。</li>
+</ul>
+<h4 id="多级-cache-结构">多级 Cache 结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#多级-cache-结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>现代 CPU（如 Core i7）通常采用三级 Cache 结构：</p>
+<ul>
+<li><strong>最近最少使用 (LRU)：</strong> 指令与数据分离（I-Cache, D-Cache），速度最快，容量小（如 32KB+32KB），私有。</li>
+<li><strong>L1 Cache：</strong> 统一存储，速度次之，容量中等（如 256KB），私有或共享。</li>
+<li><strong>L2 Cache：</strong> 多核共享，容量大（如 8MB），用于减少访问主存的次数。</li>
+</ul>
+<h3 id="hbm">HBM<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#hbm" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="1-市场格局从--三足鼎立--到--晶圆厂结盟-">1. 市场格局：从 ” 三足鼎立 ” 到 ” 晶圆厂结盟 ”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-市场格局从--三足鼎立--到--晶圆厂结盟-" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>虽然市场份额仍由三大原厂占据，但 HBM4 时代引入了新的变量——<strong>L3 Cache：</strong>。</p>
+<ul>
+<li><strong>Foundry（晶圆代工厂）</strong>
+<ul>
+<li><strong>三大巨头（The Big Three）：</strong> HBM 市场的领军者。在 HBM4 世代，它与 <strong>SK 海力士 (SK Hynix)：</strong> 深度结盟，利用台积电的逻辑工艺制造底座（Base Die）。</li>
+<li><strong>台积电 (TSMC)</strong> 拥有 IDM（垂直整合）优势，试图同时提供存储、逻辑代工和封装的一站式服务（Turnkey Solution）。</li>
+<li><strong>三星电子 (Samsung)：</strong> 依然是不可忽视的第三极。</li>
+</ul>
+</li>
+<li><strong>美光 (Micron)：</strong> 以前是买 ” 标准品 “，HBM4 时代开始走向 ” 客制化 “。客户（如 NVIDIA、Google）可能要求定制 HBM4 的底座功能。</li>
+</ul>
+<h4 id="2-技术演进hbm4-成为新基准">2. 技术演进：HBM4 成为新基准<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-技术演进hbm4-成为新基准" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>格局变化核心：</strong> <strong>HBM3E：</strong>。应用于 2024/2025 年的主力 AI 芯片（如 H200, B200）。它是 HBM3 的增强版，架构未大改。</li>
+<li><strong>当前量产主流</strong> <strong>HBM4：</strong>。
+<ul>
+<li><strong>最新发布的标准 (Current Latest Standard)</strong> 标准已发布，各大原厂处于样品测试或初期量产阶段。</li>
+<li><strong>状态：</strong> 标准化了 <strong>堆叠高度：</strong>（16 层堆叠），容量显著提升（单颗可达 32GB 或 48GB）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-架构原理与带宽计算-️-核心考点重构">3. 架构原理与带宽计算 (⚠️ 核心考点重构)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-架构原理与带宽计算-️-核心考点重构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这是 HBM4 与 HBM3E/3/2e 最大的区别，<strong>16-Hi</strong>。</p>
+<ul>
+<li>
+<p><strong>做题时必须看清题目问的是哪一代</strong></p>
+<ul>
+<li><strong>位宽革命 (Bus Width)：</strong> 接口位宽恒定为 <strong>HBM1 ~ HBM3E：</strong>。</li>
+<li><strong>1024-bit</strong> 接口位宽翻倍至 <strong>HBM4：</strong>。</li>
+</ul>
+</li>
+<li>
+<p>带宽计算公式 (通用)：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"></span></span></span>
+</li>
+</ul>
+<p>\text{总带宽} = \frac{\text{单引脚速率 (Gbps)} \times \text{位宽 (bits)}}{8}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 77: …1024 bit。
+
+    $̲$
+\text{带宽} = 9…" style="color:#cc0000;">
+- **实战对比 (假如题目换成 HBM4)：**
+
+  - 场景 A (HBM3E)： 速率 9.2 Gbps，位宽 1024 bit。
+
+    $$
+\text{带宽} = 9.2 \times (1024 / 8) = 1.18 \text{ TB/s}</span>
+<pre><code>- 场景 B (HBM4)： 假设速率同为 9.2 Gbps（或者略低），但位宽变为 2048 bit。
+
+
+$$
+</code></pre>
+<p>\text{带宽} = 9.2 \times (2048 / 8) = 2.36 \text{ TB/s}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 49: …宽翻倍，带宽也能直接翻倍。
+
+#̲### 4. 关键技术变革：逻…" style="color:#cc0000;">  
+  - **结论：** 即使频率不提升，仅靠 HBM4 的位宽翻倍，带宽也能直接翻倍。
+
+#### 4. 关键技术变革：逻辑底座 (Logic Base Die)
+
+这是 HBM4 能实现 2048-bit 位宽的物理基础。
+
+- **过去 (HBM3E 及以前)：**
+  - 底部的 Base Die 使用**存储器工艺 (DRAM Process)** 制造。
+  - 功能仅限于物理互联和简单的测试电路。
+- **现在 (HBM4)：**
+  - 底部的 Base Die 改用**逻辑工艺 (Logic Process, 如 12nm/5nm)** 制造。
+  - **优势：** 可以在底部集成更复杂的控制器，布线密度更高，从而容纳 2048 根数据线。
+  - **深远影响：** 这为未来在内存里直接计算（PIM, Processing-In-Memory）铺平了道路。
+
+#### 5. 封装形式：混合键合 (Hybrid Bonding) 的引入
+
+随着堆叠层数增加到 16层 (16-Hi)，为了控制总厚度不超标（标准通常限制在 720μm 左右），传统的微凸块 (Micro-bumps) 连接方式面临极限。
+
+- **HBM4 技术趋势：** 开始引入 **混合键合 (Hybrid Bonding)** 技术。
+  - 取消了凸块（Bumpless），让铜与铜直接连接。
+  - 这就好比把两块砖头之间的“水泥层”去掉了，直接原子级融合，散热更好，信号传输更快，厚度更薄。
+
+## 总线
+
+### 总线的基本概念
+
+#### 定义与组成
+
+- **定义**：总线（Bus）是两个以上模块（设备或子系统）之间传送信息的**公共通路**。
+
+- **组成**：
+  1. **物理电路**：传输信息的硬件线路。
+  1. **协议**：管理信息传输的规则（如时序、电平等）。
+
+
+#### 总线的分类（按层次）
+
+总线在计算机系统中呈现出层次化的结构：
+
+1. **片上总线 (On-chip Bus / Component-level Bus)**：
+
+   - **位置**：中央处理器（CPU）芯片内部。
+   
+   
+      - **作用**：连接芯片内部的各个寄存器、运算器等模块。
+   
+
+
+2. **内总线 (System Bus / Board-level Bus)**：
+
+   - **位置**：计算机系统的各插件板之间。
+   
+   
+      - **作用**：通常所说的“微机总线”即指此类，用于连接 CPU、内存和 I/O 接口。
+   
+3. **外总线 (External Bus / Communication Bus)**：
+   - **位置**：计算机系统之间，或计算机与外部设备（仪器、仪表、控制装置）之间。
+
+---
+
+### 总线的基本结构与逻辑
+
+一个典型的总线系统主要由以下几种角色的模块组成：
+
+#### 模块角色
+
+- **总线主模块 (Bus Master)**：
+  - 具有总线控制能力。
+  - 获得控制权后，能主动发起传输（读或写）。
+  - **示例**：CPU、DMA 控制器。
+
+- **总线从模块 (Bus Slave)**：
+  - 不具备总线控制能力，只能被动响应。
+  - ==负责接收写数据、返回读数据或发送状态信号（如“错误”）。==
+  - **示例**：存储器（Memory）。
+
+
+#### 核心控制组件
+
+- **总线仲裁器 (Bus Arbiter)**：
+  - **功能**：当多个主模块同时请求总线时，依据**特定策略**（如优先级）决定谁获得控制权。
+  - **目的**：避免冲突，确保总线高效使用。
+
+- **总线译码器 (Bus Decoder)**：
+  - **功能**：根据当前控制总线的主模块提供的地址，选择作为本次总线传输目标的从模块。
+  - **原理**：通常基于地址的高位进行空间划分（例如：`0x0000-0x0FFF` 选中从模块1，`0x1000-0x1FFF` 选中从模块2）。
+
+
+```mermaid
+graph TD
+     1. 主模块部分
+        subgraph Masters [&quot;总线主模块 (Bus Masters)&quot;]
+            direction LR
+            CPU[&quot;主模块 A (如: CPU)&lt;br/>有控制能力/主动发起&quot;]:::master
+            DMA[&quot;主模块 B (如: DMA)&lt;br/>有控制能力&quot;]:::master
+        end
+
+         3. 从模块部分
+        subgraph Slaves [&quot;总线从模块 (Bus Slaves)&quot;]
+            direction LR
+            Mem[&quot;从模块 A (如: Memory)&lt;br/>被动响应/存储数据&quot;]:::slave
+            IO[&quot;从模块 B (其他设备)&quot;]:::slave
+        end
+
+         阶段1：仲裁
+        CPU -- &quot;发起总线请求&quot; --> Arbiter
+        DMA -.-> Arbiter
+        Arbiter -- &quot;授予控制权 (Grant)&quot; --> CPU
+
+         阶段3：数据传输
+        CPU &lt;== &quot;数据传输 (读/写)&quot; ==> Mem
+        CPU  &lt;-.-> IO
+    end
+
+     样式定义
+    classDef cpuContainer fill:#fce4ec,stroke:#ad1457,stroke-width:2px;
+    classDef logicCore fill:#c62828,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef extDevice fill:#ef6c00,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef controller fill:#ffb74d,stroke:#ef6c00,stroke-width:2px,color:#000;
+    classDef internalSrc fill:#1565c0,stroke:#fff,stroke-width:1px,color:#fff;
+
+     核心接收逻辑
+        IntLogic[&quot;CPU 内部中断逻辑&quot;]:::logicCore
+        
+         内部连接
+        Inst_INT --> IntLogic
+        Exceptions --> IntLogic
+    end
+
+     来源 2: 紧急外设
+        Dev_NMI[&quot;外设 (非屏蔽请求)&quot;]:::extDevice
+        
+         跨界连接 (外部 -> CPU)
+    Dev_NMI -->|&quot;NMI (直接连接)&quot;| IntLogic
+    Dev_IRQ -->|&quot;IRQx&quot;| IntCtrl
+    IntCtrl -->|&quot;INTR (汇总请求)&quot;| IntLogic
+
+     样式定义
+    classDef cpu fill:#ef5350,stroke:#b71c1c,stroke-width:2px,color:white;
+    classDef device fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+    classDef intercept fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef pass stroke:#2e7d32,stroke-width:3px;
+
+     1. INTR: 并行请求 (只要想请求，随时都能喊)
+    DevA -- &quot;INTR (请求)&quot; --> Central
+    DevB -- &quot;INTR&quot; --> Central
+    DevC -- &quot;INTR&quot; --> Central
+
+     设备 A 的逻辑
+    DevA == &quot;不需要: 向后传递&quot; ==> DevB:::pass
+    DevA -. &quot;需要: 截留!&quot; .-> ServiceA>&quot;获得总线权&quot;]:::intercept
+
+     设备 C 的逻辑
+    DevC -. &quot;需要: 截留!&quot; .-> ServiceC>&quot;获得总线权&quot;]:::intercept
+```
+
+**硬件逻辑**
+
+```mermaid
+graph TD
+     输入节点 (文本已加引号)
+    Token((&quot;输入: INTA 信号&lt;br/>(0 = 令牌到达)&quot;)):::input
+    Req((&quot;输入: 本机 Request&lt;br/>(1 = 有请求)&quot;)):::input
+
+     分支结果 (文本已加引号)
+    Logic -- &quot;令牌在 &amp;&amp; 我没请求&quot; --> Pass[&quot;放行模式&lt;br/>1. 输出 INTA = 0 (有效)&lt;br/>2. 传递给下一级&quot;]:::actionPass
+    Logic -- &quot;令牌在 &amp;&amp; 我有请求&quot; --> Block[&quot;截留模式&lt;br/>1. 输出 INTA = 1 (无效)&lt;br/>2. 激活本机总线驱动&quot;]:::actionBlock
+    Logic -- &quot;令牌没在&quot; --> Wait[&quot;等待模式&lt;br/>输出 INTA = 1&quot;]:::decision
+
+     样式定义
+    classDef cpu fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+    classDef control fill:#f8bbd0,stroke:#c2185b,stroke-width:2px;
+    classDef counter fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+
+     2. 中间：总控核心
+    ControlReg[&quot;控制字寄存器&lt;br/>(决定工作模式)&quot;]:::control
+    
+    DataBus -->|&quot;写入配置&quot;| ControlReg
+
+     通道 0
+        subgraph C0 [&quot;通道 0&quot;]
+            direction LR
+            CLK0[&quot;CLK&quot;] --> Core0[&quot;计数器 0&quot;]:::counter
+            GATE0[&quot;GATE&quot;] --> Core0
+            Core0 --> OUT0[&quot;OUT&quot;]
+        end
+
+         通道 2
+        subgraph C2 [&quot;通道 2&quot;]
+            direction LR
+            CLK2[&quot;CLK&quot;] --> Core2[&quot;计数器 2&quot;]:::counter
+            GATE2[&quot;GATE&quot;] --> Core2
+            Core2 --> OUT2[&quot;OUT&quot;]
+        end
+    end
+
+    %% 连接关系
+    ControlReg -.->|&quot;控制&quot;| Core0
+    ControlReg -.->|&quot;控制&quot;| Core1
+    ControlReg -.->|&quot;控制&quot;| Core2
+    
+    DataBus &lt;==>|&quot;读写数值&quot;| Core0
+    DataBus &lt;==>|&quot;读写数值&quot;| Core1
+    DataBus &lt;==>|&quot;读写数值&quot;| Core2
+```
+
+#### 初始化与编程步骤
+
+1. **写控制字**
+   - 选择要操作的通道（0/1/2）。
+   - 指定读写格式（只写低字节、只写高字节、先写低再写高）。
+   - 选择工作方式（0–5）。
+   - 指定计数制（二进制 / BCD）。
+2. **写计数初值**
+   - 向选定计数通道的CR写入计数初值，计数通道由地址A1A0指定
+   - 初值在一个 CLK 下降沿后装入内部计数寄存器，开始计数或等待触发。
+   
+3. **计数过程**
+   - 每到一个 CLK 脉冲，计数器减 1。
+   - 根据工作方式，OUT 会在计数到 0 等特定时刻发生变化（产生方波、负脉冲等）。
+
+![image-20260107113328022](image-20260107113328022.png)
+
+#### 常见工作方式与典型用途
+
+
+
+> **方式 0：计数结束中断 (Interrupt on Terminal Count)**
+>
+> - OUT 初始为低，计数开始后保持低电平，计数减到 0 时 OUT 变为高。
+> - 一般用于“一次性延时”或事件计数。
+>
+> > **初始化阶段 (Write CW):**
+> >
+> > - 当 CPU 向控制寄存器写入控制字（CW, Control Word）后，输出端 **OUT** 会立即变为 **低电平**。这是为产生最后的中断（上升沿）做准备。
+> >
+> > **装入计数初值 (Write N=4):**
+> >
+> > - CPU 写入计数初值（例如 $N=4$）。
+> > - **注意延迟：** 计数器并不是写入后立刻开始减法。==写入初值后，需要经过一个 CLK 的**下降沿**，初值才会从控制寄存器（CR）装入执行单元（CE，计数执行单元）。==
+> > - 因此，实际的定时时间通常是 $N+1$ 个时钟周期。
+> >
+> > **计数阶段 (Countdown):**
+> >
+> > - 只要 **GATE** 信号为高电平（允许计数），每来一个时钟脉冲（CLK），计数器的值就减 1。
+> > - 可以看到：4 $\rightarrow$ 3 $\rightarrow$ 2 $\rightarrow$ **1** $\rightarrow$ 0。
+> >
+> > **结束阶段 (Terminal Count):**
+> >
+> > - 当计数器减到 **0** 时，**OUT** 端会由低电平跳变为 **高电平**。
+> > - 这个 **从低到高的跳变（上升沿）** 就是它的核心作用——作为一个**中断请求信号**发送给 CPU（连接到 8259 中断控制器），通知 CPU 任务完成。
+> > - 此后，OUT 将一直保持高电平，直到你再次写入新的计数值。
+> >
+> > ![image-20260107114511988](image-20260107114511988.png)
+> >
+> > ![image-20260107114525167](image-20260107114525167.png)
+
+> **方式 2：速率发生器 (Rate Generator / 分频器)**
+>
+> - OUT 输出周期性的负脉冲（每个周期末低一个时钟周期）。
+> - 计数器自动重装初值，自动重复计数。
+> - 典型用途：
+>
+>   - 通道 1 用于 DRAM 刷新（定期产生刷新请求）。
+>
+> ![image-20260107114727258](image-20260107114727258.png)
+>
+> ![image-20260107114753383](image-20260107114753383.png)
+>
+> > ![image-20260107115605609](image-20260107115605609.png)
+
+> **方式 3：方波发生器 (Square Wave Generator)**
+>
+> - OUT 输出周期性方波（初值为偶数时占空比约 50%）。
+> - 典型用途：
+>
+>   - 通道 0：生成系统时钟中断（系统节拍 Time Tick）。
+>   - 通道 2：生成扬声器发声的方波，通过改变计数初值控制发声频率。
+>
+> ![image-20260107115644610](image-20260107115644610.png)
+
+---
+
+### 基于中断的功能调用（BIOS / DOS 中断）
+
+#### INT N 指令的硬件行为
+
+执行 `INT n` 时，CPU 会：
+
+1. 将 FLAGS 压栈。
+2. 清除 IF 和 TF（防止处理中再被可屏蔽中断/单步打断）。
+3. 将当前 CS、 IP  压栈。 
+5. 根据类型码 n，从中断向量表或 IDT 中取出该中断的入口地址。
+6. 设置 CS、IP 指向服务程序入口，并开始执行。
+
+从程序员视角看：
+
+- `INT n` 相当于一个“特殊的函数调用”：
+  - 调用目标地址由系统在向量表中指定；
+  - 除了返回地址，还自动保存了 FLAGS；
+  - 通常还隐含权限检查等机制。
+
+#### BIOS 中断与 ROM BIOS 布局
+
+- **ROM BIOS**
+
+  - 存放在主板上的 ROM 区域（例如以某个高地址为起点的一段 ROM，大小若干 KB）。
+  - 提供：
+
+    - 上电自检（POST）和硬件初始化。
+    - 引导装载程序（从软盘/硬盘/其他介质加载操作系统）。
+    - 键盘、显示器、磁盘、串口等基础 I/O 设备的底层控制代码。
+
+- **BIOS 中断**
+
+  - BIOS 将自己的各个功能模块入口地址登记在 IVT 中相应的向量入口。
+  - 应用程序可通过执行相应的 `INT n` 调用 BIOS 功能，而不必直接操作硬件。
+  - 例如：
+
+    - 显示字符
+    - 读写磁盘
+    - 键盘输入
+    - 系统时间/日期服务等
+
+这就是“用中断作为系统功能调用接口”的典型模式。
+
+#### DOS 中断 21H 示例：INT 21H
+
+DOS 在 BIOS 之上又定义了一层更“高层”的中断接口：
+
+- `INT 21H` 是一个“多功能入口”，具体功能通过 AH 中的功能号指定，常见示例：
+
+1. **在屏幕上输出一个字符**：
+
+   ```asm
+   MOV AH, 6       ; 功能号 06H：直接控制台 I/O
+   MOV DL, '$'     ; DL：要输出的字符
+   INT 21H         ; 调用 DOS 中断
+
+2. **显示以 '$' 结尾的字符串**：
+
+   * AH = 09H
+   * DS:DX 指向以 `$` 结尾的字符串。
+
+3. **取得当前时间**：
+
+   * AH = 2CH
+   * 返回：CH=小时，CL=分钟，DH=秒，DL=1/100 秒。
+
+4. **设置当前时间**：
+
+   * AH = 2DH，CH:CL、DH:DL 传入时分秒和 1/100 秒。
+   * 返回：AL=00H 表示成功，AL=FFH 表示失败。
+
+DOS 通过把大量系统服务封装在 INT 21H 下的各个功能号内，实现了“基于中断的系统调用接口”。
+
+### MSI (消息信号中断) 机制
+
+#### 1. 核心定义与原理
+
+- **全称**：Message Signaled Interrupt（消息信号中断）。
+- **基本原理**：
+  - **抛弃物理连线**：MSI 不再依赖传统的专用物理中断引脚（如 INTx）。
+  - **基于内存写入**：当设备需要发送中断时，它向主存中的一个**特殊地址**写入一个**特定的数据值**。
+  - **触发机制**：==这个写入操作会被 **HOST主桥** 中的 **MSI控制部件**捕获，识别为中断请求，进而通知 CPU。==
+
+#### 2. 硬件架构对比 (图解)
+
+根据架构图，系统存在两种中断传输路径：
+
+```mermaid
+flowchart BT;
+    CPU[&quot;CPU&quot;];
+
+    subgraph Chipset [&quot;芯片组&quot;];
+        HB[&quot;HOST主桥 (含MSI控制)&quot;];
+        IntCtrl[&quot;独立中断控制器&quot;];
+        Mem[&quot;存储器&quot;];
+    end;
+
+    Bus[&quot;PCI 总线&quot;];
+    NIC[&quot;PCI 网卡&quot;];
+
+    NIC -->|1.物理信号 INTx| IntCtrl;
+    IntCtrl -->|2.通知 CPU| CPU;
+
+    NIC -.->|1.MSI写入 带内| Bus;
+    Bus -.->|2.传输至主桥| HB;
+    HB -.->|3.触发中断| CPU;
+
+    HB ==>|普通数据写入| Mem;
+
+    linkStyle 2,3,4 stroke:red,stroke-width:3px,stroke-dasharray: 5 5;
+    linkStyle 0,1 stroke:black,stroke-width:2px;
+    linkStyle 5 stroke:#999,stroke-width:2px;
+```
+
+- A. 传统中断路径 (Legacy INTx) - *黑色实线路径*
+
+  - **路径**：PCI网卡 -> 物理连线 (INTx) -> 独立的中断控制器 -> CPU。
+
+  - **特点**：**旁路传输 (Out-of-Band)**。中断信号走专用的“小路”，不经过 PCI 数据总线。这导致中断信号可能比数据先到达 CPU，引发数据同步问题（竞争冒险）。
+
+
+- B. MSI 中断路径 - *红色虚线路径*
+
+  - **路径**：PCI网卡 -> PCI总线 -> HOST主桥 (MSI控制部件) -> CPU。
+
+  - **特点**：**带内传输 (In-Band)**。中断被封装成数据包（Message），和普通数据（蓝色虚线）公用同一条 PCI 总线。
+
+
+#### 3. MSI 解决的三大痛点 (优势)
+
+MSI 的出现主要是为了解决传统电平触发中断（INTx）的以下缺陷：
+
+- 解决“共享中断效率低”的问题
+
+  - **旧问题**：传统的 INTx 引脚很少（通常只有 A/B/C/D 四根），多个设备必须共享同一根中断线。当 CPU 收到中断时，操作系统内核必须逐个调用中断处理函数（轮询），问“是谁触发的？”，效率极低。
+
+  - **MSI 解法**：每个设备发送的消息（数据值）是独一无二的，CPU 可以直接识别是谁发出的，无需轮询。
+
+
+- 解决“单设备多中断需求”的问题
+
+  - **旧问题**：传统方式下一个功能设备通常只能对应一个中断引脚。CPU 为了知道该设备到底发生了什么事（比如是“发送完成”还是“接收完成”），还需要去查询设备寄存器。
+
+  - **MSI 解法**：通过 MSI（特别是 MSI-X），一个设备可以支持多个中断向量（向不同地址写不同值）。不同的事件（如收包、发包、错误）可以直接触发不同的中断处理程序，极大提升效率。
+
+
+- 解决“异步中断的数据完整性”问题 (核心)
+
+  - **旧问题 (Race Condition)**：中断走旁路，可能跑得比数据快。CPU 被中断叫醒去读内存时，数据可能还在总线上堵着，导致读到旧数据。
+
+  - **MSI 解法**：**严格的写排序**。因为 MSI 本质是写操作，且与数据走同一条总线。根据总线协议，设备会先写数据，再写 MSI 消息。当 MSI 消息到达内存（或被主桥拦截）时，之前的数据写入**必然**已经完成。中断服务程序可以确信所有数据已安全到达内存。
+
+
+#### 4. 缺点与代价
+
+- **占用带宽**：因为 MSI 是通过“写数据包”来实现的，所以它需要占用一部分 PCI 总线的带宽。
+  - *注：但在 PCIe 时代，这点带宽开销相对于带来的性能提升（消除轮询、无竞争冒险）来说微乎其微。*</span></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-7" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#导论" data-for="导论">导论</a></li><li class="depth-1"><a href="#冯诺依曼结构" data-for="冯诺依曼结构">冯诺依曼结构</a></li><li class="depth-1"><a href="#南北桥演变" data-for="南北桥演变">南北桥演变</a></li><li class="depth-1"><a href="#gpu-结构" data-for="gpu-结构">GPU 结构</a></li><li class="depth-0"><a href="#isa" data-for="isa">ISA</a></li><li class="depth-1"><a href="#x86-体系结构" data-for="x86-体系结构">X86 体系结构</a></li><li class="depth-1"><a href="#实例mov-ax-3000h-的执行过程" data-for="实例mov-ax-3000h-的执行过程">实例：MOV AX, [3000H] 的执行过程</a></li><li class="depth-1"><a href="#主存技术的发展-sdram-到-ddr" data-for="主存技术的发展-sdram-到-ddr">主存技术的发展 (SDRAM 到 DDR)</a></li><li class="depth-1"><a href="#1-tccd_l-long同组访问--抢占私有路权" data-for="1-tccd_l-long同组访问--抢占私有路权">1. tCCD_L (Long)：同组访问 = 抢占私有路权</a></li><li class="depth-1"><a href="#2-tccd_s-short跨组访问--并行流水线" data-for="2-tccd_s-short跨组访问--并行流水线">2. tCCD_S (Short)：跨组访问 = 并行流水线</a></li><li class="depth-1"><a href="#高速缓存-cache-的工作原理" data-for="高速缓存-cache-的工作原理">高速缓存 (Cache) 的工作原理</a></li><li class="depth-1"><a href="#高速缓存的设计要点" data-for="高速缓存的设计要点">高速缓存的设计要点</a></li><li class="depth-1"><a href="#hbm" data-for="hbm">HBM</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

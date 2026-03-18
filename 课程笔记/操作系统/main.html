@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>main</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="main"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="main"/><meta name="twitter:description" content="操作系统概述 Tip 助教导读 这一讲最容易学散，因为课上既讲 ” 操作系统是什么 “，又讲历史、分类、批处理、SPOOLing、多道程序设计，还会穿插很多追问。你可以把这一讲读成一句话：操作系统之所以出现，是为了更有效地管理资源、给用户提供更好的服务，并把难用的裸机扩展成更容易使用的虚拟机器。 课件开头抛出的几个追问 这一讲一开始，其实不是在直接讲定义，而是在提醒你：真正理解操作系统，不能只背概念，还要能把概念和具体机制对应起来。 这一讲里反复会遇到下面这些问题： UNIX 里文件子系统和块设备之间的 Buffer Cache 是干什么的？ UNIX 这个名字大概率是怎么来的？ 单道批处理和..."/><meta property="og:description" content="操作系统概述 Tip 助教导读 这一讲最容易学散，因为课上既讲 ” 操作系统是什么 “，又讲历史、分类、批处理、SPOOLing、多道程序设计，还会穿插很多追问。你可以把这一讲读成一句话：操作系统之所以出现，是为了更有效地管理资源、给用户提供更好的服务，并把难用的裸机扩展成更容易使用的虚拟机器。 课件开头抛出的几个追问 这一讲一开始，其实不是在直接讲定义，而是在提醒你：真正理解操作系统，不能只背概念，还要能把概念和具体机制对应起来。 这一讲里反复会遇到下面这些问题： UNIX 里文件子系统和块设备之间的 Buffer Cache 是干什么的？ UNIX 这个名字大概率是怎么来的？ 单道批处理和..."/><meta property="og:image:alt" content="操作系统概述 Tip 助教导读 这一讲最容易学散，因为课上既讲 ” 操作系统是什么 “，又讲历史、分类、批处理、SPOOLing、多道程序设计，还会穿插很多追问。你可以把这一讲读成一句话：操作系统之所以出现，是为了更有效地管理资源、给用户提供更好的服务，并把难用的裸机扩展成更容易使用的虚拟机器。 课件开头抛出的几个追问 这一讲一开始，其实不是在直接讲定义，而是在提醒你：真正理解操作系统，不能只背概念，还要能把概念和具体机制对应起来。 这一讲里反复会遇到下面这些问题： UNIX 里文件子系统和块设备之间的 Buffer Cache 是干什么的？ UNIX 这个名字大概率是怎么来的？ 单道批处理和..."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/main"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/main"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="操作系统概述 Tip 助教导读 这一讲最容易学散，因为课上既讲 ” 操作系统是什么 “，又讲历史、分类、批处理、SPOOLing、多道程序设计，还会穿插很多追问。你可以把这一讲读成一句话：操作系统之所以出现，是为了更有效地管理资源、给用户提供更好的服务，并把难用的裸机扩展成更容易使用的虚拟机器。 课件开头抛出的几个追问 这一讲一开始，其实不是在直接讲定义，而是在提醒你：真正理解操作系统，不能只背概念，还要能把概念和具体机制对应起来。 这一讲里反复会遇到下面这些问题： UNIX 里文件子系统和块设备之间的 Buffer Cache 是干什么的？ UNIX 这个名字大概率是怎么来的？ 单道批处理和..."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/main"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-125"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-125" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>main</a></div></nav><h1 class="article-title">main</h1><p show-comma="true" class="content-meta"><time datetime="2026-03-18T11:35:59.784Z">Mar 18, 2026</time><span>80 min read</span></p></div></div><article class="popover-hint"><h2 id="操作系统概述">操作系统概述<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#操作系统概述" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Tip</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>助教导读 这一讲最容易学散，因为课上既讲 ” 操作系统是什么 “，又讲历史、分类、批处理、SPOOLing、多道程序设计，还会穿插很多追问。你可以把这一讲读成一句话：<strong>操作系统之所以出现，是为了更有效地管理资源、给用户提供更好的服务，并把难用的裸机扩展成更容易使用的虚拟机器。</strong></p>
+</div>
+</blockquote>
+<h3 id="课件开头抛出的几个追问">课件开头抛出的几个追问<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#课件开头抛出的几个追问" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这一讲一开始，其实不是在直接讲定义，而是在提醒你：真正理解操作系统，不能只背概念，还要能把概念和具体机制对应起来。</p>
+<p>这一讲里反复会遇到下面这些问题：</p>
+<ol>
+<li>UNIX 里文件子系统和块设备之间的 <strong>Buffer Cache</strong> 是干什么的？</li>
+<li>UNIX 这个名字大概率是怎么来的？</li>
+<li>单道批处理和多道批处理到底差在哪？</li>
+<li>SPOOLing 的原理是什么？今天还有没有影子？</li>
+<li>传统分时系统今天还有意义吗？</li>
+<li>操作系统和别的软件相比，到底特殊在哪？</li>
+</ol>
+<p>你可以把这些问题当成一条复习线索：</p>
+<ul>
+<li>凡是谈 ” 为什么需要操作系统 “，都在回答第 6 个问题。</li>
+<li>凡是谈 ” 批处理、多道、分时、SPOOLing”，都在回答第 3、4、5 个问题。</li>
+<li>凡是谈 “UNIX、文件系统、Buffer Cache”，都在提醒你：操作系统不是抽象口号，它最终一定要落到具体实现上。</li>
+</ul>
+<hr/>
+<h3 id="核心主线一操作系统是什么">核心主线一：操作系统是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#核心主线一操作系统是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="1-一个定义先抓住三个关键词">1. 一个定义，先抓住三个关键词<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-一个定义先抓住三个关键词" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>操作系统（Operating System, OS）是计算机系统中最核心的<strong>系统软件</strong>，是由一组程序模块构成的整体。</p>
+<p>这个定义不要背死，真正有用的是把它拆成三个关键词：</p>
+<ul>
+<li><strong>资源管理者</strong>：管理 CPU、内存、磁盘、I/O 设备、时钟、网络接口，以及磁盘上的文件和数据。</li>
+<li><strong>服务提供者</strong>：给用户和应用程序提供统一、方便、安全的使用接口。</li>
+<li><strong>虚机器扩展者</strong>：把原本难用、复杂、易出错的裸机，扩展成更通用、更友好的计算平台。</li>
+</ul>
+<p>所以，操作系统不是 ” 某个单独的软件 “，而是<strong>整个系统秩序的建立者</strong>。</p>
+<h4 id="2-操作系统的设计与实现目标">2. 操作系统的设计与实现目标<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-操作系统的设计与实现目标" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件里这一部分其实写得很全，不能只记成 ” 提高效率 ” 这么一句话。更准确地说，操作系统的设计目标包括：</p>
+<ol>
+<li>
+<p><strong>抽象</strong></p>
+<ul>
+<li>把复杂硬件细节藏起来。</li>
+<li>给用户和程序员提供更高层、更一致的接口。</li>
+</ul>
+</li>
+<li>
+<p><strong>模块化</strong></p>
+<ul>
+<li>把大系统拆成若干相对独立的部分，便于设计、调试、维护、替换和扩展。</li>
+</ul>
+</li>
+<li>
+<p><strong>尽量用高级语言实现</strong></p>
+<ul>
+<li>比如大量使用 C，而不是全用汇编。</li>
+<li>这样更利于可读性、可维护性和可移植性。</li>
+</ul>
+</li>
+<li>
+<p><strong>最小化额外开销</strong></p>
+<ul>
+<li>时间开销要小。</li>
+<li>空间开销要小。</li>
+<li>操作系统不能自己变成性能负担。</li>
+</ul>
+</li>
+<li>
+<p><strong>保护与隔离</strong></p>
+<ul>
+<li>用户程序不能随便破坏系统。</li>
+<li>一个程序出错不能轻易把别人拖死。</li>
+</ul>
+</li>
+<li>
+<p><strong>可靠性与安全性</strong></p>
+<ul>
+<li>系统必须稳定。</li>
+<li>同时要防止非法访问和恶意破坏。</li>
+</ul>
+</li>
+<li>
+<p><strong>可移植性</strong></p>
+<ul>
+<li>不应该死绑某一台机器。</li>
+<li>同样的系统思想最好能迁移到其他平台。</li>
+</ul>
+</li>
+<li>
+<p><strong>节能</strong></p>
+<ul>
+<li>这一点在移动设备和嵌入式系统里尤其重要。</li>
+</ul>
+</li>
+</ol>
+<p>你会发现，操作系统和普通应用的差别就在这：<br/>
+<strong>普通应用只需要完成自己的功能，操作系统要同时对全系统负责。</strong></p>
+<hr/>
+<h3 id="核心主线二从三个角度理解操作系统">核心主线二：从三个角度理解操作系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#核心主线二从三个角度理解操作系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>课件特别强调，同一个操作系统可以从三个角度来看。这个地方很重要，因为很多同学学到后面会把不同视角混在一起。</p>
+<h4 id="1-资源管理的视角操作系统是资源的管理者">1. 资源管理的视角：操作系统是资源的管理者<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-资源管理的视角操作系统是资源的管理者" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这是<strong>自底向上</strong>的看法。</p>
+<h5 id="它管理什么">它管理什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#它管理什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p><strong>硬件资源：</strong></p>
+<ul>
+<li>CPU</li>
+<li>内存</li>
+<li>I/O 设备</li>
+<li>磁盘</li>
+<li>时钟</li>
+<li>网络接口</li>
+</ul>
+<p><strong>软件资源：</strong></p>
+<ul>
+<li>文件</li>
+<li>磁盘上的信息</li>
+<li>各种运行时系统对象</li>
+</ul>
+<h5 id="它怎么管理">它怎么管理？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#它怎么管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>不是嘴上说 ” 我来管 “，而是真的要维护一套数据结构和算法：</p>
+<ol>
+<li>
+<p><strong>跟踪记录资源使用状况</strong></p>
+<ul>
+<li>哪些资源空闲</li>
+<li>哪些资源忙</li>
+<li>被谁占用</li>
+<li>占用多久</li>
+<li>状态是否正常</li>
+</ul>
+</li>
+<li>
+<p><strong>分配和回收资源</strong></p>
+<ul>
+<li>静态分配策略</li>
+<li>动态分配策略</li>
+</ul>
+</li>
+<li>
+<p><strong>协调冲突</strong></p>
+<ul>
+<li>多个进程都来抢资源怎么办</li>
+<li>哪些资源可以共享</li>
+<li>哪些资源必须互斥使用</li>
+</ul>
+</li>
+</ol>
+<h5 id="它为什么要这样做">它为什么要这样做？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#它为什么要这样做" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>目标主要有三个：</p>
+<ul>
+<li>提高资源利用率</li>
+<li>实现资源共享</li>
+<li>在共享时做好保护并协调冲突</li>
+</ul>
+<p>共享通常依靠两种复用方式实现：</p>
+<ul>
+<li><strong>时间复用</strong>：同一资源轮流给不同进程使用</li>
+<li><strong>空间复用</strong>：同一资源在空间上切开给不同进程使用</li>
+</ul>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>打印机是最典型的例子。它天然是独占设备，同一时刻只能真正服务一个任务。但操作系统可以通过排队、缓冲和虚拟化，让很多进程 ” 看起来都能用打印机 “。这其实就是资源管理 + 虚拟化一起工作的结果。</p>
+</div>
+</blockquote>
+<h4 id="2-进程的视角操作系统是一个动态运行体">2. 进程的视角：操作系统是一个动态运行体<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-进程的视角操作系统是一个动态运行体" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这是<strong>从运行过程</strong>来观察操作系统。</p>
+<p>按照这个角度看，操作系统不是一本静态说明书，而是一组持续运行、彼此协作的执行流：</p>
+<ul>
+<li>有的长期驻留后台</li>
+<li>有的在事件发生时被唤醒</li>
+<li>有的负责调度</li>
+<li>有的负责设备管理</li>
+<li>有的负责内存管理</li>
+</ul>
+<p>课件里的原话可以概括成：<br/>
+<strong>操作系统由一些可同时、独立运行的进程，以及一个协调这些进程的核心组成。</strong></p>
+<p>顺手把 ” 进程 ” 这个词也重新钉牢：</p>
+<ul>
+<li>进程不是静态程序文本。</li>
+<li>进程是程序的一次执行过程。</li>
+<li>它是动态的，有诞生、运行、阻塞、结束这一整条生命线。</li>
+</ul>
+<h4 id="3-虚机器的视角操作系统是分层扩展出来的机器">3. 虚机器的视角：操作系统是分层扩展出来的机器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-虚机器的视角操作系统是分层扩展出来的机器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这是<strong>从内部结构</strong>来理解操作系统。</p>
+<p>可以把它想成：</p>
+<ul>
+<li>最底层是真实硬件</li>
+<li>上面先建立基础控制能力</li>
+<li>再逐层加入进程、内存、设备、文件等抽象</li>
+<li>最终形成一个对上层应用更友好的 ” 虚拟机器 ”</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[裸机硬件] --> B[基本控制机制]\n    B --> C[进程管理]\n    B --> D[内存管理]\n    B --> E[设备管理]\n    D --> F[文件系统与存储抽象]\n    C --> G[调度与并发]\n    E --> G\n    F --> H[应用程序看到的虚拟机器]&quot;">flowchart TD
+    A[裸机硬件] --> B[基本控制机制]
+    B --> C[进程管理]
+    B --> D[内存管理]
+    B --> E[设备管理]
+    D --> F[文件系统与存储抽象]
+    C --> G[调度与并发]
+    E --> G
+    F --> H[应用程序看到的虚拟机器]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这个视角最重要的启发是：<br/>
+<strong>操作系统的很多 ” 高级功能 “，本质上都是层层封装出来的。</strong></p>
+<hr/>
+<h3 id="核心主线三操作系统的四大特征">核心主线三：操作系统的四大特征<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#核心主线三操作系统的四大特征" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这四个词不是孤立记忆点，它们之间是有因果关系的。</p>
+<h4 id="1-并发concurrency">1. 并发（Concurrency）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-并发concurrency" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>并发是指系统处理多个同时性活动的能力。</p>
+<ul>
+<li>宏观上看，多个程序在同时运行。</li>
+<li>微观上看，在单 CPU 情况下，任何时刻通常只有一个程序真正占着 CPU。</li>
+<li>它们是在 CPU 上轮流执行的。</li>
+</ul>
+<p>这里要顺手区分：</p>
+<ul>
+<li><strong>并发</strong>：交替推进</li>
+<li><strong>并行</strong>：真正同时推进</li>
+</ul>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>一个厨师来回照看三口锅，这是并发。<br/>
+三个厨师同时各管一口锅，这是并行。</p>
+</div>
+</blockquote>
+<p>并发会带来很多后续问题：</p>
+<ul>
+<li>活动切换</li>
+<li>相互依赖活动之间的同步</li>
+<li>资源保护</li>
+<li>共享冲突</li>
+</ul>
+<h4 id="2-共享sharing">2. 共享（Sharing）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-共享sharing" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>共享是指多个用户程序和操作系统共同使用系统资源。</p>
+<p>常见的两种共享形式：</p>
+<ul>
+<li><strong>互斥共享</strong>：某一时刻只能一个进程用，比如打印机</li>
+<li><strong>同时共享</strong>：多个进程可以同时读某个资源，比如共享只读文件</li>
+</ul>
+<p>共享本身是好事，因为它提高了资源利用率；但共享一旦出现，就必须引入保护与控制。</p>
+<h4 id="3-虚拟virtual">3. 虚拟（Virtual）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-虚拟virtual" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>虚拟就是把一个物理实体映射成多个逻辑实体，或者把复杂的真实对象包装成更好用的抽象对象。</p>
+<p>典型例子：</p>
+<ul>
+<li>一个物理 CPU 看起来像很多个 ” 虚 CPU”</li>
+<li>一块真实内存看起来像每个进程各自独享的地址空间</li>
+<li>一堆磁盘块看起来像文件和目录</li>
+</ul>
+<h4 id="4-随机性--不确定性">4. 随机性 / 不确定性<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-随机性--不确定性" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这个词最容易被忽略，但课件很强调。</p>
+<p>由于系统里有并发、有共享、有异步事件，所以很多执行顺序不是预先写死的：</p>
+<ul>
+<li>谁先抢到 CPU 不一定</li>
+<li>谁先拿到锁不一定</li>
+<li>设备何时发中断不一定</li>
+<li>一个 bug 是否复现也不一定</li>
+</ul>
+<p>所以操作系统必须面对一个现实：<br/>
+<strong>系统行为有很强的不确定性。</strong></p>
+<h4 id="5-它们之间的逻辑关系">5. 它们之间的逻辑关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-它们之间的逻辑关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>最推荐你这样串起来记：</p>
+<ul>
+<li>因为要让多个活动同时推进，所以出现了<strong>并发</strong>。</li>
+<li>因为多个活动要共同使用资源，所以出现了<strong>共享</strong>。</li>
+<li>因为共享会冲突、物理资源又有限，所以需要<strong>虚拟</strong>和抽象。</li>
+<li>因为并发 + 共享 + 异步事件一起存在，所以系统表现出<strong>随机性 / 不确定性</strong>。</li>
+</ul>
+<hr/>
+<h3 id="核心主线四发展历程与技术启示">核心主线四：发展历程与技术启示<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#核心主线四发展历程与技术启示" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>操作系统的发展不是凭空长出来的，而是跟着三样东西一起变：</p>
+<ul>
+<li>硬件能力</li>
+<li>应用需求</li>
+<li>软件技术</li>
+</ul>
+<p>总目标始终没变：</p>
+<ul>
+<li><strong>更充分地利用硬件</strong></li>
+<li><strong>给用户提供更好的服务</strong></li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;timeline\n    title 操作系统演进时间线\n    第1阶段 1948-1970 : 硬件昂贵 人工便宜 : 批处理 多道程序设计 SPOOLing\n    第2阶段 1970-1985 : 硬件便宜 人工昂贵 : 分时 交互 UNIX\n    第3阶段 1981起 : 个人计算时代 : PC操作系统\n    第4阶段 1981起 : 网络与分布式 : 资源共享 通信协作\n    第5阶段 1995起 : 移动计算时代 : 小型化 移动化\n    第6阶段 2006起 : 云计算时代 : 资源池化 按需服务\n    第7阶段 未来 : 泛在计算/物联网 : 人-机-物融合&quot;">timeline
+    title 操作系统演进时间线
+    第1阶段 1948-1970 : 硬件昂贵 人工便宜 : 批处理 多道程序设计 SPOOLing
+    第2阶段 1970-1985 : 硬件便宜 人工昂贵 : 分时 交互 UNIX
+    第3阶段 1981起 : 个人计算时代 : PC操作系统
+    第4阶段 1981起 : 网络与分布式 : 资源共享 通信协作
+    第5阶段 1995起 : 移动计算时代 : 小型化 移动化
+    第6阶段 2006起 : 云计算时代 : 资源池化 按需服务
+    第7阶段 未来 : 泛在计算/物联网 : 人-机-物融合
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="第-1-阶段1948-1970硬件贵人工便宜">第 1 阶段：1948-1970，硬件贵，人工便宜<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第-1-阶段1948-1970硬件贵人工便宜" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这一阶段的中心矛盾是：<strong>机器太贵，不能闲着。</strong></p>
+<p>特点：</p>
+<ul>
+<li>用户和机器之间几乎没有交互</li>
+<li>控制台通常一次只能给一个用户用</li>
+<li>早期是装入程序、运行、打印结果</li>
+<li>保护机制很弱甚至没有</li>
+</ul>
+<p>后来引入了几项特别关键的技术：</p>
+<ul>
+<li><strong>数据通道 / 通道技术</strong>：让 I/O 和计算能重叠</li>
+<li><strong>中断机制</strong>：让 CPU 不必傻等 I/O</li>
+<li><strong>多道程序设计</strong>：一个作业等 I/O 时，CPU 去干别的作业</li>
+<li><strong>SPOOLing</strong>：把慢速 I/O 从计算路径上拆出来</li>
+</ul>
+<h4 id="第-2-阶段1970-1985硬件便宜人工贵">第 2 阶段：1970-1985，硬件便宜，人工贵<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第-2-阶段1970-1985硬件便宜人工贵" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这一阶段的中心矛盾变成：<strong>不能只让机器高效，还得让人高效。</strong></p>
+<p>于是重点从 ” 吞吐量 ” 逐渐转向 ” 交互性 ” 和 ” 响应时间 ”。</p>
+<p>特点：</p>
+<ul>
+<li>多用户联机终端</li>
+<li>分时系统兴起</li>
+<li>用户可以在线开发、调试、编辑</li>
+<li>为了响应快，可以牺牲一部分 CPU 利用率</li>
+</ul>
+<p>但这也引出了一个新问题：</p>
+<ul>
+<li>用户一多，系统性能下降</li>
+<li>响应时间和抖动变明显</li>
+</ul>
+<h4 id="典型历史案例">典型历史案例<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#典型历史案例" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<h5 id="ctss第一个分时系统">CTSS：第一个分时系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ctss第一个分时系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>CTSS 的思想在 1959 年 MIT 被提出，1961 年由 Fernando Corbató 等人在改装的 IBM 7090/94 上实现。</p>
+<p>课件给的几个细节很值得记：</p>
+<ul>
+<li>大约支持 32 个交互式用户</li>
+<li>总内存 32K</li>
+<li>系统占 5K</li>
+<li>用户占 27K</li>
+<li>用户映像在内存和磁鼓之间切换</li>
+</ul>
+<p>这些数字今天看很小，但它说明一件特别重要的事：<br/>
+<strong>分时并不是 ” 资源很充裕时 ” 的产物，而是在资源极其紧张时硬抠出来的。</strong></p>
+<h5 id="atlas虚拟存储和分页调度的先驱">Atlas：虚拟存储和分页调度的先驱<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#atlas虚拟存储和分页调度的先驱" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>1962 年 Manchester 大学的 Atlas 计算机投入运行。</p>
+<p>它的重要性在于：</p>
+<ul>
+<li>它是第一台具有<strong>虚拟存储器</strong>思想的机器之一</li>
+<li>它把<strong>分页调度</strong>带到了系统设计里</li>
+</ul>
+<p>这意味着：操作系统开始不仅在 ” 调作业 “，还在更深层地管理地址空间。</p>
+<h5 id="os360一次著名的大失败">OS/360：一次著名的大失败<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#os360一次著名的大失败" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>IBM 的 OS/360 发布时，带着已知的大量错误。</p>
+<p>它之所以常被提到，不是为了嘲笑谁，而是为了提醒你：<br/>
+<strong>操作系统规模一大，复杂度就会爆炸。</strong></p>
+<p>这也是后来很多系统工程思想、模块化思想、软件项目管理经验的重要背景。</p>
+<h5 id="multics理想很大实现很难">Multics：理想很大，实现很难<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#multics理想很大实现很难" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>Multics 于 1963 年启动，到 1969 年才发布。</p>
+<p>它的名字来自 <strong>MULTiplexed Information and Computing Service</strong>。</p>
+<p>它的很多思想非常超前，比如：</p>
+<ul>
+<li>计算服务化</li>
+<li>强调共享</li>
+<li>分时与多用户</li>
+<li>更系统化的保护和组织方式</li>
+</ul>
+<p>今天你看 ” 云计算 &quot;&quot; 计算服务平台 ” 时，会发现其中很多理念其实和 Multics 很像。课件里说 ” 技术会轮回 “，说的就是这种现象。</p>
+<h5 id="unix更小更务实的成功路线">UNIX：更小、更务实的成功路线<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#unix更小更务实的成功路线" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>UNIX 可以看成是对 Multics 路线的一种 ” 降维实现 ”：</p>
+<ul>
+<li>更小</li>
+<li>更简洁</li>
+<li>更强调工具化组合</li>
+<li>更容易传播和移植</li>
+</ul>
+<p>至于 UNIX 这个名字，课上提到的是 ” 猜测 “——通常会把它理解为对 Multics 的一种戏谑式命名：<br/>
+Multics 是 ” 多 “，UNIX 是 ” 单 ” 或 ” 简化 ”。</p>
+<p>这个问题本身不是考试大点，但它提醒你：<br/>
+<strong>操作系统的发展里，技术路线和工程风格同样重要。</strong></p>
+<h4 id="后续阶段的主线">后续阶段的主线<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#后续阶段的主线" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<h5 id="个人计算时代">个人计算时代<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#个人计算时代" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>一台机器主要服务单用户</li>
+<li>追求界面友好、应用丰富、使用方便</li>
+</ul>
+<h5 id="网络与分布式时代">网络与分布式时代<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#网络与分布式时代" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>重点从 ” 单机管理 ” 变成 ” 联网协作 ”</li>
+<li>资源共享和通信成为新的主题</li>
+</ul>
+<h5 id="移动计算时代">移动计算时代<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#移动计算时代" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>设备更小</li>
+<li>能耗更敏感</li>
+<li>随时在线、随时移动</li>
+</ul>
+<h5 id="云计算时代">云计算时代<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#云计算时代" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>资源池化</li>
+<li>按需分配</li>
+<li>看起来像 ” 资源无限 “</li>
+</ul>
+<h5 id="泛在计算--物联网时代">泛在计算 / 物联网时代<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#泛在计算--物联网时代" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>人、机、物深度融合</li>
+<li>操作系统不再只在 ” 电脑 ” 里，而是扩展到各种设备和环境中</li>
+</ul>
+<hr/>
+<h3 id="核心主线五操作系统分类与关键技术">核心主线五：操作系统分类与关键技术<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#核心主线五操作系统分类与关键技术" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="1-批处理系统batch-processing">1. 批处理系统（Batch Processing）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-批处理系统batch-processing" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>批处理系统的基本思路是：<br/>
+<strong>把很多作业先收集起来，形成一批，然后自动、依次处理。</strong></p>
+<p>它追求的不是交互，而是：</p>
+<ul>
+<li>吞吐量</li>
+<li>设备利用率</li>
+<li>CPU 利用率</li>
+</ul>
+<h5 id="批处理的典型工作方式">批处理的典型工作方式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#批处理的典型工作方式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>课件里给了一个很完整的 5 步流程：</p>
+<ol>
+<li>用户把作业交给系统操作员。</li>
+<li>操作员把许多作业组成一批，输入计算机系统。</li>
+<li>操作员启动操作系统。</li>
+<li>系统自动、依次执行每个作业。</li>
+<li>操作员把结果交还给用户。</li>
+</ol>
+<h5 id="-批--到底是什么">” 批 ” 到底是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-批--到底是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>这里的 ” 批 ” 不是一个抽象词，而是：</p>
+<ul>
+<li>一次加载的一盘磁带或磁盘</li>
+<li>往往由若干个作业组装而成</li>
+<li>整批在处理中使用一组相同的系统软件</li>
+</ul>
+<h5 id="典型作业结构fms-job">典型作业结构：FMS JOB<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#典型作业结构fms-job" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>一个作业通常由三部分组成：</p>
+<ul>
+<li>用户程序</li>
+<li>数据</li>
+<li>作业说明书（作业控制语言）</li>
+</ul>
+<p>也就是说，系统不是只接收 ” 代码 “，而是接收一整份 ” 请系统怎么帮我跑 ” 的任务包。</p>
+<h4 id="2-单道批处理-vs-多道批处理">2. 单道批处理 Vs 多道批处理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-单道批处理-vs-多道批处理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这是课件明确点名要区分的内容。</p>
+<h5 id="单道批处理">单道批处理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#单道批处理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>内存里一次只放一个作业。</p>
+<p>流程大概是：</p>
+<ul>
+<li>当前作业运行</li>
+<li>一旦它要做 I/O</li>
+<li>CPU 就只能等</li>
+</ul>
+<p>所以问题很明显：</p>
+<ul>
+<li>CPU 可能闲着</li>
+<li>I/O 设备可能闲着</li>
+<li>整体效率不高</li>
+</ul>
+<h5 id="多道批处理">多道批处理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#多道批处理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>内存里同时放多个作业。</p>
+<p>当某个作业等待 I/O 时：</p>
+<ul>
+<li>CPU 可以立刻切去执行别的作业</li>
+</ul>
+<p>这样带来的好处是：</p>
+<ul>
+<li>CPU 和 I/O 可以重叠工作</li>
+<li>整体吞吐量大幅提升</li>
+<li>用户共享系统成为可能</li>
+</ul>
+<p>但它也立刻提出新要求：</p>
+<ul>
+<li>内存保护</li>
+<li>作业切换</li>
+<li>调度机制</li>
+<li>更复杂的资源管理</li>
+</ul>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>单道批处理像只有一个顾客点餐，厨师在等汤煮开时什么也不干。<br/>
+多道批处理像厨房里同时有几桌菜，炒锅空了就先炒下一桌，等汤的那桌先挂起。</p>
+</div>
+</blockquote>
+<h4 id="3-多道程序设计multiprogramming">3. 多道程序设计（Multiprogramming）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-多道程序设计multiprogramming" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>多道程序设计是多道批处理背后的核心思想。</p>
+<p>它的本质不是 ” 真的同时执行 “，而是：</p>
+<ul>
+<li>内存里驻留多个程序</li>
+<li>当前程序一旦因为 I/O 等原因不能继续推进</li>
+<li>CPU 立刻切给另一个可以推进的程序</li>
+</ul>
+<p>所以它的核心价值是：</p>
+<ul>
+<li>让 CPU 少闲着</li>
+<li>让 I/O 设备少闲着</li>
+<li>提高整体系统吞吐量</li>
+</ul>
+<p>这个思想会一直延续到今天，哪怕系统形式已经变成图形界面、多任务、云平台，本质上还是这套逻辑。</p>
+<h4 id="4-分时系统time-sharing">4. 分时系统（Time-Sharing）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-分时系统time-sharing" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>分时系统的核心机制是：<strong>时间片</strong>。</p>
+<p>做法是把 CPU 时间切成很多很短的小片，轮流分给各个用户或任务。</p>
+<p>用户感受到的是：</p>
+<ul>
+<li>自己似乎独占了机器</li>
+<li>系统响应很快</li>
+<li>可以交互式工作</li>
+</ul>
+<p>它追求的重点从 ” 吞吐量优先 ” 变成了 ” 响应时间优先 “。</p>
+<h5 id="传统分时系统今天还有没有意义">传统分时系统今天还有没有意义？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#传统分时系统今天还有没有意义" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>有，而且意义很大。</p>
+<p>虽然今天我们不再用老式终端接大型机，但很多现代系统都继承了分时思想：</p>
+<ul>
+<li>桌面操作系统的多任务切换</li>
+<li>服务器上的多用户资源共享</li>
+<li>远程登录环境</li>
+<li>云平台上的资源调度</li>
+</ul>
+<p>你甚至可以说：<br/>
+<strong>今天凡是 ” 大家都觉得自己在同时用一台机器 ” 的地方，本质上都还有分时影子。</strong></p>
+<h4 id="5-通用操作系统分时--批处理结合">5. 通用操作系统：分时 + 批处理结合<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-通用操作系统分时--批处理结合" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件还提到一种很自然的组合：</p>
+<ul>
+<li>前台：频繁交互的作业，优先保证响应</li>
+<li>后台：时间要求不强的批作业，放在后面慢慢跑</li>
+</ul>
+<p>原则是：<br/>
+<strong>分时优先，批处理在后。</strong></p>
+<p>这就是很多通用操作系统的思路来源。</p>
+<h4 id="6-实时操作系统real-time-os">6. 实时操作系统（Real-Time OS）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-实时操作系统real-time-os" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>实时系统最关键的参数不是吞吐量，不是平均速度，而是：<br/>
+<strong>时间。</strong></p>
+<p>定义上可以概括为：系统必须在严格规定的时间范围内对外部事件作出反应，并完成处理。</p>
+<h5 id="两类典型实时系统">两类典型实时系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#两类典型实时系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ol>
+<li>
+<p><strong>实时过程控制</strong></p>
+<ul>
+<li>工业控制</li>
+<li>军事控制</li>
+<li>自动化流水线</li>
+</ul>
+</li>
+<li>
+<p><strong>实时通信 / 信息处理</strong></p>
+<ul>
+<li>电讯交换</li>
+<li>银行业务</li>
+<li>订票系统</li>
+<li>股市行情</li>
+</ul>
+</li>
+</ol>
+<h5 id="目标与特点">目标与特点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#目标与特点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>严格时限内响应</li>
+<li>高可靠性</li>
+<li>时间正确性极其重要</li>
+</ul>
+<h5 id="硬实时-vs-软实时">硬实时 Vs 软实时<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#硬实时-vs-软实时" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li><strong>硬实时</strong>：绝对不能错过时限
+<ul>
+<li>例如安全气囊控制</li>
+<li>例如某些工业联锁保护</li>
+</ul>
+</li>
+<li><strong>软实时</strong>：偶尔错过时限可以接受，但体验会下降
+<ul>
+<li>例如直播画面偶尔卡一下</li>
+<li>例如音视频播放偶尔抖一下</li>
+</ul>
+</li>
+</ul>
+<h4 id="7-个人计算机操作系统">7. 个人计算机操作系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-个人计算机操作系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>特点很直接：</p>
+<ul>
+<li>某一时间主要为单用户服务</li>
+<li>追求界面友好、应用丰富、使用方便</li>
+</ul>
+<p>这类系统的重点通常不是 ” 让成百上千用户远程共享 “，而是 ” 把一台机器服务好 “。</p>
+<h4 id="8-网络操作系统">8. 网络操作系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-网络操作系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>网络操作系统是基于计算机网络，在各种操作系统之上按网络协议开发的软件环境。</p>
+<p>重点功能：</p>
+<ul>
+<li>网络管理</li>
+<li>通信</li>
+<li>安全</li>
+<li>资源共享</li>
+<li>网络应用支持</li>
+</ul>
+<p>它追求的目标主要是：</p>
+<ul>
+<li>相互通信</li>
+<li>资源共享</li>
+</ul>
+<h4 id="9-分布式操作系统">9. 分布式操作系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-分布式操作系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>分布式系统是建立在网络基础上的，但它比 ” 联网 ” 更进一步。</p>
+<p>它的关键点是：</p>
+<ul>
+<li>处理和控制是分散的</li>
+<li>功能和任务分布在多台机器上</li>
+<li>系统能自动做全局任务分配和负载调度</li>
+</ul>
+<h5 id="分布式操作系统的几个关键特征">分布式操作系统的几个关键特征<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#分布式操作系统的几个关键特征" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ol>
+<li>
+<p><strong>是一个统一的操作系统</strong></p>
+<ul>
+<li>对用户来说，不希望看到底层一堆机器碎片化暴露出来。</li>
+</ul>
+</li>
+<li>
+<p><strong>资源进一步共享</strong></p>
+<ul>
+<li>共享范围从单机扩展到整个系统。</li>
+</ul>
+</li>
+<li>
+<p><strong>透明性</strong></p>
+<ul>
+<li>用户最好感觉不到 ” 分布 ” 这件事。</li>
+</ul>
+</li>
+<li>
+<p><strong>自治性</strong></p>
+<ul>
+<li>多个主机处于平等地位，没有固定主从关系。</li>
+</ul>
+</li>
+<li>
+<p><strong>处理能力增强、速度更快、可靠性更高</strong></p>
+</li>
+</ol>
+<h4 id="10-嵌入式操作系统">10. 嵌入式操作系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-嵌入式操作系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>嵌入式系统是指运行在各种设备、装置或系统中的软硬件子系统，它们往往不是传统意义上的 ” 电脑 “，而是一个大系统的一部分。</p>
+<p>嵌入式操作系统要完成的事是：</p>
+<ul>
+<li>对整个嵌入式环境中的资源做统一协调、调度、控制</li>
+</ul>
+<p>典型特点：</p>
+<ul>
+<li>常处于反应式环境</li>
+<li>对处理时间可能有较严格要求</li>
+<li>空间、性能、能耗约束都更强</li>
+</ul>
+<p>课件举了 TinyOS 这种传感器节点操作系统的例子，这类系统很适合帮助你理解 ” 操作系统不是只存在于 PC 和手机里 “。</p>
+<h4 id="11-传感器节点操作系统与-tanenbaum-的分类">11. 传感器节点操作系统与 Tanenbaum 的分类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-传感器节点操作系统与-tanenbaum-的分类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件还额外提到了另一套分类方式，包括：</p>
+<ul>
+<li>大型机操作系统</li>
+<li>服务器操作系统</li>
+<li>多处理机操作系统</li>
+<li>个人计算机操作系统</li>
+<li>掌上 / 移动计算机操作系统</li>
+<li>嵌入式操作系统</li>
+<li>传感器节点操作系统</li>
+<li>实时操作系统</li>
+<li>智能卡操作系统</li>
+</ul>
+<p>这说明分类本来就不是只有一套标准，重要的是抓住系统面向的<strong>场景和约束</strong>。</p>
+<h4 id="12-智能卡操作系统">12. 智能卡操作系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-智能卡操作系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这是很容易被略过去，但课件专门讲到了的点。</p>
+<p>智能卡是一种包含 CPU 芯片的卡片设备。</p>
+<p>它的约束极其严苛：</p>
+<ul>
+<li>存储很小</li>
+<li>能耗很低</li>
+<li>功能常常很专用</li>
+</ul>
+<p>有些智能卡是面向 Java 的：</p>
+<ul>
+<li>ROM 里有 JVM 解释器</li>
+<li>Java 小程序被下载到卡上运行</li>
+<li>有些卡还能同时处理多个小程序</li>
+</ul>
+<p>一旦多个小程序同时存在，就会出现：</p>
+<ul>
+<li>调度</li>
+<li>资源管理</li>
+<li>保护</li>
+</ul>
+<p>这些问题，仍然得由智能卡上的操作系统处理。</p>
+<h5 id="它怎么通信">它怎么通信？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#它怎么通信" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>课件里说得很具体：</p>
+<ul>
+<li>读写器与智能卡之间通过<strong>命令 - 响应对</strong>来通信</li>
+<li>读写器发命令</li>
+<li>智能卡接收命令</li>
+<li>操作系统解释命令、完成解密与校验</li>
+<li>调用相应程序处理数据</li>
+<li>再把应答信息加密后送回读写器</li>
+</ul>
+<p>这个例子特别适合提醒自己：<br/>
+<strong>只要有资源管理、控制、保护和服务，哪怕系统很小，也可能有操作系统。</strong></p>
+<hr/>
+<h3 id="重点技术拆解spooling-技术">重点技术拆解：SPOOLing 技术<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#重点技术拆解spooling-技术" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="1-为什么需要-spooling">1. 为什么需要 SPOOLing？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-为什么需要-spooling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>SPOOLing 的英文是 <strong>Simultaneous Peripheral Operation On-Line</strong>，通常翻成 ” 假脱机技术 ”。</p>
+<p>它是为了解决一个很老但很根本的问题：</p>
+<ul>
+<li>CPU 很快</li>
+<li>外设很慢</li>
+<li>如果让 CPU 直接等外设，效率会极差</li>
+</ul>
+<p>最典型的慢设备就是：</p>
+<ul>
+<li>读卡机</li>
+<li>打印机</li>
+</ul>
+<h4 id="2-它的核心思想是什么">2. 它的核心思想是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-它的核心思想是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>核心思想可以压缩成一句话：<br/>
+<strong>利用磁盘作为大缓冲区，把输入、计算、输出拆成相互独立的任务流。</strong></p>
+<p>这样就能做到：</p>
+<ul>
+<li>输入设备慢慢输它的</li>
+<li>CPU 快速算它的</li>
+<li>输出设备慢慢打它的</li>
+</ul>
+<p>三者尽量并行。</p>
+<h4 id="3-输入井输出井是什么">3. 输入井、输出井是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-输入井输出井是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>为了让数据在不同环节之间顺畅流动，系统会在高速设备（通常是磁盘）上组织出：</p>
+<ul>
+<li><strong>输入井</strong>：先把外部输入提前搬进来</li>
+<li><strong>输出井</strong>：先把程序输出暂存起来</li>
+</ul>
+<p>这就像把原本必须 ” 面对面交接 ” 的流程，改成了 ” 先存进仓库，再异步取走 “。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TD\n    subgraph 低速设备\n        A[输入设备]\n        B[输出设备]\n    end\n\n    subgraph 高速磁盘缓冲区\n        C[(输入井)]\n        D[(输出井)]\n    end\n\n    subgraph 系统内部\n        E[输入进程]\n        F[作业调度进程]\n        G[运行中的作业]\n        H[输出进程]\n    end\n\n    A --> E --> C\n    C --> F --> G\n    G --> D --> H --> B&quot;">graph TD
+    subgraph 低速设备
+        A[输入设备]
+        B[输出设备]
+    end
+
+    subgraph 高速磁盘缓冲区
+        C[(输入井)]
+        D[(输出井)]
+    end
+
+    subgraph 系统内部
+        E[输入进程]
+        F[作业调度进程]
+        G[运行中的作业]
+        H[输出进程]
+    end
+
+    A --> E --> C
+    C --> F --> G
+    G --> D --> H --> B
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="4-spooling-的三大效果">4. SPOOLing 的三大效果<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-spooling-的三大效果" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ol>
+<li>
+<p><strong>提高 I/O 效率</strong></p>
+<ul>
+<li>进程先和高速磁盘交互，而不是直接等慢设备。</li>
+</ul>
+</li>
+<li>
+<p><strong>把独占设备改造成共享设备</strong></p>
+<ul>
+<li>比如打印请求都先进输出井排队。</li>
+</ul>
+</li>
+<li>
+<p><strong>实现虚拟设备效果</strong></p>
+<ul>
+<li>每个进程都感觉自己好像拥有一台打印机。</li>
+</ul>
+</li>
+</ol>
+<h4 id="5-它和--脱机技术--的关系">5. 它和 ” 脱机技术 ” 的关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-它和--脱机技术--的关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件图里把 ” 脱机技术 ” 和 ” 假脱机技术 ” 放在一起看。你可以这样理解：</p>
+<ul>
+<li><strong>脱机</strong>：把原来在线串行做的事拆到别处做</li>
+<li><strong>假脱机</strong>：看起来像在线直接使用设备，实际上中间隔着缓冲与排队</li>
+</ul>
+<h4 id="6-今天还有没有-spooling-的影子">6. 今天还有没有 SPOOLing 的影子？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-今天还有没有-spooling-的影子" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>当然有，而且非常常见。</p>
+<p>最直接的例子就是：</p>
+<ul>
+<li>打印队列</li>
+<li>邮件队列</li>
+<li>消息队列</li>
+<li>日志缓冲</li>
+<li>后台批量上传</li>
+</ul>
+<p>它们的共性都是：</p>
+<ul>
+<li>前台先快速提交请求</li>
+<li>后台再慢慢完成真正的 I/O 或外部操作</li>
+</ul>
+<p>所以 SPOOLing 不只是历史名词，它其实是一类很有生命力的系统设计模式。</p>
+<hr/>
+<h3 id="课件里几个追问顺手讲清楚">课件里几个追问，顺手讲清楚<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#课件里几个追问顺手讲清楚" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="1-buffer-cache-可以怎么理解">1. Buffer Cache 可以怎么理解？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-buffer-cache-可以怎么理解" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>严格说，这个问题属于文件系统和块设备之间的实现细节，会在后面文件系统部分学得更完整。这里先抓住直觉就够了：</p>
+<ul>
+<li>文件系统按 ” 文件、目录、逻辑块 ” 思考</li>
+<li>块设备按 ” 磁盘块、扇区 ” 思考</li>
+<li>两者之间需要一个缓冲与协调层</li>
+</ul>
+<p><strong>Buffer Cache</strong> 的作用就是：</p>
+<ul>
+<li>把经常访问的磁盘块先缓存在内存里</li>
+<li>减少真实磁盘 I/O</li>
+<li>平衡文件子系统和块设备之间的速度差</li>
+<li>帮助做读写合并与延迟写回</li>
+</ul>
+<p>你可以把它理解成 ” 文件系统和磁盘之间的中转仓库 “。</p>
+<h4 id="2-单道批处理和多道批处理一句话怎么区分">2. 单道批处理和多道批处理一句话怎么区分？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-单道批处理和多道批处理一句话怎么区分" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>单道</strong>：内存里一次只放一个作业，I/O 一等，CPU 就闲着。</li>
+<li><strong>多道</strong>：内存里同时放多个作业，一个等 I/O，CPU 就去跑另一个。</li>
+</ul>
+<h4 id="3-传统分时系统今天的意义是什么">3. 传统分时系统今天的意义是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-传统分时系统今天的意义是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>它的形式变了，但思想还在：</p>
+<ul>
+<li>多任务</li>
+<li>时间片调度</li>
+<li>多用户共享</li>
+<li>快速响应</li>
+</ul>
+<p>这些都还是今天系统的骨架之一。</p>
+<hr/>
+<h3 id="本讲小结">本讲小结<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#本讲小结" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这一讲真正想让你建立的是一个整体图景：</p>
+<ol>
+<li>操作系统出现，是为了更有效地使用资源，并向用户提供更好的服务。</li>
+<li>它既是资源管理者，也是服务提供者，还是虚拟机器的构造者。</li>
+<li>它有四个核心特征：并发、共享、虚拟、随机性。</li>
+<li>它的发展历史，本质上是在 ” 机器效率 ” 和 ” 用户体验 ” 之间不断重新取平衡。</li>
+<li>批处理、多道程序设计、分时、实时、网络、分布式、嵌入式等分类，本质上是在不同应用场景下做取舍。</li>
+<li>SPOOLing 不是老古董，它背后那种 ” 前台快速提交，后台异步处理 ” 的思想今天依然随处可见。</li>
+</ol>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>如果你读完整讲后还能记住一句话，那我希望是这一句：<br/>
+<strong>操作系统的所有演化，都是围绕 ” 如何更聪明地管理有限资源，并把复杂机器变成可用平台 ” 展开的。</strong></p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="运行环境与运行机制">运行环境与运行机制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#运行环境与运行机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Tip</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这一讲是很多同学第一次真正碰到 ” 操作系统和硬件接口 ” 的地方，所以会觉得抽象、碎、底层。但你只要抓住一条主线，整体就会清楚很多：<strong>应用程序不能直接乱碰硬件，必须通过硬件支持的特权级和中断/异常机制，才能安全地进入内核、请求服务、再返回用户态。</strong></p>
+<p>这也是课件反复强调的一句话：<strong>操作系统是由中断 / 异常 / 事件驱动的。</strong></p>
+</div>
+</blockquote>
+<h3 id="课件开头真正想让你回答的问题">课件开头真正想让你回答的问题<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#课件开头真正想让你回答的问题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这一讲一开始抛了很多问题，它们其实都围着同一个核心在转：<strong>ECF，异常控制流。</strong></p>
+<p>建议你把这些问题串起来看：</p>
+<ol>
+<li>应用程序如何和操作系统交互？</li>
+<li>为什么说操作系统是由中断/异常/事件驱动的？</li>
+<li>中断和异常来自哪里？一样吗？</li>
+<li>硬件负责什么？软件负责什么？</li>
+<li>从中断响应到中断处理结束，中间到底发生了哪些步骤？</li>
+<li>操作系统初始化和中断/异常有什么关系？</li>
+<li>什么是软件异常？</li>
+<li><code>system_call()</code> 与 IDT、系统调用表分别是什么关系？</li>
+<li>系统调用处理完后，处理器会转去执行谁？</li>
+<li>系统调用和普通函数调用、API 调用到底有什么差别？</li>
+</ol>
+<p>这些问题的共同答案就是：<br/>
+<strong>理解 ECF，就能理解应用怎样进入内核，也能理解并发、中断、系统调用和很多底层机制。</strong></p>
+<hr/>
+<h3 id="1-基础运行环境硬件如何支持操作系统">1. 基础运行环境：硬件如何支持操作系统？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-基础运行环境硬件如何支持操作系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>操作系统不是飘在空中的，它必须站在硬件提供的基础机制上运行。</p>
+<p>课件这一部分的关键点是：<br/>
+<strong>操作系统之所以能 ” 管别人 “，前提是硬件先给了它更高权限。</strong></p>
+<h4 id="11-cpu-和寄存器程序运行的最小现场">1.1 CPU 和寄存器：程序运行的最小现场<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-cpu-和寄存器程序运行的最小现场" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>CPU 可以粗略理解为由这些东西构成：</p>
+<ul>
+<li>运算器</li>
+<li>控制器</li>
+<li>一系列寄存器</li>
+<li>高速缓存</li>
+</ul>
+<p>课件把寄存器分成两类：</p>
+<h5 id="用户可见寄存器">用户可见寄存器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#用户可见寄存器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>机器语言能直接引用，主要包括：</p>
+<ul>
+<li>数据寄存器（通用寄存器）</li>
+<li>地址寄存器</li>
+<li>条件码寄存器</li>
+</ul>
+<p>条件码寄存器里保存的是 CPU 运算结果的各种标记位。</p>
+<h5 id="控制和状态寄存器">控制和状态寄存器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#控制和状态寄存器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>它们用于控制处理器操作，只有在某些特权级下才能访问或修改，典型包括：</p>
+<ul>
+<li><strong>PC</strong>：程序计数器，下一条要执行的指令位置</li>
+<li><strong>IR</strong>：指令寄存器，当前指令</li>
+<li><strong>PSW</strong>：程序状态字，保存处理器状态信息</li>
+</ul>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>你可以把 ” 程序运行现场 ” 想成演员演戏时的舞台位置：</p>
+<ul>
+<li>PC 像 ” 下一句台词该说到哪 ”</li>
+<li>通用寄存器像 ” 手里暂时拿着的道具 ”</li>
+<li>PSW / EFLAGS 像 ” 当前的灯光和舞台规则状态 ”</li>
+</ul>
+<p>一旦中断发生，必须先把这些东西保存好，不然演员回来就接不上戏了。</p>
+</div>
+</blockquote>
+<h4 id="12-保护需求为什么必须有特权级">1.2 保护需求：为什么必须有特权级？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-保护需求为什么必须有特权级" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>从操作系统四大特征出发，系统里有：</p>
+<ul>
+<li>并发</li>
+<li>共享</li>
+</ul>
+<p>一旦有这两件事，系统就必须有：</p>
+<ul>
+<li>保护</li>
+<li>控制</li>
+<li>隔离</li>
+</ul>
+<p>所以硬件必须提供一种基本运行机制，把：</p>
+<ul>
+<li>操作系统代码</li>
+<li>普通用户程序</li>
+</ul>
+<p>区分开来。</p>
+<h4 id="13-处理器状态mode">1.3 处理器状态（Mode）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#13-处理器状态mode" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>现代处理器通常把 CPU 状态划成两种、三种或四种。</p>
+<h5 id="最常见的两种">最常见的两种<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#最常见的两种" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li><strong>内核态（Kernel Mode / Supervisor Mode）</strong>
+<ul>
+<li>权限最高</li>
+<li>可执行特权指令</li>
+<li>运行操作系统核心代码</li>
+</ul>
+</li>
+<li><strong>用户态（User Mode）</strong>
+<ul>
+<li>权限受限</li>
+<li>只能执行非特权指令</li>
+<li>运行普通应用程序</li>
+</ul>
+</li>
+</ul>
+<h5 id="特权指令-vs-非特权指令">特权指令 Vs 非特权指令<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#特权指令-vs-非特权指令" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li><strong>特权指令</strong>：只能操作系统用，用户程序不能直接用</li>
+<li><strong>非特权指令</strong>：用户程序也可以执行</li>
+</ul>
+<h4 id="14-x86-与-risc-v-的特权模式">1.4 X86 与 RISC-V 的特权模式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#14-x86-与-risc-v-的特权模式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<h5 id="x86">X86<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#x86" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>X86 支持 4 个特权环：</p>
+<ul>
+<li>R0</li>
+<li>R1</li>
+<li>R2</li>
+<li>R3</li>
+</ul>
+<p>从 R0 到 R3，权限逐级降低。</p>
+<p>在多数实际系统里：</p>
+<ul>
+<li>R0 对应内核态</li>
+<li>R3 对应用户态</li>
+<li>R1、R2 很少真正使用</li>
+</ul>
+<h5 id="risc-v">RISC-V<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#risc-v" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>RISC-V 常见的三种特权模式：</p>
+<ul>
+<li><strong>M 模式</strong>（机器模式）</li>
+<li><strong>S 模式</strong>（监管模式）</li>
+<li><strong>U 模式</strong>（用户模式）</li>
+</ul>
+<h4 id="15-eflags--psw-在这里的重要性">1.5 EFLAGS / PSW 在这里的重要性<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#15-eflags--psw-在这里的重要性" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件专门给了 X86 的 EFLAGS 图，原因不是要你逐位背，而是让你知道：</p>
+<ul>
+<li>处理器状态不是抽象口号</li>
+<li>它真的编码在寄存器里</li>
+<li>中断允许位、陷阱标志、特权相关信息都在里面</li>
+</ul>
+<p>也就是说，” 从用户态到内核态 ” 不是文学描述，而是寄存器状态真的变了。</p>
+<h4 id="16-cpu-状态如何切换">1.6 CPU 状态如何切换？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#16-cpu-状态如何切换" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<h5 id="用户态--内核态">用户态 → 内核态<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#用户态--内核态" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>唯一途径：</p>
+<ul>
+<li>中断</li>
+<li>异常</li>
+<li>陷入（trap）机制</li>
+</ul>
+<h5 id="内核态--用户态">内核态 → 用户态<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#内核态--用户态" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>要恢复原程序状态，并通过专门的返回机制回去。</p>
+<p>课件同时列了几种不同体系结构的指令例子：</p>
+<ul>
+<li><code>int</code></li>
+<li><code>trap</code></li>
+<li><code>syscall</code></li>
+<li><code>sysenter / sysexit</code></li>
+<li><code>ecall</code></li>
+</ul>
+<p>你不用在这一讲把每条指令背成百科，但一定要记住：<br/>
+<strong>从低权限进入高权限，必须依赖体系结构定义好的入口。</strong></p>
+<h4 id="17-存储系统io-系统时钟在这讲里的位置">1.7 存储系统、I/O 系统、时钟在这讲里的位置<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#17-存储系统io-系统时钟在这讲里的位置" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件目录里列了：</p>
+<ul>
+<li>存储系统</li>
+<li>I/O 系统</li>
+<li>时钟</li>
+</ul>
+<p>虽然这讲没有像文件系统那样详细展开它们，但它们在 ” 运行环境 ” 里扮演的角色很清楚：</p>
+<ul>
+<li><strong>存储系统</strong>：决定现场保存、堆栈切换、地址空间与内存访问方式</li>
+<li><strong>I/O 系统</strong>：是外部中断的重要来源</li>
+<li><strong>时钟</strong>：提供周期性中断，是调度和时间管理的基础</li>
+</ul>
+<p>也就是说，这三项没有消失，只是作为后续展开的硬件背景先出现。</p>
+<hr/>
+<h3 id="2-核心动力中断与异常机制">2. 核心动力：中断与异常机制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-核心动力中断与异常机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>课件有一句话非常值得记：<br/>
+<strong>中断对于操作系统的重要性，就像汽车发动机、飞机引擎。</strong></p>
+<p>这是因为操作系统不是靠 ” 主循环一直傻跑 ” 维持秩序，而是靠事件来推动执行。</p>
+<h4 id="21-什么是中断--异常">2.1 什么是中断 / 异常？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#21-什么是中断--异常" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>可以先用一句最通俗的话定义：</p>
+<p><strong>中断 / 异常就是 CPU 对某个事件作出的控制流改变。</strong></p>
+<p>当事件发生时：</p>
+<ul>
+<li>CPU 暂停当前执行流</li>
+<li>保存现场</li>
+<li>转去执行相应处理程序</li>
+<li>处理完后再返回原先位置或转去新的位置</li>
+</ul>
+<p>这个机制的几个特点：</p>
+<ul>
+<li>是自动处理的</li>
+<li>往往带有随机性或异步性</li>
+<li>需要保存和恢复现场</li>
+<li>本质上改变了处理器控制流</li>
+</ul>
+<h4 id="22-为什么会引入中断和异常">2.2 为什么会引入中断和异常？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#22-为什么会引入中断和异常" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<h5 id="中断的引入原因">中断的引入原因<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#中断的引入原因" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>为了支持 CPU 和设备之间的并行操作。</p>
+<p>如果没有中断：</p>
+<ul>
+<li>CPU 启动 I/O 后只能不停轮询等它</li>
+</ul>
+<p>有了中断：</p>
+<ul>
+<li>设备完成工作后通知 CPU</li>
+<li>CPU 中间可以去做别的事</li>
+</ul>
+<h5 id="异常的引入原因">异常的引入原因<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#异常的引入原因" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>为了处理 CPU 在执行指令时自身遇到的问题，或者执行某些特定的软件触发行为。</p>
+<p>例如：</p>
+<ul>
+<li>除零</li>
+<li>算术溢出</li>
+<li>非法操作数</li>
+<li>地址越界</li>
+<li>缺页</li>
+<li>执行陷入指令（系统调用）</li>
+</ul>
+<h4 id="23-中断陷入故障终止的分类">2.3 中断、陷入、故障、终止的分类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#23-中断陷入故障终止的分类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这是非常标准的一组分类。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>类别</th><th>原因</th><th>同步/异步</th><th>返回行为</th><th>例子</th></tr></thead><tbody><tr><td>中断 Interrupt</td><td>外部设备或其他硬件信号</td><td>异步</td><td>返回到下一条指令</td><td>键盘、时钟、I/O 完成</td></tr><tr><td>陷入 Trap</td><td>程序有意识安排</td><td>同步</td><td>返回到下一条指令</td><td>系统调用、断点</td></tr><tr><td>故障 Fault</td><td>可恢复错误</td><td>同步</td><td>返回当前指令重新执行</td><td>缺页异常</td></tr><tr><td>终止 Abort</td><td>不可恢复严重错误</td><td>同步</td><td>不返回</td><td>严重硬件错误</td></tr></tbody></table></div>
+<p>顺手记一句最实用的话：</p>
+<ul>
+<li><strong>中断看来源</strong>：外部来的吗？</li>
+<li><strong>异常看发生点</strong>：是不是执行当前指令时出的问题？</li>
+</ul>
+<h4 id="24-ecf异常控制流">2.4 ECF：异常控制流<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#24-ecf异常控制流" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件说这一部分 ” 很重要 “，不是客气话。</p>
+<p>ECF 可以理解成：<br/>
+<strong>程序的控制流并不总是沿着你写出来的顺序线性前进，它会被异常事件改道。</strong></p>
+<p>为什么理解 ECF 很重要？</p>
+<p>因为它直接帮助你理解：</p>
+<ul>
+<li>应用程序如何和操作系统交互</li>
+<li>软件异常怎么工作</li>
+<li>并发的很多现象为什么会发生</li>
+</ul>
+<h4 id="25-硬件做什么软件做什么">2.5 硬件做什么，软件做什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#25-硬件做什么软件做什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这一点是本讲的关键分工。</p>
+<h5 id="硬件负责中断--异常响应">硬件负责：中断 / 异常响应<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#硬件负责中断--异常响应" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>也就是：</p>
+<ul>
+<li>发现中断或异常请求</li>
+<li>捕获它</li>
+<li>保存最基本的上下文</li>
+<li>把控制权转给指定处理程序</li>
+</ul>
+<h5 id="软件负责中断--异常处理">软件负责：中断 / 异常处理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#软件负责中断--异常处理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>也就是：</p>
+<ul>
+<li>识别具体原因</li>
+<li>保存更多寄存器现场</li>
+<li>执行对应处理逻辑</li>
+<li>恢复现场并返回</li>
+</ul>
+<p>你可以把它想成：</p>
+<ul>
+<li><strong>硬件负责开门、指路、抬担架</strong></li>
+<li><strong>软件负责诊断、治疗、收尾</strong></li>
+</ul>
+<h4 id="26-硬件中断响应过程">2.6 硬件中断响应过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#26-硬件中断响应过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件给了一个很典型的硬件流程：</p>
+<ul>
+<li>CPU 在每条指令执行周期末尾扫描中断寄存器</li>
+<li>如果没有中断，继续执行下一条指令</li>
+<li>如果有中断，就把中断信号按规则编码成中断码</li>
+<li>再根据中断向量把控制权引到对应处理程序</li>
+</ul>
+<p>所以 ” 响应 ” 不是软件在干，而是硬件先完成第一段流程。</p>
+<h4 id="27-中断向量表是什么">2.7 中断向量表是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#27-中断向量表是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>中断向量本质上就是：</p>
+<ul>
+<li>一个表项</li>
+<li>里面存放处理程序入口地址以及相关状态信息</li>
+</ul>
+<p>中断向量表就像一本 ” 电话簿 ”：</p>
+<ul>
+<li>你给我一个中断号</li>
+<li>我查表</li>
+<li>我知道该去找谁处理</li>
+</ul>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>你可以把它想成医院急诊分诊台。<br/>
+来一个病人，先不是随便冲进任何科室，而是先根据症状分到神经内科、骨科、心内科。<br/>
+中断号就像病人的分诊编号，中断向量表就是 ” 编号 → 科室入口 ” 的映射表。</p>
+</div>
+</blockquote>
+<h4 id="28-linux-中-x86-的中断向量范围">2.8 Linux 中 X86 的中断向量范围<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#28-linux-中-x86-的中断向量范围" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件给了一个具体表，这是实现层很重要的细节。</p>
+<p>大致可以这样记：</p>
+<ul>
+<li><code>0 ~ 19</code>：不可屏蔽中断和异常</li>
+<li><code>20 ~ 31</code>：Intel 保留</li>
+<li><code>32 ~ 127</code>：外部中断（IRQ）</li>
+<li><code>128 (0x80)</code>：系统调用使用的可编程异常</li>
+<li><code>129 ~ 238</code>：外部中断</li>
+<li><code>239</code>：本地 APIC 时钟中断</li>
+<li><code>240</code>：本地 APIC 高温中断</li>
+<li><code>241 ~ 250</code>：Linux 保留</li>
+<li><code>251 ~ 253</code>：处理器间中断</li>
+<li><code>254</code>：本地 APIC 错误中断</li>
+<li><code>255</code>：本地 APIC 伪中断</li>
+</ul>
+<p>还列出了一些典型异常号：</p>
+<ul>
+<li><code>0</code>：除零</li>
+<li><code>1</code>：单步调试</li>
+<li><code>4</code>：算术溢出</li>
+<li><code>6</code>：非法操作数</li>
+<li><code>12</code>：栈异常</li>
+<li><code>13</code>：保护性错误</li>
+<li><code>14</code>：缺页异常</li>
+</ul>
+<h4 id="29-从设备中断到返回完整流程怎么走">2.9 从设备中断到返回，完整流程怎么走？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#29-从设备中断到返回完整流程怎么走" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件的小结可以整成下面这条线：</p>
+<ol>
+<li>设备发出中断信号。</li>
+<li>CPU 执行完当前指令后检测到中断。</li>
+<li>CPU 判断中断来源，并向相关设备发送确认。</li>
+<li>处理器切到内核态。</li>
+<li>硬件在系统栈中保存关键上下文，如 PC、PSW。</li>
+<li>CPU 根据中断码查中断向量表。</li>
+<li>得到处理程序入口地址，把 PC 设成它。</li>
+<li>软件中断处理程序开始运行。</li>
+<li>软件再保存更多现场。</li>
+<li>软件检查设备状态、搬运数据、更新系统状态。</li>
+<li>处理结束，执行返回指令。</li>
+<li>硬件恢复原上下文，CPU 回到原程序继续。</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant Dev as 外设\n    participant CPU as CPU/硬件\n    participant Stack as 系统栈\n    participant ISR as 中断处理程序\n\n    Dev->>CPU: 发出中断信号\n    CPU->>CPU: 执行完当前指令后检测中断\n    CPU->>Stack: 硬件压栈保存关键现场\n    CPU->>CPU: 根据中断码查向量表\n    CPU->>ISR: 跳转到中断处理入口\n    ISR->>Stack: 软件保存更多寄存器\n    ISR->>Dev: 查询设备状态/完成处理\n    ISR->>Stack: 恢复寄存器\n    ISR->>CPU: 执行中断返回\n    CPU->>Stack: 硬件恢复 PC / PSW 等\n    CPU->>CPU: 回到被打断的执行流&quot;">sequenceDiagram
+    participant Dev as 外设
+    participant CPU as CPU/硬件
+    participant Stack as 系统栈
+    participant ISR as 中断处理程序
+
+    Dev->>CPU: 发出中断信号
+    CPU->>CPU: 执行完当前指令后检测中断
+    CPU->>Stack: 硬件压栈保存关键现场
+    CPU->>CPU: 根据中断码查向量表
+    CPU->>ISR: 跳转到中断处理入口
+    ISR->>Stack: 软件保存更多寄存器
+    ISR->>Dev: 查询设备状态/完成处理
+    ISR->>Stack: 恢复寄存器
+    ISR->>CPU: 执行中断返回
+    CPU->>Stack: 硬件恢复 PC / PSW 等
+    CPU->>CPU: 回到被打断的执行流
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="210-为什么-linux-要分上半部和下半部">2.10 为什么 Linux 要分上半部和下半部？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#210-为什么-linux-要分上半部和下半部" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件在中断响应流程页专门提了这个问题。</p>
+<p>直觉上理解就够了：</p>
+<ul>
+<li>中断一来，系统要尽快响应</li>
+<li>但有些工作非常耗时</li>
+<li>如果全都在中断入口里一次做完，就会拖很久，影响别的中断和系统整体响应</li>
+</ul>
+<p>所以 Linux 把它拆成：</p>
+<ul>
+<li><strong>上半部</strong>：尽快做最紧急、最必要的事</li>
+<li><strong>下半部</strong>：把可以延后的工作推迟处理</li>
+</ul>
+<p>这本质上还是一个老原则：<br/>
+<strong>关键路径尽量短。</strong></p>
+<hr/>
+<h3 id="3-ia32--x86-对中断的具体支持">3. IA32 / X86 对中断的具体支持<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-ia32--x86-对中断的具体支持" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这一部分最容易让人头大，因为名词突然变多了。但逻辑其实并不复杂：</p>
+<p><strong>中断号只是编号，真正把编号变成 ” 跳到哪段代码去执行 ” 的，是 IA32 定义的一套表和描述符。</strong></p>
+<h4 id="31-pic--apic中断控制器">3.1 PIC / APIC：中断控制器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#31-pic--apic中断控制器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>硬件外设发出的信号，不能直接变成 CPU 能理解的处理入口。</p>
+<p>中断控制器（PIC 或 APIC）的工作是：</p>
+<ul>
+<li>接收外设中断信号</li>
+<li>把它转换成中断向量</li>
+<li>触发 CPU 的中断机制</li>
+</ul>
+<h4 id="32-实模式-vs-保护模式">3.2 实模式 Vs 保护模式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#32-实模式-vs-保护模式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<h5 id="实模式">实模式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#实模式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>使用的是<strong>中断向量表（Interrupt Vector Table）</strong>。</p>
+<p>特点：</p>
+<ul>
+<li>表项直接存放中断服务程序入口地址</li>
+<li>地址通常按 ” 段地址左移 4 位 + 偏移地址 ” 形成</li>
+<li>不支持 CPU 运行状态切换</li>
+<li>中断处理更像普通过程调用</li>
+</ul>
+<h5 id="保护模式">保护模式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#保护模式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>使用的是<strong>中断描述符表（IDT, Interrupt Descriptor Table）</strong>。</p>
+<p>特点：</p>
+<ul>
+<li>表项不只是一个裸地址</li>
+<li>它使用 ” 门描述符（gate descriptor）” 来描述入口</li>
+<li>可以结合特权级、段机制、栈切换做更安全的控制</li>
+</ul>
+<h4 id="33-门描述符有哪些类型">3.3 门描述符有哪些类型？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#33-门描述符有哪些类型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件列了四种：</p>
+<ol>
+<li>
+<p><strong>任务门（Task Gate）</strong></p>
+<ul>
+<li>和 TSS 强相关</li>
+<li>Linux 一般不使用任务门</li>
+</ul>
+</li>
+<li>
+<p><strong>中断门（Interrupt Gate）</strong></p>
+<ul>
+<li>给出段选择符和偏移量</li>
+<li>通过中断门后，系统会自动禁止中断（清 IF）</li>
+</ul>
+</li>
+<li>
+<p><strong>陷阱门（Trap Gate）</strong></p>
+<ul>
+<li>跟中断门类似</li>
+<li>但通过后不会自动关中断</li>
+</ul>
+</li>
+<li>
+<p><strong>调用门（Call Gate）</strong></p>
+<ul>
+<li>也是一种跨特权调用机制</li>
+</ul>
+</li>
+</ol>
+<h4 id="34-idtgdtldtidtrgdtr-到底是什么关系">3.4 IDT、GDT、LDT、IDTR、GDTR 到底是什么关系？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#34-idtgdtldtidtrgdtr-到底是什么关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这里推荐按 ” 查表链路 ” 记：</p>
+<ol>
+<li>CPU 已经知道当前是哪个中断向量号 <code>i</code></li>
+<li>通过 <strong>IDTR</strong> 找到 <strong>IDT</strong></li>
+<li>取出 IDT 中第 <code>i</code> 项，也就是中断描述符</li>
+<li>中断描述符里有一个<strong>段选择符</strong>和<strong>偏移量</strong></li>
+<li>段选择符再去 <strong>GDT / LDT</strong> 里找对应段描述符</li>
+<li>段描述符给出段基址</li>
+<li>用 ” 段基址 + 偏移量 ” 算出真正入口地址</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[中断向量号 i] --> B[IDTR]\n    B --> C[IDT 中第 i 项]\n    C --> D[段选择符]\n    C --> E[偏移量]\n    D --> F[GDTR]\n    F --> G[GDT/LDT 中的段描述符]\n    G --> H[段基址]\n    H --> I[入口地址 = 段基址 + 偏移量]&quot;">flowchart LR
+    A[中断向量号 i] --> B[IDTR]
+    B --> C[IDT 中第 i 项]
+    C --> D[段选择符]
+    C --> E[偏移量]
+    D --> F[GDTR]
+    F --> G[GDT/LDT 中的段描述符]
+    G --> H[段基址]
+    H --> I[入口地址 = 段基址 + 偏移量]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="35-段选择符是什么">3.5 段选择符是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#35-段选择符是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件图里强调了：段选择符不是地址本身，它更像一个索引凭证。</p>
+<p>它通常编码了：</p>
+<ul>
+<li>索引值</li>
+<li>选择 GDT 还是 LDT</li>
+<li>特权级相关信息</li>
+</ul>
+<p>所以 ” 门描述符里写的不是最终地址 ” 这点很关键。</p>
+<h4 id="36-ia32-中断--异常的硬件处理过程">3.6 IA32 中断 / 异常的硬件处理过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#36-ia32-中断--异常的硬件处理过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件把这个过程列得很清楚，建议按步骤背逻辑，不要死背术语。</p>
+<ol>
+<li>确定和中断或异常关联的向量 <code>i</code></li>
+<li>通过 IDTR 找到 IDT</li>
+<li>取第 <code>i</code> 项中断描述符</li>
+<li>再通过 GDTR 找 GDT</li>
+<li>根据中断描述符中的段选择符，找到对应段描述符</li>
+<li>从段描述符里拿到段基址</li>
+<li>做<strong>特权级检查</strong></li>
+<li>如果发生特权级变化，就做<strong>栈切换</strong></li>
+<li>硬件压栈保存上下文</li>
+<li>如果这是某些异常，还会额外压入<strong>硬件错误码</strong></li>
+<li>如果是中断门，清 IF 位</li>
+<li>根据 ” 段基址 + 偏移量 ” 定位处理程序入口，开始执行</li>
+</ol>
+<h4 id="37-为什么要做特权级检查">3.7 为什么要做特权级检查？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#37-为什么要做特权级检查" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>因为不是任何代码都能随便跳进任何高权限代码。</p>
+<p>系统必须确认：</p>
+<ul>
+<li>当前调用是否合法</li>
+<li>是否允许进入这个门</li>
+<li>是否允许发生这次跨级切换</li>
+</ul>
+<p>这个检查的存在，本质上是在保证：<br/>
+<strong>进入内核是受控的，不是应用随便一跳就能进去。</strong></p>
+<h4 id="38-为什么会发生栈切换">3.8 为什么会发生栈切换？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#38-为什么会发生栈切换" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>如果当前从用户态进入内核态，还继续使用用户栈，会有两个大问题：</p>
+<ul>
+<li>不安全</li>
+<li>不可靠</li>
+</ul>
+<p>所以一旦特权级变化，CPU 必须切到和新特权级对应的栈。</p>
+<p>也就是说：</p>
+<ul>
+<li>用户代码用用户栈</li>
+<li>内核代码用内核栈</li>
+</ul>
+<p>这样内核才能在可信环境里保存和处理上下文。</p>
+<h4 id="39-什么是硬件错误码">3.9 什么是硬件错误码？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#39-什么是硬件错误码" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>对于某些异常，CPU 会在进入处理程序前自动压入一个错误码。</p>
+<p>它的作用是：</p>
+<ul>
+<li>帮助软件进一步判断异常的具体细节</li>
+</ul>
+<p>你可以把它理解成：<br/>
+<strong>异常不仅告诉你 ” 出事了 “，还顺手给你塞一张简短诊断单。</strong></p>
+<hr/>
+<h3 id="4-系统调用应用程序进入内核的唯一正规接口">4. 系统调用：应用程序进入内核的唯一正规接口<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-系统调用应用程序进入内核的唯一正规接口" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="41-系统调用是什么">4.1 系统调用是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#41-系统调用是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>系统调用是：<br/>
+<strong>用户程序在编程时可以调用的操作系统功能。</strong></p>
+<p>课件特别强调两点：</p>
+<ul>
+<li>它是操作系统提供给编程人员的唯一接口</li>
+<li>它会使 CPU 状态从用户态陷入内核态</li>
+</ul>
+<p>系统调用类型很多，比如：</p>
+<ul>
+<li>进程控制</li>
+<li>进程通信</li>
+<li>文件操作</li>
+<li>目录操作</li>
+<li>设备管理</li>
+<li>信息维护</li>
+</ul>
+<p>每个操作系统通常都会提供几百个系统调用。</p>
+<h4 id="42-系统调用库函数api内核函数之间的关系">4.2 系统调用、库函数、API、内核函数之间的关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#42-系统调用库函数api内核函数之间的关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这个地方一定要理顺，否则后面会一直混。</p>
+<h5 id="应用程序">应用程序<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#应用程序" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>写的是：</p>
+<ul>
+<li><code>printf()</code></li>
+<li><code>write()</code></li>
+<li><code>fork()</code></li>
+<li><code>open()</code></li>
+</ul>
+<h5 id="c-函数库--api">C 函数库 / API<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#c-函数库--api" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>很多时候应用不是直接写裸汇编，而是先调用库函数。库函数负责：</p>
+<ul>
+<li>包装参数</li>
+<li>触发系统调用</li>
+<li>把结果转换成更方便的接口形式</li>
+</ul>
+<h5 id="系统调用">系统调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#系统调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>系统调用是真正跨过 ” 用户态 / 内核态边界 ” 的入口动作。</p>
+<h5 id="内核函数">内核函数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#内核函数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>进入内核后，真正干活的是内核里的处理函数，比如 <code>sys_write()</code>。</p>
+<p>所以关系最好记成：</p>
+<p><strong>应用程序 → C 库/API → 系统调用入口 → 内核函数</strong></p>
+<h4 id="43-printf-和-write-的例子">4.3 <code>printf()</code> 和 <code>write()</code> 的例子<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#43-printf-和-write-的例子" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件举了一个非常经典的例子：</p>
+<p>应用程序写：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">printf</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Hello</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<p>但底层最终会触发：</p>
+<ul>
+<li><code>write()</code> 系统调用</li>
+</ul>
+<p>你甚至可以在 Linux 上用：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">strace</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> -e</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> trace=write</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> ./hello</span></span></code></pre></figure>
+<p>来观察它真的发起了 <code>write</code>。</p>
+<p>这个例子很有用，因为它直接说明：</p>
+<ul>
+<li>API 调用不等于系统调用</li>
+<li>但 API 经常会在底层触发系统调用</li>
+</ul>
+<h4 id="44-系统调用和普通函数调用的区别">4.4 系统调用和普通函数调用的区别<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#44-系统调用和普通函数调用的区别" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这是高频混淆点。</p>
+<h5 id="普通函数调用">普通函数调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#普通函数调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>通常不改变特权级</li>
+<li>不需要切换到内核态</li>
+<li>参数和返回按普通调用约定处理</li>
+<li>本质上是同一权限空间里的控制转移</li>
+</ul>
+<h5 id="系统调用-1">系统调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#系统调用-1" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>会触发特权级切换</li>
+<li>依赖体系结构定义的陷入机制</li>
+<li>要保存和恢复更多上下文</li>
+<li>要经过内核入口、查表分派、返回路径</li>
+</ul>
+<p>一句话总结：<br/>
+<strong>函数调用是在屋里走门，系统调用是过安检进机房。</strong></p>
+<hr/>
+<h3 id="5-系统调用机制是怎么设计出来的">5. 系统调用机制是怎么设计出来的？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-系统调用机制是怎么设计出来的" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>课件把系统调用机制设计概括成 4 个关键点：</p>
+<ol>
+<li>
+<p><strong>选择一条特殊指令</strong></p>
+<ul>
+<li>也就是陷入指令 / 访管指令</li>
+<li>用来触发用户态到内核态的切换</li>
+</ul>
+</li>
+<li>
+<p><strong>系统调用号和参数</strong></p>
+<ul>
+<li>每个系统调用预先分配一个编号</li>
+</ul>
+</li>
+<li>
+<p><strong>系统调用表</strong></p>
+<ul>
+<li>用来把调用号映射到对应的服务例程</li>
+</ul>
+</li>
+<li>
+<p><strong>查表分派执行</strong></p>
+<ul>
+<li>进入总入口后，根据调用号查表，转到具体内核函数</li>
+</ul>
+</li>
+</ol>
+<p>这其实就是一种很典型的 ” 机制与策略分离 ”：</p>
+<ul>
+<li>硬件 + 入口机制负责 ” 怎么进来 ”</li>
+<li>调用号 + 查表负责 ” 该调用谁 ”</li>
+<li>具体内核函数负责 ” 怎么干活 “</li>
+</ul>
+<h4 id="51-参数怎么传给内核">5.1 参数怎么传给内核？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#51-参数怎么传给内核" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件列了 3 种常见方法：</p>
+<ol>
+<li>
+<p><strong>陷入指令自带参数</strong></p>
+<ul>
+<li>但指令长度有限，能带的参数很少</li>
+</ul>
+</li>
+<li>
+<p><strong>通过通用寄存器传参</strong></p>
+<ul>
+<li>很常见</li>
+<li>但寄存器个数有限</li>
+</ul>
+</li>
+<li>
+<p><strong>在内存中开专用堆栈区传参</strong></p>
+<ul>
+<li>适合更多参数</li>
+</ul>
+</li>
+</ol>
+<p>很多系统会组合使用这些方法。</p>
+<hr/>
+<h3 id="6-linux-基于-x86-的系统调用实现">6. Linux 基于 X86 的系统调用实现<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-linux-基于-x86-的系统调用实现" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这一部分是第二讲里非常 ” 实现派 ” 的内容。</p>
+<h4 id="61-入口指令int-0x80">6.1 入口指令：<code>int 0x80</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#61-入口指令int-0x80" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在传统 x86 Linux 中，系统调用使用：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="asm" data-theme="github-light github-dark"><code data-language="asm" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $0x80</span></span></code></pre></figure>
+<p>这条指令会引发一次软件异常，从而进入内核。</p>
+<h4 id="62-idt-里的第-128-号门">6.2 IDT 里的第 128 号门<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#62-idt-里的第-128-号门" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>系统初始化时，Linux 会把 IDT 中的第 <code>128</code> 号门设置成系统调用入口。</p>
+<p>也就是说：</p>
+<ul>
+<li><code>0x80</code> 不是随便写的</li>
+<li>它正对应 IDT 里那个专门给系统调用准备的入口</li>
+</ul>
+<p>课件给出的初始化形式是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">set_system_gate</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">0x</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">80</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">system_call</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></figure>
+<p>这说明：</p>
+<ul>
+<li><code>system_call()</code> 是系统调用总入口例程</li>
+<li>IDT 第 128 项会指向它</li>
+</ul>
+<h4 id="63-为什么这里用陷阱门">6.3 为什么这里用陷阱门？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#63-为什么这里用陷阱门" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件点出门类型是 <code>15</code>，也就是<strong>陷阱门</strong>。</p>
+<p>直觉理解就够了：</p>
+<ul>
+<li>系统调用是软件有意识触发的</li>
+<li>它不像普通外设中断那样主要强调 ” 立即屏蔽后续中断 ”</li>
+<li>所以使用陷阱门是很自然的选择</li>
+</ul>
+<h4 id="64-dpl-为什么要设成-3">6.4 DPL 为什么要设成 3？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#64-dpl-为什么要设成-3" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>因为系统调用入口必须允许用户态程序合法使用。</p>
+<p>如果不把门的 DPL 放到和用户级别兼容的位置，用户程序根本无法通过这个入口进入内核。</p>
+<h4 id="65-系统调用号示例">6.5 系统调用号示例<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#65-系统调用号示例" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件列了几个经典编号：</p>
+<ul>
+<li><code>__NR_exit = 1</code></li>
+<li><code>__NR_fork = 2</code></li>
+<li><code>__NR_read = 3</code></li>
+<li><code>__NR_write = 4</code></li>
+<li><code>__NR_open = 5</code></li>
+<li><code>__NR_close = 6</code></li>
+</ul>
+<p>这说明：</p>
+<ul>
+<li>系统调用不是靠名字区分的</li>
+<li>真正进入内核后，首先看的往往是编号</li>
+</ul>
+<h4 id="66-int-0x80-执行时硬件做了什么">6.6 <code>int 0x80</code> 执行时硬件做了什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#66-int-0x80-执行时硬件做了什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件拆成了两页，这里合起来讲。</p>
+<h5 id="第一步栈切换">第一步：栈切换<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第一步栈切换" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>因为特权级变了，所以必须：</p>
+<ul>
+<li>从用户栈切到内核栈</li>
+</ul>
+<p>CPU 会从 <strong>TSS（任务状态段）</strong> 中装入新的 <code>SS:ESP</code>，指向内核栈。</p>
+<h5 id="第二步硬件压栈">第二步：硬件压栈<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第二步硬件压栈" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>用户栈相关信息会被保存下来，用于以后返回，包括：</p>
+<ul>
+<li>用户栈 <code>SS:ESP</code></li>
+<li><code>EFLAGS</code></li>
+<li>用户态 <code>CS</code></li>
+<li><code>EIP</code></li>
+</ul>
+<h5 id="第三步状态位处理">第三步：状态位处理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第三步状态位处理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>把 <code>EFLAGS</code> 压栈</li>
+<li>复位 <code>TF</code></li>
+<li><code>IF</code> 保持不变</li>
+</ul>
+<h5 id="第四步查-idt">第四步：查 IDT<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第四步查-idt" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>用 <code>128</code> 作为索引查 IDT</li>
+<li>找到对应门描述符</li>
+<li>把门里的段选择符装入 <code>CS</code></li>
+</ul>
+<h5 id="第五步定位-system_call-入口">第五步：定位 <code>system_call()</code> 入口<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第五步定位-system_call-入口" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>段描述符里的基地址</li>
+<li>加上门描述符里的偏移量</li>
+<li>得到 <code>system_call()</code> 第一条指令地址</li>
+</ul>
+<h4 id="67-参数通过哪些寄存器传">6.7 参数通过哪些寄存器传？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#67-参数通过哪些寄存器传" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>x86 Linux 这里使用寄存器传参：</p>
+<ul>
+<li><code>EAX</code>：系统调用号，也用于返回值</li>
+<li><code>EBX</code>、<code>ECX</code>、<code>EDX</code>、<code>ESI</code>、<code>EDI</code>：系统调用参数</li>
+</ul>
+<p>课件强调：进入内核后，<code>system_call</code> 还会把这些参数继续保存在<strong>内核栈</strong>中。</p>
+<h4 id="68-一个简单的高级语言--汇编视角例子">6.8 一个简单的高级语言 / 汇编视角例子<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#68-一个简单的高级语言--汇编视角例子" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<h5 id="高级语言视角">高级语言视角<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#高级语言视角" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">write</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, string, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">7</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<h5 id="汇编视角">汇编视角<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#汇编视角" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="asm" data-theme="github-light github-dark"><code data-language="asm" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">$4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">eax</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">     # 系统调用号：write</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">$1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ebx</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">     # 文件描述符 stdout</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl $output, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ecx</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl $len, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">edx</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $0x80</span></span></code></pre></figure>
+<p>后面如果要退出程序，还会再做一次系统调用：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="asm" data-theme="github-light github-dark"><code data-language="asm" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">$1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">eax</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">     # exit</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">$0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ebx</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $0x80</span></span></code></pre></figure>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这一段特别适合理解 ” 系统调用不是神秘魔法 “。<br/>
+从硬件角度看，它就是：</p>
+<ol>
+<li>把调用号塞进 <code>EAX</code></li>
+<li>把参数塞进若干寄存器</li>
+<li>执行 <code>int 0x80</code></li>
+<li>其余工作由硬件入口和内核总入口接手</li>
+</ol>
+</div>
+</blockquote>
+<h4 id="69-system_callsys_call_tableret_from_sys_call-的关系">6.9 <code>system_call()</code>、<code>sys_call_table</code>、<code>ret_from_sys_call</code> 的关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#69-system_callsys_call_tableret_from_sys_call-的关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这是课件专门问的重点。</p>
+<h5 id="system_call"><code>system_call()</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#system_call" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>系统调用总入口</li>
+<li>它和 IDT 中第 128 号门直接对应</li>
+</ul>
+<h5 id="sys_call_table"><code>sys_call_table</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#sys_call_table" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>系统调用号 → 内核处理函数 的映射表</li>
+<li>例如：
+<ul>
+<li><code>3 → sys_read</code></li>
+<li><code>4 → sys_write</code></li>
+</ul>
+</li>
+</ul>
+<h5 id="ret_from_sys_call"><code>ret_from_sys_call</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ret_from_sys_call" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>系统调用执行完之后，不是直接 ” 啪一下回用户程序 ”</li>
+<li>而是先转到返回路径例程 <code>ret_from_sys_call</code></li>
+<li>在这里做返回前的收尾检查，再恢复现场回用户态</li>
+</ul>
+<p>最推荐你这样串起来记：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[int 0x80] --> B[IDT 第 128 项]\n    B --> C[system_call 总入口]\n    C --> D[sys_call_table 查表]\n    D --> E[具体内核函数 比如 sys_write]\n    E --> F[ret_from_sys_call]\n    F --> G[恢复现场 返回用户态]&quot;">flowchart LR
+    A[int 0x80] --> B[IDT 第 128 项]
+    B --> C[system_call 总入口]
+    C --> D[sys_call_table 查表]
+    D --> E[具体内核函数 比如 sys_write]
+    E --> F[ret_from_sys_call]
+    F --> G[恢复现场 返回用户态]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="610-save_all-在干什么">6.10 <code>SAVE_ALL</code> 在干什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#610-save_all-在干什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件给了 Linux 里的 <code>SAVE_ALL</code> 宏，它会把寄存器按顺序压栈：</p>
+<ul>
+<li><code>%es</code></li>
+<li><code>%ds</code></li>
+<li><code>%eax</code></li>
+<li><code>%ebp</code></li>
+<li><code>%edi</code></li>
+<li><code>%esi</code></li>
+<li><code>%edx</code></li>
+<li><code>%ecx</code></li>
+<li><code>%ebx</code></li>
+</ul>
+<p>然后把数据段寄存器切到内核数据段。</p>
+<p>它的本质作用就是：</p>
+<ul>
+<li>把执行现场尽量完整地保存下来</li>
+<li>让后续内核代码可以安全运行</li>
+</ul>
+<h4 id="611-system_call-的核心逻辑">6.11 <code>system_call()</code> 的核心逻辑<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#611-system_call-的核心逻辑" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件给出的片段可以概括成：</p>
+<ol>
+<li>先把系统调用号压栈</li>
+<li>执行 <code>SAVE_ALL</code></li>
+<li>检查 <code>EAX</code> 是否是合法系统调用号</li>
+<li>如果非法：
+<ul>
+<li>把返回值设成 <code>-ENOSYS</code></li>
+<li>跳到 <code>ret_from_sys_call</code></li>
+</ul>
+</li>
+<li>如果合法：
+<ul>
+<li>用 <code>EAX</code> 索引 <code>sys_call_table</code></li>
+<li>调用对应内核函数</li>
+</ul>
+</li>
+<li>把内核函数返回值写回保存现场中的 <code>EAX</code></li>
+<li>跳到 <code>ret_from_sys_call</code></li>
+</ol>
+<h4 id="612-ret_from_sys_call-在返回前做什么">6.12 <code>ret_from_sys_call</code> 在返回前做什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#612-ret_from_sys_call-在返回前做什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这也是实现层非常关键的细节。</p>
+<p>课件给的逻辑大概是：</p>
+<ol>
+<li>关中断</li>
+<li>检查 <code>need_resched</code>
+<ul>
+<li>如果需要重新调度，就先去调度</li>
+</ul>
+</li>
+<li>检查 <code>sigpending</code>
+<ul>
+<li>如果有待处理信号，就先处理信号</li>
+</ul>
+</li>
+<li>最后 <code>RESTORE_ALL</code>
+<ul>
+<li>弹栈恢复现场</li>
+<li>返回用户态</li>
+</ul>
+</li>
+</ol>
+<p>这说明一个很重要的事实：</p>
+<p><strong>系统调用完成 ≠ 立刻原样返回。</strong></p>
+<p>它还要先确认：</p>
+<ul>
+<li>现在是不是应该切换进程</li>
+<li>有没有待处理信号</li>
+<li>返回前是否还需要做额外清理</li>
+</ul>
+<h4 id="613-系统调用参数传递的一个小例子">6.13 系统调用参数传递的一个小例子<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#613-系统调用参数传递的一个小例子" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件给了这样一个伪码：</p>
+<p>假设有：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> sys_func</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> para1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> para2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span></code></pre></figure>
+<p>编译器可能做：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="asm" data-theme="github-light github-dark"><code data-language="asm" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0x8</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(%</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">esp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">), %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ecx</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   # para2 -> ecx</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0x4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(%</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">esp</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">), %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ebx</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   # para1 -> ebx</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl $0x3, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">eax</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        # 调用号 -> eax</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $0x80</span></span></code></pre></figure>
+<p>这个例子特别适合帮你看清楚：</p>
+<ul>
+<li>用户态原本参数在用户栈上</li>
+<li>进入系统调用前，库函数/编译器封装会先把它们搬到约定寄存器里</li>
+</ul>
+<hr/>
+<h3 id="7-为什么后来又有-sysentersysexit-和-syscallsysret">7. 为什么后来又有 <code>sysenter/sysexit</code> 和 <code>syscall/sysret</code>？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-为什么后来又有-sysentersysexit-和-syscallsysret" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>课件抛了一个追问：</p>
+<ul>
+<li>Pentium II 300 之后，X86 为什么又提供了 <code>sysenter/sysexit</code>？</li>
+<li>X86-64 又为什么有 <code>syscall/sysret</code>？</li>
+</ul>
+<p>这一讲不用把这些指令的细节背满，先抓住动机就够：</p>
+<p><code>int 0x80 / iret</code> 的路径比较通用，但开销不算小。</p>
+<p>后来处理器为了让系统调用更快，引入了更专用、更轻量的快速系统调用指令：</p>
+<ul>
+<li>32 位里：<code>sysenter / sysexit</code></li>
+<li>64 位里：<code>syscall / sysret</code></li>
+</ul>
+<p>所以它们并存，不是因为前者错了，而是因为：<br/>
+<strong>系统调用太常用了，值得专门优化入口和返回路径。</strong></p>
+<hr/>
+<h3 id="8-系统调用小结定义作用与准备条件">8. 系统调用小结：定义、作用与准备条件<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-系统调用小结定义作用与准备条件" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="81-这东西到底是什么">8.1 这东西到底是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#81-这东西到底是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件最后的小结里，系统调用的本质被压缩成几句话：</p>
+<ul>
+<li>它是用户程序调用操作系统子功能的方式</li>
+<li>它是一种特殊的过程调用</li>
+<li>它由特殊机器指令实现</li>
+<li>它是编程人员访问操作系统功能的唯一正规接口</li>
+<li>它让 CPU 从用户态进入内核态</li>
+</ul>
+<h4 id="82-它能做什么">8.2 它能做什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#82-它能做什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>通过系统调用，程序可以：</p>
+<ul>
+<li>动态申请和释放资源</li>
+<li>完成与硬件相关的工作</li>
+<li>控制程序执行</li>
+<li>请求内核提供文件、进程、设备等服务</li>
+</ul>
+<h4 id="83-完成一次系统调用需要哪些准备">8.3 完成一次系统调用，需要哪些准备？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#83-完成一次系统调用需要哪些准备" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>课件把条件分成了<strong>静态</strong>和<strong>动态</strong>两类，这是很好的整理方式。</p>
+<h5 id="静态准备">静态准备<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#静态准备" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>这些是系统事先就必须具备的：</p>
+<ul>
+<li>封装好的库函数 / API</li>
+<li>访管指令与陷入机制</li>
+<li>编译器对调用约定的支持</li>
+<li>操作系统完成初始化</li>
+<li>系统调用编号规则</li>
+<li>参数传递约定</li>
+<li>系统调用表</li>
+</ul>
+<h5 id="动态准备">动态准备<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#动态准备" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>这是调用发生时系统实际要做的：</p>
+<ul>
+<li>陷入内核</li>
+<li>进入总入口程序</li>
+<li>保存现场（压栈）</li>
+<li>查表分派</li>
+<li>执行具体服务例程</li>
+<li>执行返回路径</li>
+</ul>
+<hr/>
+<h3 id="9-中断发生后操作系统低层到底做了哪些步骤">9. 中断发生后，操作系统低层到底做了哪些步骤？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-中断发生后操作系统低层到底做了哪些步骤" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>课件最后给了一个非常适合考试和口头回答的 8 步总结。</p>
+<ol>
+<li><strong>硬件压栈</strong>：保存程序计数器等关键上下文</li>
+<li><strong>硬件从中断向量装入新的程序计数器等</strong></li>
+<li><strong>汇编语言过程保存寄存器值</strong></li>
+<li><strong>汇编语言过程设置新的堆栈</strong></li>
+<li><strong>C 语言中断服务程序运行</strong></li>
+<li><strong>调度程序决定下一个运行进程</strong></li>
+<li><strong>C 语言过程返回到汇编代码</strong></li>
+<li><strong>汇编过程开始运行新的当前进程</strong></li>
+</ol>
+<p>这一串步骤特别重要，因为它把：</p>
+<ul>
+<li>硬件</li>
+<li>汇编入口</li>
+<li>C 处理程序</li>
+<li>调度</li>
+<li>返回</li>
+</ul>
+<p>连成了一条完整路径。</p>
+<p>你会发现，这正是 ” 中断驱动操作系统 ” 的真实展开版。</p>
+<hr/>
+<h3 id="10-操作系统初始化与中断异常有什么关系">10. 操作系统初始化与中断/异常有什么关系？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-操作系统初始化与中断异常有什么关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这个问题课件没有单独长篇展开，但前后信息已经足够拼出来。</p>
+<p>初始化阶段至少要完成几件事：</p>
+<ul>
+<li>为各种中断 / 异常准备好处理程序</li>
+<li>设置中断向量表 / IDT</li>
+<li>准备好系统栈、内核入口、段描述符等环境</li>
+<li>配置系统调用入口（比如 <code>0x80 → system_call</code>）</li>
+</ul>
+<p>所以初始化的本质是：<br/>
+<strong>先把 ” 出事时该怎么接管 ” 的路修好，系统才敢真正跑起来。</strong></p>
+<hr/>
+<h3 id="11-内核的进入与退出把全图串起来">11. 内核的进入与退出：把全图串起来<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-内核的进入与退出把全图串起来" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>课件最后给了一张 ” 内核的进入与退出 ” 总图，特别适合用来收束这一讲。</p>
+<p>你可以这样理解：</p>
+<h4 id="进入内核的几条典型路径">进入内核的几条典型路径<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进入内核的几条典型路径" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ol>
+<li>
+<p><strong>系统调用</strong></p>
+<ul>
+<li>应用主动请求服务</li>
+</ul>
+</li>
+<li>
+<p><strong>异常</strong></p>
+<ul>
+<li>代码执行出错或需要特殊处理</li>
+</ul>
+</li>
+<li>
+<p><strong>中断</strong></p>
+<ul>
+<li>外设发事件，内核被动响应</li>
+</ul>
+</li>
+</ol>
+<h4 id="内核内部会发生什么">内核内部会发生什么<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#内核内部会发生什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>查中断向量表</li>
+<li>进入异常服务例程或系统调用实现</li>
+<li>调用设备驱动或内核子系统</li>
+<li>完成处理、更新状态</li>
+</ul>
+<h4 id="退出内核前会做什么">退出内核前会做什么<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#退出内核前会做什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>恢复现场</li>
+<li>必要时调度</li>
+<li>必要时处理信号</li>
+<li>最终返回用户态</li>
+</ul>
+<p>也就是说，应用程序平时运行在用户态，但随时可能因为：</p>
+<ul>
+<li>主动请求服务</li>
+<li>代码执行出错</li>
+<li>外设事件到来</li>
+</ul>
+<p>而进入内核。</p>
+<p>这就是 ” 内核进入与退出 ” 的主旋律。</p>
+<hr/>
+<h3 id="12-机制与策略分离">12. 机制与策略分离<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-机制与策略分离" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这是两讲里都隐约贯穿的设计思想，第二讲把它明确点出来了。</p>
+<h4 id="什么是机制">什么是机制？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#什么是机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>机制回答的是：<br/>
+<strong>能不能做、靠什么做。</strong></p>
+<p>例如：</p>
+<ul>
+<li>中断 / 异常硬件响应机制</li>
+<li>压栈保存现场</li>
+<li>查向量表</li>
+<li>通过陷入指令进入内核</li>
+<li>系统调用表查表分派</li>
+</ul>
+<p>这些东西强调的是：</p>
+<ul>
+<li>基础能力</li>
+<li>可重复使用的底层框架</li>
+<li>相对固定的实现方式</li>
+</ul>
+<h4 id="什么是策略">什么是策略？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#什么是策略" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>策略回答的是：<br/>
+<strong>具体怎么做、先做谁、按什么规则做。</strong></p>
+<p>例如：</p>
+<ul>
+<li>中断到来后先处理谁</li>
+<li>调度算法怎么选</li>
+<li>什么时候重调度</li>
+<li>哪些工作放上半部，哪些放下半部</li>
+</ul>
+<h4 id="为什么要分离">为什么要分离？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#为什么要分离" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>因为底层能力不应该每换一个需求就重造一遍，而上层规则又必须能灵活调整。</p>
+<p>一句话说就是：</p>
+<ul>
+<li><strong>机制提供能力</strong></li>
+<li><strong>策略决定使用方式</strong></li>
+</ul>
+<p>这也是操作系统设计里一个非常高频、非常有味道的思想。</p>
+<hr/>
+<h3 id="13-xv6-riscv-阅读任务该怎么看">13. xv6-riscv 阅读任务该怎么看<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#13-xv6-riscv-阅读任务该怎么看" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>课件最后给的是阅读要求，不是让你现在就背出所有 xv6 代码，但它已经告诉你 ” 应该去哪里看、看什么问题 “。</p>
+<h4 id="131-推荐阅读范围">13.1 推荐阅读范围<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#131-推荐阅读范围" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<h5 id="xv6-book-章节">xv6-book 章节<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#xv6-book-章节" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li>2.6</li>
+<li>4.1 ~ 4.5</li>
+<li>5.1 ~ 5.4</li>
+</ul>
+<h5 id="xv6-riscv-相关文件">xv6-riscv 相关文件<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#xv6-riscv-相关文件" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<ul>
+<li><code>entry.S</code></li>
+<li><code>start.c</code></li>
+<li><code>main.c</code></li>
+<li><code>trap.c</code></li>
+<li><code>trampoline.S</code></li>
+<li><code>syscall.h</code></li>
+<li><code>syscall.c</code></li>
+<li><code>kernelvec.S</code></li>
+<li><code>uart.c</code></li>
+<li><code>console.c</code></li>
+</ul>
+<h4 id="132-课件要求你回答的几个问题">13.2 课件要求你回答的几个问题<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#132-课件要求你回答的几个问题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<h5 id="1-xv6-riscv-有几个特权模式">1. xv6-riscv 有几个特权模式？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-xv6-riscv-有几个特权模式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>要结合：</p>
+<ul>
+<li><code>entry.S</code></li>
+<li><code>start.c</code></li>
+<li><code>main.c</code></li>
+<li>xv6-book 2.6</li>
+</ul>
+<p>去梳理启动阶段特权模式如何转换。</p>
+<h5 id="2-xv6-系统调用时系统调用号参数返回值通过哪些寄存器传">2. Xv6 系统调用时，系统调用号、参数、返回值通过哪些寄存器传？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-xv6-系统调用时系统调用号参数返回值通过哪些寄存器传" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>这是让你把 ” 系统调用约定 ” 落实到 RISC-V 上。</p>
+<h5 id="3-xv6-进程上下文切换时需要保存和恢复哪些寄存器">3. Xv6 进程上下文切换时，需要保存和恢复哪些寄存器？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-xv6-进程上下文切换时需要保存和恢复哪些寄存器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>这要求你读 trap 和上下文切换代码，而不是只看概念。</p>
+<h5 id="4-xv6-处理-trap-时几个控制寄存器分别干什么">4. Xv6 处理 Trap 时，几个控制寄存器分别干什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-xv6-处理-trap-时几个控制寄存器分别干什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>课件点名了：</p>
+<ul>
+<li><code>stvec</code></li>
+<li><code>sepc</code>（课件里打成 <code>spec</code>，实际看代码和文档时要注意）</li>
+<li><code>scause</code></li>
+<li><code>sstatus</code></li>
+</ul>
+<p>你要做的是把它们各自的职责说清楚。</p>
+<h5 id="5-devintr-和-uartintr-的流程是什么">5. <code>devintr</code> 和 <code>uartintr</code> 的流程是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-devintr-和-uartintr-的流程是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h5>
+<p>这是让你把 ” 中断处理 ” 具体落实到一个设备实例上。</p>
+<h4 id="133-这一部分真正的学习目标">13.3 这一部分真正的学习目标<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#133-这一部分真正的学习目标" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>xv6 这部分的真正作用不是让你死记源码，而是帮助你把这一讲里学到的抽象概念落地：</p>
+<ul>
+<li>特权模式不是空话</li>
+<li>trap 不是空话</li>
+<li>保存寄存器不是空话</li>
+<li>系统调用不是空话</li>
+<li>中断入口和返回路径都能在代码里看到</li>
+</ul>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>如果你前面这讲学完觉得 ” 我大概懂，但还是有点飘 “，那 xv6 就是把你从 ” 概念懂了 ” 拉到 ” 真能落地 ” 的桥。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="本讲小结-1">本讲小结<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#本讲小结-1" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这一讲最重要的，不是多记几个缩写，而是把整条逻辑链看清：</p>
+<ol>
+<li>操作系统要想管理整个系统，必须先有硬件提供的特权级支持。</li>
+<li>用户态程序不能直接碰硬件，进入内核的正规方式是中断 / 异常 / 陷入机制。</li>
+<li>中断和异常共同构成 ECF，也就是异常控制流。</li>
+<li>硬件负责响应和初始转移，软件负责真正处理和收尾。</li>
+<li>IA32 用 IDT、门描述符、特权级检查和栈切换把 ” 进入内核 ” 这件事变成了一条受控路径。</li>
+<li>系统调用是应用请求内核服务的唯一正规接口。</li>
+<li>在 Linux x86 中，<code>int 0x80 → IDT 第 128 项 → system_call → sys_call_table → 具体内核函数 → ret_from_sys_call → 返回用户态</code> 是最关键的一条实现链。</li>
+<li>中断发生后，真正的流程会跨越硬件、汇编入口、C 处理程序、调度与返回路径。</li>
+<li>机制与策略分离，是理解操作系统设计的一把总钥匙。</li>
+</ol>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Tip</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>如果这讲最后你只能留下一个总印象，我希望是这个：<br/>
+<strong>操作系统不是 ” 一个一直在前台跑的大程序 “，而是一个依靠特权机制和异常控制流，在关键时刻接管机器、完成处理、再把控制权交还出去的系统。</strong></p>
+</div>
+</blockquote></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-61" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#操作系统概述" data-for="操作系统概述">操作系统概述</a></li><li class="depth-1"><a href="#课件开头抛出的几个追问" data-for="课件开头抛出的几个追问">课件开头抛出的几个追问</a></li><li class="depth-1"><a href="#核心主线一操作系统是什么" data-for="核心主线一操作系统是什么">核心主线一：操作系统是什么？</a></li><li class="depth-1"><a href="#核心主线二从三个角度理解操作系统" data-for="核心主线二从三个角度理解操作系统">核心主线二：从三个角度理解操作系统</a></li><li class="depth-1"><a href="#核心主线三操作系统的四大特征" data-for="核心主线三操作系统的四大特征">核心主线三：操作系统的四大特征</a></li><li class="depth-1"><a href="#核心主线四发展历程与技术启示" data-for="核心主线四发展历程与技术启示">核心主线四：发展历程与技术启示</a></li><li class="depth-1"><a href="#核心主线五操作系统分类与关键技术" data-for="核心主线五操作系统分类与关键技术">核心主线五：操作系统分类与关键技术</a></li><li class="depth-1"><a href="#重点技术拆解spooling-技术" data-for="重点技术拆解spooling-技术">重点技术拆解：SPOOLing 技术</a></li><li class="depth-1"><a href="#课件里几个追问顺手讲清楚" data-for="课件里几个追问顺手讲清楚">课件里几个追问，顺手讲清楚</a></li><li class="depth-1"><a href="#本讲小结" data-for="本讲小结">本讲小结</a></li><li class="depth-0"><a href="#运行环境与运行机制" data-for="运行环境与运行机制">运行环境与运行机制</a></li><li class="depth-1"><a href="#课件开头真正想让你回答的问题" data-for="课件开头真正想让你回答的问题">课件开头真正想让你回答的问题</a></li><li class="depth-1"><a href="#1-基础运行环境硬件如何支持操作系统" data-for="1-基础运行环境硬件如何支持操作系统">1. 基础运行环境：硬件如何支持操作系统？</a></li><li class="depth-1"><a href="#2-核心动力中断与异常机制" data-for="2-核心动力中断与异常机制">2. 核心动力：中断与异常机制</a></li><li class="depth-1"><a href="#3-ia32--x86-对中断的具体支持" data-for="3-ia32--x86-对中断的具体支持">3. IA32 / X86 对中断的具体支持</a></li><li class="depth-1"><a href="#4-系统调用应用程序进入内核的唯一正规接口" data-for="4-系统调用应用程序进入内核的唯一正规接口">4. 系统调用：应用程序进入内核的唯一正规接口</a></li><li class="depth-1"><a href="#5-系统调用机制是怎么设计出来的" data-for="5-系统调用机制是怎么设计出来的">5. 系统调用机制是怎么设计出来的？</a></li><li class="depth-1"><a href="#6-linux-基于-x86-的系统调用实现" data-for="6-linux-基于-x86-的系统调用实现">6. Linux 基于 X86 的系统调用实现</a></li><li class="depth-1"><a href="#7-为什么后来又有-sysentersysexit-和-syscallsysret" data-for="7-为什么后来又有-sysentersysexit-和-syscallsysret">7. 为什么后来又有 sysenter/sysexit 和 syscall/sysret？</a></li><li class="depth-1"><a href="#8-系统调用小结定义作用与准备条件" data-for="8-系统调用小结定义作用与准备条件">8. 系统调用小结：定义、作用与准备条件</a></li><li class="depth-1"><a href="#9-中断发生后操作系统低层到底做了哪些步骤" data-for="9-中断发生后操作系统低层到底做了哪些步骤">9. 中断发生后，操作系统低层到底做了哪些步骤？</a></li><li class="depth-1"><a href="#10-操作系统初始化与中断异常有什么关系" data-for="10-操作系统初始化与中断异常有什么关系">10. 操作系统初始化与中断/异常有什么关系？</a></li><li class="depth-1"><a href="#11-内核的进入与退出把全图串起来" data-for="11-内核的进入与退出把全图串起来">11. 内核的进入与退出：把全图串起来</a></li><li class="depth-1"><a href="#12-机制与策略分离" data-for="12-机制与策略分离">12. 机制与策略分离</a></li><li class="depth-1"><a href="#13-xv6-riscv-阅读任务该怎么看" data-for="13-xv6-riscv-阅读任务该怎么看">13. xv6-riscv 阅读任务该怎么看</a></li><li class="depth-1"><a href="#本讲小结-1" data-for="本讲小结-1">本讲小结</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>
