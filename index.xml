@@ -9,62 +9,62 @@
     <title>index</title>
     <link>https://localhost/</link>
     <guid>https://localhost/</guid>
-    <description><![CDATA[ 这是属于释怀的咸鱼的笔记站，这是使用 osp（obsidian site publisher）构建并发布的。 . ]]></description>
-    <pubDate>Wed, 18 Mar 2026 12:24:36 GMT</pubDate>
+    <description><![CDATA[ 这是属于释怀的咸鱼的笔记站，这是使用 osp（obsidian site publisher）构建并发布的。 我准备将osp进一步完善. ]]></description>
+    <pubDate>Thu, 19 Mar 2026 02:54:02 GMT</pubDate>
   </item><item>
     <title>ob</title>
     <link>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob</link>
     <guid>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob</guid>
     <description><![CDATA[ 人和组织的行为动力学 * 核心概念与定义 组织管理心理学是一门专注于研究人（包括个体和群体）在组织中的行为的学科。其研究不仅仅停留在理论层面，更旨在通过科学的方法实现对组织行为的深度把控。 组织与管理的本质 组织：指两个或两个以上的个体以一定方式有意识地联系在一起，为达到共同的目标而按照一定规则从事活动的群体或社会单位。 管理：是让别人同自己一起工作，并通过别人来达到组织目标的过程。其实质在于 ” 使别人为组织目标而工作 ”。 本学科的研究目标遵循一套严密的逻辑递进关系，即： 描述：客观记录员工在不同情境下的行为表现。 解释：深入分析员工为什么会有这些行为。 预测：基于现有规律推断员工未来的行... ]]></description>
-    <pubDate>Wed, 18 Mar 2026 12:24:36 GMT</pubDate>
+    <pubDate>Thu, 19 Mar 2026 02:54:02 GMT</pubDate>
   </item><item>
     <title>ob_distill</title>
     <link>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob_distill</link>
     <guid>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob_distill</guid>
     <description><![CDATA[ 整体建构 把 OB 看作三个层级的输入 - 处理 - 输出系统 微观内核 个人特征与能力 传记特征 这些是简历上显而易见的信息，但对行为有稳定的预测作用。 年龄： 效应：年龄越大，离职率越低（机会少、福利绑定）；缺勤率越低（责任感强）；工作满意度通常较高。 误区：常被误认为生产率低，但实际上经验和技能往往能弥补体力的衰退。 性别： 核心结论：在工作绩效和分析解决问题能力上，男女没有显著差异。 差异点：女性的缺勤率往往高于男性，这主要归因于社会文化赋予女性更多的家庭照顾责任。 婚姻状况： 已婚员工通常缺勤率更低、离职率更低、满意度更高。原因在于婚姻带来的家庭责任感增加了对稳定工作的需求。 任职年... ]]></description>
-    <pubDate>Wed, 18 Mar 2026 12:24:36 GMT</pubDate>
+    <pubDate>Thu, 19 Mar 2026 02:54:02 GMT</pubDate>
   </item><item>
     <title>认知心理学</title>
     <link>https://localhost/Archive/%E8%AE%A4%E7%9F%A5%E5%BF%83%E7%90%86%E5%AD%A6</link>
     <guid>https://localhost/Archive/%E8%AE%A4%E7%9F%A5%E5%BF%83%E7%90%86%E5%AD%A6</guid>
     <description><![CDATA[ 认知心理学导论 * 心智与认知心理学的定义 心智（The Mind）的本质 结构主义： 心智创造和控制心理功能，例如知觉（perception）、记忆（memory）、情绪 （emotions）、语言（language）、决策（deciding）、思维（thinking）和推理 （reasoning）。 结构主义认为心智是这些功能的组合。 功能主义：心智是一个创造世界表征的系统，使我们能够在世界中行动以实现我们的目标。 这种观点强调心智的功能、生存和目标导向性（Goal-directed）。 认知心理学的定义 认知心理学是对心智（Mind）的研究，具体而言，它是对**心理过程（Mental P... ]]></description>
-    <pubDate>Wed, 18 Mar 2026 12:24:36 GMT</pubDate>
+    <pubDate>Thu, 19 Mar 2026 02:54:02 GMT</pubDate>
   </item><item>
     <title>main</title>
     <link>https://localhost/Archive/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%9F%BA%E7%A1%80/main</link>
     <guid>https://localhost/Archive/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%9F%BA%E7%A1%80/main</guid>
     <description><![CDATA[ 机器学习 基本定义 机器学习 是研究如何设计算法，使得模型基于数据经验，不断提高在特定任务上的表现。 任务（Task）：分类、回归、聚类、强化学习等 经验（Experience）：训练数据 表现（Performance）：损失函数、准确率等评价指标 有监督学习：如分类与回归，需要带标签训练数据 无监督学习：如聚类、密度估计、降维，不需要标签 半监督学习：部分数据有标签，结合无监督策略 弱监督学习：标签不完全或不准确 强化学习：通过与环境交互进行学习 常见损失函数 不同的任务采用不同的损失函数，以下是机器学习中常见的几类损失函数： 0/1 损失（分类）：用于最简单的准确率衡量 \text{los... ]]></description>
-    <pubDate>Wed, 18 Mar 2026 12:24:36 GMT</pubDate>
+    <pubDate>Thu, 19 Mar 2026 02:54:02 GMT</pubDate>
   </item><item>
     <title>离散数学基础</title>
     <link>https://localhost/Archive/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80</link>
     <guid>https://localhost/Archive/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80</guid>
     <description><![CDATA[ 第 5 章 图的基本概念 1. 图的定义及运算 1. ]]></description>
-    <pubDate>Wed, 18 Mar 2026 12:24:36 GMT</pubDate>
+    <pubDate>Thu, 19 Mar 2026 02:54:02 GMT</pubDate>
   </item><item>
     <title>计算机组成与体系结构</title>
     <link>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84</link>
     <guid>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84</guid>
     <description><![CDATA[ 导论 冯诺依曼结构 现代计算机的共同理论基础 A. ]]></description>
-    <pubDate>Wed, 18 Mar 2026 12:24:36 GMT</pubDate>
+    <pubDate>Thu, 19 Mar 2026 02:54:02 GMT</pubDate>
   </item><item>
     <title>part3</title>
     <link>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%AF%BC%E8%AE%BA/part3</link>
     <guid>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%AF%BC%E8%AE%BA/part3</guid>
     <description><![CDATA[ System IO Unix I/O Unix I/O 是操作系统内核提供的一组用于输入输出的低级系统调用接口。 核心概念 文件即字节序列：Linux 文件仅仅是 m 个字节的序列 (B_0, B_1, …, B_m)。 万物皆文件：所有的 I/O 设备都被模型化为文件，包括： 网络、磁盘分区 (/dev/sda2) 终端 (/dev/tty2) 甚至内核数据结构 (/proc) 统一接口：这种优雅的映射允许内核导出一个简单的 Unix I/O 接口来处理所有设备： 打开 (open) / 关闭 (close) 读 (read) / 写 (write) 改变当前文件位置 (lseek) 文件类... ]]></description>
-    <pubDate>Wed, 18 Mar 2026 12:24:36 GMT</pubDate>
+    <pubDate>Thu, 19 Mar 2026 02:54:02 GMT</pubDate>
   </item><item>
     <title>part2</title>
     <link>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%AF%BC%E8%AE%BA/part2</link>
     <guid>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%AF%BC%E8%AE%BA/part2</guid>
     <description><![CDATA[ 指令集体系结构 (ISA) 与逻辑设计 这部分内容介绍了计算机系统的软硬件接口（ISA）以及实现它的基本硬件构建块（逻辑设计）。 指令集体系结构 (ISA) ISA（Instruction Set Architecture）是一种抽象层，位于编译器/操作系统和 CPU 硬件设计之间。 对上层（程序员视角） ：它定义了机器如何被编程 。这包括： 处理器状态：如寄存器、内存等。 指令：如 addq, pushq, ret 等。 指令编码：指令如何被编码为字节。 对下层（硬件设计者视角） ：它定义了需要构建什么样的硬件 。 处理器按顺序执行指令 。 硬件可以使用各种技巧来提高运行速度，例如同时执行多... ]]></description>
-    <pubDate>Wed, 18 Mar 2026 12:24:36 GMT</pubDate>
+    <pubDate>Thu, 19 Mar 2026 02:54:02 GMT</pubDate>
   </item><item>
     <title>part1</title>
     <link>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%AF%BC%E8%AE%BA/part1</link>
     <guid>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%AF%BC%E8%AE%BA/part1</guid>
     <description><![CDATA[ Session1 区分位级运算和逻辑运算：位级运算操作的是位，逻辑运算只看是不是 0 移位运算 右移区分逻辑右移和算术右移 逻辑右移用 0 补齐高位（一般是无符号数） 算术右移用符号位补齐高位（一般是有符号数） ！！！位运算要加上括号（datalab 有很多题都是因为这个有 bug） 基本数据类型 char 1byte 对于 char s[]=“ILOVEICS” sizeof(s) 计算的是加上 \0 的长度 strlen(s) 计算的是不加 \0 的长度 unsigned char 1byte short 2byte int 4byte TMAX=2147483647 -TMIN=TMIN... ]]></description>
-    <pubDate>Wed, 18 Mar 2026 12:24:36 GMT</pubDate>
+    <pubDate>Thu, 19 Mar 2026 02:54:02 GMT</pubDate>
   </item>
     </channel>
   </rss>
