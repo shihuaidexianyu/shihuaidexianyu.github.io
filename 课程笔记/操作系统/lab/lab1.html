@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr"><head><title>lab1</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="lab1"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="lab1"/><meta name="twitter:description" content="xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用 本部分的核心任务不是编写一组新的用户程序，而是在现有 xv6-k210 内核上建立一套能够兼容预编译测试程序的系统调用接口，使系统可以正确启动、装载测试程序、输出可比对结果，并在测试结束后稳定退出。测试覆盖 getcwd、write、getpid、times 与 uname 五个点，因此这一部分同时涉及启动链路、自举机制、评测流程、系统调用号 ABI 对齐，以及若干系统调用的实现或适配。(Arthals’ ink) initcode xv6 在 QEMU 中的启动链路由虚拟硬件环境、引导固件、内核初始化和首个用户进程启动四个..."/><meta property="og:description" content="xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用 本部分的核心任务不是编写一组新的用户程序，而是在现有 xv6-k210 内核上建立一套能够兼容预编译测试程序的系统调用接口，使系统可以正确启动、装载测试程序、输出可比对结果，并在测试结束后稳定退出。测试覆盖 getcwd、write、getpid、times 与 uname 五个点，因此这一部分同时涉及启动链路、自举机制、评测流程、系统调用号 ABI 对齐，以及若干系统调用的实现或适配。(Arthals’ ink) initcode xv6 在 QEMU 中的启动链路由虚拟硬件环境、引导固件、内核初始化和首个用户进程启动四个..."/><meta property="og:image:alt" content="xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用 本部分的核心任务不是编写一组新的用户程序，而是在现有 xv6-k210 内核上建立一套能够兼容预编译测试程序的系统调用接口，使系统可以正确启动、装载测试程序、输出可比对结果，并在测试结束后稳定退出。测试覆盖 getcwd、write、getpid、times 与 uname 五个点，因此这一部分同时涉及启动链路、自举机制、评测流程、系统调用号 ABI 对齐，以及若干系统调用的实现或适配。(Arthals’ ink) initcode xv6 在 QEMU 中的启动链路由虚拟硬件环境、引导固件、内核初始化和首个用户进程启动四个..."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/lab/lab1"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/lab/lab1"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用 本部分的核心任务不是编写一组新的用户程序，而是在现有 xv6-k210 内核上建立一套能够兼容预编译测试程序的系统调用接口，使系统可以正确启动、装载测试程序、输出可比对结果，并在测试结束后稳定退出。测试覆盖 getcwd、write、getpid、times 与 uname 五个点，因此这一部分同时涉及启动链路、自举机制、评测流程、系统调用号 ABI 对齐，以及若干系统调用的实现或适配。(Arthals’ ink) initcode xv6 在 QEMU 中的启动链路由虚拟硬件环境、引导固件、内核初始化和首个用户进程启动四个..."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+<html lang="en" dir="ltr"><head><title>lab1</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="lab1"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="lab1"/><meta name="twitter:description" content="xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用 本部分的核心任务不是编写一组新的用户程序，而是在现有 xv6-k210 内核上建立一套能够兼容预编译测试程序的系统调用接口，使系统可以正确启动、装载测试程序、输出可比对结果，并在测试结束后稳定退出。Part 1 的测试点集中在 getcwd、write、getpid、times 与 uname，因此这一部分同时牵涉启动链路、自举机制、评测流程、系统调用 ABI 对齐、首进程构造以及若干系统调用的实现或适配。 一、整体任务与系统主线 从工程角度看，Part 1 的工作不是零散地补几个系统调用，而是打通一条完整链路： 使用户态测..."/><meta property="og:description" content="xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用 本部分的核心任务不是编写一组新的用户程序，而是在现有 xv6-k210 内核上建立一套能够兼容预编译测试程序的系统调用接口，使系统可以正确启动、装载测试程序、输出可比对结果，并在测试结束后稳定退出。Part 1 的测试点集中在 getcwd、write、getpid、times 与 uname，因此这一部分同时牵涉启动链路、自举机制、评测流程、系统调用 ABI 对齐、首进程构造以及若干系统调用的实现或适配。 一、整体任务与系统主线 从工程角度看，Part 1 的工作不是零散地补几个系统调用，而是打通一条完整链路： 使用户态测..."/><meta property="og:image:alt" content="xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用 本部分的核心任务不是编写一组新的用户程序，而是在现有 xv6-k210 内核上建立一套能够兼容预编译测试程序的系统调用接口，使系统可以正确启动、装载测试程序、输出可比对结果，并在测试结束后稳定退出。Part 1 的测试点集中在 getcwd、write、getpid、times 与 uname，因此这一部分同时牵涉启动链路、自举机制、评测流程、系统调用 ABI 对齐、首进程构造以及若干系统调用的实现或适配。 一、整体任务与系统主线 从工程角度看，Part 1 的工作不是零散地补几个系统调用，而是打通一条完整链路： 使用户态测..."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/lab/lab1"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/lab/lab1"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用 本部分的核心任务不是编写一组新的用户程序，而是在现有 xv6-k210 内核上建立一套能够兼容预编译测试程序的系统调用接口，使系统可以正确启动、装载测试程序、输出可比对结果，并在测试结束后稳定退出。Part 1 的测试点集中在 getcwd、write、getpid、times 与 uname，因此这一部分同时牵涉启动链路、自举机制、评测流程、系统调用 ABI 对齐、首进程构造以及若干系统调用的实现或适配。 一、整体任务与系统主线 从工程角度看，Part 1 的工作不是零散地补几个系统调用，而是打通一条完整链路： 使用户态测..."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
   position: absolute;
   display: flex;
   float: right;
@@ -115,96 +115,680 @@ pre:hover > .expand-button {
   padding: 0 12px;
   font-size: 14px;
 }
-/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/lab/lab1"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-116"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-116" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/lab/">lab</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lab1</a></div></nav><h1 class="article-title">lab1</h1><p show-comma="true" class="content-meta"><time datetime="2026-03-20T06:36:05.897Z">Mar 20, 2026</time><span>29 min read</span></p></div></div><article class="popover-hint"><h1 id="xv6-os-lab-part-1系统启动自举过程与首批系统调用">xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#xv6-os-lab-part-1系统启动自举过程与首批系统调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
-<p>本部分的核心任务不是编写一组新的用户程序，而是在现有 xv6-k210 内核上建立一套能够兼容预编译测试程序的系统调用接口，使系统可以正确启动、装载测试程序、输出可比对结果，并在测试结束后稳定退出。测试覆盖 <code>getcwd</code>、<code>write</code>、<code>getpid</code>、<code>times</code> 与 <code>uname</code> 五个点，因此这一部分同时涉及启动链路、自举机制、评测流程、系统调用号 ABI 对齐，以及若干系统调用的实现或适配。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<h2 id="initcode">initcode<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#initcode" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p>xv6 在 QEMU 中的启动链路由虚拟硬件环境、引导固件、内核初始化和首个用户进程启动四个层面构成。QEMU 提供 CPU、内存和块设备等虚拟硬件；RustSBI 作为引导固件首先运行，完成硬件初始化并装载内核；内核接管控制权后完成进程管理、内存管理与文件系统挂载；随后内核创建第一个用户进程并执行 <code>initcode</code>，由它发起 <code>exec(&quot;/init&quot;)</code>，最终把控制权交给 <code>/init</code> 程序。这个链路决定了 Part 1 中所有测试都以 <code>/init</code> 为用户态入口，而不是直接从 shell 启动。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TD\n    A[\&quot;QEMU 提供虚拟硬件\&quot;] --> B[\&quot;RustSBI 启动并装载内核\&quot;]\n    B --> C[\&quot;内核初始化\&quot;]\n    C --> D[\&quot;挂载 fs.img\&quot;]\n    D --> E[\&quot;userinit 创建 PID=1\&quot;]\n    E --> F[\&quot;将 initcode 机器码复制到首进程地址空间\&quot;]\n    F --> G[\&quot;initcode 执行 exec('/init')\&quot;]\n    G --> H[\&quot;内核装载 /init\&quot;]\n    H --> I[\&quot;/init 顺序执行测试程序或启动 shell\&quot;]&quot;">graph TD
-    A[&quot;QEMU 提供虚拟硬件&quot;] --> B[&quot;RustSBI 启动并装载内核&quot;]
-    B --> C[&quot;内核初始化&quot;]
-    C --> D[&quot;挂载 fs.img&quot;]
-    D --> E[&quot;userinit 创建 PID=1&quot;]
-    E --> F[&quot;将 initcode 机器码复制到首进程地址空间&quot;]
-    F --> G[&quot;initcode 执行 exec('/init')&quot;]
-    G --> H[&quot;内核装载 /init&quot;]
-    H --> I[&quot;/init 顺序执行测试程序或启动 shell&quot;]
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/lab/lab1"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-117"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-117" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/lab/">lab</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lab1</a></div></nav><h1 class="article-title">lab1</h1><p show-comma="true" class="content-meta"><time datetime="2026-03-20T12:32:15.474Z">Mar 20, 2026</time><span>34 min read</span></p></div></div><article class="popover-hint"><h1 id="xv6-os-lab-part-1系统启动自举过程与首批系统调用">xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#xv6-os-lab-part-1系统启动自举过程与首批系统调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<p>本部分的核心任务不是编写一组新的用户程序，而是在现有 xv6-k210 内核上建立一套能够兼容预编译测试程序的系统调用接口，使系统可以正确启动、装载测试程序、输出可比对结果，并在测试结束后稳定退出。Part 1 的测试点集中在 <code>getcwd</code>、<code>write</code>、<code>getpid</code>、<code>times</code> 与 <code>uname</code>，因此这一部分同时牵涉启动链路、自举机制、评测流程、系统调用 ABI 对齐、首进程构造以及若干系统调用的实现或适配。</p>
+<h2 id="一整体任务与系统主线">一、整体任务与系统主线<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#一整体任务与系统主线" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>从工程角度看，Part 1 的工作不是零散地补几个系统调用，而是打通一条完整链路：</p>
+<ol>
+<li>使用户态测试程序所使用的系统调用号与内核分发表完全一致；</li>
+<li>使首个用户进程能够在当前平台上正确启动；</li>
+<li>使 <code>/init</code> 能够按预期顺序调度测试程序；</li>
+<li>使测试输出经过 <code>write</code> 稳定写到 QEMU 标准输出，供评测脚本逐字比对；</li>
+<li>使测试结束后系统能够通过 <code>shutdown</code> 正常退出，而不是悬停或触发 <code>panic: init exiting</code>。</li>
+</ol>
+<p>这一主线可概括为：先对齐 ABI，再重建 <code>initcode</code>，随后补齐关机与测试所需系统调用，最后将本地运行路径与平台评测路径分别处理。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;\nflowchart TD\n\n    A[统一系统调用号] --> B[重建 initcode]\n\n    B --> C[补全 shutdown 调用链]\n\n    C --> D[修正 getcwd 语义]\n\n    D --> E[补齐 times]\n\n    E --> F[补齐 uname]\n\n    F --> G[确认 write 与 getpid ABI 已对齐]\n\n    G --> H[区分本地与平台构建路径]\n\n    H --> I[按固定顺序运行测试并正常关机]\n&quot;">
+flowchart TD
+
+    A[统一系统调用号] --> B[重建 initcode]
+
+    B --> C[补全 shutdown 调用链]
+
+    C --> D[修正 getcwd 语义]
+
+    D --> E[补齐 times]
+
+    E --> F[补齐 uname]
+
+    F --> G[确认 write 与 getpid ABI 已对齐]
+
+    G --> H[区分本地与平台构建路径]
+
+    H --> I[按固定顺序运行测试并正常关机]
+
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<p><code>initcode</code> 的意义在于完成系统自举。首个用户进程出现时，完整的用户态运行时环境尚未建立，因而不可能依赖动态链接器、标准库或常规 ELF 装载路径来“再去启动第一个加载器”。因此，<code>initcode</code> 只能是一段极小、纯粹、可直接复制到用户地址空间中执行的机器码；内核只需把它作为字节数组写入首进程内存，再把 PC 交给它，就能由该进程主动发起 <code>exec(&quot;/init&quot;)</code>，从而把真正的用户态初始化程序装入进程映像。<code>initcode</code> 不是长期运行的用户程序，而是把“没有用户态环境”过渡到“已有 <code>/init</code> 可运行”的最小桥梁。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>在实现上，<code>initcode</code> 先由 <code>xv6-user/initcode.S</code> 编译为机器码，再以 <code>uchar initcode[]</code> 的形式嵌入内核镜像；<code>userinit()</code> 为 PID 1 分配进程结构后，不从磁盘读取任何程序文件，而是直接把这段字节流复制到新进程地址空间中。调度器开始运行该进程后，它执行的第一组用户态指令就是 <code>initcode</code> 本身；当 <code>exec(&quot;/init&quot;)</code> 发出以后，控制流重新陷入内核，内核从文件系统中装载 <code>/init</code>，用其覆盖原有的 <code>initcode</code> 映像，随后返回用户态执行 <code>/init</code> 的主逻辑。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>Part 1 对 <code>initcode</code> 的处理之所以成为问题，根本原因在于所基于的 k210 框架较早，其原始 <code>initcode.S</code> 面向 32 位 RISC-V，而当前实验环境是 64 位 RISC-V；同时，<code>initcode.S</code> 中又通过 <code>SYS_exec</code>、<code>SYS_exit</code> 等宏依赖 <code>sysnum.h</code> 中的系统调用号，因此只要系统调用编号发生调整，<code>initcode</code> 就必须重新生成，否则首进程会在最早阶段因调用号不匹配而出现 <code>unknown sys call</code>。这说明 <code>initcode</code> 既受 ISA 位宽影响，也受系统调用 ABI 影响。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>网页材料采用了一种区分本地测试与平台评测的双路径设计。本地测试时，使用理想的短自举片段 <code>initcode.S</code> 生成 <code>initcode.h</code>，再通过 <code>exec(&quot;/init&quot;)</code> 装载 <code>/init</code>；平台评测时，由于提供的预编译 <code>sdcard.img</code> 中没有可供装载的 <code>/init</code>，且编译阶段也无法改写平台镜像，因此将完整 <code>init</code> 程序的机器码直接硬编码到 <code>initcode.h</code> 中，使首进程一开始就运行整段 <code>/init</code> 逻辑。前者更符合自举的设计本义，后者则是受评测环境约束而产生的工程折中。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>这种折中的直接后果是：本地与平台的 <code>Makefile</code> 目标需要分流。<code>dump</code> 过程在一种模式下把短 <code>initcode.S</code> 转成字节数组，在另一种模式下则把 <code>_init</code> 这个完整用户程序转成字节数组；<code>proc.c</code> 中的 <code>initcode[]</code> 不再手动书写机器码，而是通过 <code>#include &quot;include/initcode.h&quot;</code> 引入自动生成的字节序列。这样，<code>initcode</code> 的维护工作从“修改一串裸字节”转为“修改汇编或用户程序并重新生成头文件”，显著降低了维护成本。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<h2 id="评测流程">评测流程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#评测流程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p>Part 1 的评测对象是内核，不是测试程序本身。<code>riscv64/</code> 目录中的测试文件已经在标准 Linux 环境下预编译完成，它们的职责是调用约定好的系统调用接口，检查返回值与副作用是否满足预期，并通过 <code>printf</code> 打印标准化输出。由于 <code>printf</code> 最终依赖 <code>write</code> 系统调用，测试结果会沿着“用户程序输出 → 内核 <code>write</code> → QEMU 标准输出”的路径暴露给外部评测脚本，评测端再把整个输出文本与标准答案逐字比较。只要输出完全一致，测试即判定为通过。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>因此，虚拟磁盘中实际共存两类用户程序。第一类是 <code>xv6-user/</code> 目录下由本地构建系统编译得到的原生 xv6 用户程序，例如 <code>ls</code>、<code>cat</code>、<code>init</code> 等，它们为 shell 环境和基础用户态功能服务。第二类是 <code>riscv64/</code> 目录下直接复制到 <code>fs.img</code> 根目录中的预编译测试二进制，例如 <code>/getcwd</code>、<code>/write</code>、<code>/getpid</code> 等，它们不参与本地重新编译，存在的唯一目的就是对内核接口进行自动化验收。二者在文件系统中的位置、来源和用途均不相同。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TD\n    A[\&quot;/init\&quot;] --> B[\&quot;fork 子进程\&quot;]\n    B --> C[\&quot;exec 某个测试程序\&quot;]\n    C --> D[\&quot;测试程序调用系统调用\&quot;]\n    D --> E[\&quot;内核处理并返回结果\&quot;]\n    E --> F[\&quot;测试程序 printf 输出\&quot;]\n    F --> G[\&quot;write 输出到 QEMU 标准输出\&quot;]\n    G --> H[\&quot;评测脚本捕获文本\&quot;]\n    H --> I[\&quot;与标准答案逐字比对\&quot;]\n    I --> J[\&quot;全部完成后 shutdown 退出\&quot;]&quot;">graph TD
-    A[&quot;/init&quot;] --> B[&quot;fork 子进程&quot;]
-    B --> C[&quot;exec 某个测试程序&quot;]
-    C --> D[&quot;测试程序调用系统调用&quot;]
-    D --> E[&quot;内核处理并返回结果&quot;]
-    E --> F[&quot;测试程序 printf 输出&quot;]
-    F --> G[&quot;write 输出到 QEMU 标准输出&quot;]
-    G --> H[&quot;评测脚本捕获文本&quot;]
-    H --> I[&quot;与标准答案逐字比对&quot;]
-    I --> J[&quot;全部完成后 shutdown 退出&quot;]
+<h2 id="二启动链路与首进程的形成">二、启动链路与首进程的形成<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#二启动链路与首进程的形成" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>xv6 在 QEMU 中的启动过程由虚拟硬件、引导固件、内核初始化与首个用户进程启动四个层面组成。QEMU 提供 CPU、内存和块设备等虚拟硬件；RustSBI 作为引导固件首先运行，完成底层初始化并装载内核；内核接管控制权后完成进程管理、内存管理与文件系统挂载；随后内核创建第一个用户进程，并让它执行一段极小的用户态启动代码，由这段代码继续将控制权交给真正的 <code>/init</code> 程序。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;\ngraph TD\n\n    A[QEMU 提供虚拟硬件] --> B[RustSBI 启动并装载内核]\n\n    B --> C[内核初始化]\n\n    C --> D[挂载文件系统镜像]\n\n    D --> E[userinit 创建 PID=1]\n\n    E --> F[将 initcode 复制到首进程地址空间]\n\n    F --> G[首进程执行 initcode]\n\n    G --> H[执行 /init 或直接进入完整 init 逻辑]\n\n    H --> I[\&quot;/init 调度测试程序或启动 shell\&quot;]\n&quot;">
+graph TD
+
+    A[QEMU 提供虚拟硬件] --> B[RustSBI 启动并装载内核]
+
+    B --> C[内核初始化]
+
+    C --> D[挂载文件系统镜像]
+
+    D --> E[userinit 创建 PID=1]
+
+    E --> F[将 initcode 复制到首进程地址空间]
+
+    F --> G[首进程执行 initcode]
+
+    G --> H[执行 /init 或直接进入完整 init 逻辑]
+
+    H --> I[&quot;/init 调度测试程序或启动 shell&quot;]
+
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<p>为了匹配这种评测模型，<code>/init</code> 不再承担“启动 shell 并长期驻留”的传统职责，而是被改造为一个测试调度器。它预先保存待测程序名数组 <code>{&quot;getcwd&quot;,&quot;write&quot;,&quot;getpid&quot;,&quot;times&quot;,&quot;uname&quot;}</code>，在主循环中依次执行 <code>fork</code>、<code>exec</code> 与 <code>wait</code>，保证每轮只运行一个测试程序，并等待其结束后再进入下一轮。这样可以获得稳定、可预测的输出顺序，并把每个测试点的输出与前后流程严格分隔开来。所有测试结束后，<code>/init</code> 调用 <code>shutdown()</code> 触发关机，避免程序悬停造成平台超时。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<h2 id="系统调用号对齐">系统调用号对齐<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#系统调用号对齐" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p>Part 1 的第一项基础工作是让内核的系统调用号与测试程序所遵循的 ABI 保持一致。原因在于 xv6-k210 原始实现虽然已经带有 <code>write</code>、<code>read</code>、<code>fork</code>、<code>exec</code> 等基本系统调用，但这些处理函数对应的编号采用的是项目自身的旧约定，而测试程序是按照标准 Linux 的 RISC-V 系统调用号编译的。以 <code>write</code> 为例，原项目编号为 <code>16</code>，而 Linux 约定编号为 <code>64</code>；如果用户程序把 <code>64</code> 放入 <code>a7</code> 发起 <code>ecall</code>，而内核仍把 <code>16</code> 视为 <code>sys_write</code> 的入口，那么分发表就会在 <code>64</code> 号位置找不到正确处理函数，从而报出 <code>unknown sys call</code>。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>系统调用号对齐的本质，是让“用户态约定的编号”和“内核态分发表的索引”重新对应起来。对 Part 1 来说，真正关键的是与启动和测试相关的一组编号：<code>SYS_getcwd = 17</code>、<code>SYS_write = 64</code>、<code>SYS_exec = 221</code>、<code>SYS_exit = 93</code>、<code>SYS_wait = 3</code>、<code>SYS_getpid = 172</code>，以及新增的 <code>SYS_shutdown = 210</code>。这些编号决定了首进程能否顺利执行 <code>exec(&quot;/init&quot;)</code>，决定了测试程序能否命中既有的 <code>write</code>、<code>getpid</code> 等处理函数，也决定了测试流程结束后能否正确触发关机。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>系统调用号一旦修改，<code>initcode</code> 也必须同步重建。原因在于 <code>initcode.S</code> 内部并不是直接写死某个数字，而是通过 <code>SYS_exec</code>、<code>SYS_exit</code> 这样的宏生成机器码；如果系统调用号表发生变更而 <code>initcode</code> 没有重生成，那么它携带的仍是旧 ABI 下的编号，首进程在最早的自举阶段就会失败。系统调用号调整因此不是单纯编辑头文件，而是会沿着“头文件定义 → 汇编生成 → 机器码嵌入 → 首进程执行”这一整条链路传播。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p><code>write</code> 与 <code>getpid</code> 之所以在 Part 1 中不需要额外编写内核实现，正是因为原项目已经具备相应处理函数，问题只出在调用号不匹配。完成调用号对齐后，测试程序发出的 Linux 风格系统调用号就会被准确分发到现有的 <code>sys_write</code> 与 <code>sys_getpid</code> 等处理函数上，因此这两个测试点本质上属于 ABI 适配问题，而不是新增功能实现问题。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<h2 id="shutdown">shutdown<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#shutdown" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p><code>shutdown</code> 的作用是为测试流程提供一个显式、可控的终止机制。网页材料指出，在某些本地路径下即使不添加它也未必立即出错，但在平台评测中，若系统在所有测试完成后不能可靠退出，就可能因持续运行而引发超时。因此，把“测试全部执行完毕”与“虚拟机终止”之间建立起一个明确的系统调用接口，可以把评测结束从偶然行为变成确定行为。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p><code>shutdown</code> 的用户态可用性依赖于 xv6 自身的系统调用封装链。对于 <code>xv6-user/</code> 下的源代码程序，仅在 <code>user.h</code> 中声明函数还不够，还必须在 <code>usys.pl</code> 中登记入口，才能自动生成对应的用户态汇编存根。该存根的职责是在用户态把 <code>SYS_shutdown</code> 装入 <code>a7</code>，执行 <code>ecall</code>，并在返回后恢复普通函数调用语义。没有这一步，<code>init.c</code> 虽然可以写出 <code>shutdown()</code> 这样的调用表达式，但链接阶段找不到对应符号。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>与之相对，预编译测试程序不需要在 <code>usys.pl</code> 中再次注册，因为它们在生成二进制时已经把各自的系统调用封装为底层机器码，运行时会直接执行 <code>li a7, &lt;syscall_no>; ecall</code> 这样的序列。<code>usys.pl</code> 面向的是 xv6 自己重新编译的用户态源程序，而不是外部已经编译完成的测试二进制。这个差异解释了为什么 <code>shutdown</code> 需要补全用户态包装，而 <code>getcwd</code>、<code>times</code>、<code>uname</code> 这些由外部测试程序触发的接口本身并不依赖 xv6 的 <code>usys.pl</code> 才能被调用。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>在内核侧，<code>shutdown</code> 需要三层映射关系同时成立。第一层是 <code>sysnum.h</code> 中给出 <code>SYS_shutdown = 210</code>；第二层是 <code>kernel/syscall.c</code> 中把编号 <code>210</code> 映射到 <code>sys_shutdown</code>；第三层是 <code>kernel/sysproc.c</code> 中真正定义 <code>sys_shutdown()</code>，其函数体只调用 <code>sbi_shutdown()</code> 即可。系统调用分发表位于 <code>syscall.c</code>，而具体功能实现根据类别放在不同的 <code>sys*.c</code> 文件中。网页材料将 <code>shutdown</code>、<code>getpid</code>、<code>uname</code>、<code>times</code> 归入 <code>sysproc.c</code>，将 <code>write</code> 与 <code>getcwd</code> 归入 <code>sysfile.c</code>，而 <code>syscall.c</code> 仅负责分发。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p><code>shutdown</code> 的底层语义涉及两次特权级跃迁。第一次跃迁发生在用户程序调用 <code>shutdown()</code> 时，<code>ecall</code> 使 CPU 从 U 模式进入 S 模式，由内核的系统调用分发逻辑处理 <code>SYS_shutdown</code>。第二次跃迁发生在 <code>sys_shutdown()</code> 内部调用 <code>sbi_shutdown()</code> 时，这个 SBI 调用再次通过环境调用从 S 模式进入 M 模式，交由 RustSBI 这样的底层固件执行真正的关机操作。因而，<code>shutdown</code> 表面上是一个普通系统调用，实质上把“用户态测试结束”转换成了“通过内核向固件请求关闭虚拟机”的控制链。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TD\n    A[\&quot;用户态 /init 调用 shutdown()\&quot;] --> B[\&quot;a7 = SYS_shutdown\&quot;]\n    B --> C[\&quot;ecall: U-mode → S-mode\&quot;]\n    C --> D[\&quot;syscall.c 分发到 sys_shutdown\&quot;]\n    D --> E[\&quot;sys_shutdown 调用 sbi_shutdown()\&quot;]\n    E --> F[\&quot;ecall: S-mode → M-mode\&quot;]\n    F --> G[\&quot;RustSBI 处理关机请求\&quot;]\n    G --> H[\&quot;QEMU 退出\&quot;]&quot;">graph TD
-    A[&quot;用户态 /init 调用 shutdown()&quot;] --> B[&quot;a7 = SYS_shutdown&quot;]
-    B --> C[&quot;ecall: U-mode → S-mode&quot;]
-    C --> D[&quot;syscall.c 分发到 sys_shutdown&quot;]
-    D --> E[&quot;sys_shutdown 调用 sbi_shutdown()&quot;]
-    E --> F[&quot;ecall: S-mode → M-mode&quot;]
-    F --> G[&quot;RustSBI 处理关机请求&quot;]
-    G --> H[&quot;QEMU 退出&quot;]
+<p>这一链路决定了 Part 1 中所有测试都以 <code>/init</code> 为用户态入口，而不是由 shell 手工启动。首进程的构造方式直接影响后续所有测试程序是否能够被正确装载和执行。</p>
+<h2 id="三initcode-的作用与自举意义">三、<code>initcode</code> 的作用与自举意义<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#三initcode-的作用与自举意义" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>initcode</code> 的作用是完成系统自举。首个用户进程出现时，完整的用户态运行环境尚未建立，因而不能依赖动态链接器、标准库或常规 ELF 装载路径去“再启动一个加载器”。因此，内核必须人工创建一个最小用户进程，将一段极小的机器码直接复制到它的用户地址空间中，并把程序计数器指向这段代码的起始位置。随后，这段代码以用户态身份发起 <code>exec(&quot;/init&quot;)</code>，从而将真正的 <code>/init</code> 程序装入进程映像，完成从“尚无用户态环境”到“已有正式用户程序运行”的过渡。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;\nflowchart TD\n\n    A[想运行 /init] --> B[必须先有用户进程]\n\n    B --> C[但首个用户进程尚未建立]\n\n    C --> D[内核人工创建最小用户进程]\n\n    D --> E[将 initcode 拷入其用户内存]\n\n    E --> F[CPU 从该段用户代码开始执行]\n\n    F --> G[\&quot;initcode 发起 exec('/init')\&quot;]\n\n    G --> H[\&quot;/init 成为真正运行的首个正式用户程序\&quot;]\n&quot;">
+flowchart TD
+
+    A[想运行 /init] --> B[必须先有用户进程]
+
+    B --> C[但首个用户进程尚未建立]
+
+    C --> D[内核人工创建最小用户进程]
+
+    D --> E[将 initcode 拷入其用户内存]
+
+    E --> F[CPU 从该段用户代码开始执行]
+
+    F --> G[&quot;initcode 发起 exec('/init')&quot;]
+
+    G --> H[&quot;/init 成为真正运行的首个正式用户程序&quot;]
+
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<h2 id="getcwd">getcwd<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#getcwd" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p><code>getcwd</code> 的标准语义是把当前工作目录的绝对路径复制到调用者提供的缓冲区 <code>buf</code> 中，缓冲区长度由 <code>size</code> 指定；成功时返回指向 <code>buf</code> 的指针，失败时返回空指针。若路径字符串连同结尾空字符的总长度超过 <code>size</code>，则这一调用应被视为失败。也就是说，<code>getcwd</code> 不只是“把路径写出去”，还必须体现“用户提供的接收空间是否足够”这一边界条件。(<a href="https://man7.org/linux/man-pages/man3/getcwd.3.html?utm_source=chatgpt.com" title="getcwd(3) - Linux manual page" class="external">man7.org<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>原仓库中的 <code>sys_getcwd</code> 已经具有“从目录项链回溯父目录并拼接绝对路径”的基本思路，但接口只接收一个用户地址参数，既不读取 <code>size</code>，也不把返回值设计成“成功时返回用户缓冲区地址”。这种实现对内核内部来说可以写出路径，但对遵循标准调用约定的测试程序而言并不兼容，因为测试程序会传入两个参数，并根据返回值是否等于缓冲区地址来判断成功。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>实验实现的核心是从当前目录项 <code>cwd</code> 沿父指针逐级向上回溯，并在一个内核栈上的临时数组 <code>path[FAT32_MAX_PATH]</code> 中自右向左构造路径字符串。若当前目录已是根目录，则结果直接为 <code>/</code>；否则，每访问一级目录，就把该目录名向左拷入缓冲区，再补一个 <code>/</code>，直到抵达根目录为止。由于构造过程是反向进行的，最终得到的有效字符串位于数组尾部，随后再通过 <code>memmove</code> 把这段结果移动到数组起始位置，以形成连续、从开头开始的 C 字符串。该算法的优点是无需预先知道目录深度，也无需在回溯前做两遍遍历。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TD\n    A[\&quot;读取当前 cwd\&quot;] --> B{\&quot;是否为根目录\&quot;}\n    B -- 是 --> C[\&quot;结果设为 '/'\&quot;]\n    B -- 否 --> D[\&quot;在 path 尾部放置 '\\\\0'\&quot;]\n    D --> E[\&quot;沿 parent 链向上回溯\&quot;]\n    E --> F[\&quot;向左拷入目录名\&quot;]\n    F --> G[\&quot;继续向左补 '/'\&quot;]\n    G --> H{\&quot;到达根目录?\&quot;}\n    H -- 否 --> E\n    H -- 是 --> I[\&quot;memmove 到 path 开头\&quot;]\n    I --> J{\&quot;路径长度 ≤ size?\&quot;}\n    J -- 否 --> K[\&quot;返回 NULL\&quot;]\n    J -- 是 --> L[\&quot;copyout2 拷贝到用户 buf\&quot;]\n    L --> M[\&quot;返回 buf 地址\&quot;]&quot;">graph TD
-    A[&quot;读取当前 cwd&quot;] --> B{&quot;是否为根目录&quot;}
-    B -- 是 --> C[&quot;结果设为 '/'&quot;]
-    B -- 否 --> D[&quot;在 path 尾部放置 '\\0'&quot;]
-    D --> E[&quot;沿 parent 链向上回溯&quot;]
-    E --> F[&quot;向左拷入目录名&quot;]
-    F --> G[&quot;继续向左补 '/'&quot;]
-    G --> H{&quot;到达根目录?&quot;}
-    H -- 否 --> E
-    H -- 是 --> I[&quot;memmove 到 path 开头&quot;]
-    I --> J{&quot;路径长度 ≤ size?&quot;}
-    J -- 否 --> K[&quot;返回 NULL&quot;]
-    J -- 是 --> L[&quot;copyout2 拷贝到用户 buf&quot;]
-    L --> M[&quot;返回 buf 地址&quot;]
+<p>因此，<code>initcode</code> 不是长期运行的用户程序，而只是完成自举所需的最小桥梁。</p>
+<h2 id="四initcode-的生成方式与构建位置">四、<code>initcode</code> 的生成方式与构建位置<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#四initcode-的生成方式与构建位置" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在实现上，<code>initcode.S</code> 是汇编源文件。它先经过汇编器生成目标文件，再经过链接与提取得到一段原始机器码字节，最后这段字节被转成可以被 C 源文件包含的数组文本，编入内核镜像。于是，<code>userinit()</code> 在创建 PID 1 时无需从磁盘读取程序，而是直接把这些字节复制到新进程地址空间中。调度器首次运行该进程时，它执行的第一组用户态指令就是这段被嵌入内核的 <code>initcode</code>。</p>
+<p>这一生成路径如下：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;\nflowchart TD\n\n    A[initcode.S 汇编源文件]\n\n    --> B[汇编得到 initcode.o]\n\n    --> C[链接得到可执行映像]\n\n    --> D[objcopy 提取纯二进制]\n\n    --> E[脚本转成十六进制字节列表]\n\n    --> F[生成 initcode.h]\n\n    --> G[proc.c 中 include]\n\n    --> H[\&quot;编译进内核中的 initcode[]\&quot;]\n&quot;">
+flowchart TD
+
+    A[initcode.S 汇编源文件]
+
+    --> B[汇编得到 initcode.o]
+
+    --> C[链接得到可执行映像]
+
+    --> D[objcopy 提取纯二进制]
+
+    --> E[脚本转成十六进制字节列表]
+
+    --> F[生成 initcode.h]
+
+    --> G[proc.c 中 include]
+
+    --> H[&quot;编译进内核中的 initcode[]&quot;]
+
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<p><code>sys_getcwd(void)</code> 之所以函数签名看不到普通 C 风格参数，并不是因为它没有参数，而是因为系统调用参数在进入内核时并不通过当前内核函数栈传递。用户进程与内核拥有彼此独立的虚拟地址空间，当用户态执行 <code>ecall</code> 后，CPU 会把用户寄存器状态保存到当前进程的陷阱帧中。内核实现若想读取第一个参数里的用户地址和第二个参数里的缓冲区大小，就必须通过 <code>argaddr(0, &amp;addr)</code> 与 <code>argint(1, &amp;size)</code> 这样的辅助函数，从陷阱帧中安全提取寄存器内容。系统调用返回给用户的字符串也不能直接把内核指针交出去，而必须借助 <code>copyout2()</code> 把内核缓冲区里的字节复制到用户空间指定地址。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>因此，<code>getcwd</code> 的实现同时体现了三个关键点：其一，系统调用兼容性不仅是“功能存在”，还要求参数数量、返回值语义与边界检查都与调用约定一致；其二，内核中构造路径时使用的是内核私有缓冲区，而不是直接写用户内存；其三，用户态与内核态之间的数据交换必须显式经过参数提取与地址空间拷贝，而不能套用普通函数调用的直觉。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<h2 id="write--getpid">write / getpid<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#write--getpid" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p><code>write</code> 与 <code>getpid</code> 在这一部分没有新增实现代码，原因在于 xv6-k210 已经具备相应的内核处理逻辑。Part 1 中这两个测试点的真实问题不是“内核不会写”或“内核不会返回 PID”，而是预编译测试程序发出的 Linux 风格调用号在旧 ABI 下无法命中原有处理函数。只要系统调用号对齐完成，测试程序就会把 <code>write</code> 与 <code>getpid</code> 正确分发到既有实现上，因此这两个点本质上属于接口兼容性修复。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<h2 id="times">times<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#times" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p>Linux 语义下的 <code>times(struct tms *buf)</code> 会把当前进程以及已结束子进程的 CPU 时间统计写入 <code>struct tms</code>，其中 <code>tms_utime</code> 表示调用进程的用户态时间，<code>tms_stime</code> 表示调用进程的内核态时间，<code>tms_cutime</code> 与 <code>tms_cstime</code> 则分别表示已等待回收的子进程累计用户态与内核态时间；函数返回值本身表示自某个历史基准点以来流逝的时钟节拍数。这个接口的重点既包括结构体字段布局，也包括时间来源的抽象含义。(<a href="https://man7.org/linux/man-pages/man2/times.2.html?utm_source=chatgpt.com" title="times(2) - Linux manual page" class="external">man7.org<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>网页材料中的实验实现采用了一个简化策略：先在 <code>kernel/include/timer.h</code> 中定义 <code>struct tms</code>，再在 <code>sys_times</code> 中获取全局时钟节拍变量 <code>ticks</code>，把同一个 <code>ticks</code> 值填入四个字段，然后通过用户地址拷贝辅助函数把整个结构体复制回用户空间。其实现依赖 <code>tickslock</code> 对共享时钟状态进行保护，因此读取过程中不会与并发更新发生竞争。对给定测试而言，关键在于返回给用户的结构布局正确、字段含义可解释，并且整体值处于合理范围内。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>这个实现反映出实验语境与完整接口语义之间的差异。完整的 <code>times</code> 接口应区分调用进程自身与其子进程的不同 CPU 时间来源，而简化实现把当前全局节拍统一写入四个字段，实际上是用一个“结构正确、数值稳定”的近似结果满足测试需求。网页材料还提到另一种基于 <code>r_time()</code> 读取硬件周期数的写法；该写法也能通过给定测试，但从接口抽象角度看，使用操作系统维护的 <code>ticks</code> 更贴近 <code>times</code> 所描述的节拍统计语义。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>为了减少样板代码，实验实现把“从第 <code>arg_index</code> 个系统调用参数中取出用户地址，并把一段内核内存复制过去”抽象为 <code>get_and_copyout()</code>。这个辅助函数在内部顺序调用 <code>argaddr()</code> 与 <code>copyout2()</code>，从而把“取用户地址”和“跨地址空间写回”的模式固化为一个通用过程。<code>times</code> 与 <code>uname</code> 这类“在内核栈上临时组装结构，再整体拷回用户态”的系统调用都可以复用这一模式。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<h2 id="uname">uname<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#uname" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p><code>uname(struct utsname *buf)</code> 的标准职责是把当前系统的标识信息写入用户提供的结构体中。标准结构至少包含 <code>sysname</code>、<code>nodename</code>、<code>release</code>、<code>version</code> 与 <code>machine</code> 等字段，在 GNU 扩展下还可以包含 <code>domainname</code>。这些字段分别承担操作系统名、节点名、系统发行版本、版本字符串、硬件架构标识及域名等含义。与 <code>times</code> 相似，<code>uname</code> 的重点不在复杂算法，而在于结构布局、字段语义以及用户态可见的数据回填。(<a href="https://man7.org/linux/man-pages/man2/uname.2.html?utm_source=chatgpt.com" title="uname(2) - Linux manual page" class="external">man7.org<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>实验实现采取的是固定字符串填充策略：在 <code>sys_uname</code> 内部声明一个包含六个 65 字节字符数组的本地结构体，分别写入诸如 <code>xv6</code>、<code>xv6-node</code>、<code>1.0.0</code> 等系统标识，再通过 <code>get_and_copyout()</code> 一次性复制到用户缓冲区。这种实现没有追求真实机器环境的动态探测，而是提供一组稳定、格式正确、字段齐全的系统身份信息，以满足测试程序对 <code>uname</code> 输出格式和结构完整性的要求。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p><code>uname</code> 被放在 <code>sysproc.c</code> 中而不是 <code>sysfile.c</code> 中，也体现了系统调用按功能类别组织的原则。它返回的并非文件内容或文件系统状态，而是当前操作系统实例的全局身份信息，因而更接近进程与系统管理层面的接口。对 Part 1 而言，这种文件组织方式和 <code>shutdown</code>、<code>times</code> 一样，都是“由 <code>syscall.c</code> 分发，在对应功能域的 <code>sys*.c</code> 中实现”的具体体现。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<h2 id="测试与结果解释">测试与结果解释<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#测试与结果解释" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p>本地测试流程以清理旧构建并重新执行本地构建为主，网页材料给出的命令序列是先执行 <code>make clean</code>，再执行 <code>make local</code>。在这种路径下，构建系统会按本地模式生成 <code>initcode.h</code>、重建内核与文件系统镜像，并启动 QEMU 运行全部五个测试程序。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>测试输出按固定顺序出现：先后进入 <code>test_getcwd</code>、<code>test_write</code>、<code>test_getpid</code>、<code>test_times</code> 与 <code>test_uname</code>，其中 <code>getcwd</code> 会成功打印根目录路径，<code>write</code> 会把测试字符串写到标准输出，<code>getpid</code> 会给出一个有效的进程号，<code>times</code> 会回显 <code>struct tms</code> 中的四个字段值，<code>uname</code> 则输出系统名、节点名、版本与域名等信息。输出序列的稳定性说明 <code>/init</code> 的调度逻辑、系统调用 ABI、用户态输出链路和关机流程已经形成一个闭环。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p>
-<p>从 Part 1 的整体结构看，真正的主线并不是五个孤立的系统调用测试点，而是“自举 → 装载 <code>/init</code> → 顺序执行预编译测试 → 通过 Linux 风格系统调用号命中内核处理函数 → 将结果写回用户态并输出 → 通过 <code>shutdown</code> 结束虚拟机”这一条完整的系统运行通路。<code>getcwd</code>、<code>times</code> 与 <code>uname</code> 负责体现参数提取、内核态构造结果与用户态回填；<code>write</code> 与 <code>getpid</code> 负责体现 ABI 对齐后对既有实现的复用；<code>shutdown</code> 则把评测结束动作从用户程序一直传递到底层 SBI 固件。Part 1 因而既是首批系统调用实验，也是一次关于“用户态约定如何穿过内核并落到硬件抽象层”的完整演示。(<a href="https://arthals.ink/blog/xv6-os-lab-part1" title="更适合北大宝宝体质的 xv6 OS Lab 踩坑记 - Part1 • Arthals' ink" class="external">Arthals’ ink<svg aria-hidden="true" class="external-icon" style="max-width:0.8em;max-height:0.8em;" viewBox="0 0 512 512"><path d="M320 0H288V64h32 82.7L201.4 265.4 178.7 288 224 333.3l22.6-22.6L448 109.3V192v32h64V192 32 0H480 320zM32 32H0V64 480v32H32 456h32V480 352 320H424v32 96H64V96h96 32V32H160 32z"></path></svg></a>)</p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+<p>需要特别区分两件事：</p>
+<ul>
+<li>
+<p><code>initcode.h</code> 参与的是内核的编译，不是运行时加载；</p>
+</li>
+<li>
+<p>CPU 最先执行的是被复制进首进程用户地址空间的那段机器码，而不是 <code>initcode.h</code> 这个头文件本身。</p>
+</li>
+</ul>
+<p>从构建顺序看，过程如下：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;\nflowchart TD\n\n    A[执行 make] --> B[Makefile 解析依赖]\n\n    B --> C[生成 initcode.h]\n\n    C --> D[编译 proc.c]\n\n    D --> E[预处理阶段 include initcode.h]\n\n    E --> F[\&quot;得到带有 initcode[] 的 proc.o\&quot;]\n\n    F --> G[与其他目标文件一起链接为内核]\n\n    G --> H[启动 QEMU]\n\n    H --> I[内核创建首进程]\n\n    I --> J[\&quot;将 initcode[] 复制到首进程用户内存\&quot;]\n\n    J --> K[首进程执行这段最小机器码]\n&quot;">
+flowchart TD
+
+    A[执行 make] --> B[Makefile 解析依赖]
+
+    B --> C[生成 initcode.h]
+
+    C --> D[编译 proc.c]
+
+    D --> E[预处理阶段 include initcode.h]
+
+    E --> F[&quot;得到带有 initcode[] 的 proc.o&quot;]
+
+    F --> G[与其他目标文件一起链接为内核]
+
+    G --> H[启动 QEMU]
+
+    H --> I[内核创建首进程]
+
+    I --> J[&quot;将 initcode[] 复制到首进程用户内存&quot;]
+
+    J --> K[首进程执行这段最小机器码]
+
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="五为什么-initcode-不能沿用旧版本">五、为什么 <code>initcode</code> 不能沿用旧版本<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#五为什么-initcode-不能沿用旧版本" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>initcode</code> 不能被视作一段长期固定不变的裸字节，原因主要来自两方面。</p>
+<h3 id="1-执行环境变化">1. 执行环境变化<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-执行环境变化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>旧框架中的 <code>initcode.S</code> 往往面向 32 位 RISC-V，而当前实验环境是 64 位 RISC-V。<code>initcode</code> 最终以机器码字节的形式嵌入内核，只要指令集位宽、地址宽度或调用约定发生变化，原先生成好的字节序列就可能不再适用。因此，在从 RV32 迁移到 RV64 时，必须重新生成 <code>initcode</code>，而不能继续沿用旧产物。</p>
+<h3 id="2-系统调用-abi-变化">2. 系统调用 ABI 变化<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-系统调用-abi-变化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>initcode.S</code> 会通过 <code>SYS_exec</code>、<code>SYS_exit</code> 等宏，把系统调用号直接编码进机器码，再通过 <code>ecall</code> 发起系统调用。这意味着，<code>initcode</code> 不仅依赖于“系统中存在 exec 和 exit”，更依赖于“这些系统调用在当前 ABI 中对应哪些具体编号、如何传参”。只要系统调用号发生变化，<code>initcode</code> 就必须同步重建，否则首进程在最早阶段就会提交错误的调用号，直接触发 <code>unknown sys call</code>。</p>
+<p>这一关系可以表示为：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;\nflowchart TD\n\n    A[修改运行环境或接口] --> B{变化类型}\n\n    B --> C[32 位 RISC-V -> 64 位 RISC-V]\n\n    B --> D[sysnum.h 中系统调用号变化]\n\n    C --> E[旧 initcode 字节序列失配]\n\n    D --> F[旧 initcode 中的调用号失效]\n\n    E --> G[必须重新生成 initcode]\n\n    F --> G\n\n    G --> H[首进程才能正确执行]\n&quot;">
+flowchart TD
+
+    A[修改运行环境或接口] --> B{变化类型}
+
+    B --> C[32 位 RISC-V -> 64 位 RISC-V]
+
+    B --> D[sysnum.h 中系统调用号变化]
+
+    C --> E[旧 initcode 字节序列失配]
+
+    D --> F[旧 initcode 中的调用号失效]
+
+    E --> G[必须重新生成 initcode]
+
+    F --> G
+
+    G --> H[首进程才能正确执行]
+
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>因此，<code>initcode</code> 同时受 ISA 位宽和系统调用 ABI 约束，其维护方式必须从“直接手改裸字节”转变为“修改源程序，再自动生成头文件”。</p>
+<h2 id="六本地测试与平台评测的两条启动路径">六、本地测试与平台评测的两条启动路径<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#六本地测试与平台评测的两条启动路径" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>理想情况下，<code>initcode</code> 应当只承担“发起第一个 <code>exec(&quot;/init&quot;)</code>”这一最小职责。本地测试环境通常可以保证文件系统镜像中存在可供装载的 <code>/init</code>，因此可以采用标准自举路径：首进程先执行短小的 <code>initcode</code>，再通过 <code>exec(&quot;/init&quot;)</code> 装载真正的 <code>/init</code>。</p>
+<p>但平台评测环境与本地环境不同。平台运行时使用预先提供的 <code>sdcard.img</code>，其中并没有可供标准自举链装载的 <code>/init</code>，而且编译阶段也无法改写该镜像。于是，若平台仍沿用“短 <code>initcode</code> <span>→</span> <code>exec(&quot;/init&quot;)</code>”这条路径，自举过程会在查找 <code>/init</code> 时中断。</p>
+<p>为了适配平台环境，必须采用另一条工程化路径：不再让首进程从磁盘中装载 <code>/init</code>，而是将完整的 <code>init</code> 用户程序预先编译为机器码，再转换为字节数组，直接作为 <code>initcode[]</code> 的内容嵌入内核。这样首进程一开始执行的就不是“只负责跳转的最小跳板”，而是完整的 <code>init</code> 逻辑本体，从而绕过“从平台镜像中查找 <code>/init</code>”这一步。</p>
+<p>两条路径的区别如下：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;\nflowchart TD\n\n    A[内核创建首进程] --> B{运行环境}\n\n  \n\n    B --> C[本地测试]\n\n    B --> D[平台评测]\n\n  \n\n    C --> C1[使用短 initcode.S]\n\n    C1 --> C2[生成 initcode.h]\n\n    C2 --> C3[首进程执行最小自举片段]\n\n    C3 --> C4[\&quot;exec('/init')\&quot;]\n\n    C4 --> C5[从镜像装载 /init]\n\n    C5 --> C6[进入正式用户态初始化]\n\n  \n\n    D --> D1[平台镜像中没有可装载的 /init]\n\n    D1 --> D2[将完整 init 程序转成字节数组]\n\n    D2 --> D3[生成 initcode.h]\n\n    D3 --> D4[首进程直接执行整段 init 逻辑]\n\n    D4 --> D5[绕过再次装载 /init]\n&quot;">
+flowchart TD
+
+    A[内核创建首进程] --> B{运行环境}
+
+  
+
+    B --> C[本地测试]
+
+    B --> D[平台评测]
+
+  
+
+    C --> C1[使用短 initcode.S]
+
+    C1 --> C2[生成 initcode.h]
+
+    C2 --> C3[首进程执行最小自举片段]
+
+    C3 --> C4[&quot;exec('/init')&quot;]
+
+    C4 --> C5[从镜像装载 /init]
+
+    C5 --> C6[进入正式用户态初始化]
+
+  
+
+    D --> D1[平台镜像中没有可装载的 /init]
+
+    D1 --> D2[将完整 init 程序转成字节数组]
+
+    D2 --> D3[生成 initcode.h]
+
+    D3 --> D4[首进程直接执行整段 init 逻辑]
+
+    D4 --> D5[绕过再次装载 /init]
+
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这意味着构建流程必须分流：</p>
+<ul>
+<li>本地模式下，由短小的 <code>initcode.S</code> 生成 <code>initcode.h</code>；</li>
+<li>平台模式下，由完整的 <code>_init</code> 用户程序生成 <code>initcode.h</code>。</li>
+</ul>
+<p>随后，<code>proc.c</code> 不再手写 <code>initcode[]</code> 的裸字节，而是统一通过 <code>#include &quot;include/initcode.h&quot;</code> 引入自动生成的内容。</p>
+<h2 id="七评测流程与-init-的职责变化">七、评测流程与 <code>/init</code> 的职责变化<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#七评测流程与-init-的职责变化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Part 1 的评测对象是内核，而不是测试程序本身。<code>riscv64/</code> 目录中的测试文件已经在标准 Linux 环境下预编译完成，它们的职责是调用约定好的系统调用接口，检查返回值与副作用是否满足预期，并通过 <code>printf</code> 打印标准化输出。由于 <code>printf</code> 最终依赖 <code>write</code> 系统调用，测试结果会沿着“用户程序输出 <span>→</span> 内核 <code>write</code> <span>→</span> QEMU 标准输出”的路径暴露给外部评测脚本，评测端再将整个输出文本与标准答案逐字比较。只要输出完全一致，测试即判定为通过。</p>
+<p>因此，虚拟磁盘中通常共存两类用户程序：</p>
+<ol>
+<li>
+<p><code>xv6-user/</code> 目录下由本地构建系统编译得到的原生 xv6 用户程序，如 <code>ls</code>、<code>cat</code>、<code>init</code> 等，用于基础用户态功能；</p>
+</li>
+<li>
+<p><code>riscv64/</code> 目录下直接复制到镜像根目录中的预编译测试二进制，如 <code>/getcwd</code>、<code>/write</code>、<code>/getpid</code>、<code>/times</code>、<code>/uname</code> 等，仅用于自动化验收。</p>
+</li>
+</ol>
+<p>为了匹配这一评测模型，<code>/init</code> 不再承担“启动 shell 并长期驻留”的传统职责，而是被改造为测试调度器。它预先保存待测程序名数组，在主循环中依次执行 <code>fork</code>、<code>exec</code> 与 <code>wait</code>，保证每轮只运行一个测试程序，并等待其结束后再进入下一轮。所有测试结束后，<code>/init</code> 调用 <code>shutdown()</code> 触发关机，以避免平台因悬停而超时。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;\ngraph TD\n\n    A[\&quot;/init\&quot;] --> B[fork 子进程]\n\n    B --> C[exec 某个测试程序]\n\n    C --> D[测试程序调用系统调用]\n\n    D --> E[内核处理并返回结果]\n\n    E --> F[测试程序 printf 输出]\n\n    F --> G[write 输出到 QEMU 标准输出]\n\n    G --> H[评测脚本捕获文本]\n\n    H --> I[与标准答案逐字比对]\n\n    I --> J[全部完成后 shutdown 退出]\n&quot;">
+graph TD
+
+    A[&quot;/init&quot;] --> B[fork 子进程]
+
+    B --> C[exec 某个测试程序]
+
+    C --> D[测试程序调用系统调用]
+
+    D --> E[内核处理并返回结果]
+
+    E --> F[测试程序 printf 输出]
+
+    F --> G[write 输出到 QEMU 标准输出]
+
+    G --> H[评测脚本捕获文本]
+
+    H --> I[与标准答案逐字比对]
+
+    I --> J[全部完成后 shutdown 退出]
+
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="八系统调用-abi-对齐">八、系统调用 ABI 对齐<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#八系统调用-abi-对齐" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Part 1 中最基础、也最关键的工作，是使测试程序所遵循的系统调用 ABI 与内核中的系统调用分发表保持一致。测试程序在发起系统调用时会将调用号放入 <code>a7</code>；内核的 <code>syscall()</code> 例程则依据该调用号查询 <code>syscalls[]</code> 分发表并跳转到对应处理函数。如果调用号不匹配，即使处理函数本身已经存在，内核仍会在错误的位置查表，最终报出 <code>unknown sys call</code>。</p>
+<p>因此，必须优先整理系统调用号定义，至少保证以下关键调用的编号与测试程序一致：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_wait</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">      3</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_getcwd</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">   17</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_write</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    64</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_exit</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">     93</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_times</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">   153</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_uname</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">   160</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_getpid</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  172</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_shutdown</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 210</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_exec</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    221</span></span>
+<span data-line> </span></code></pre></figure>
+<p>若这些编号与原项目既有系统调用冲突，则必须将原有调用迁移到其他空闲编号，优先保证测试与启动链所依赖的这些关键项完全对齐。</p>
+<p>这一步的核心不是“增加功能”，而是让用户态传入的调用号与内核分发表的索引一一对应。</p>
+<h2 id="九shutdown使测试结束后系统稳定退出">九、<code>shutdown</code>：使测试结束后系统稳定退出<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#九shutdown使测试结束后系统稳定退出" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>shutdown</code> 并不是 Part 1 的直接测试点之一，但它对于整条评测链至关重要。若测试全部完成后 <code>/init</code> 正常返回，xv6 往往会触发 <code>panic: init exiting</code>；若 <code>/init</code> 挂起不退，则平台可能因超时而判定失败。因此，必须补齐 <code>shutdown</code> 的整条调用链，使测试调度器在完成最后一个测试后能够主动关机。</p>
+<p>这条调用链包括五个层面：</p>
+<ol>
+<li>
+<p>在 <code>user.h</code> 中声明 <code>int shutdown(void);</code>；</p>
+</li>
+<li>
+<p>在 <code>usys.pl</code> 中登记 <code>entry(&quot;shutdown&quot;);</code>，生成用户态存根；</p>
+</li>
+<li>
+<p>在系统调用号表中定义 <code>SYS_shutdown 210</code>；</p>
+</li>
+<li>
+<p>在 <code>kernel/syscall.c</code> 中声明 <code>extern uint64 sys_shutdown(void);</code>，并将 <code>SYS_shutdown</code> 映射到 <code>sys_shutdown</code>；</p>
+</li>
+<li>
+<p>在 <code>kernel/sysproc.c</code> 中实现 <code>sys_shutdown()</code>，内部调用 <code>sbi_shutdown()</code> 完成 QEMU 退出；</p>
+</li>
+<li>
+<p>在 <code>/init</code> 的末尾调用 <code>shutdown();</code>。</p>
+</li>
+</ol>
+<p>其完整路径如下：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;\nflowchart TD\n\n    A[user.h 声明 shutdown] --> B[usys.pl 生成用户态入口]\n\n    B --> C[\&quot;用户程序调用 shutdown()\&quot;]\n\n    C --> D[a7 = SYS_shutdown 并 ecall]\n\n    D --> E[syscall.c 按编号分发]\n\n    E --> F[命中 sys_shutdown]\n\n    F --> G[\&quot;sbi_shutdown()\&quot;]\n\n    G --> H[QEMU 退出]\n&quot;">
+flowchart TD
+
+    A[user.h 声明 shutdown] --> B[usys.pl 生成用户态入口]
+
+    B --> C[&quot;用户程序调用 shutdown()&quot;]
+
+    C --> D[a7 = SYS_shutdown 并 ecall]
+
+    D --> E[syscall.c 按编号分发]
+
+    E --> F[命中 sys_shutdown]
+
+    F --> G[&quot;sbi_shutdown()&quot;]
+
+    G --> H[QEMU 退出]
+
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="十getcwd修正接口语义而不是推翻算法">十、<code>getcwd</code>：修正接口语义而不是推翻算法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十getcwd修正接口语义而不是推翻算法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>原项目中 <code>getcwd</code> 往往已经具备基本实现，能够沿当前目录向父目录回溯并拼接出绝对路径。但测试程序要求的并不只是“能够计算出当前路径”，而是要求系统调用接口在参数个数、长度检查和返回值语义上与标准接口一致。</p>
+<p>为满足测试要求，<code>getcwd</code> 至少需要满足以下条件：</p>
+<ol>
+<li>读取两个参数：</li>
+</ol>
+<p>   - 第 0 个参数为用户缓冲区地址 <code>buf</code>；</p>
+<p>   - 第 1 个参数为缓冲区大小 <code>size</code>。</p>
+<ol start="2">
+<li>
+<p>在内核中使用临时缓冲区构造完整路径；</p>
+</li>
+<li>
+<p>若路径长度连同结尾的 <code>\0</code> 超过 <code>size</code>，则返回 <code>0</code>；</p>
+</li>
+<li>
+<p>若长度足够，则通过 <code>copyout</code> 将路径复制到用户态；</p>
+</li>
+<li>
+<p>成功时返回用户传入的 <code>buf</code> 地址，而不是返回内核中的临时地址或其他数值。</p>
+</li>
+</ol>
+<p>因此，这一项的重点不是重新发明路径回溯算法，而是使调用语义严格符合测试程序的预期。</p>
+<h2 id="十一write-与-getpid核心在于-abi-对齐">十一、<code>write</code> 与 <code>getpid</code>：核心在于 ABI 对齐<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十一write-与-getpid核心在于-abi-对齐" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>write</code> 与 <code>getpid</code> 这两个测试点通常并不需要重写实现。原项目一般已经存在 <code>sys_write</code> 与 <code>sys_getpid</code> 的处理函数，它们无法通过测试的主要原因往往不是实现逻辑有误，而是系统调用号与测试程序不一致。</p>
+<p>因此，对这两个系统调用需要重点确认的是：</p>
+<ol>
+<li>
+<p><code>SYS_write = 64</code>、<code>SYS_getpid = 172</code> 是否已正确设置；</p>
+</li>
+<li>
+<p><code>syscall.c</code> 中的分发表是否将这两个编号映射到了现有的 <code>sys_write</code> 与 <code>sys_getpid</code>。</p>
+</li>
+</ol>
+<p>一旦 ABI 对齐完成，这两个测试点通常即可直接通过。</p>
+<h2 id="十二times结构正确值稳定可安全写回用户态">十二、<code>times</code>：结构正确、值稳定、可安全写回用户态<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十二times结构正确值稳定可安全写回用户态" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>times</code> 的核心要求是返回一个结构布局正确、数值合理的结果。对于 Part 1 而言，不必一开始就精确区分用户态时间、内核态时间与子进程累计时间，只要结构体字段完整、拷回路径正确、返回值稳定，即可满足测试需要。</p>
+<h3 id="1-数据结构">1. 数据结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-数据结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>需要在用户态和内核态均可见的位置定义 <code>struct tms</code>，至少包含以下字段：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tms {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tms_utime;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tms_stime;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tms_cutime;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    long</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> tms_cstime;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span>
+<span data-line> </span></code></pre></figure>
+<h3 id="2-系统调用号与分发">2. 系统调用号与分发<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-系统调用号与分发" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>需在系统调用号表中加入：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_times</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 153</span></span>
+<span data-line> </span></code></pre></figure>
+<p>并在 <code>kernel/syscall.c</code> 中将 <code>[SYS_times]</code> 映射到 <code>sys_times</code>，必要时也在 <code>sysnames[]</code> 中补充名字映射，便于调试日志输出。</p>
+<h3 id="3-实现思路">3. 实现思路<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-实现思路" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>sys_times()</code> 的基本过程为：</p>
+<ol>
+<li>
+<p>通过 <code>argaddr(0, &amp;uaddr)</code> 读取用户传入的结构体地址；</p>
+</li>
+<li>
+<p>在内核中构造一个临时 <code>struct tms</code>；</p>
+</li>
+<li>
+<p>读取全局 <code>ticks</code>，将其填入相关字段；</p>
+</li>
+<li>
+<p>通过 <code>copyout2()</code> 将整个结构体安全地拷回用户空间；</p>
+</li>
+<li>
+<p>返回一个合理的节拍值，例如 <code>tms_utime</code> 或当前 <code>ticks</code>。</p>
+</li>
+</ol>
+<p>这里最重要的不是统计精度，而是“结构正确、地址安全、返回值稳定”。</p>
+<h2 id="十三uname返回结构完整字符串稳定的系统标识">十三、<code>uname</code>：返回结构完整、字符串稳定的系统标识<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十三uname返回结构完整字符串稳定的系统标识" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>uname</code> 的目标是向用户态返回一组系统标识字符串，因此关键在于结构体布局完整、字段内容稳定，并能通过 <code>copyout2()</code> 安全回写到用户空间。</p>
+<h3 id="1-数据结构-1">1. 数据结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-数据结构-1" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>需要定义 <code>struct utsname</code>，至少包含下列字段：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> utsname {</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    char</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> sysname</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">65</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">];</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    char</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> nodename</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">65</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">];</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    char</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> release</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">65</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">];</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    char</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> version</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">65</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">];</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    char</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> machine</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">65</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">];</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    char</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> domainname</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">65</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">];</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span>
+<span data-line> </span></code></pre></figure>
+<h3 id="2-系统调用号与分发-1">2. 系统调用号与分发<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-系统调用号与分发-1" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>需在系统调用号表中加入：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_uname</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 160</span></span>
+<span data-line> </span></code></pre></figure>
+<p>并在 <code>kernel/syscall.c</code> 中声明 <code>extern uint64 sys_uname(void);</code>，随后在 <code>syscalls[]</code> 与必要的 <code>sysnames[]</code> 中加入对应映射。</p>
+<h3 id="3-实现思路-1">3. 实现思路<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-实现思路-1" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>sys_uname()</code> 的基本过程为：</p>
+<ol>
+<li>
+<p>读取用户传入的缓冲区地址；</p>
+</li>
+<li>
+<p>在内核中构造 <code>struct utsname</code>；</p>
+</li>
+<li>
+<p>填入固定且稳定的字符串，例如：</p>
+</li>
+</ol>
+<p>   - <code>sysname = &quot;xv6&quot;</code></p>
+<p>   - <code>nodename = &quot;xv6-node&quot;</code></p>
+<p>   - <code>release = &quot;1.0.0&quot;</code></p>
+<p>   - <code>version = &quot;...&quot;</code></p>
+<p>   - <code>machine = &quot;riscv64&quot;</code></p>
+<ol start="4">
+<li>
+<p>使用 <code>copyout2()</code> 将结构体写回用户空间；</p>
+</li>
+<li>
+<p>成功返回 <code>0</code>。</p>
+</li>
+</ol>
+<p>这一项的重点是字段齐全、布局正确、字符串稳定，而不是构造复杂的系统版本信息。</p>
+<h2 id="十四times-与-uname-的实际排障记录">十四、<code>times</code> 与 <code>uname</code> 的实际排障记录<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十四times-与-uname-的实际排障记录" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在调试过程中，系统启动日志曾出现如下报错：</p>
+<ul>
+<li>
+<p><code>pid 5 times: unknown sys call 153</code></p>
+</li>
+<li>
+<p><code>pid 1 init: unknown sys call 10</code></p>
+</li>
+<li>
+<p><code>pid 6 uname: unknown sys call 160</code></p>
+</li>
+</ul>
+<p>这些错误揭示出当前工程存在一个高风险点：仓库中同时存在两类用户程序来源，一类是偏 xv6 风格的 <code>xv6-user/*</code>，另一类是来自 <code>riscv64/*</code> 的预编译测试产物，后者大量采用 Linux RISC-V 风格的系统调用编号。如果内核号表缺项、分发表缺失或两类程序依赖的编号不一致，就会出现 <code>unknown sys call</code>。</p>
+<p>针对这组问题，排查应优先集中在以下文件：</p>
+<ul>
+<li>
+<p><code>kernel/include/sysnum.h</code></p>
+</li>
+<li>
+<p><code>kernel/syscall.c</code></p>
+</li>
+<li>
+<p><code>kernel/timer.c</code></p>
+</li>
+<li>
+<p><code>kernel/sysproc.c</code></p>
+</li>
+</ul>
+<p>排查重点包括：</p>
+<ol>
+<li>
+<p><code>syscall()</code> 是否正确从 <code>a7</code> 读取系统调用号；</p>
+</li>
+<li>
+<p><code>syscalls[]</code> 的对应下标是否存在函数指针；</p>
+</li>
+<li>
+<p><code>SYS_xxx</code> 常量是否已经定义且编号正确；</p>
+</li>
+<li>
+<p>处理函数是否真正实现，且在向用户态写回数据时使用了安全的 <code>copyout</code>/<code>copyout2</code> 接口。</p>
+</li>
+</ol>
+<p>最终发现的问题主要有三类：</p>
+<ol>
+<li>
+<p><code>sysnum.h</code> 一度缺失 <code>SYS_times</code>，导致 <code>times(153)</code> 无法匹配；</p>
+</li>
+<li>
+<p>原工程中缺少 <code>SYS_uname</code> 与 <code>sys_uname</code> 的实现，导致 <code>uname(160)</code> 必然失败；</p>
+</li>
+<li>
+<p>早期 <code>sys_times</code> 实现错误地将用户地址当作内核地址直接写入，而非通过 <code>copyout2()</code> 安全回写；</p>
+</li>
+<li>
+<p><code>dup(10)</code> 报错同样说明号表与分发表之间存在 ABI 失配现象。</p>
+</li>
+</ol>
+<p>修复后的关键改动包括：</p>
+<ul>
+<li>
+<p>在 <code>kernel/include/sysnum.h</code> 中补齐 <code>SYS_times = 153</code>、<code>SYS_uname = 160</code>；</p>
+</li>
+<li>
+<p>在 <code>kernel/syscall.c</code> 中补齐 <code>sys_times</code> 与 <code>sys_uname</code> 的声明、分发与名字映射；</p>
+</li>
+<li>
+<p>在 <code>kernel/timer.c</code> 中修复 <code>sys_times()</code>，使用 <code>argaddr</code> 获取用户地址、在锁内读取 <code>ticks</code>，构造 <code>struct tms</code> 后通过 <code>copyout2()</code> 写回，并返回节拍值；</p>
+</li>
+<li>
+<p>在 <code>kernel/sysproc.c</code> 中新增 <code>sys_uname()</code>，构造 <code>struct utsname</code> 并使用 <code>copyout2()</code> 写回；</p>
+</li>
+<li>
+<p>新建或补充公共头文件，用于声明 <code>struct utsname</code> 等共享结构。</p>
+</li>
+</ul>
+<p>这组问题说明，系统调用问题首先要检查“编号、分发、实现”三件套。任何一处缺失，都可能表现为 <code>unknown sys call</code>，而不仅仅是某个处理函数实现错误。</p>
+<h2 id="十五initcodes-在-rv64-下的链接与对齐问题">十五、<code>initcode.S</code> 在 RV64 下的链接与对齐问题<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十五initcodes-在-rv64-下的链接与对齐问题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在将 <code>initcode.S</code> 迁移到 RV64 并重新生成 <code>initcode</code> 的过程中，链接阶段可能出现如下报错：</p>
+<ul>
+<li>
+<p><code>5 bytes required for alignment to 8-byte boundary, but only 4 present</code></p>
+</li>
+<li>
+<p><code>can't relax section: bad value</code></p>
+</li>
+</ul>
+<p>其本质原因在于：</p>
+<ol>
+<li>
+<p><code>argv</code> 已从 32 位指针改为 64 位指针，因此应使用 <code>.quad</code>；</p>
+</li>
+<li>
+<p>同时又使用了 8 字节对齐（如 <code>.p2align 3</code>）；</p>
+</li>
+<li>
+<p>但 <code>initcode.S</code> 的 <code>.text</code> 段极短，字符串和数据紧挨着指令，导致链接器在进行 RISC-V relax 时，为满足 8 字节边界对齐需要插入 5 字节填充，而当前布局中最多只能插入 4 字节，于是对齐失败。</p>
+</li>
+</ol>
+<p>修复方法是：</p>
+<ul>
+<li>
+<p>保留 <code>argv</code> 使用 <code>.quad</code>，因为 RV64 下指针必须为 64 位；</p>
+</li>
+<li>
+<p>将对齐要求从 <code>.p2align 3</code> 改为 <code>.p2align 2</code>，即从 8 字节对齐降低为 4 字节对齐。</p>
+</li>
+</ul>
+<p>这一修改不会改变 <code>argv</code> 中指针的位宽，但可以降低链接器的填充需求，避免在极短代码段布局下触发 relax 冲突。</p>
+<h2 id="十六构建系统分流与-makefile-的职责">十六、构建系统分流与 <code>Makefile</code> 的职责<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十六构建系统分流与-makefile-的职责" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>由于本地测试与平台评测在文件系统镜像和启动方式上存在本质差异，<code>Makefile</code> 不能只维持单一路径，而应显式区分本地构建与平台构建。</p>
+<p>从工程要求看，至少需要处理以下事项：</p>
+<ol>
+<li>
+<p>提供面向平台的一键构建入口，例如 <code>make all</code>；</p>
+</li>
+<li>
+<p>在平台构建路径中输出平台所要求的产物名称，如 <code>kernel-qemu</code> 与 <code>sbi-qemu</code>；</p>
+</li>
+<li>
+<p>在本地构建路径中生成 <code>fs.img</code>，并将测试样例同步到镜像根目录；</p>
+</li>
+<li>
+<p>在本地与平台两种模式下，分别采用不同的 <code>initcode.h</code> 生成策略：</p>
+</li>
+</ol>
+<p>   - 本地模式：由短 <code>initcode.S</code> 生成；</p>
+<p>   - 平台模式：由完整 <code>_init</code> 程序生成。</p>
+<p>平台模式下，完整 <code>_init</code> 转为 <code>initcode.h</code> 的路径大致为：先编译 <code>init.c</code> 得到 <code>init.o</code>，再与 <code>usys.o</code>、<code>printf.o</code> 等用户态对象链接为完整 <code>_init</code>，之后用 <code>objcopy</code> 提取纯二进制，并通过 <code>od</code> 或脚本转换为十六进制字节列表，最终生成 <code>initcode.h</code>，再由 <code>proc.c</code> 通过 <code>#include</code> 将其编入内核。</p>
+<h2 id="十七实际动手顺序">十七、实际动手顺序<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十七实际动手顺序" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>若按实现顺序组织，Part 1 的工作可归纳为以下步骤：</p>
+<ol>
+<li>
+<p>修改系统调用号定义，优先对齐 <code>wait</code>、<code>getcwd</code>、<code>write</code>、<code>exit</code>、<code>times</code>、<code>uname</code>、<code>getpid</code>、<code>shutdown</code>、<code>exec</code> 等关键调用；</p>
+</li>
+<li>
+<p>在 <code>syscall.c</code> 中补齐所有关键调用的分发表映射；</p>
+</li>
+<li>
+<p>重建 <code>initcode</code>，停止手写 <code>proc.c</code> 中的裸字节；</p>
+</li>
+<li>
+<p>补齐 <code>shutdown</code> 的整条调用链，使系统能够在测试结束后主动退出；</p>
+</li>
+<li>
+<p>修正 <code>getcwd</code> 的参数读取、长度检查与返回值语义；</p>
+</li>
+<li>
+<p>对 <code>write</code> 与 <code>getpid</code> 仅做 ABI 对齐确认；</p>
+</li>
+<li>
+<p>定义 <code>struct tms</code> 并实现 <code>sys_times()</code>；</p>
+</li>
+<li>
+<p>定义 <code>struct utsname</code> 并实现 <code>sys_uname()</code>；</p>
+</li>
+<li>
+<p>修改 <code>Makefile</code>，分别处理本地与平台的 <code>initcode.h</code> 生成路径；</p>
+</li>
+<li>
+<p>本地执行完整重建与测试，确认五个测试依次通过，并由 <code>shutdown</code> 正常关机。</p>
+</li>
+</ol>
+<p>其流程图如下：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;\nflowchart TD\n\n    A[改 syscall 号表] --> B[重生成 initcode.h]\n\n    B --> C[补 shutdown: user.h/usys.pl/syscall.c/sysproc.c/init.c]\n\n    C --> D[修 getcwd: 两参数 + size 检查 + 返回 buf]\n\n    D --> E[确认 write/getpid 只做 ABI 对齐]\n\n    E --> F[补 times: struct tms + sys_times]\n\n    F --> G[补 uname: struct utsname + sys_uname]\n\n    G --> H[Makefile 分流: local / all]\n\n    H --> I[平台模式把完整 _init 转成 initcode.h]\n\n    I --> J[make clean &amp;&amp; make local]\n\n    J --> K[五个测试依次通过并 shutdown]\n&quot;">
+flowchart TD
+
+    A[改 syscall 号表] --> B[重生成 initcode.h]
+
+    B --> C[补 shutdown: user.h/usys.pl/syscall.c/sysproc.c/init.c]
+
+    C --> D[修 getcwd: 两参数 + size 检查 + 返回 buf]
+
+    D --> E[确认 write/getpid 只做 ABI 对齐]
+
+    E --> F[补 times: struct tms + sys_times]
+
+    F --> G[补 uname: struct utsname + sys_uname]
+
+    G --> H[Makefile 分流: local / all]
+
+    H --> I[平台模式把完整 _init 转成 initcode.h]
+
+    I --> J[make clean &amp;&amp; make local]
+
+    J --> K[五个测试依次通过并 shutdown]
+
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="十八验证与回归检查">十八、验证与回归检查<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十八验证与回归检查" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>每次修改系统调用相关代码后，都应避免只看源码，而应重新验证整个构建链条。尤其在本实验中，运行结果可能来自旧的 <code>kernel</code>、旧的 <code>fs.img</code>，甚至来自与当前源码不一致的构建产物，因此“源码看起来已经改对了”并不等于“系统实际运行的就是新版本”。</p>
+<p>较稳妥的验证流程包括：</p>
+<ol>
+<li>
+<p>完整重编译内核与用户程序；</p>
+</li>
+<li>
+<p>重新打包文件系统镜像；</p>
+</li>
+<li>
+<p>重启 QEMU；</p>
+</li>
+<li>
+<p>观察启动日志中是否仍出现 <code>unknown sys call</code>；</p>
+</li>
+<li>
+<p>重点检查 <code>times</code>、<code>uname</code> 以及 <code>init</code> 初始化阶段的 <code>dup(0)</code> 等调用是否已恢复正常；</p>
+</li>
+<li>
+<p>确认测试输出顺序稳定，且系统最终经 <code>shutdown</code> 正常退出。</p>
+</li>
+</ol>
+<h2 id="十九结论">十九、结论<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十九结论" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Part 1 的本质不是单点式地补若干系统调用，而是建立一条能够兼容预编译测试程序的完整用户态启动与系统调用链路。其关键在于：</p>
+<ol>
+<li>
+<p>正确理解 <code>initcode</code> 在系统自举中的地位，并使其随着 ISA 位宽和系统调用 ABI 的变化自动重建；</p>
+</li>
+<li>
+<p>明确区分本地测试与平台评测在 <code>/init</code> 装载方式上的差异，分别采用短跳板与完整内嵌 <code>init</code> 两种方案；</p>
+</li>
+<li>
+<p>优先完成系统调用号与分发表的 ABI 对齐；</p>
+</li>
+<li>
+<p>对 <code>getcwd</code>、<code>times</code>、<code>uname</code> 等调用在语义、结构布局与用户态回写路径上进行适配；</p>
+</li>
+<li>
+<p>通过 <code>shutdown</code> 使测试流程形成完整闭环。</p>
+</li>
+</ol>
+<p>从排障结果看，本次故障的根因集中在系统调用号与分发映射不完整或不一致，表现为 <code>times(153)</code>、<code>uname(160)</code>、<code>dup(10)</code> 等调用在启动阶段即触发 <code>unknown sys call</code>。修复后，只要重新构建内核与镜像，并保证 <code>initcode</code> 与当前 ABI 同步生成，Part 1 所要求的启动、自举与首批系统调用链路即可恢复到可测试状态。</p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
                 s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
                 c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
                 C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
@@ -214,6 +798,6 @@ pre:hover > .expand-button {
                 C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
                 S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
                 s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
-                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-67" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#xv6-os-lab-part-1系统启动自举过程与首批系统调用" data-for="xv6-os-lab-part-1系统启动自举过程与首批系统调用">xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用</a></li><li class="depth-1"><a href="#initcode" data-for="initcode">initcode</a></li><li class="depth-1"><a href="#评测流程" data-for="评测流程">评测流程</a></li><li class="depth-1"><a href="#系统调用号对齐" data-for="系统调用号对齐">系统调用号对齐</a></li><li class="depth-1"><a href="#shutdown" data-for="shutdown">shutdown</a></li><li class="depth-1"><a href="#getcwd" data-for="getcwd">getcwd</a></li><li class="depth-1"><a href="#write--getpid" data-for="write--getpid">write / getpid</a></li><li class="depth-1"><a href="#times" data-for="times">times</a></li><li class="depth-1"><a href="#uname" data-for="uname">uname</a></li><li class="depth-1"><a href="#测试与结果解释" data-for="测试与结果解释">测试与结果解释</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-68" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#xv6-os-lab-part-1系统启动自举过程与首批系统调用" data-for="xv6-os-lab-part-1系统启动自举过程与首批系统调用">xv6 OS Lab Part 1：系统启动、自举过程与首批系统调用</a></li><li class="depth-1"><a href="#一整体任务与系统主线" data-for="一整体任务与系统主线">一、整体任务与系统主线</a></li><li class="depth-1"><a href="#二启动链路与首进程的形成" data-for="二启动链路与首进程的形成">二、启动链路与首进程的形成</a></li><li class="depth-1"><a href="#三initcode-的作用与自举意义" data-for="三initcode-的作用与自举意义">三、initcode 的作用与自举意义</a></li><li class="depth-1"><a href="#四initcode-的生成方式与构建位置" data-for="四initcode-的生成方式与构建位置">四、initcode 的生成方式与构建位置</a></li><li class="depth-1"><a href="#五为什么-initcode-不能沿用旧版本" data-for="五为什么-initcode-不能沿用旧版本">五、为什么 initcode 不能沿用旧版本</a></li><li class="depth-2"><a href="#1-执行环境变化" data-for="1-执行环境变化">1. 执行环境变化</a></li><li class="depth-2"><a href="#2-系统调用-abi-变化" data-for="2-系统调用-abi-变化">2. 系统调用 ABI 变化</a></li><li class="depth-1"><a href="#六本地测试与平台评测的两条启动路径" data-for="六本地测试与平台评测的两条启动路径">六、本地测试与平台评测的两条启动路径</a></li><li class="depth-1"><a href="#七评测流程与-init-的职责变化" data-for="七评测流程与-init-的职责变化">七、评测流程与 /init 的职责变化</a></li><li class="depth-1"><a href="#八系统调用-abi-对齐" data-for="八系统调用-abi-对齐">八、系统调用 ABI 对齐</a></li><li class="depth-1"><a href="#九shutdown使测试结束后系统稳定退出" data-for="九shutdown使测试结束后系统稳定退出">九、shutdown：使测试结束后系统稳定退出</a></li><li class="depth-1"><a href="#十getcwd修正接口语义而不是推翻算法" data-for="十getcwd修正接口语义而不是推翻算法">十、getcwd：修正接口语义而不是推翻算法</a></li><li class="depth-1"><a href="#十一write-与-getpid核心在于-abi-对齐" data-for="十一write-与-getpid核心在于-abi-对齐">十一、write 与 getpid：核心在于 ABI 对齐</a></li><li class="depth-1"><a href="#十二times结构正确值稳定可安全写回用户态" data-for="十二times结构正确值稳定可安全写回用户态">十二、times：结构正确、值稳定、可安全写回用户态</a></li><li class="depth-2"><a href="#1-数据结构" data-for="1-数据结构">1. 数据结构</a></li><li class="depth-2"><a href="#2-系统调用号与分发" data-for="2-系统调用号与分发">2. 系统调用号与分发</a></li><li class="depth-2"><a href="#3-实现思路" data-for="3-实现思路">3. 实现思路</a></li><li class="depth-1"><a href="#十三uname返回结构完整字符串稳定的系统标识" data-for="十三uname返回结构完整字符串稳定的系统标识">十三、uname：返回结构完整、字符串稳定的系统标识</a></li><li class="depth-2"><a href="#1-数据结构-1" data-for="1-数据结构-1">1. 数据结构</a></li><li class="depth-2"><a href="#2-系统调用号与分发-1" data-for="2-系统调用号与分发-1">2. 系统调用号与分发</a></li><li class="depth-2"><a href="#3-实现思路-1" data-for="3-实现思路-1">3. 实现思路</a></li><li class="depth-1"><a href="#十四times-与-uname-的实际排障记录" data-for="十四times-与-uname-的实际排障记录">十四、times 与 uname 的实际排障记录</a></li><li class="depth-1"><a href="#十五initcodes-在-rv64-下的链接与对齐问题" data-for="十五initcodes-在-rv64-下的链接与对齐问题">十五、initcode.S 在 RV64 下的链接与对齐问题</a></li><li class="depth-1"><a href="#十六构建系统分流与-makefile-的职责" data-for="十六构建系统分流与-makefile-的职责">十六、构建系统分流与 Makefile 的职责</a></li><li class="depth-1"><a href="#十七实际动手顺序" data-for="十七实际动手顺序">十七、实际动手顺序</a></li><li class="depth-1"><a href="#十八验证与回归检查" data-for="十八验证与回归检查">十八、验证与回归检查</a></li><li class="depth-1"><a href="#十九结论" data-for="十九结论">十九、结论</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
 </script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
 </script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>
