@@ -1,331 +1,334 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"><url>
     <loc>https://localhost/Archive/prompt</loc>
-    <lastmod>2026-03-20T03:06:44.514Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.039Z</lastmod>
   </url><url>
     <loc>https://localhost/Archive/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%9F%BA%E7%A1%80/main</loc>
-    <lastmod>2026-03-20T03:06:44.505Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.029Z</lastmod>
   </url><url>
     <loc>https://localhost/Archive/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80</loc>
-    <lastmod>2026-03-20T03:06:44.497Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.021Z</lastmod>
   </url><url>
     <loc>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob</loc>
-    <lastmod>2026-03-20T03:06:44.512Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.038Z</lastmod>
   </url><url>
     <loc>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob_distill</loc>
-    <lastmod>2026-03-20T03:06:44.509Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.035Z</lastmod>
   </url><url>
     <loc>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%AF%BC%E8%AE%BA/part1</loc>
-    <lastmod>2026-03-20T03:06:44.480Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.005Z</lastmod>
   </url><url>
     <loc>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%AF%BC%E8%AE%BA/part2</loc>
-    <lastmod>2026-03-20T03:06:44.484Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.008Z</lastmod>
   </url><url>
     <loc>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E5%AF%BC%E8%AE%BA/part3</loc>
-    <lastmod>2026-03-20T03:06:44.489Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.013Z</lastmod>
   </url><url>
     <loc>https://localhost/Archive/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E4%B8%8E%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84</loc>
-    <lastmod>2026-03-20T03:06:44.493Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.018Z</lastmod>
   </url><url>
     <loc>https://localhost/Archive/%E8%AE%A4%E7%9F%A5%E5%BF%83%E7%90%86%E5%AD%A6</loc>
-    <lastmod>2026-03-20T03:06:44.508Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.033Z</lastmod>
   </url><url>
     <loc>https://localhost/</loc>
-    <lastmod>2026-03-20T03:06:44.515Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.041Z</lastmod>
+  </url><url>
+    <loc>https://localhost/template/template1</loc>
+    <lastmod>2026-03-20T06:36:06.042Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E5%8F%AF%E8%A7%A3%E9%87%8A%E6%80%A7%E7%A0%94%E7%A9%B6/%E6%B5%81%E5%BD%A2</loc>
-    <lastmod>2026-03-20T03:06:44.463Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.990Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E5%8F%AF%E8%A7%A3%E9%87%8A%E6%80%A7%E7%A0%94%E7%A9%B6/%E6%BB%9E%E5%90%8E%E5%9B%9E%E5%BD%92</loc>
-    <lastmod>2026-03-20T03:06:44.465Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.992Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/book</loc>
-    <lastmod>2026-03-20T03:06:44.468Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.994Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/main</loc>
-    <lastmod>2026-03-20T03:06:44.470Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.995Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</loc>
-    <lastmod>2026-03-20T03:06:44.460Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.989Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A6%82%E7%8E%87%E8%AE%BA%E4%B8%8E%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1</loc>
-    <lastmod>2026-03-20T03:06:44.453Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.984Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%94%A8%E6%8A%9B%E7%A1%AC%E5%B8%81%E8%A7%A3%E9%87%8A%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%96%B9%E6%B3%95</loc>
-    <lastmod>2026-03-20T03:06:44.460Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.988Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/1.Intro_Math</loc>
-    <lastmod>2026-03-20T03:06:44.418Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.954Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/10.VI</loc>
-    <lastmod>2026-03-20T03:06:44.419Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.955Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/11.MCMC</loc>
-    <lastmod>2026-03-20T03:06:44.420Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.956Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/12.HMM</loc>
-    <lastmod>2026-03-20T03:06:44.422Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.958Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/13.LDS</loc>
-    <lastmod>2026-03-20T03:06:44.423Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.959Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/14.particleFilter</loc>
-    <lastmod>2026-03-20T03:06:44.424Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.960Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/15.CRF</loc>
-    <lastmod>2026-03-20T03:06:44.426Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.962Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/16.GaussianNetwork</loc>
-    <lastmod>2026-03-20T03:06:44.427Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.963Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/17.BayesianLR</loc>
-    <lastmod>2026-03-20T03:06:44.429Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.964Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/18.GaussianProcess</loc>
-    <lastmod>2026-03-20T03:06:44.430Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.965Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/19.RBM</loc>
-    <lastmod>2026-03-20T03:06:44.431Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.966Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/2.LinearRegression</loc>
-    <lastmod>2026-03-20T03:06:44.432Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.967Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/20.Spectral</loc>
-    <lastmod>2026-03-20T03:06:44.434Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.968Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/21.NN</loc>
-    <lastmod>2026-03-20T03:06:44.435Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.968Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/22.PartitionFunction</loc>
-    <lastmod>2026-03-20T03:06:44.436Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.969Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/23.ApproInference</loc>
-    <lastmod>2026-03-20T03:06:44.437Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.971Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/3.LinearClassification</loc>
-    <lastmod>2026-03-20T03:06:44.439Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.972Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/4.DimentionReduction</loc>
-    <lastmod>2026-03-20T03:06:44.441Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.973Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/5.SVM</loc>
-    <lastmod>2026-03-20T03:06:44.442Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.975Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/6.Exponentialfamily</loc>
-    <lastmod>2026-03-20T03:06:44.443Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.976Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/7.PGMIntro</loc>
-    <lastmod>2026-03-20T03:06:44.444Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.977Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/8.EM</loc>
-    <lastmod>2026-03-20T03:06:44.446Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.979Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/9.GMM</loc>
-    <lastmod>2026-03-20T03:06:44.449Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.980Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/cheatsheet</loc>
-    <lastmod>2026-03-20T03:06:44.450Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.982Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%99%BD%E6%9D%BF%E6%8E%A8%E5%AF%BC/</loc>
-    <lastmod>2026-03-20T03:06:44.452Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.982Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0</loc>
-    <lastmod>2026-03-20T03:06:44.458Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.987Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E9%99%8D%E7%BB%B4</loc>
-    <lastmod>2026-03-20T03:06:44.455Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.985Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E4%B9%A0%E9%A2%98%E8%A7%A3%E6%9E%90</loc>
-    <lastmod>2026-03-20T03:06:44.472Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.998Z</lastmod>
   </url><url>
     <loc>https://localhost/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E6%9C%AA%E5%91%BD%E5%90%8D</loc>
-    <lastmod>2026-03-20T03:06:44.471Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.997Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/docker</loc>
-    <lastmod>2026-03-20T03:06:44.342Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.877Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/git</loc>
-    <lastmod>2026-03-20T03:06:44.343Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.878Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/its</loc>
-    <lastmod>2026-03-20T03:06:44.344Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.879Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/makefile</loc>
-    <lastmod>2026-03-20T03:06:44.344Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.880Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/slurm</loc>
-    <lastmod>2026-03-20T03:06:44.345Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.881Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/ssh</loc>
-    <lastmod>2026-03-20T03:06:44.346Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.881Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/starship</loc>
-    <lastmod>2026-03-20T03:06:44.347Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.883Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/tmux</loc>
-    <lastmod>2026-03-20T03:06:44.348Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.883Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/ufw</loc>
-    <lastmod>2026-03-20T03:06:44.349Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.885Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/uv</loc>
-    <lastmod>2026-03-20T03:06:44.350Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.886Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/vim</loc>
-    <lastmod>2026-03-20T03:06:44.351Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.887Z</lastmod>
   </url><url>
     <loc>https://localhost/%E5%B7%A5%E5%85%B7/zsh</loc>
-    <lastmod>2026-03-20T03:06:44.353Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.888Z</lastmod>
   </url><url>
     <loc>https://localhost/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BA/%E5%81%87%E8%AE%BE%E6%A3%80%E9%AA%8C</loc>
-    <lastmod>2026-03-20T03:06:44.340Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.876Z</lastmod>
   </url><url>
     <loc>https://localhost/%E7%A7%91%E7%A0%94/%E5%9B%9B%E5%AD%90%E6%A3%8B/IBS</loc>
-    <lastmod>2026-03-20T03:06:44.358Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.892Z</lastmod>
   </url><url>
     <loc>https://localhost/%E7%A7%91%E7%A0%94/%E5%9B%9B%E5%AD%90%E6%A3%8B/MCS</loc>
-    <lastmod>2026-03-20T03:06:44.359Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.893Z</lastmod>
   </url><url>
     <loc>https://localhost/%E7%A7%91%E7%A0%94/%E5%9B%9B%E5%AD%90%E6%A3%8B/Minimax-%E7%AE%97%E6%B3%95</loc>
-    <lastmod>2026-03-20T03:06:44.360Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.895Z</lastmod>
   </url><url>
     <loc>https://localhost/%E7%A7%91%E7%A0%94/%E5%9B%9B%E5%AD%90%E6%A3%8B/%E5%A4%A7%E7%BA%B2</loc>
-    <lastmod>2026-03-20T03:06:44.356Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.891Z</lastmod>
   </url><url>
     <loc>https://localhost/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/rust</loc>
-    <lastmod>2026-03-20T03:06:44.338Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.874Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E5%A4%96%E5%AD%A6%E4%B9%A0/cs336/BuildLLM_Building_Blocks</loc>
-    <lastmod>2026-03-20T03:06:44.401Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.938Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E5%A4%96%E5%AD%A6%E4%B9%A0/cs336/Emergence_Torch_Transformer_MoE</loc>
-    <lastmod>2026-03-20T03:06:44.406Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.942Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E5%A4%96%E5%AD%A6%E4%B9%A0/cs336/Scaling_Hardware_Distributed</loc>
-    <lastmod>2026-03-20T03:06:44.409Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.945Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E5%A4%96%E5%AD%A6%E4%B9%A0/cs336/Scaling_Inference</loc>
-    <lastmod>2026-03-20T03:06:44.411Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.947Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E5%A4%96%E5%AD%A6%E4%B9%A0/cs336/Transformer_Overview</loc>
-    <lastmod>2026-03-20T03:06:44.413Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.949Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E5%A4%96%E5%AD%A6%E4%B9%A0/rl/%E6%A8%A1%E5%9E%8B%E5%92%8C%E7%AE%97%E6%B3%95</loc>
-    <lastmod>2026-03-20T03:06:44.415Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.952Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E4%BF%A1%E6%81%AF%E4%B8%AD%E7%9A%84%E6%A6%82%E7%8E%87%E7%BB%9F%E8%AE%A1/lecture2</loc>
-    <lastmod>2026-03-20T03:06:44.398Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.934Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E4%BF%A1%E6%81%AF%E4%B8%AD%E7%9A%84%E6%A6%82%E7%8E%87%E7%BB%9F%E8%AE%A1/lecture3</loc>
-    <lastmod>2026-03-20T03:06:44.400Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.936Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E4%BF%A1%E6%81%AF%E4%B8%AD%E7%9A%84%E6%A6%82%E7%8E%87%E7%BB%9F%E8%AE%A1/%E4%BD%9C%E4%B8%9A/ans2</loc>
-    <lastmod>2026-03-20T03:06:44.391Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.927Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E4%BF%A1%E6%81%AF%E4%B8%AD%E7%9A%84%E6%A6%82%E7%8E%87%E7%BB%9F%E8%AE%A1/%E4%BD%9C%E4%B8%9A/hw1</loc>
-    <lastmod>2026-03-20T03:06:44.392Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.928Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E4%BF%A1%E6%81%AF%E4%B8%AD%E7%9A%84%E6%A6%82%E7%8E%87%E7%BB%9F%E8%AE%A1/%E4%BD%9C%E4%B8%9A/hw2</loc>
-    <lastmod>2026-03-20T03:06:44.393Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.929Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E4%BF%A1%E6%81%AF%E4%B8%AD%E7%9A%84%E6%A6%82%E7%8E%87%E7%BB%9F%E8%AE%A1/%E4%BD%9C%E4%B8%9A/hw3</loc>
-    <lastmod>2026-03-20T03:06:44.394Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.929Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E4%BF%A1%E6%81%AF%E4%B8%AD%E7%9A%84%E6%A6%82%E7%8E%87%E7%BB%9F%E8%AE%A1/%E4%BD%9C%E4%B8%9A/</loc>
-    <lastmod>2026-03-20T03:06:44.395Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.931Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E4%BF%A1%E6%81%AF%E4%B8%AD%E7%9A%84%E6%A6%82%E7%8E%87%E7%BB%9F%E8%AE%A1/%E4%BD%9C%E4%B8%9A/prompt</loc>
-    <lastmod>2026-03-20T03:06:44.396Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.932Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E4%BF%A1%E6%81%AF%E4%B8%AD%E7%9A%84%E6%A6%82%E7%8E%87%E7%BB%9F%E8%AE%A1/%E5%8F%8D%E5%B0%84%E5%8E%9F%E7%90%86</loc>
-    <lastmod>2026-03-20T03:06:44.389Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.924Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E5%8F%98%E6%80%81%E5%BF%83%E7%90%86%E5%AD%A6/prompt</loc>
-    <lastmod>2026-03-20T03:06:44.361Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.896Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E5%BF%83%E7%90%86%E6%B5%8B%E9%87%8F/</loc>
-    <lastmod>2026-03-20T03:06:44.383Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.919Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E5%BF%83%E7%90%86%E6%B5%8B%E9%87%8F/lecture1</loc>
-    <lastmod>2026-03-20T03:06:44.384Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.920Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E5%BF%83%E7%90%86%E6%B5%8B%E9%87%8F/lecture2</loc>
-    <lastmod>2026-03-20T03:06:44.385Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.921Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E5%BF%83%E7%90%86%E6%B5%8B%E9%87%8F/lecture3</loc>
-    <lastmod>2026-03-20T03:06:44.387Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.922Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E5%BF%83%E7%90%86%E6%B5%8B%E9%87%8F/prompt</loc>
-    <lastmod>2026-03-20T03:06:44.388Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.923Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/lab/lab1</loc>
-    <lastmod>2026-03-20T03:06:44.362Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.897Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/lab/roadmap</loc>
-    <lastmod>2026-03-20T03:06:44.363Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.899Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/lecture/</loc>
-    <lastmod>2026-03-20T03:06:44.364Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.899Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/lecture/lecture1</loc>
-    <lastmod>2026-03-20T03:06:44.365Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.901Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/lecture/lecture2</loc>
-    <lastmod>2026-03-20T03:06:44.367Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.902Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/lecture/lecture3</loc>
-    <lastmod>2026-03-20T03:06:44.368Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.903Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/lecture/lecture4</loc>
-    <lastmod>2026-03-20T03:06:44.368Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.904Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/lecture/lecture5</loc>
-    <lastmod>2026-03-20T03:06:44.369Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.904Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/lecture/prompt</loc>
-    <lastmod>2026-03-20T03:06:44.370Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.906Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E6%95%99%E8%82%B2%E5%BF%83%E7%90%86%E5%AD%A6/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0</loc>
-    <lastmod>2026-03-20T03:06:44.382Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.918Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
-    <lastmod>2026-03-20T03:06:44.372Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.908Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/lecture1</loc>
-    <lastmod>2026-03-20T03:06:44.373Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.909Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/lecture2</loc>
-    <lastmod>2026-03-20T03:06:44.375Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.911Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/lecture3</loc>
-    <lastmod>2026-03-20T03:06:44.377Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.913Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/lecture4</loc>
-    <lastmod>2026-03-20T03:06:44.379Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.915Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/lecture5</loc>
-    <lastmod>2026-03-20T03:06:44.379Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.916Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/prompt</loc>
-    <lastmod>2026-03-20T03:06:44.381Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.917Z</lastmod>
   </url><url>
     <loc>https://localhost/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AF%BE%E7%A8%8B%E5%A4%A7%E7%BA%B2</loc>
-    <lastmod>2026-03-20T03:06:44.371Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.907Z</lastmod>
   </url><url>
     <loc>https://localhost/%E9%87%91%E8%9E%8D/note</loc>
-    <lastmod>2026-03-20T03:06:44.354Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.889Z</lastmod>
   </url><url>
     <loc>https://localhost/%E9%A1%B9%E7%9B%AE/obsidian-publish</loc>
-    <lastmod>2026-03-20T03:06:44.474Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.000Z</lastmod>
   </url><url>
     <loc>https://localhost/%E9%A1%B9%E7%9B%AE/shp</loc>
-    <lastmod>2026-03-20T03:06:44.475Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.001Z</lastmod>
   </url><url>
     <loc>https://localhost/%E9%A1%B9%E7%9B%AE/static_web_presentation</loc>
-    <lastmod>2026-03-20T03:06:44.476Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.001Z</lastmod>
   </url><url>
     <loc>https://localhost/%E9%A1%B9%E7%9B%AE/tnf</loc>
-    <lastmod>2026-03-20T03:06:44.477Z</lastmod>
+    <lastmod>2026-03-20T06:36:06.002Z</lastmod>
   </url><url>
     <loc>https://localhost/%E9%A1%B9%E7%9B%AE/%E5%9C%A8%E7%BA%BF%E6%B8%B8%E6%88%8F%E5%B9%B3%E5%8F%B0</loc>
-    <lastmod>2026-03-20T03:06:44.474Z</lastmod>
+    <lastmod>2026-03-20T06:36:05.999Z</lastmod>
   </url></urlset>
