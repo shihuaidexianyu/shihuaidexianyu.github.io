@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>windows配置</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="windows配置"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="windows配置"/><meta name="twitter:description" content="一、配置目标 Windows 的推荐配置应当围绕三个核心目标展开：稳定、整洁、易维护。 一套合适的配置，不是单纯追求“极限优化”或“精简到极致”，而是尽量减少日常使用中的常见问题，例如 C 盘爆满、软件残留、系统卡顿、文件混乱、备份缺失，以及重装系统后的恢复成本过高。 因此，Windows 的推荐配置应当遵循以下原则： 常用数据与系统尽量分离，但不盲目制造复杂分区。 常用文件定期备份，避免单点故障。 软件选择以稳定、轻量、成熟、易替换为主。 不进行高风险、收益有限的“玄学优化”。 所有重要配置应服务于长期维护，而不是一时爽快。 二、磁盘与文件配置 1."/><meta property="og:description" content="一、配置目标 Windows 的推荐配置应当围绕三个核心目标展开：稳定、整洁、易维护。 一套合适的配置，不是单纯追求“极限优化”或“精简到极致”，而是尽量减少日常使用中的常见问题，例如 C 盘爆满、软件残留、系统卡顿、文件混乱、备份缺失，以及重装系统后的恢复成本过高。 因此，Windows 的推荐配置应当遵循以下原则： 常用数据与系统尽量分离，但不盲目制造复杂分区。 常用文件定期备份，避免单点故障。 软件选择以稳定、轻量、成熟、易替换为主。 不进行高风险、收益有限的“玄学优化”。 所有重要配置应服务于长期维护，而不是一时爽快。 二、磁盘与文件配置 1."/><meta property="og:image:alt" content="一、配置目标 Windows 的推荐配置应当围绕三个核心目标展开：稳定、整洁、易维护。 一套合适的配置，不是单纯追求“极限优化”或“精简到极致”，而是尽量减少日常使用中的常见问题，例如 C 盘爆满、软件残留、系统卡顿、文件混乱、备份缺失，以及重装系统后的恢复成本过高。 因此，Windows 的推荐配置应当遵循以下原则： 常用数据与系统尽量分离，但不盲目制造复杂分区。 常用文件定期备份，避免单点故障。 软件选择以稳定、轻量、成熟、易替换为主。 不进行高风险、收益有限的“玄学优化”。 所有重要配置应服务于长期维护，而不是一时爽快。 二、磁盘与文件配置 1."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/教程/windows配置"/><meta property="twitter:url" content="https://localhost/教程/windows配置"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="一、配置目标 Windows 的推荐配置应当围绕三个核心目标展开：稳定、整洁、易维护。 一套合适的配置，不是单纯追求“极限优化”或“精简到极致”，而是尽量减少日常使用中的常见问题，例如 C 盘爆满、软件残留、系统卡顿、文件混乱、备份缺失，以及重装系统后的恢复成本过高。 因此，Windows 的推荐配置应当遵循以下原则： 常用数据与系统尽量分离，但不盲目制造复杂分区。 常用文件定期备份，避免单点故障。 软件选择以稳定、轻量、成熟、易替换为主。 不进行高风险、收益有限的“玄学优化”。 所有重要配置应服务于长期维护，而不是一时爽快。 二、磁盘与文件配置 1."/><meta name="generator" content="Quartz"/><link href="../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="教程/windows配置"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-92"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-92" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../教程/">教程</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>windows配置</a></div></nav><h1 class="article-title">windows配置</h1><p show-comma="true" class="content-meta"><time datetime="2026-03-21T04:47:14.068Z">Mar 21, 2026</time><span>16 min read</span></p></div></div><article class="popover-hint"><h2 id="一配置目标">一、配置目标<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#一配置目标" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Windows 的推荐配置应当围绕三个核心目标展开：稳定、整洁、易维护。<br/>
+一套合适的配置，不是单纯追求“极限优化”或“精简到极致”，而是尽量减少日常使用中的常见问题，例如 C 盘爆满、软件残留、系统卡顿、文件混乱、备份缺失，以及重装系统后的恢复成本过高。</p>
+<p>因此，Windows 的推荐配置应当遵循以下原则：</p>
+<ol>
+<li>
+<p>常用数据与系统尽量分离，但不盲目制造复杂分区。</p>
+</li>
+<li>
+<p>常用文件定期备份，避免单点故障。</p>
+</li>
+<li>
+<p>软件选择以稳定、轻量、成熟、易替换为主。</p>
+</li>
+<li>
+<p>不进行高风险、收益有限的“玄学优化”。</p>
+</li>
+<li>
+<p>所有重要配置应服务于长期维护，而不是一时爽快。</p>
+</li>
+</ol>
+<hr/>
+<h2 id="二磁盘与文件配置">二、磁盘与文件配置<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#二磁盘与文件配置" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-养成常备份的习惯">1. 养成常备份的习惯<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-养成常备份的习惯" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>常用数据必须定期备份。<br/>
+系统故障、误删除、硬盘损坏、同步误覆盖，都会导致重要文件丢失。课程资料、笔记、代码、论文、证件扫描件、配置文件等内容，不应只保存在单一设备的单一磁盘上。</p>
+<p>推荐至少采用以下思路之一：</p>
+<ul>
+<li>
+<p>本地单独备份一份；</p>
+</li>
+<li>
+<p>外接硬盘定期备份；</p>
+</li>
+<li>
+<p>云同步保存重要文档；</p>
+</li>
+<li>
+<p>关键资料保留历史版本。</p>
+</li>
+</ul>
+<p>真正重要的不是“是否做了备份”，而是“备份是否可恢复”。因此备份后的抽样检查同样必要。</p>
+<h3 id="2-为减少-c-盘爆满问题可考虑简化盘符结构">2. 为减少 C 盘爆满问题，可考虑简化盘符结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-为减少-c-盘爆满问题可考虑简化盘符结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在很多个人电脑上，分区过多并不会显著提升管理效率，反而容易造成以下问题：</p>
+<ul>
+<li>
+<p>C 盘空间紧张，但其他盘空闲很多；</p>
+</li>
+<li>
+<p>软件默认安装到 C 盘，后期清理困难；</p>
+</li>
+<li>
+<p>下载、桌面、文档长期堆积在系统盘；</p>
+</li>
+<li>
+<p>用户误以为“分了很多盘就更安全”，实际上并没有形成真正备份。</p>
+</li>
+</ul>
+<p>如果当前机器只是普通学习、办公和开发用途，而不是多系统、多硬盘、复杂工程环境，那么<strong>推荐尽量避免过细分区</strong>。<br/>
+在条件合适时，可以考虑将磁盘整合为更少的盘符，甚至统一成一个主盘符，以减少空间割裂问题。</p>
+<p>不过，这里的“合并磁盘”为管理建议，不等于无脑操作分区。若当前已有大量数据，调整分区前必须先备份。对于已经形成稳定使用习惯的用户，也可以保留简洁的双分区方案，例如：</p>
+<ul>
+<li>
+<p><code>C:</code> 用于系统与常用软件；</p>
+</li>
+<li>
+<p><code>D:</code> 用于资料、下载、项目、备份。</p>
+</li>
+</ul>
+<p>这种方案通常比“分出五六个盘”更容易维护。</p>
+<h3 id="3-下载桌面文档目录应主动管理">3. 下载、桌面、文档目录应主动管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-下载桌面文档目录应主动管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 默认会把大量内容写入以下位置：</p>
+<ul>
+<li>
+<p>桌面</p>
+</li>
+<li>
+<p>下载</p>
+</li>
+<li>
+<p>文档</p>
+</li>
+<li>
+<p>图片</p>
+</li>
+<li>
+<p>视频</p>
+</li>
+</ul>
+<p>这些目录如果长期堆积，往往会直接拖垮系统盘空间。因此推荐：</p>
+<ul>
+<li>
+<p>不把桌面当仓库使用；</p>
+</li>
+<li>
+<p>下载目录定期清理；</p>
+</li>
+<li>
+<p>大文件、安装包、视频素材、数据集尽量转移到非系统存储区；</p>
+</li>
+<li>
+<p>项目文件按主题集中管理，而不是散落在多个默认目录中。</p>
+</li>
+</ul>
+<hr/>
+<h2 id="三加密与安全配置">三、加密与安全配置<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#三加密与安全配置" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-bitlocker-的使用应基于实际需求">1. BitLocker 的使用应基于实际需求<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-bitlocker-的使用应基于实际需求" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>BitLocker 是 Windows 提供的磁盘加密功能，主要作用是保护设备丢失后的数据安全。<br/>
+如果设备中存放了敏感资料，或者存在较高的丢失风险，那么启用 BitLocker 是合理的。</p>
+<p>但在个人日常使用中，如果没有明确的加密需求，也可以考虑关闭 BitLocker，原因主要有两点：</p>
+<ol>
+<li>
+<p>加密会增加管理复杂度；</p>
+</li>
+<li>
+<p>一旦出现系统损坏、主板更换、账户异常等问题，恢复过程可能依赖恢复密钥，处理不当会非常麻烦。</p>
+</li>
+</ol>
+<p>此外，BitLocker 在不同设备上的性能影响并不完全一致。现代硬件支持较好时，体感影响可能并不明显；但在部分旧设备、低性能设备或特殊读写场景下，用户可能仍会感受到额外负担。<br/>
+因此更准确的表述是：</p>
+<ul>
+<li>
+<p><strong>有明确数据安全需求时启用；</strong></p>
+</li>
+<li>
+<p><strong>无明确加密需求且更看重维护便利时，可考虑关闭；</strong></p>
+</li>
+<li>
+<p><strong>无论开关与否，都必须妥善保存恢复密钥。</strong></p>
+</li>
+</ul>
+<p>这里最重要的不是“开”还是“关”，而是不要在不了解恢复机制的情况下随意使用。</p>
+<h3 id="2-系统安全不应只依赖清理优化">2. 系统安全不应只依赖“清理优化”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-系统安全不应只依赖清理优化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>推荐保留以下基本安全习惯：</p>
+<ul>
+<li>
+<p>使用 Windows 自带安全中心；</p>
+</li>
+<li>
+<p>保持系统和浏览器更新；</p>
+</li>
+<li>
+<p>不随意关闭 Defender；</p>
+</li>
+<li>
+<p>不安装来源不明的软件；</p>
+</li>
+<li>
+<p>不轻信各种“系统加速大师”“驱动万能修复工具”。</p>
+</li>
+</ul>
+<p>真正的系统稳定，通常来自良好的使用习惯，而不是频繁折腾底层设置。</p>
+<hr/>
+<h2 id="四推荐软件配置">四、推荐软件配置<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#四推荐软件配置" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>以下软件以实用性、成熟度和日常体验为主要标准，可作为 Windows 环境中的常用工具集。</p>
+<h3 id="1-网络与代理">1. 网络与代理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-网络与代理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="flclash">FlClash<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#flclash" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>适合作为规则分流与代理管理工具。<br/>
+其主要价值在于统一管理节点、规则与系统代理设置，便于网络切换与访问控制。对于需要的人较为实用。</p>
+<h3 id="2-视频播放">2. 视频播放<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-视频播放" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="potplayer">PotPlayer<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#potplayer" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>PotPlayer 是功能完整、格式兼容性很强的本地播放器。<br/>
+其优势在于解码能力强、播放稳定、快捷键体系完善，适合日常视频播放与本地媒体管理。相比许多臃肿播放器，它在性能与可定制性之间保持了较好平衡。</p>
+<h3 id="3-翻译与划词">3. 翻译与划词<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-翻译与划词" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="pot">pot<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#pot" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>pot 适合承担轻量化翻译、划词翻译与快捷调用任务。<br/>
+在查阅英文文档、阅读论文、浏览技术资料时，这类工具能够显著降低切换成本。</p>
+<h3 id="4-压缩与解压">4. 压缩与解压<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-压缩与解压" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="bandizip">Bandizip<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#bandizip" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Bandizip 适合作为日常压缩工具。<br/>
+界面清晰，基本功能完整，适合替代系统自带压缩支持不足的问题。对于经常处理压缩包、课程资料、项目归档文件的用户来说，这是较稳定的选择。</p>
+<h3 id="5-笔记与知识管理">5. 笔记与知识管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-笔记与知识管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="obsidian">Obsidian<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#obsidian" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Obsidian 适合承担个人知识管理、课程笔记、项目规划与长期资料沉淀任务。<br/>
+其核心优势在于本地 Markdown 存储、双向链接、可扩展插件生态以及较强的长期可迁移性。对需要沉淀学习资料、技术笔记、研究记录的用户尤其合适。</p>
+<h3 id="6-卸载工具">6. 卸载工具<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-卸载工具" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="geek-uninstaller">Geek Uninstaller<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#geek-uninstaller" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Geek Uninstaller 适合用于软件卸载与残留清理。<br/>
+Windows 自带卸载流程在很多情况下并不彻底，而该工具可以帮助定位残余注册表项与文件夹，减轻系统残留积累。</p>
+<h3 id="7-启动与快速检索">7. 启动与快速检索<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-启动与快速检索" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="flow-launcher">Flow Launcher<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#flow-launcher" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Flow Launcher 适合承担启动器、文件检索、命令调用与插件式扩展任务。<br/>
+它的意义不只是“更快地打开软件”，更在于建立统一入口，减少鼠标层层点击带来的操作负担。对于重度键盘用户尤其有价值。</p>
+<h3 id="8-代码与文本编辑">8. 代码与文本编辑<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-代码与文本编辑" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="visual-studio-code">Visual Studio Code<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#visual-studio-code" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>VS Code 是当前通用性很强的编辑器，适合代码编写、Markdown 编辑、配置文件修改、轻量项目开发等多种任务。<br/>
+其优势在于插件生态完善、语言支持广、与 Git、终端、远程开发等工作流结合紧密。</p>
+<h3 id="9-文献管理">9. 文献管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-文献管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="zotero">Zotero<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#zotero" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Zotero 适合用于论文、书籍、网页资料的收集、整理与引用管理。<br/>
+对于学习、科研和写作场景，它几乎属于高收益基础工具。相较于手动维护文献列表，文献管理器能显著降低资料混乱与引用错误的概率。</p>
+<h3 id="10-注册表清理">10. 注册表清理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-注册表清理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="wise-registry-cleaner">Wise Registry Cleaner<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#wise-registry-cleaner" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>Wise Registry Cleaner 可以作为<strong>谨慎使用</strong>的辅助工具。<br/>
+注册表清理并不是 Windows 维护的核心手段，过度依赖此类工具往往收益有限，风险反而更高。因此它更适合作为低频检查工具，而不应当成为高频“优化神器”。</p>
+<p>更稳妥的原则是：</p>
+<ul>
+<li>
+<p>不要频繁清理注册表；</p>
+</li>
+<li>
+<p>不要指望通过注册表清理解决卡顿根因；</p>
+</li>
+<li>
+<p>使用前确认可回滚或有系统还原点；</p>
+</li>
+<li>
+<p>仅在明确知道自己在做什么时使用。</p>
+</li>
+</ul>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>某些情况下，清理注册表可能有奇效。<br/>
+当注册表相关配置出错时，可能表现为以下现象：</p>
+<ul>
+<li>软件已经卸载，但右键菜单、文件关联、启动项中仍残留无效入口。</li>
+<li>双击某类文件时无法用正确程序打开，或“打开方式”列表混乱、重复、失效。</li>
+<li>桌面右键、文件右键、资源管理器右键菜单异常卡顿，甚至出现短暂无响应。</li>
+<li>开机自启动项异常，表现为无效启动项报错、重复启动、启动残留无法删除。</li>
+<li>控制面板、设置、默认应用等界面的关联配置失灵，修改后无法保存。</li>
+<li>资源管理器行为异常，例如“新建”菜单中出现空白项、无效项，或缺少本应存在的项。</li>
+<li>某些软件反复提示“已安装”或“未正确安装”，导致无法重装、无法卸载或升级失败。</li>
+<li>程序卸载后仍在“应用和功能”或“程序和功能”中留下幽灵条目。</li>
+<li>图标关联异常，例如文件图标显示错误、快捷方式图标空白、图标缓存反复错乱。</li>
+<li>系统路径、环境变量、COM 组件、Shell 扩展等注册信息损坏时，可能导致特定程序无法启动、调用失败或资源管理器崩溃。</li>
+</ul>
+<p>不过，这类现象并不一定都由注册表本身直接引起，也可能与残留文件、权限问题、缓存损坏、Shell 扩展冲突或软件安装不完整有关。<br/>
+因此，注册表清理更适合作为“定向修复手段”，而不是日常高频优化手段。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="五软件安装与系统维护习惯">五、软件安装与系统维护习惯<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#五软件安装与系统维护习惯" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-软件尽量少而精">1. 软件尽量少而精<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-软件尽量少而精" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>推荐的软件应当形成稳定工具链，而不是不断尝试替代品。<br/>
+过多重复软件会带来以下问题：</p>
+<ul>
+<li>
+<p>文件关联混乱；</p>
+</li>
+<li>
+<p>开机启动项增加；</p>
+</li>
+<li>
+<p>后台进程增多；</p>
+</li>
+<li>
+<p>更新提醒泛滥；</p>
+</li>
+<li>
+<p>卸载残留累积。</p>
+</li>
+</ul>
+<p>与其安装多个功能重叠的软件，不如每类场景固定一个主工具。</p>
+<h3 id="2-开机启动项应主动控制">2. 开机启动项应主动控制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-开机启动项应主动控制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>很多软件会默认加入开机启动。<br/>
+推荐定期检查启动项，只保留确实需要常驻的内容，例如输入法、同步工具、安全软件、必要驱动管理程序等。播放器、笔记软件、升级助手、清理工具通常不需要默认开机自启。</p>
+<h3 id="3-定期清理但不做激进优化">3. 定期清理，但不做激进优化<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-定期清理但不做激进优化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>推荐的清理对象包括：</p>
+<ul>
+<li>
+<p>下载目录中的安装包与临时文件；</p>
+</li>
+<li>
+<p>浏览器缓存中的无用内容；</p>
+</li>
+<li>
+<p>已卸载软件的残留文件夹；</p>
+</li>
+<li>
+<p>无用的大型日志、旧数据、重复副本。</p>
+</li>
+</ul>
+<p>不推荐的做法包括：</p>
+<ul>
+<li>
+<p>频繁修改注册表；</p>
+</li>
+<li>
+<p>随意关闭系统服务；</p>
+</li>
+<li>
+<p>使用来源不明的“极限优化脚本”；</p>
+</li>
+<li>
+<p>以“提速”为名删除系统组件。</p>
+</li>
+</ul>
+<p>Windows 的很多问题并不是因为“系统不够精简”，而是因为软件装得太乱、文件堆得太散、维护习惯太差。</p>
+<hr/>
+<h2 id="附录图标变白怎么办">附录：图标变白怎么办？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#附录图标变白怎么办" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><strong>重建图标缓存</strong>是最常见、也最有效的办法之一，特别适合“大量图标变白、变空白、错乱”。</p>
+<p>先关闭所有文件夹窗口，然后以管理员身份打开命令提示符或 PowerShell，执行：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="cmd" data-theme="github-light github-dark"><code data-language="cmd" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">taskkill /f /im explorer.exe  </span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">del /a /q </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;%localappdata%\IconCache.db&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  </span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">del /a /f /q </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;%localappdata%\Microsoft\Windows\Explorer\iconcache*&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  </span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">start explorer.exe</span></span></code></pre></figure>
+<p>执行完后系统会重新生成图标缓存。</p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-45" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#一配置目标" data-for="一配置目标">一、配置目标</a></li><li class="depth-0"><a href="#二磁盘与文件配置" data-for="二磁盘与文件配置">二、磁盘与文件配置</a></li><li class="depth-1"><a href="#1-养成常备份的习惯" data-for="1-养成常备份的习惯">1. 养成常备份的习惯</a></li><li class="depth-1"><a href="#2-为减少-c-盘爆满问题可考虑简化盘符结构" data-for="2-为减少-c-盘爆满问题可考虑简化盘符结构">2. 为减少 C 盘爆满问题，可考虑简化盘符结构</a></li><li class="depth-1"><a href="#3-下载桌面文档目录应主动管理" data-for="3-下载桌面文档目录应主动管理">3. 下载、桌面、文档目录应主动管理</a></li><li class="depth-0"><a href="#三加密与安全配置" data-for="三加密与安全配置">三、加密与安全配置</a></li><li class="depth-1"><a href="#1-bitlocker-的使用应基于实际需求" data-for="1-bitlocker-的使用应基于实际需求">1. BitLocker 的使用应基于实际需求</a></li><li class="depth-1"><a href="#2-系统安全不应只依赖清理优化" data-for="2-系统安全不应只依赖清理优化">2. 系统安全不应只依赖“清理优化”</a></li><li class="depth-0"><a href="#四推荐软件配置" data-for="四推荐软件配置">四、推荐软件配置</a></li><li class="depth-1"><a href="#1-网络与代理" data-for="1-网络与代理">1. 网络与代理</a></li><li class="depth-1"><a href="#2-视频播放" data-for="2-视频播放">2. 视频播放</a></li><li class="depth-1"><a href="#3-翻译与划词" data-for="3-翻译与划词">3. 翻译与划词</a></li><li class="depth-1"><a href="#4-压缩与解压" data-for="4-压缩与解压">4. 压缩与解压</a></li><li class="depth-1"><a href="#5-笔记与知识管理" data-for="5-笔记与知识管理">5. 笔记与知识管理</a></li><li class="depth-1"><a href="#6-卸载工具" data-for="6-卸载工具">6. 卸载工具</a></li><li class="depth-1"><a href="#7-启动与快速检索" data-for="7-启动与快速检索">7. 启动与快速检索</a></li><li class="depth-1"><a href="#8-代码与文本编辑" data-for="8-代码与文本编辑">8. 代码与文本编辑</a></li><li class="depth-1"><a href="#9-文献管理" data-for="9-文献管理">9. 文献管理</a></li><li class="depth-1"><a href="#10-注册表清理" data-for="10-注册表清理">10. 注册表清理</a></li><li class="depth-0"><a href="#五软件安装与系统维护习惯" data-for="五软件安装与系统维护习惯">五、软件安装与系统维护习惯</a></li><li class="depth-1"><a href="#1-软件尽量少而精" data-for="1-软件尽量少而精">1. 软件尽量少而精</a></li><li class="depth-1"><a href="#2-开机启动项应主动控制" data-for="2-开机启动项应主动控制">2. 开机启动项应主动控制</a></li><li class="depth-1"><a href="#3-定期清理但不做激进优化" data-for="3-定期清理但不做激进优化">3. 定期清理，但不做激进优化</a></li><li class="depth-0"><a href="#附录图标变白怎么办" data-for="附录图标变白怎么办">附录：图标变白怎么办？</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript.js" type="module" data-persist="true"></script></html>
