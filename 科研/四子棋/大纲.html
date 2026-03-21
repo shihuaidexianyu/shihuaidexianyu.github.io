@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>大纲</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="大纲"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="大纲"/><meta name="twitter:description" content="Expertise Increases Planning Depth in Human Gameplay 0."/><meta property="og:description" content="Expertise Increases Planning Depth in Human Gameplay 0."/><meta property="og:image:alt" content="Expertise Increases Planning Depth in Human Gameplay 0."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/科研/四子棋/大纲"/><meta property="twitter:url" content="https://localhost/科研/四子棋/大纲"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="Expertise Increases Planning Depth in Human Gameplay 0."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="科研/四子棋/大纲"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-99"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-99" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../科研/">科研</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../科研/四子棋/">四子棋</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>大纲</a></div></nav><h1 class="article-title">大纲</h1><p show-comma="true" class="content-meta"><time datetime="2026-03-21T17:11:16.220Z">Mar 22, 2026</time><span>55 min read</span></p></div></div><article class="popover-hint"><h1 id="expertise-increases-planning-depth-in-human-gameplay">Expertise Increases Planning Depth in Human Gameplay<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#expertise-increases-planning-depth-in-human-gameplay" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="0-这篇文章到底做了什么">0. 这篇文章到底做了什么<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0-这篇文章到底做了什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>作者设计了一个复杂度足够高、但规则足够简单的新棋类任务 ” 四连棋 “（4×9），并提出一个 ” 启发式价值函数 + best-first 树搜索 + 剪枝 + 注意力遗漏（feature dropout）+ 噪声/失误 ” 的计算认知模型。模型不仅能预测人的落子，还能在单局层面预测反应时与注视位置分布；通过学习实验、时间压力实验、移动端大样本数据、图灵测试、记忆重建实验等，得到一致结论：<strong>水平越高/经验越多，规划（planning）越深，注意力遗漏越少</strong>；在实验室样本里 ” 启发式权重是否更正确 ” 并未随学习改善（甚至略降），但在移动端大样本里启发式质量会随经验上升（起点更差，提升空间更大）。</p>
+<hr/>
+<h2 id="1-任务four-in-a-row49-四连棋">1. 任务：Four-in-a-row（4×9 四连棋）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-任务four-in-a-row49-四连棋" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="11-规则与界面行为">1.1 规则与界面行为<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-规则与界面行为" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>棋盘：4 行 × 9 列（共 36 格）。</li>
+<li>两名玩家轮流在空格落子（黑/白）。</li>
+<li>任一方先达成 ” 连续四子 “（横/竖/对角线）即胜。</li>
+<li>棋盘填满且无人四连则为和局。</li>
+<li>在线可游玩（作者提供网页版本）。</li>
+</ul>
+<h3 id="12-复杂度">1.2 复杂度<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-复杂度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>作者强调该任务拥有约 <strong>1.2×10^16 个非终局状态</strong>，复杂度远高于常见认知科学规划任务，因此不会轻易 ” 顶到天花板 “，更适合研究 ” 高手是否真的规划更深 “。</li>
+</ul>
+<hr/>
+<h2 id="2-计算认知模型启发式评估--best-first-搜索principal-variation-剪枝--注意力遗漏--噪声--失误">2. 计算认知模型：启发式评估 + Best-first 搜索（principal variation）+ 剪枝 + 注意力遗漏 + 噪声 + 失误<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-计算认知模型启发式评估--best-first-搜索principal-variation-剪枝--注意力遗漏--噪声--失误" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="21-总体结构每一步落子如何生成">2.1 总体结构（每一步落子如何生成）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#21-总体结构每一步落子如何生成" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>模型假设：在<strong>同一实验 session 内</strong>，一个人每一步落子由同一组参数生成；且每一步选择相互独立（在建模层面这么处理）。</p>
+<p>每次轮到模型落子，它执行：</p>
+<ol>
+<li>
+<p><strong>是否 ” 走神/失误 “(lapse)</strong>：以概率 <strong>λ</strong> 直接随机下一个合法空格。</p>
+</li>
+<li>
+<p><strong>注意力遗漏（feature dropout）</strong>：对启发式特征的 ” 每个具体实例 “，以概率 <strong>δ</strong> 独立丢弃；被丢弃的特征在本次落子整棵搜索树里都不会参与任何节点的价值计算。</p>
+</li>
+<li>
+<p><strong>迭代式树搜索</strong>：反复 ” 选点 → 扩展 → 回传 (minimax)” 直到：</p>
+<ul>
+<li>根节点的胜/负/和已经被 ” 确定 “（determined with certainty），或</li>
+<li>发生随机停止：每次迭代后以概率 <strong>γ</strong> 停止（从而总迭代次数服从几何分布）。</li>
+</ul>
+</li>
+<li>
+<p>在根节点所有子节点中选 <strong>value 最大</strong> 的那个子节点对应的落子：</p>
+<ul>
+<li>形式上就是 <code>argmax_{child of root} child.val</code>。</li>
+</ul>
+</li>
+</ol>
+<hr/>
+<h2 id="22-价值函数启发式评估用少量--棋形特征--快速估值">2.2 价值函数（启发式评估）：用少量 ” 棋形特征 ” 快速估值<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#22-价值函数启发式评估用少量--棋形特征--快速估值" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="221-总体形式-自己特征--减--对手特征-">2.2.1 总体形式（” 自己特征 ” 减 ” 对手特征 ”）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#221-总体形式-自己特征--减--对手特征-" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>作者以 ” 特征加权和 ” 的方式近似棋局价值。直观含义：值越大越利于黑方胜利。</p>
+<p>一个简化表述是：</p>
+<ul>
+<li>价值函数由若干特征 <code>φ_i</code> 的加权和构成；</li>
+<li>以 ” 自己（self）” 与 ” 对手（opponent）” 的特征差来形成相对优势。</li>
+</ul>
+<h3 id="222-具体用了哪些特征5-类">2.2.2 具体用了哪些特征（5 类）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#222-具体用了哪些特征5-类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>模型包含 <strong>五个</strong>特征类型（并在图中把对称/同色的特征权重做了绑定约束）：</p>
+<ol>
+<li><strong>centre（中心偏好）</strong>：越靠近棋盘中心越好。</li>
+<li><strong>connected two-in-a-row（相邻二连）</strong>：两个相邻棋子，且周围还有足够空位使其有潜力扩展成四连。</li>
+<li><strong>unconnected two-in-a-row（隔一格二连）</strong>：同一条长度为 4 的连续线段里出现两个不相邻棋子，另外两格为空（典型 ”..X.X..” 嵌入到四格线段的那种）。</li>
+<li><strong>three-in-a-row（三连带一空）</strong>：长度为 4 的连续线段里已有 3 子 + 1 空；这是 ” 立即致胜威胁 “（轮到该方时可以直接补空成四连）。</li>
+<li><strong>four-in-a-row（四连）</strong>：只有在已经胜利的状态里才出现。</li>
+</ol>
+<p>这些棋形特征会在三种方向上计数：<strong>横、竖、对角</strong>。每个 ” 特征实例 ” 对应一个具体位置 <code>(x,y)</code> 和方向 <code>o</code>，是一个二值函数：出现为 1，不出现为 0。</p>
+<hr/>
+<h3 id="223-centre-特征的精确定义公式层面">2.2.3 Centre 特征的精确定义（公式层面）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#223-centre-特征的精确定义公式层面" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>中心项写成 ” 离中心越近贡献越大 “，具体是 <strong>距离的倒数求和差</strong>：</p>
+<ul>
+<li>记 <code>Pieces(s, black)</code> 为局面 <code>s</code> 上黑子的坐标集合，<code>Pieces(s, white)</code> 为白子的集合；</li>
+<li><code>x_center</code> 是棋盘中心坐标；</li>
+<li><code>||·||</code> 是欧氏距离。</li>
+</ul>
+<p>则：</p>
+<ul>
+<li><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ce</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mord mathnormal mtight">e</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">s</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.3651em;vertical-align:-0.52em;"></span><span class="mord"><span class="mord">Σ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="mrel mtight">∈</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">eces</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight">s</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight">b</span><span class="mord mathnormal mtight" style="margin-right:0.01968em;">l</span><span class="mord mathnormal mtight">a</span><span class="mord mathnormal mtight">c</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∣∣</span><span class="mord mathnormal mtight">x</span><span class="mbin mtight">−</span><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2963em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ce</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">er</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mord mtight">∣∣</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.3651em;vertical-align:-0.52em;"></span><span class="mord"><span class="mord">Σ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="mrel mtight">∈</span><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mord mathnormal mtight">i</span><span class="mord mathnormal mtight">eces</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight">s</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span><span class="mord mathnormal mtight">hi</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight">e</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∣∣</span><span class="mord mathnormal mtight">x</span><span class="mbin mtight">−</span><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2963em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ce</span><span class="mord mathnormal mtight">n</span><span class="mord mathnormal mtight">t</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">er</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mord mtight">∣∣</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></li>
+</ul>
+<p>（注意这里写的是 ” 倒数距离 “，不是线性距离。）</p>
+<hr/>
+<h3 id="224-pattern-特征项--主动被动缩放active-scaling">2.2.4 Pattern 特征项 + 主动/被动缩放（active scaling）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#224-pattern-特征项--主动被动缩放active-scaling" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>除了 centre 外，其他棋形特征项会根据 ” 当前轮到谁走 ” 做缩放：</p>
+<ul>
+<li>当一个玩家 ” 马上要走子 “（active）时，某些特征（尤其是三连威胁）价值会更高；</li>
+<li>作者用一个缩放常数 <strong>C</strong> 来乘到 ” 轮到走子的那方 ” 的特征权重上（centre 特征不缩放）。</li>
+</ul>
+<p>在公式里用 <code>c_black, c_white</code> 表示这次轮到谁走：</p>
+<ul>
+<li>若轮到黑走：<code>c_black = C</code>, <code>c_white = 1</code></li>
+<li>若轮到白走：<code>c_black = 1</code>, <code>c_white = C</code></li>
+</ul>
+<hr/>
+<h3 id="225-节点价值噪声gaussian-value-noise">2.2.5 节点价值噪声（Gaussian Value noise）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#225-节点价值噪声gaussian-value-noise" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在树搜索过程中，每个节点的 <code>V(s)</code> 还会加上一个均值 0、方差 1 的高斯噪声项：</p>
+<ul>
+<li><code>+ N(0,1)</code><br/>
+这让模型能产生 ” 人类式波动 ” 和偶发次优选择。</li>
+</ul>
+<hr/>
+<h2 id="23-树搜索best-first沿-principal-variation-反复扩展">2.3 树搜索：best-first（沿 Principal Variation 反复扩展）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#23-树搜索best-first沿-principal-variation-反复扩展" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="231-节点结构">2.3.1 节点结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#231-节点结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>每个节点保存：</p>
+<ul>
+<li>一个状态 <code>s</code>（棋盘局面）</li>
+<li>该状态轮到的 active player</li>
+<li>当前对 <code>s</code> 的价值估计 <code>val</code></li>
+</ul>
+<p>节点初始值来自上面的 <code>V(s)</code>（带噪声、且考虑 feature dropout 之后的特征集合）。</p>
+<hr/>
+<h3 id="232-选点selectionprincipal-variation">2.3.2 选点（selection）：principal Variation<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#232-选点selectionprincipal-variation" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>使用 best-first 思路：每次沿着当前树里 ” 双方都走最优 ” 的路径（principal variation）从根一路走到叶子；</li>
+<li>选中这条路径上的叶子进行扩展；</li>
+<li>因为回传会改写节点值，principal variation 会动态改变，因此搜索会在不同分支间来回切换。</li>
+</ul>
+<hr/>
+<h3 id="233-扩展expansion-剪枝pruning">2.3.3 扩展（expansion）+ 剪枝（pruning）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#233-扩展expansion-剪枝pruning" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>对选中的叶子节点：</p>
+<ol>
+<li>
+<p>为该局面所有合法落子建立子节点（每个子节点对应一个落子后的新状态）。</p>
+</li>
+<li>
+<p>初始化这些子节点的值为 <code>V(s_child)</code>（此时并不立刻判定终局）。</p>
+</li>
+<li>
+<p><strong>剪枝</strong>：对 ” 明显差 ” 的子节点直接删掉。规则是：</p>
+<ul>
+<li>令最佳候选子节点的值为 <code>V_best</code>；</li>
+<li>若某个子节点与 <code>V_best</code> 的差值超过阈值 <strong>θ</strong>，则被剪掉。</li>
+</ul>
+</li>
+<li>
+<p><strong>终局赋值在剪枝之后</strong>才做：</p>
+<ul>
+<li>黑胜：赋 <code>V = 10000</code></li>
+<li>白胜：赋 <code>V = -10000</code></li>
+<li>和局：赋 <code>V = 0</code></li>
+</ul>
+</li>
+</ol>
+<p>一个关键后果（作者明确指出）：</p>
+<ul>
+<li>如果 <code>w_four-in-a-row</code> 不够大，或关键位置的 ” 四连 ” 特征实例刚好被 dropout 丢掉，模型可能在 ” 剪枝发生时 ” 没意识到某一步是立刻取胜/立刻防守，从而把真正的制胜步剪掉，出现很糟但 ” 很像人类 ” 的低级失误。</li>
+</ul>
+<hr/>
+<h3 id="234-回传backpropagationminimax但只沿-pv-高效更新">2.3.4 回传（backpropagation）：minimax（但只沿 PV 高效更新）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#234-回传backpropagationminimax但只沿-pv-高效更新" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>使用 minimax 规则：
+<ul>
+<li>若节点轮到黑走：节点值取子节点最大值</li>
+<li>若轮到白走：节点值取子节点最小值</li>
+</ul>
+</li>
+<li>为提高效率，只更新 principal variation 上的节点，并按从叶到根的顺序回传。</li>
+<li>回传后，节点值被解释为：在当前已展开的树中，对 ” 双方最优应对 ” 结果的最好估计。</li>
+</ul>
+<hr/>
+<h3 id="235-停止规则stopping">2.3.5 停止规则（stopping）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#235-停止规则stopping" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>若根节点已经能确定胜/负/和，则停止；</li>
+<li>否则每次迭代后以概率 <strong>γ</strong> 停止；因此迭代次数呈几何分布。</li>
+</ul>
+<p>作者还提到：当把模型当作对弈 AI 时，会把迭代次数 N 映射成 ” 思考时间 ”：</p>
+<ul>
+<li><code>t = a * sqrt(N) + b</code>，其中 <code>a = 4s</code>，<code>b = 0.5s</code>。</li>
+</ul>
+<hr/>
+<h2 id="24-模型参数主模型-10-个参数">2.4 模型参数（主模型 10 个参数）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#24-模型参数主模型-10-个参数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>主模型参数一共 <strong>10 个</strong>：</p>
+<ol>
+<li>
+<p>剪枝阈值 <strong>θ</strong></p>
+</li>
+<li>
+<p>停止概率 <strong>γ</strong></p>
+</li>
+<li>
+<p>lapse 概率 <strong>λ</strong></p>
+</li>
+<li>
+<p>feature drop 概率 <strong>δ</strong></p>
+</li>
+<li>
+<p>active scaling 常数 <strong>C</strong></p>
+</li>
+<li>
+<p>五个特征权重：</p>
+<ul>
+<li><code>w_centre</code></li>
+<li><code>w_connected-two-in-a-row</code></li>
+<li><code>w_unconnected-two-in-a-row</code></li>
+<li><code>w_three-in-a-row</code></li>
+<li><code>w_four-in-a-row</code></li>
+</ul>
+</li>
+</ol>
+<p>作者强调：没有把 ” 价值噪声方差 σ²” 当作独立参数，因为把噪声从 <code>N(0,1)</code> 改成 <code>N(0,σ²)</code> 的效果，等价于把 <code>θ</code> 和全部 <code>w</code> 同时按 <code>1/σ</code> 缩放，会导致 <code>σ、θ、w</code> 不可识别。</p>
+<hr/>
+<h2 id="25-用模型计算--博弈论意义上的真值-game-theoretic-value">2.5 用模型计算 ” 博弈论意义上的真值 “（game-theoretic value）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#25-用模型计算--博弈论意义上的真值-game-theoretic-value" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>作者用 best-first 搜索在 ” 无噪声、无剪枝、默认权重 ” 的设置下，逼近从某局面开始双方完美下法的结果（胜/负/和）：</p>
+<ul>
+<li>理论上迭代次数 → ∞ 时，根节点值收敛到博弈论真值。</li>
+<li>实际上作者经验上认为 <strong>200,000 次迭代</strong>对几乎所有局面足够。</li>
+<li>若 200,000 次仍无法得到 ” 确定结果 “，则把该局面真值设为 <strong>0（和局）</strong>。</li>
+</ul>
+<hr/>
+<h2 id="26-替代模型用于验证--哪些组件必不可少-">2.6 替代模型（用于验证 ” 哪些组件必不可少 ”）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#26-替代模型用于验证--哪些组件必不可少-" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>作者比较了 <strong>22 个替代模型</strong>，三大类：</p>
+<h3 id="261-lesion删组件把某参数固定为常数">2.6.1 Lesion（删组件：把某参数固定为常数）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#261-lesion删组件把某参数固定为常数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>No centre：<code>w_centre = 0</code></li>
+<li>No connected two-in-a-row：对应权重为 0</li>
+<li>No unconnected two-in-a-row：对应权重为 0</li>
+<li>No three-in-a-row：对应权重为 0</li>
+<li>No four-in-a-row：对应权重为 0</li>
+<li>No feature drop：<code>δ = 0</code></li>
+<li>No active scaling：<code>C = 1</code></li>
+<li>No pruning：<code>θ = 20000</code>（足够大，几乎永不剪枝）</li>
+<li>No tree：<code>γ = 1</code>（只做 1 次迭代，相当于只展开根节点；此时剪枝也不起作用，所以 θ 不再是参数）</li>
+</ul>
+<h3 id="262-modifications替换某组件的实现方式">2.6.2 Modifications（替换某组件的实现方式）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#262-modifications替换某组件的实现方式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Fixed iterations：停止改为固定迭代次数 N。</li>
+<li>Fixed depth：改为把每个分支都探索到固定深度 D。</li>
+<li>Fixed branching：不按阈值剪枝，而是每个节点保留 K 个最优子节点（白走时保留 ” 最小值 ” 那侧的 K 个）；子节点少于 K 则不剪。</li>
+<li>Square dropping：去掉 feature drop，改为扩展时对每个子节点以概率 ε 随机剪掉（在价值剪枝之前），形成 ” 格子/走法层面 ” 的随机漏看。</li>
+<li>Optimal weights：把 <code>{w_i}</code> 限制成一个固定向量（不因人而异），该向量通过最大化 <code>tanh(V(s)/20)</code> 与博弈论真值之间的 Pearson 相关得到。</li>
+</ul>
+<h3 id="263-把搜索改成-mctsmonte-carlo-tree-search">2.6.3 把搜索改成 MCTS（Monte Carlo Tree Search）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#263-把搜索改成-mctsmonte-carlo-tree-search" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>评估节点不再直接用 <code>V(s)</code>，而是做一次 rollout（从 s 开始模拟一局）。</li>
+<li>rollout 中双方采取 ” 近视策略 ”：
+<ul>
+<li>在状态 s′，黑选使 <code>V(s′+m)</code> 最大的落子；白选使其最小的落子。</li>
+</ul>
+</li>
+<li>rollout 结果映射为值：
+<ul>
+<li>黑胜：1；白胜：0；和：1/2</li>
+</ul>
+</li>
+<li>因为 <code>V</code> 本身含噪声，rollout 和近视策略也随机。</li>
+<li>回传不用 minimax，而是对后代 rollouts 的平均（让中间节点值等于其后代 rollout 结果均值）。</li>
+<li>选点规则从 <code>argmax child.val</code> 改成 UCB：
+<ul>
+<li><code>m = argmax_{c∈children(root)} [ c.val + C_exp * sqrt( log(n.N_rollouts) / c.N_rollouts ) ]</code></li>
+<li><code>n.N_rollouts</code>：节点 n 及其后代一共做过多少次 rollout</li>
+<li><code>c.N_rollouts</code>：子节点 c 及其后代一共做过多少次 rollout</li>
+<li><code>C_exp</code> 控制 ” 探索 vs 利用 ” 权衡</li>
+</ul>
+</li>
+<li>最终落子：选根节点子节点中 <code>N_rollouts</code> 最大者。</li>
+</ul>
+<h3 id="264-extensions增加新参数新特征">2.6.4 Extensions（增加新参数/新特征）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#264-extensions增加新参数新特征" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Orientation-dependent weights：对竖向/对角向的特征权重分别乘以缩放常数 <code>c_vert、c_diag</code>。</li>
+<li>Orientation-dependent dropping：让横/竖/对角三种方向的 drop rate 各不相同。</li>
+<li>Type-dependent dropping：让 drop rate 随特征类型不同而不同。</li>
+<li>Triangle model：加入一个 ” 统计某组 3 子图案出现次数 ” 的新特征。</li>
+<li>Opponent scaling：加入 <code>c_opp</code>，对 ” 属于对手的特征权重 ” 做统一缩放；作者强调这与 active scaling 不同：前者不随轮到谁走而变，后者是 ” 谁走谁更重要 ” 的自适应缩放。</li>
+</ul>
+<hr/>
+<h2 id="3-实验与数据实验室-7-个--移动端大样本--多项验证">3. 实验与数据（实验室 7 个 + 移动端大样本 + 多项验证）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-实验与数据实验室-7-个--移动端大样本--多项验证" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="31-总览与补偿">3.1 总览与补偿<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#31-总览与补偿" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>实验室共 7 个实验：</p>
+<ol>
+<li>人 - 人对战（n=40）</li>
+<li>泛化（n=40）</li>
+<li>眼动追踪（n=10）</li>
+<li>学习（n=30）</li>
+<li>时间压力（n=30）</li>
+<li>图灵测试（n=30）</li>
+<li>记忆与重建（n=38；分两组各 19）</li>
+</ol>
+</li>
+<li>
+<p>除 ” 人 - 人对战、眼动追踪 ” 外，其余实验可在线进行。</p>
+</li>
+<li>
+<p>受试招募来源：NYU 心理学被试系统、传单、实验室网页报名链接、个人联系等。</p>
+</li>
+<li>
+<p>补偿：<strong>每小时 12 美元</strong>，与表现无关；均签署知情同意；由 NYU IRB 审批。</p>
+</li>
+</ul>
+<hr/>
+<h2 id="4-实验-1人---人对战无时间限制-模型落子预测">4. 实验 1：人 - 人对战（无时间限制）+ 模型落子预测<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-实验-1人---人对战无时间限制-模型落子预测" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="41-过程细节人---人对战">4.1 过程细节（人 - 人对战）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#41-过程细节人---人对战" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>40 人两两配对：
+<ul>
+<li>一起签同意书、一起听任务说明；</li>
+<li>之后被分到不同房间，通过在线界面对弈；</li>
+<li>50 分钟结束并完成最后一局后填写问卷，然后当场现金支付（12 美元），最后离开。</li>
+<li>参与者只在对弈前后有社交互动，对弈过程中不互动。</li>
+</ul>
+</li>
+<li>对弈设置：
+<ul>
+<li>每局后双方交换先后手/颜色。</li>
+<li>每局后弹窗显示双方名字、当前比分和 ” 继续 ” 按钮；只有双方都点击继续才进入下一局。</li>
+<li>每次任一方落子，界面会播放轻微点击音效。</li>
+<li>允许 ” 求和 ”：
+<ul>
+<li>玩家可在自己回合不落子而提出和局；</li>
+<li>对手屏幕弹窗选择接受/拒绝；</li>
+<li>接受则立即结束；拒绝则弹窗消失，提出者继续落子；</li>
+<li>不限制提出次数（甚至同一步可多次），但实际提出很少。</li>
+</ul>
+</li>
+<li>全程无时间限制。</li>
+</ul>
+</li>
+</ul>
+<h3 id="42-拟合与结果落子预测">4.2 拟合与结果（落子预测）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#42-拟合与结果落子预测" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>对每个参与者单独估计参数（包括特征权重、feature drop rate、决策树规模、剪枝阈值、噪声水平等），采用 <strong>五折交叉验证</strong>。</li>
+<li>模型对 out-of-sample 选择预测准确率：<strong>40.8% ± 1.4%（跨参与者均值±SEM）</strong>；显著高于随机猜空格（检验统计量 t39=26，p&lt;0.001）。</li>
+<li>图中还给出：
+<ul>
+<li>单个样例局面：模型对下一步落子形成概率分布（热度/红色阴影），并与真实选择对比。</li>
+<li>每人准确率排序柱/点图；每人平均试次数量标注为 <strong>n = 137.1 ± 9.6</strong>（平均±SEM）。</li>
+</ul>
+</li>
+<li>作者还做了大量模型规格对比与组件消融，结论是：<strong>特征型价值函数 + 树搜索 + 注意力遗漏机制</strong>对预测人类选择是关键组件；主模型被选为该类模型中更简洁的代表。</li>
+</ul>
+<hr/>
+<h2 id="5-实验-2泛化实验对电脑--2afc--局面评估">5. 实验 2：泛化实验（对电脑 + 2AFC + 局面评估）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-实验-2泛化实验对电脑--2afc--局面评估" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="51-实验流程">5.1 实验流程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#51-实验流程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>n=40，个人完成：</p>
+<ol>
+<li>与电脑对战 <strong>30 分钟</strong></li>
+<li><strong>84 次 2AFC</strong>：给定局面与两种候选落子，点选更偏好的落子（无时间限制）</li>
+<li><strong>84 次局面评估</strong>：给定局面，用 7 点量表评估自己的胜率/赢面（无时间限制）<br/>
+结束后解释与付款（12 美元）。</li>
+</ol>
+</li>
+</ul>
+<h3 id="52-人---机对战界面差异">5.2 人 - 机对战界面差异<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#52-人---机对战界面差异" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>与人 - 人对战界面基本一致，但：
+<ul>
+<li>局间弹窗不显示名字与比分</li>
+<li>移除 ” 求和 ” 按钮</li>
+</ul>
+</li>
+</ul>
+<h3 id="53-电脑对手的生成与匹配非常细">5.3 电脑对手的生成与匹配（非常细）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#53-电脑对手的生成与匹配非常细" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>电脑算法 ” 类似行为模型 “，但有三处修改：</p>
+<ol>
+<li>剪枝规则使用 fixed branching 模型那套（保留 K 个最佳子节点）。</li>
+<li>加入 ” 对手特征缩放 “（opponent scaling）与 ” 方向依赖权重 “（orientation-dependent weights），但不包含 “active vs passive 的另一种缩放形式（no active scaling 模型里那种对照项）”。</li>
+<li>使用了一个 ” 略不同 ” 的特征集合（与人类拟合用的特征集略有差别）。</li>
+</ol>
+</li>
+<li>
+<p>为了让电脑 ” 像在思考 “，每一步电脑落子加入一个人为延迟：延迟时间随该步搜索迭代次数单调增加，使得简单局面下得更快、困难局面下得更慢（但不改变其决策）。</p>
+</li>
+</ul>
+<h4 id="电脑对手参数族如何构造从人类拟合出发">电脑对手参数族如何构造（从人类拟合出发）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#电脑对手参数族如何构造从人类拟合出发" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ol>
+<li>
+<p>先把行为模型拟合到人 - 人对战里的每位人类参与者，得到一组参数向量。</p>
+</li>
+<li>
+<p>对每个参数向量再造 8 个变体：对以下三个量做 ” 翻倍/减半 ” 并组合：</p>
+<ul>
+<li>平均树大小（tree size）翻倍</li>
+<li>价值噪声减半</li>
+<li>feature drop rate 减半</li>
+<li>以及它们的任意组合</li>
+</ul>
+</li>
+<li>
+<p>用这些参数向量跑 ” 全员互搏 ” 的电脑 - 电脑锦标赛，用 Elo 排序。</p>
+</li>
+<li>
+<p>从 Elo 轴上挑 <strong>30 个</strong>对手，让它们强度覆盖从 ” 略弱于最弱人类 ” 到 ” 略强于最强人类 ” 的区间，并尽量均匀。</p>
+</li>
+<li>
+<p>把 30 个对手分成 <strong>6 个 level</strong>，每级 5 个对手。</p>
+</li>
+<li>
+<p>用 one-up one-down 阶梯法匹配受试：</p>
+<ul>
+<li>从 level 3 开始；</li>
+<li>每局在当前 level 的 5 个对手中随机抽一个；</li>
+<li>结果好则升一级、差则降一级（阶梯细节按经典 one-up one-down）。</li>
+</ul>
+</li>
+</ol>
+<h3 id="54-2afc-与评估任务的--刺激选择-信息论挑题">5.4 2AFC 与评估任务的 ” 刺激选择 “（信息论挑题）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#54-2afc-与评估任务的--刺激选择-信息论挑题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>2AFC：
+<ul>
+<li>目标：既让人觉得难，也让模型预测/参数约束更强。</li>
+<li>作者在 ” 人类可能参数集合 ” 内，选择能最大化 ” 所选落子与模型参数之间互信息 ” 的局面与候选走法组合。</li>
+<li>同时计算候选走法的 ” 客观/博弈论价值 “，并让不同 ” 走法真值组合类型 ” 均衡出现（例如：两步都赢、一个赢一个和、两步都和……），每一类型出现 <strong>14 次</strong>。</li>
+<li>对每个受试呈现相同的一组局面，顺序随机。</li>
+</ul>
+</li>
+<li>局面评估：
+<ul>
+<li>7 点按钮，首/中/末分别标注 ” 输/均势/赢 ”。</li>
+<li>局面挑选方式与 2AFC 类似，但最后筛选时确保呈现局面的博弈论真值在 ” 赢/输/和 ” 三类上均匀分布：各 <strong>28 个</strong>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="55-泛化结果">5.5 泛化结果<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#55-泛化结果" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>用 ” 人 - 机对战阶段的落子数据 ” 拟合每个受试参数，然后去预测其：
+<ul>
+<li>2AFC 选择：<strong>58.6% ± 1.0%</strong>（高于 50%），t39=8.3，p&lt;0.001。</li>
+<li>局面评估：预测值与真实评估的相关 <strong>ρ = 0.377 ± 0.039</strong>，t39=9.6，p&lt;0.001。</li>
+</ul>
+</li>
+<li>作者还展示：模型能超过一个 ” 总是下客观正确步、随机打破平局 ” 的 oracle（说明模型捕捉了个体偏好，而非只追求客观最优）。</li>
+</ul>
+<hr/>
+<h2 id="6-图灵测试人能不能分辨--真实人类棋局片段--vs--模型生成片段-">6. 图灵测试：人能不能分辨 ” 真实人类棋局片段 ” Vs ” 模型生成片段 “<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-图灵测试人能不能分辨--真实人类棋局片段--vs--模型生成片段-" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="61-设计两天两-session">6.1 设计（两天两 session）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#61-设计两天两-session" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>第一天：受试与电脑对战 <strong>60 分钟</strong>。电脑对手直接使用 ” 主模型 + 人 - 人对战中某个真实参与者的拟合参数 ”。</li>
+<li>第二天：完成 <strong>180 个分类 trial</strong>：
+<ul>
+<li>每 trial 看一段棋局视频（平均长度 <strong>9.38 步</strong>）。</li>
+<li>视频来源二选一：
+<ul>
+<li>人 - 人对战真实两人棋局片段</li>
+<li>两个模型代理（参数取自对应人类玩家拟合值）从同一起始局面继续下出来的片段</li>
+</ul>
+</li>
+<li>受试点击 ” 播放 ” 开始；播放速度固定 <strong>1.8 秒/步</strong>；之后用滑条判断：
+<ul>
+<li>左端：” 肯定是电脑 ”</li>
+<li>中间：” 没把握 ”</li>
+<li>右端：” 肯定是人 ”</li>
+</ul>
+</li>
+<li>每次回答后给即时反馈：“Correct!” 或 “Incorrect”。</li>
+</ul>
+</li>
+</ul>
+<h3 id="62-视频片段如何抽样非常具体">6.2 视频片段如何抽样（非常具体）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#62-视频片段如何抽样非常具体" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>对每盘人 - 人对战棋局：</p>
+<ol>
+<li>起始步号从几何分布抽样，rate = <strong>0.15</strong>；丢弃之前的所有步，片段从该步开始。</li>
+<li>片段最大长度从另一几何分布抽样，rate = <strong>0.1</strong>；从起点不断添加后续步，直到超过最大长度或棋局结束。</li>
+</ol>
+</li>
+<li>
+<p>对应的电脑 - 电脑片段：</p>
+<ul>
+<li>从同一个起始局面开始；</li>
+<li>用相同的最大长度阈值；</li>
+<li>让两个模型代理继续对弈生成后续步，直到达到长度或结束。</li>
+</ul>
+</li>
+<li>
+<p>因为起始局面来自真实棋局、播放速度恒定且不给反应时线索，受试只能依据 ” 走法序列本身 ” 判断。</p>
+</li>
+<li>
+<p>最终挑：</p>
+<ul>
+<li>90 盘棋用于 ” 人类片段 ”</li>
+<li>90 盘棋用于 ” 模型片段 ”</li>
+<li>合计 180 段视频。</li>
+</ul>
+</li>
+</ul>
+<h3 id="63-结果两层结果一起给">6.3 结果（两层结果一起给）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#63-结果两层结果一起给" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>主文报告：整体区分准确率 <strong>55.4%</strong>（接近随机 50%，说明模型 ” 像人 ”）。</li>
+<li>扩展数据里更细：
+<ul>
+<li>对 “1 步视频 “（共有 8 个）受试基本在随机水平；</li>
+<li>准确率显著超过 50% 主要发生在 <strong>长度 > 10 步</strong> 的片段；</li>
+<li>混合效应线性回归估计：每多观察一步，准确率仅增加 <strong>0.33% ± 0.10%</strong>；</li>
+<li>在 180 个视频中，没有任何一个视频能让 <strong>全部 30 名观察者</strong>一致判断；</li>
+<li>有相当一部分视频（<strong>63/180</strong>）甚至 ” 多数观察者判断错误 “。</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h2 id="7-过程数据验证反应时rt与眼动">7. 过程数据验证：反应时（RT）与眼动<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-过程数据验证反应时rt与眼动" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="71-反应时预测从--树的结构--预测-rt">7.1 反应时预测（从 ” 树的结构 ” 预测 RT）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#71-反应时预测从--树的结构--预测-rt" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>做法：
+<ul>
+<li>先用 choice 数据拟合参数；</li>
+<li>在 best-first 搜索上再加一个 “early-stopping 规则 “：当继续迭代不太可能改变最终决策时提前停（用于更贴近人的停止策略）；</li>
+<li>用每步构建出来的 ” 决策树 ” 作为 RT 的预测变量。</li>
+</ul>
+</li>
+<li>分析细节：
+<ul>
+<li>合并人 - 人对战数据做 RT 分析时，排除棋盘上棋子数 <strong>&lt;6 或 >30</strong> 的局面。</li>
+<li>以对数空间比较预测与真实 RT。</li>
+</ul>
+</li>
+<li>结果：
+<ul>
+<li>跨参与者预测 - 真实 RT 的平均相关：<strong>ρ = 0.351 ± 0.029</strong>，t39=12，p&lt;0.001。</li>
+</ul>
+</li>
+</ul>
+<h3 id="72-眼动实验n10">7.2 眼动实验（n=10）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#72-眼动实验n10" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="设备与显示">设备与显示<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#设备与显示" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>EyeLink 1000（远程红外视频眼动），采样率 <strong>1 kHz</strong>，精度约 <strong>0.01°</strong>。</li>
+<li>眼动软件设置：<code>Heuristic filter ON</code>。</li>
+<li>显示器：21 英寸 Sony GDMF520 CRT；分辨率 <strong>1280×960</strong>；刷新率 <strong>100 Hz</strong>。</li>
+<li>头托：眼 - 屏距离约 <strong>57 cm</strong>。</li>
+<li>只记录事件（fixation / saccade / blink），即数据是这些事件的时间序列。</li>
+</ul>
+<h4 id="校准两层校准">校准（两层校准）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#校准两层校准" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>每 session 先做系统自带 <strong>9 点校准</strong>。</li>
+<li>另外在 ” 对电脑对战 ” 环节前后各加一次自定义校准：
+<ul>
+<li>显示空棋盘，在左下角格子放一个白棋，上面叠一个注视十字；</li>
+<li>受试注视稳定后按空格；</li>
+<li>十字 + 白棋向右移动一格；重复；</li>
+<li>跨 4 行移动，最终获得每行的 9 个注视坐标与按键时间戳。</li>
+</ul>
+</li>
+</ul>
+<h4 id="-人类注意分布--如何从眼动构造">” 人类注意分布 ” 如何从眼动构造<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-人类注意分布--如何从眼动构造" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>把注视轨迹用高斯滤波做卷积得到空间分布；</li>
+<li>截断到 ” 未落子的空格 ”；</li>
+<li>再按时间平均，得到该 trial 的 ” overt attention 在空格上的概率分布 ”。</li>
+</ul>
+<h4 id="-模型注意分布--如何定义">” 模型注意分布 ” 如何定义<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#-模型注意分布--如何定义" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>用模型搜索过程中 ” 访问到的格子/节点 ” 形成一个对应分布（本质上是模型搜索的访问轨迹在棋盘空格上的投影）。</li>
+</ul>
+<h4 id="结果">结果<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#结果" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>人的注意分布与模型搜索访问分布高度相似：
+<ul>
+<li>跨参与者平均相关：<strong>ρ = 0.535 ± 0.024</strong>，t9=21，p&lt;0.001。</li>
+</ul>
+</li>
+<li>更细的机制解释：
+<ul>
+<li>这种相关性由 ” 树中分支偶尔能到达约 7 步深 ” 所驱动；</li>
+<li>线性回归分析显示：用模型 principal variation 在各深度包含的格子分布去预测人的注意分布时，回归系数在 <strong>深度 ≤ 7</strong> 显著大于 0，且在更接近根部（深度靠近 1）时最大。</li>
+<li>还挑出一些局面：若去掉 feature drop（No feature drop 模型）会给人的真实落子很低概率；这些局面里，受试在思考时往往根本不看 ” 模型认为应该下的格子 “，支持 ” 人确实漏看了关键四连相关特征实例 ” 的解释。</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h2 id="8-专长经验如何改变规划学习实验--时间压力实验--指标定义">8. 专长/经验如何改变规划：学习实验 + 时间压力实验 + 指标定义<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-专长经验如何改变规划学习实验--时间压力实验--指标定义" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="81-学习实验n305-次-session间隔-2-天">8.1 学习实验（n=30，5 次 session，间隔 ≤2 天）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#81-学习实验n305-次-session间隔-2-天" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="结构">结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>共 5 次 session，要求相邻 session 间隔不超过 2 天。</li>
+<li>第 1/3/5 次：
+<ul>
+<li>与电脑对战 30 分钟</li>
+<li>60 次 2AFC + 60 次局面评估</li>
+</ul>
+</li>
+<li>第 2/4 次：
+<ul>
+<li>与电脑对战整整 60 分钟</li>
+</ul>
+</li>
+<li>2AFC/评估局面挑选仍按 ” 信息最大化 ” 思路，但：
+<ul>
+<li>先挑出 <strong>180 个</strong>局面，分成 3 组各 60；</li>
+<li>不同受试在第 1/3/5 天看到的 3 组顺序做了反平衡（counterbalanced）。</li>
+</ul>
+</li>
+<li>支付：每次 12 美元；完成 5 次后额外 <strong>12 美元完成奖金</strong>。</li>
+</ul>
+<h4 id="实力度量elo">实力度量（Elo）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#实力度量elo" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>用 Elo 量化每个 session 的水平，且把所有实验的 Elo 放到同一基准上（靠 Bayeselo + 统一数据库/对手校准）。</li>
+</ul>
+<h4 id="主要结果随-session-增长">主要结果（随 Session 增长）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#主要结果随-session-增长" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>Elo 随 session 上升：线性回归 <strong>β = 21.6 ± 4.6</strong>（p&lt;0.001）。</li>
+<li>作者把每次拟合参数映射到三个 ” 可解释指标 “（见 8.3），并观察：
+<ul>
+<li>规划深度上升：<strong>β = 0.255 ± 0.061</strong>（p&lt;0.001）。</li>
+<li>注意力遗漏下降（feature drop rate）：<strong>β = −0.0119 ± 0.0028</strong>（p&lt;0.001）。</li>
+<li>启发式质量不升反降一点：<strong>β = −0.0067 ± 0.0020</strong>（p=0.0012）。</li>
+</ul>
+</li>
+<li>session 1 到 session 5 的总 Elo 增益：<strong>90 ± 26</strong>；分解为：
+<ul>
+<li>规划带来 <strong>+36 ± 11</strong></li>
+<li>注意力改善带来 <strong>+46 ± 12</strong></li>
+<li>启发式质量变化带来 <strong>−6.6 ± 3.5</strong></li>
+</ul>
+</li>
+<li>另外核查：后期并不是下得更慢导致 ” 看起来规划更深 “，反而总体更快（因此 ” 规划深度上升 ” 不是靠拖延时间堆出来的）。</li>
+</ul>
+<hr/>
+<h3 id="82-时间压力实验n30每步限时-51020-秒">8.2 时间压力实验（n=30；每步限时 5/10/20 秒）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#82-时间压力实验n30每步限时-51020-秒" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="结构与界面细节非常具体">结构与界面细节（非常具体）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#结构与界面细节非常具体" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>与电脑对战 50 分钟；流程与泛化实验一致，但每局有固定时限：
+<ul>
+<li>每步限时为 <strong>5 秒、10 秒或 20 秒</strong></li>
+<li><strong>同一局内时限固定</strong>，不同局之间随机切换</li>
+<li>人和电脑都遵守时限</li>
+<li>超时立即判负、结束该局</li>
+</ul>
+</li>
+<li>电脑 ” 思考时间 ” 显示为界面暂停，确保电脑最多用到其分配时间的 <strong>80%</strong>（但强调：电脑决策本身只需极短时间，暂停不影响落子选择）。</li>
+<li>时间提示 UI：
+<ul>
+<li>棋盘右侧显示彩色条形计时器，随思考时间线性缩短；下方显示文本倒计时（秒）。</li>
+<li>20 秒条件：条初始高度等于棋盘高度；0~10 秒剩余为绿；剩 10 秒变蓝；剩 5 秒变红。</li>
+<li>还会在剩余 <strong>2、1、0 秒</strong>分别播放短蜂鸣音，音高依次升高。</li>
+<li>10 秒条件：计时条从 “20 秒条件过了 10 秒后的状态 ” 开始（蓝色、半棋盘高度）。</li>
+<li>5 秒条件：从 “20 秒条件过了 15 秒后的状态 ” 开始（红色、四分之一棋盘高度）。</li>
+<li>电脑思考时，在棋盘左侧显示同样的计时器。</li>
+</ul>
+</li>
+<li>超时发生很少：仅 <strong>1.87%</strong>（33 / 1,766 局）因超时判负。</li>
+</ul>
+<h4 id="结果-1">结果<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#结果-1" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li>规划深度整体低于学习实验，但随允许时间更长而上升：<strong>β = 0.042 ± 0.018</strong>（p=0.019）。</li>
+<li>但 Elo 没有随更长时限提升：<strong>β = −2.0 ± 1.6</strong>（p=0.21）。</li>
+<li>模型给出的解释：最宽松时限下，人反而更容易 ” 漏看特征/注意力走神 ”：
+<ul>
+<li>feature drop 随时限放宽上升：<strong>β = 0.0027 ± 0.0010</strong>（p=0.009）</li>
+<li>漏看的代价抵消了更深搜索的收益。</li>
+</ul>
+</li>
+<li>启发式质量随时限变化不显著：<strong>β = 0.00086 ± 0.00056</strong>（p=0.13）。</li>
+<li>另一个验证：时限操控确实显著改变了受试反应时（平均只用掉可用时间的一部分，但可用时间更长时反应时仍显著上升）。</li>
+</ul>
+<hr/>
+<h3 id="83-三个--派生指标-derived-metrics把-10-参数压缩成-3-个更可解释量">8.3 三个 ” 派生指标 “（derived metrics）：把 10 参数压缩成 3 个更可解释量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#83-三个--派生指标-derived-metrics把-10-参数压缩成-3-个更可解释量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>作者把每个拟合得到的 10 参数映射为：</p>
+<ol>
+<li>
+<p><strong>Planning depth（规划深度）</strong></p>
+<ul>
+<li>定义：模型决策树里 principal variation（双方都走当前树里最优步的那条路径）从根到叶的长度（叶的深度）。</li>
+<li>不是直接从每盘棋实时树里读，而是：
+<ul>
+<li>在一组固定 probe positions 上跑模型模拟；</li>
+<li>probe positions 取自人 - 人对战实验中出现过的全部局面，共 <strong>5,482 个</strong>；</li>
+<li>每个局面做 <strong>10 次模拟落子</strong>；</li>
+<li>对所有局面与模拟取平均，得到该参数向量对应的 planning depth。</li>
+</ul>
+</li>
+<li>解释：它是 ” 模型（以及被解释的人）大致往后想了多少步 ” 的近似量。</li>
+</ul>
+</li>
+<li>
+<p><strong>Feature drop rate（注意力遗漏率）</strong></p>
+<ul>
+<li>直接等于参数 <strong>δ</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>Heuristic quality（启发式质量）</strong></p>
+<ul>
+<li>做法：
+<ul>
+<li>在同一组 5,482 probe positions 上计算 <code>V(s,w)</code>；</li>
+<li>取 <code>tanh(V(s,w)/20)</code>（把值压到更稳定的范围）；</li>
+<li>与该局面的 ” 博弈论真值 ” 做 Pearson 相关；</li>
+</ul>
+</li>
+<li>注意：只依赖 <code>w</code> 与 <code>C</code>（与停止/剪枝等搜索参数无关）。</li>
+</ul>
+</li>
+</ol>
+<p>作者还给出派生量与原参数的依赖关系（在大量人类拟合参数向量上统计）：</p>
+<ul>
+<li>planning depth 主要由停止概率 γ 决定：
+<ul>
+<li>与 γ 的 Spearman 相关 <strong>ρ = −0.87</strong>（p&lt;0.001）</li>
+<li>与剪枝阈值 θ 也有小幅相关 <strong>ρ = −0.21</strong>（p&lt;0.001）</li>
+</ul>
+</li>
+<li>heuristic quality 与 <code>w_three / w_connected</code> 有相关：
+<ul>
+<li>Spearman <strong>ρ = 0.55</strong>（p&lt;0.001），但作者强调这种关系不算非常强，其他权重也会影响。</li>
+</ul>
+</li>
+<li>总结：三个派生指标把 10 参数 ” 切开 ” 了：
+<ul>
+<li>planning depth 主要对应（θ, γ）</li>
+<li>feature drop rate 对应 δ</li>
+<li>heuristic quality 对应（w, C）</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h2 id="9-大规模移动端数据peak-合作">9. 大规模移动端数据（Peak 合作）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-大规模移动端数据peak-合作" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="91-数据收集与伦理">9.1 数据收集与伦理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#91-数据收集与伦理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>平台：Peak 移动端应用（视觉上更丰富、棋盘竖向显示）。</li>
+<li>用户注册时同意隐私政策，其中包括：可能把<strong>聚合且匿名化</strong>的数据共享给大学等第三方。</li>
+<li>NYU IRB 判定该研究为 “exempt”，无需额外同意流程。</li>
+</ul>
+<h3 id="92-数据规模与对手匹配">9.2 数据规模与对手匹配<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#92-数据规模与对手匹配" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>共收集 <strong>10,874,547 局</strong>，来自 <strong>1,234,844 名</strong>唯一用户。</li>
+<li>用户永远先手（先下）。</li>
+<li>用户与电脑对手对弈；电脑实现主模型的一个版本，参数来自实验室多项实验拟合并做了适配。</li>
+<li>电脑对手生成流程与实验室的人 - 机实验一致，但因电脑永远后手进行了重新校准。</li>
+<li>电脑对手分成 <strong>7 个强度类别</strong>，并根据用户的胜负 ” 战绩轨迹 ” 动态匹配对手强度。</li>
+</ul>
+<h3 id="93-分析子样本与分块">9.3 分析子样本与分块<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#93-分析子样本与分块" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>出于计算限制，从全体中随机抽取 <strong>1,000 名</strong>至少下过 <strong>100 局</strong>的用户。</li>
+<li>把每位用户的前 100 局分成 <strong>5 个 block</strong>，每 block <strong>20 局</strong>，以对齐实验室学习实验的经验量级。</li>
+</ul>
+<h3 id="94-移动端结果随经验增长">9.4 移动端结果（随经验增长）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#94-移动端结果随经验增长" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>Elo 上升：<strong>β = 1.13 ± 0.04</strong>（p&lt;0.001）</li>
+<li>planning depth 上升：<strong>β = 0.0108 ± 0.0010</strong>（p&lt;0.001）</li>
+<li>feature drop rate 下降：<strong>β = −2.58×10^−4 ± 4.7×10^−5</strong>（p&lt;0.001）</li>
+<li>heuristic quality 上升：<strong>6.12×10^−4 ± 4.2×10^−5</strong>（p&lt;0.001）</li>
+<li>也做了 ” 不是因为变慢才显得更深 ” 的检验：planning depth 上升不由更慢的下法解释。</li>
+<li>作者还指出一个跨场景差异（按文中原句的数值顺序记录）：
+<ul>
+<li>移动端前 20 局的 heuristic quality 被描述为 ” 明显低于 ” 实验室首个 session，但括号里给出的两数是 <strong>0.5301 ± 0.0098 vs 0.4788 ± 0.0044</strong>（t999=4.7，p&lt;0.001），并由此推断移动端起点更差、提升空间更大，而实验室可能接近 ” 启发式质量天花板 “。</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h2 id="10--规划深度-46-步--到底意味着什么作者专门澄清">10. ” 规划深度 4–6 步 ” 到底意味着什么（作者专门澄清）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10--规划深度-46-步--到底意味着什么作者专门澄清" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>模型对个体选择最匹配时，planning depth 常在 <strong>4 到 6</strong>。</li>
+<li>作者强调这不代表人对未来每一步都同等具体：
+<ul>
+<li>因为模型沿树分支累积价值噪声，越往后越 ” 松散/不确定 ”；</li>
+<li>前几步更具体，后几步更模糊。</li>
+</ul>
+</li>
+<li>模型的停止规则是随机几何停止，因此经常会 ” 继续搜索但最终决策没变 “；人类停止更策略化、更接近资源理性意义上的近最优。</li>
+<li>加入 early-stopping 规则后，模型估计的 planning depth 会更低；但 ” 专长导致更深规划 ” 的核心结论对多种停止阈值都稳健。</li>
+</ul>
+<hr/>
+<h2 id="11-记忆与重建实验高手是否更像--模式识别机器-">11. 记忆与重建实验：高手是否更像 ” 模式识别机器 “<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-记忆与重建实验高手是否更像--模式识别机器-" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="111-受试分组">11.1 受试分组<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#111-受试分组" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>两组各 19 人（共 38）：
+<ul>
+<li>” 有经验组 “：曾完成学习实验，且在 <strong>4 周内</strong>；</li>
+<li>” 无经验组 “：没玩过该游戏，被告知任务是记忆 ” 方格与圆点图案 “。</li>
+</ul>
+</li>
+</ul>
+<h3 id="112-单-trial-流程与操作">11.2 单 Trial 流程与操作<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#112-单-trial-流程与操作" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>展示某个局面 <strong>10 秒</strong></li>
+<li>空白棋盘 <strong>1 秒</strong></li>
+<li>进入重建界面（无时间限制）：
+<ul>
+<li>右键：放置/移除黑子</li>
+<li>左键：放置/移除白子</li>
+<li>点击 submit 表示完成</li>
+</ul>
+</li>
+<li>提交后反馈：36 格（含空格）中有多少比例重建正确。</li>
+</ul>
+<h3 id="113-刺激96-个局面如何构造">11.3 刺激（96 个局面）如何构造<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#113-刺激96-个局面如何构造" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>
+<p>每人重建同一组 <strong>96 个局面</strong>，顺序随机，整个实验约 1 小时。</p>
+</li>
+<li>
+<p>96 分为两套各 48：</p>
+<ol>
+<li>
+<p>来自人 - 人对战真实棋局的局面：</p>
+<ul>
+<li>控制局面棋子数从 <strong>11 到 18</strong></li>
+<li>每个棋子数随机抽 <strong>6 个</strong>局面（因此 8 个棋子数量 × 6 = 48）</li>
+</ul>
+</li>
+<li>
+<p>程序生成的随机局面：</p>
+<ul>
+<li>精确匹配 ” 棋子数量分布 ”</li>
+<li>近似匹配 ” 各格子被占用的边际分布 “（marginal distribution of occupied squares）</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="114-结果要点含具体数值">11.4 结果要点（含具体数值）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#114-结果要点含具体数值" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>错误类型（专家 vs 新手）：
+<ul>
+<li><strong>extra piece</strong>：专家略差（β = 0.0071 ± 0.0031，p = 0.049）</li>
+<li><strong>missed piece</strong>：专家明显更好（β = 0.037 ± 0.006，p &lt; 0.001）</li>
+<li><strong>wrong color</strong>：专家明显更好（β = 0.019 ± 0.003，p &lt; 0.001）</li>
+</ul>
+</li>
+<li>重建时间：
+<ul>
+<li>专家平均用时更长（β = 2.73 ± 0.57，p &lt; 0.001）</li>
+<li>作者因此提醒：总体错误率优势可能掺杂速度 - 准确性权衡；但进一步分析显示，专家对 ” 与游戏相关的特征 “（例如三连威胁）确实在相近时间下更准确。</li>
+</ul>
+</li>
+<li>例子局面（底行存在一个三连威胁）：
+<ul>
+<li>新手正确重建该三连的概率：<strong>42.1%</strong></li>
+<li>专家：<strong>84.2%</strong></li>
+</ul>
+</li>
+<li>总体解释：人的棋盘表征更像 ” 以游戏相关特征为单位 ” 的表征；专家在这类特征上更精准，从而支持 ” 更快/更可靠的局面评估 → 每单位时间可评估更多节点 → 规划更深 “。</li>
+</ul>
+<hr/>
+<h2 id="12-统一-elo-标尺bayeselo-的用法跨实验对齐强度">12. 统一 Elo 标尺：Bayeselo 的用法（跨实验对齐强度）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-统一-elo-标尺bayeselo-的用法跨实验对齐强度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>作者用 Bayeselo 实现 Elo（并把实验室人类与电脑对手放进同一体系）。</li>
+<li>具体做法：
+<ul>
+<li>建一个数据库，包含：
+<ul>
+<li>全部 ” 人 - 机对战 ” 棋局</li>
+<li>一个模拟的 ” 机 - 机锦标赛 “：每个电脑对手与其他所有电脑对手（包括自己）各下 1 局</li>
+</ul>
+</li>
+<li>锦标赛里包含：
+<ul>
+<li>泛化/学习/时间压力实验里用的全部 AI 对手</li>
+<li>移动端 app 用的 AI 对手</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>这样 Elo 在不同实验中是同一刻度。</li>
+</ul>
+<hr/>
+<h2 id="13-模型拟合为什么这么贵怎么拟合">13. 模型拟合：为什么这么贵、怎么拟合<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#13-模型拟合为什么这么贵怎么拟合" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="131-为什么解析似然不可得">13.1 为什么解析似然不可得<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#131-为什么解析似然不可得" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>要算精确 log-likelihood，需要对多个隐变量做边缘化，作者认为不可行，包括：</p>
+<ul>
+<li>哪些特征实例被 dropout 丢掉</li>
+<li>树搜索的迭代次数（随机停止）</li>
+<li>每个节点的价值噪声实现</li>
+</ul>
+<p>因此不能限制在 ” 可解析似然 ” 的模型族里，否则噪声结构等会被迫简化到很不现实。</p>
+<h3 id="132-似然估计与优化">13.2 似然估计与优化<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#132-似然估计与优化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>log-likelihood 用 <strong>inverse binomial sampling</strong> 估计：本质上用模型生成的模拟数据与真实数据对比来估计似然；估计无偏但有噪声。</li>
+<li>因为无法获得梯度，用 <strong>multilevel coordinate search</strong> 做无梯度优化。</li>
+<li>用 <strong>五折交叉验证</strong>比较模型以减轻过拟合。</li>
+</ul>
+<h3 id="133-计算成本与硬件">13.3 计算成本与硬件<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#133-计算成本与硬件" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>拟合单个参与者、单个模型约需 <strong>10^14</strong> 次浮点运算量级。</li>
+<li>在 NYU 高性能集群上跑（Intel Xeon E5-2690v2，3.0 GHz）：
+<ul>
+<li>inverse binomial sampling 做了并行实现，使用 <strong>20 核</strong>。</li>
+<li>单人单模型拟合大约 <strong>1 小时</strong>。</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h2 id="14-扩展数据的关键内容模型验证稳健性可解释性">14. 扩展数据的关键内容（模型验证/稳健性/可解释性）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#14-扩展数据的关键内容模型验证稳健性可解释性" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="141-模型比较交叉验证-loglik-per-move">14.1 模型比较（交叉验证 Loglik per move）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#141-模型比较交叉验证-loglik-per-move" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>作者把替代模型分为：
+<ul>
+<li>删组件（lesions）</li>
+<li>替换实现（modifications）</li>
+<li>增加组件/参数（extensions）</li>
+</ul>
+</li>
+<li>用交叉验证的 “log-likelihood per move” 做比较，并在多个数据集上分别报告：
+<ul>
+<li>汇总（N=330）</li>
+<li>人 - 人对战（N=40）</li>
+<li>泛化（N=40）</li>
+<li>眼动（N=10）</li>
+<li>学习（N=150）</li>
+<li>时间压力（N=90）</li>
+</ul>
+</li>
+<li>结论导向：主模型在各数据集上总体表现最好或接近最好；删掉树搜索/删掉注意力遗漏/删掉关键特征会明显变差，从而支持主模型选择。</li>
+</ul>
+<h3 id="142-用--总结统计量--验证不只靠逐步预测">14.2 用 ” 总结统计量 ” 验证（不只靠逐步预测）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#142-用--总结统计量--验证不只靠逐步预测" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>作者把对局按棋子数进程来算一系列 summary statistics（对比：人类 vs 主模型 vs 随机落子），包括但不限于：
+<ul>
+<li>落子到棋盘中心的距离</li>
+<li>自己棋子平均距离、对手棋子平均距离</li>
+<li>自己/对手的 ” 质心（center-of-mass）距离 ”</li>
+<li>自己/对手的相邻棋子数量（neighbouring pieces）</li>
+<li>造成的威胁数量（threats made）</li>
+<li>防守/化解的威胁数量（threats defended）</li>
+</ul>
+</li>
+<li>这些统计量上，人类显著偏离随机；主模型能贴近人类曲线。</li>
+</ul>
+<h3 id="143-个体差异也能预测主模型不仅拟合总体平均">14.3 个体差异也能预测（主模型不仅拟合总体平均）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#143-个体差异也能预测主模型不仅拟合总体平均" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在 ” 同一批统计量 ” 的个体层面散点图中，主模型预测与真实个体差异高度相关（每点一个参与者），并报告了 Pearson ρ：</p>
+<ul>
+<li>距中心：ρ=0.88</li>
+<li>自己棋子平均距离：ρ=0.94</li>
+<li>对手棋子平均距离：ρ=0.90</li>
+<li>到自己质心距离：ρ=0.89</li>
+<li>到对手质心距离：ρ=0.85</li>
+<li>自己相邻棋子数：ρ=0.58</li>
+<li>对手相邻棋子数：ρ=0.83</li>
+<li>威胁制造数：ρ=0.72</li>
+<li>威胁防守数：ρ=0.89<br/>
+（以上面板均报告 p&lt;0.001。）</li>
+</ul>
+<h3 id="144-组件--到底解释了什么局面-用例局面展示">14.4 组件 ” 到底解释了什么局面 “（用例局面展示）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#144-组件--到底解释了什么局面-用例局面展示" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>作者挑了两类 ” 主模型与消融模型预测差异最大的局面 ”：</p>
+<ul>
+<li>去掉树搜索（No tree）会与主模型在某些局面上产生巨大分歧：通常是需要往后算很多步才知道某个选择是输/和/赢；例如作者指出某一局面里 No tree 喜欢的步是必败，而主模型选择能达成和局，但这依赖一个必须深入计算才能发现的 10 步强制序列。</li>
+<li>去掉 feature drop（No feature drop）解释不了人类某些 ” 漏看一手制胜/漏防一手致命 ” 的选择倾向，feature drop 机制正是为了抓住这种 ” 选择性注意力漏检 “。</li>
+</ul>
+<h3 id="145-实力相关性与反应时更细汇总">14.5 实力相关性与反应时（更细汇总）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#145-实力相关性与反应时更细汇总" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>在学习 + 时间压力数据中：
+<ul>
+<li>Elo 与 planning depth 正相关：ρ=0.62（p&lt;0.001）</li>
+<li>Elo 与 feature drop rate 负相关：ρ=−0.73（p&lt;0.001）</li>
+<li>Elo 与 heuristic quality 的相关不显著：ρ=0.11（p=0.088）</li>
+</ul>
+</li>
+<li>学习实验中，反应时随 session 变化呈 ” 略变快 ” 的趋势（因此 planning depth 上升不是因为更慢）。</li>
+<li>时间压力实验中，时限确实把反应时拉长（尽管平均只用了部分可用时间）。</li>
+</ul>
+<h3 id="146-稳健性表把-elo--指标相关性--对-20-模型规格逐行报告">14.6 稳健性表（把 “Elo- 指标相关性 ” 对 20+ 模型规格逐行报告）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#146-稳健性表把-elo--指标相关性--对-20-模型规格逐行报告" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>下表信息来自扩展数据表格，核心是：无论模型规格怎么改，“Elo 与 planning depth 的正相关、与 feature drop rate 的负相关 ” 几乎始终存在；heuristic quality 的相关性更不稳定、常常不显著。</p>
+<p>（字段：Loglik per move；planning depth 的 ρ、p；feature drop rate 的 ρ、p；heuristic quality 的 ρ、p）</p>
+<ul>
+<li>Main：−1.95；0.61,&lt;0.001；−0.66,&lt;0.001；0.02,0.85</li>
+<li>No value noise：−2.06；0.31,&lt;0.001；−0.38,&lt;0.001；0.35,&lt;0.001</li>
+<li>No feature drop：−2.0；0.53,&lt;0.001；Not applicable；−0.02,0.82</li>
+<li>No pruning：−2.0；0.71,&lt;0.001；−0.59,&lt;0.001；−0.02,0.78</li>
+<li>No tree：−1.98；Not applicable；−0.59,&lt;0.001；−0.10,0.20</li>
+<li>No active scaling：−1.96；0.58,&lt;0.001；−0.63,&lt;0.001；−0.05,0.56</li>
+<li>No 3-in-a-row：−2.21；0.67,&lt;0.001；−0.39,&lt;0.001；0.19,0.02</li>
+<li>No connected 2-in-a-row：−2.04；0.67,&lt;0.001；−0.51,&lt;0.001；−0.15,0.06</li>
+<li>No center：−2.03；0.58,&lt;0.001；−0.66,&lt;0.001；−0.04,0.64</li>
+<li>No 4-in-a-row：−1.98；0.65,&lt;0.001；−0.64,&lt;0.001；0.02,0.79</li>
+<li>No unconnected 2-in-a-row：−1.97；0.59,&lt;0.001；−0.65,&lt;0.001；0.07,0.39</li>
+<li>Optimal weights：−2.01；0.44,&lt;0.001；−0.61,&lt;0.001；Not applicable</li>
+<li>Square dropping：−1.95；0.62,&lt;0.001；−0.67,&lt;0.001；0.02,0.85</li>
+<li>Fixed iterations：−1.95；0.64,&lt;0.001；−0.31,&lt;0.001；0.02,0.80</li>
+<li>Fixed depth：−1.94；0.59,&lt;0.001；−0.70,&lt;0.001；0.01,0.95</li>
+<li>Fixed branching：−1.94；0.61,&lt;0.001；−0.36,&lt;0.001；−0.04,0.65</li>
+<li>Orientation-dep. weights：−1.95；0.56,&lt;0.001；−0.64,&lt;0.001；−0.01,0.92</li>
+<li>Orientation-dep. dropping：−1.95；0.61,&lt;0.001；−0.59,&lt;0.001；0.08,0.32</li>
+<li>Triangle：−1.95；0.39,&lt;0.001；−0.72,&lt;0.001；−0.21,0.01</li>
+<li>Type-dep. dropping：−1.95；0.24,0.0026；−0.70,&lt;0.001；−0.08,0.32</li>
+<li>Opponent scaling：−1.95；0.59,&lt;0.001；−0.60,&lt;0.001；−0.26,0.0014</li>
+</ul>
+<p>表格附注里作者还强调：</p>
+<ul>
+<li>对 orientation-dependent dropping 与 type-dependent dropping，feature drop rate 取 ” 横向二连/三连 ” 等对应的 drop rate 定义；</li>
+<li>fixed depth 模型因为探索每个分支到同一深度，所以其 “planning depth” 不仅等于 principal variation 长度，也等于任意 variation 的长度；</li>
+<li>结论：在 22 个模型规格中，Elo 与 planning depth、feature drop rate 的相关在 ” 能定义该指标 ” 的情况下都很稳健。</li>
+</ul>
+<hr/>
+<h2 id="15-讨论与解释框架作者的核心解释">15. 讨论与解释框架（作者的核心解释）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#15-讨论与解释框架作者的核心解释" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>
+<p>更强的玩家之所以更强，模型层面主要体现在：</p>
+<ol>
+<li><strong>更深的树搜索（更深规划）</strong></li>
+<li><strong>更少的注意力遗漏（更少 feature dropout）</strong></li>
+</ol>
+</li>
+<li>
+<p>在实验室数据里，玩家一开始就带有 ” 相对正确的特征归因/归纳偏置 “，因此 heuristic quality 可能接近上限，学习中并未再提升；移动端用户起点更差，因此能观察到 heuristic quality 的提升。</p>
+</li>
+<li>
+<p>关于 ” 更深规划 vs 更强模式识别 ” 的经典争论：</p>
+<ul>
+<li>作者认为二者并不矛盾：记忆/重建实验显示专家更擅长以 ” 游戏相关特征 ” 编码棋盘；</li>
+<li>这会提升<strong>处理速度</strong>：单位时间可做更多局面评估，因此也能推动更深规划；</li>
+<li>因此 ” 模式识别的提升 ” 可以通过 ” 更快的评估 → 更深的搜索 ” 间接表现为 ” 更深规划 “，而不仅仅是 ” 直接替代搜索 “。</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h2 id="16-推广限制与未来方向作者明确写出的">16. 推广、限制与未来方向（作者明确写出的）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#16-推广限制与未来方向作者明确写出的" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>推广猜想：在更复杂游戏或更自然的规划任务中，专长可能同样提升注意力与搜索；复杂游戏里还可能存在 ” 需要长期经验才能学到的非显然特征 “，从而 heuristic quality 的提升会更显著。</li>
+<li>特征发现：在复杂棋类中，可以考虑用训练好的神经网络内部表征来挖掘候选特征，再塞进类似的认知模型做检验。</li>
+<li>学习机制建模：未来可用 ” 深度强化学习 + 前向规划 ” 类算法来解释人类随经验的变化，并计划在更大规模（百万级用户）的移动端数据上检验。</li>
+<li>任务范围限制：当前模型只覆盖确定性两人零和博弈；随机或多人博弈可能需要额外机制。</li>
+<li>神经层面的预测（作者提出的假设型观点）：
+<ul>
+<li>未来状态价值可能与奖励/价值相关脑区的神经活动相关；</li>
+<li>当玩家思考时，神经活动的时间过程可能反映搜索迭代中 ” 根节点价值随迭代更新 ” 的动态轨迹。</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h2 id="17-研究设计报告补充信息reporting-summary-里提供的要点">17. 研究设计/报告补充信息（Reporting Summary 里提供的要点）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#17-研究设计报告补充信息reporting-summary-里提供的要点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="171-数据与软件">17.1 数据与软件<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#171-数据与软件" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>实验室数据收集与分析以自写代码为主；眼动硬件使用 EyeLink 1000 Plus 及其工作站自带软件。</li>
+<li>眼动数据从原始格式转换为 fixation/saccade 使用 SR Research 的 <code>edf2asc.exe</code>。</li>
+<li>Elo 估计使用 Remi Coulom 的 <code>bayeselo.exe</code>。</li>
+<li>其余分析为自写代码（作者在公开平台给出了数据与代码的可获得性说明）。</li>
+</ul>
+<h3 id="172-样本策略与时间线非常具体">17.2 样本策略与时间线（非常具体）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#172-样本策略与时间线非常具体" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>样本量策略：
+<ul>
+<li>单条件实验（人 - 人对战、泛化）：各 N=40</li>
+<li>多条件/被试内操控（学习、时间压力）：各 N=30</li>
+<li>眼动：N=10</li>
+<li>图灵测试：N=30</li>
+<li>记忆与重建：N=38</li>
+<li>移动端：记录 N=1,234,844；分析子样本 N=1,000（计算限制）</li>
+<li>未做正式 power analysis；样本量选择参考认知科学常见实践与预算/算力可行性。</li>
+</ul>
+</li>
+<li>实验时间（按 reporting summary 记录）：
+<ul>
+<li>人 - 人对战：2014/06–2014/09</li>
+<li>眼动：2015/04–2015/05</li>
+<li>泛化：2015/05–2016/02</li>
+<li>学习：2015/09–2016/04</li>
+<li>时间压力：2016/09–2016/11</li>
+<li>图灵测试：2016/11–2017/02</li>
+<li>记忆重建：2016/02–2017/03</li>
+<li>移动端数据收集：2018/09–2019/04</li>
+</ul>
+</li>
+<li>数据剔除：
+<ul>
+<li>实验室：未剔除任何被试数据</li>
+<li>移动端：仅因为计算限制，从全体随机抽 1,000 名做分析</li>
+</ul>
+</li>
+<li>退出/未参与：
+<ul>
+<li>实验室：有 1 名参与者提前退出（因为没预料到任务耗时/投入），仍按同意书支付</li>
+<li>移动端：同意通过 app 提示点击；未记录拒绝人数</li>
+</ul>
+</li>
+<li>随机化：
+<ul>
+<li>人 - 机对弈中，对手设置按局随机；</li>
+<li>时间压力实验中，每局时限随机；</li>
+<li>2AFC、评估、记忆重建使用预生成题库，并做 block randomization。</li>
+</ul>
+</li>
+</ul>
+<h3 id="173-被试与招募偏差说明reporting-summary-明确写出">17.3 被试与招募偏差说明（Reporting Summary 明确写出）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#173-被试与招募偏差说明reporting-summary-明确写出" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>实验室样本：NYU 社区或通过线上传单/系统报名，便利抽样，可能偏向对认知任务更感兴趣/更有动力的人。</li>
+<li>移动端样本：iOS App Store 下载 Peak app 的用户；样本不受控，且进一步只选 ” 至少玩 100 局 ” 的用户用于分析 → 可能偏向更有动力的群体；作者认为这可能影响学习幅度的平均水平，但不认为会改变主要结论方向。</li>
+<li>移动端样本的地域分布（作者能观察到的）：主要在美国（45%）与英国（21%）；未获取年龄与性别信息。</li>
+</ul></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-50" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#expertise-increases-planning-depth-in-human-gameplay" data-for="expertise-increases-planning-depth-in-human-gameplay">Expertise Increases Planning Depth in Human Gameplay</a></li><li class="depth-1"><a href="#0-这篇文章到底做了什么" data-for="0-这篇文章到底做了什么">0. 这篇文章到底做了什么</a></li><li class="depth-1"><a href="#1-任务four-in-a-row49-四连棋" data-for="1-任务four-in-a-row49-四连棋">1. 任务：Four-in-a-row（4×9 四连棋）</a></li><li class="depth-2"><a href="#11-规则与界面行为" data-for="11-规则与界面行为">1.1 规则与界面行为</a></li><li class="depth-2"><a href="#12-复杂度" data-for="12-复杂度">1.2 复杂度</a></li><li class="depth-1"><a href="#2-计算认知模型启发式评估--best-first-搜索principal-variation-剪枝--注意力遗漏--噪声--失误" data-for="2-计算认知模型启发式评估--best-first-搜索principal-variation-剪枝--注意力遗漏--噪声--失误">2. 计算认知模型：启发式评估 + Best-first 搜索（principal variation）+ 剪枝 + 注意力遗漏 + 噪声 + 失误</a></li><li class="depth-2"><a href="#21-总体结构每一步落子如何生成" data-for="21-总体结构每一步落子如何生成">2.1 总体结构（每一步落子如何生成）</a></li><li class="depth-1"><a href="#22-价值函数启发式评估用少量--棋形特征--快速估值" data-for="22-价值函数启发式评估用少量--棋形特征--快速估值">2.2 价值函数（启发式评估）：用少量 ” 棋形特征 ” 快速估值</a></li><li class="depth-2"><a href="#221-总体形式-自己特征--减--对手特征-" data-for="221-总体形式-自己特征--减--对手特征-">2.2.1 总体形式（” 自己特征 ” 减 ” 对手特征 ”）</a></li><li class="depth-2"><a href="#222-具体用了哪些特征5-类" data-for="222-具体用了哪些特征5-类">2.2.2 具体用了哪些特征（5 类）</a></li><li class="depth-2"><a href="#223-centre-特征的精确定义公式层面" data-for="223-centre-特征的精确定义公式层面">2.2.3 Centre 特征的精确定义（公式层面）</a></li><li class="depth-2"><a href="#224-pattern-特征项--主动被动缩放active-scaling" data-for="224-pattern-特征项--主动被动缩放active-scaling">2.2.4 Pattern 特征项 + 主动/被动缩放（active scaling）</a></li><li class="depth-2"><a href="#225-节点价值噪声gaussian-value-noise" data-for="225-节点价值噪声gaussian-value-noise">2.2.5 节点价值噪声（Gaussian Value noise）</a></li><li class="depth-1"><a href="#23-树搜索best-first沿-principal-variation-反复扩展" data-for="23-树搜索best-first沿-principal-variation-反复扩展">2.3 树搜索：best-first（沿 Principal Variation 反复扩展）</a></li><li class="depth-2"><a href="#231-节点结构" data-for="231-节点结构">2.3.1 节点结构</a></li><li class="depth-2"><a href="#232-选点selectionprincipal-variation" data-for="232-选点selectionprincipal-variation">2.3.2 选点（selection）：principal Variation</a></li><li class="depth-2"><a href="#233-扩展expansion-剪枝pruning" data-for="233-扩展expansion-剪枝pruning">2.3.3 扩展（expansion）+ 剪枝（pruning）</a></li><li class="depth-2"><a href="#234-回传backpropagationminimax但只沿-pv-高效更新" data-for="234-回传backpropagationminimax但只沿-pv-高效更新">2.3.4 回传（backpropagation）：minimax（但只沿 PV 高效更新）</a></li><li class="depth-2"><a href="#235-停止规则stopping" data-for="235-停止规则stopping">2.3.5 停止规则（stopping）</a></li><li class="depth-1"><a href="#24-模型参数主模型-10-个参数" data-for="24-模型参数主模型-10-个参数">2.4 模型参数（主模型 10 个参数）</a></li><li class="depth-1"><a href="#25-用模型计算--博弈论意义上的真值-game-theoretic-value" data-for="25-用模型计算--博弈论意义上的真值-game-theoretic-value">2.5 用模型计算 ” 博弈论意义上的真值 “（game-theoretic value）</a></li><li class="depth-1"><a href="#26-替代模型用于验证--哪些组件必不可少-" data-for="26-替代模型用于验证--哪些组件必不可少-">2.6 替代模型（用于验证 ” 哪些组件必不可少 ”）</a></li><li class="depth-2"><a href="#261-lesion删组件把某参数固定为常数" data-for="261-lesion删组件把某参数固定为常数">2.6.1 Lesion（删组件：把某参数固定为常数）</a></li><li class="depth-2"><a href="#262-modifications替换某组件的实现方式" data-for="262-modifications替换某组件的实现方式">2.6.2 Modifications（替换某组件的实现方式）</a></li><li class="depth-2"><a href="#263-把搜索改成-mctsmonte-carlo-tree-search" data-for="263-把搜索改成-mctsmonte-carlo-tree-search">2.6.3 把搜索改成 MCTS（Monte Carlo Tree Search）</a></li><li class="depth-2"><a href="#264-extensions增加新参数新特征" data-for="264-extensions增加新参数新特征">2.6.4 Extensions（增加新参数/新特征）</a></li><li class="depth-1"><a href="#3-实验与数据实验室-7-个--移动端大样本--多项验证" data-for="3-实验与数据实验室-7-个--移动端大样本--多项验证">3. 实验与数据（实验室 7 个 + 移动端大样本 + 多项验证）</a></li><li class="depth-2"><a href="#31-总览与补偿" data-for="31-总览与补偿">3.1 总览与补偿</a></li><li class="depth-1"><a href="#4-实验-1人---人对战无时间限制-模型落子预测" data-for="4-实验-1人---人对战无时间限制-模型落子预测">4. 实验 1：人 - 人对战（无时间限制）+ 模型落子预测</a></li><li class="depth-2"><a href="#41-过程细节人---人对战" data-for="41-过程细节人---人对战">4.1 过程细节（人 - 人对战）</a></li><li class="depth-2"><a href="#42-拟合与结果落子预测" data-for="42-拟合与结果落子预测">4.2 拟合与结果（落子预测）</a></li><li class="depth-1"><a href="#5-实验-2泛化实验对电脑--2afc--局面评估" data-for="5-实验-2泛化实验对电脑--2afc--局面评估">5. 实验 2：泛化实验（对电脑 + 2AFC + 局面评估）</a></li><li class="depth-2"><a href="#51-实验流程" data-for="51-实验流程">5.1 实验流程</a></li><li class="depth-2"><a href="#52-人---机对战界面差异" data-for="52-人---机对战界面差异">5.2 人 - 机对战界面差异</a></li><li class="depth-2"><a href="#53-电脑对手的生成与匹配非常细" data-for="53-电脑对手的生成与匹配非常细">5.3 电脑对手的生成与匹配（非常细）</a></li><li class="depth-2"><a href="#54-2afc-与评估任务的--刺激选择-信息论挑题" data-for="54-2afc-与评估任务的--刺激选择-信息论挑题">5.4 2AFC 与评估任务的 ” 刺激选择 “（信息论挑题）</a></li><li class="depth-2"><a href="#55-泛化结果" data-for="55-泛化结果">5.5 泛化结果</a></li><li class="depth-1"><a href="#6-图灵测试人能不能分辨--真实人类棋局片段--vs--模型生成片段-" data-for="6-图灵测试人能不能分辨--真实人类棋局片段--vs--模型生成片段-">6. 图灵测试：人能不能分辨 ” 真实人类棋局片段 ” Vs ” 模型生成片段 “</a></li><li class="depth-2"><a href="#61-设计两天两-session" data-for="61-设计两天两-session">6.1 设计（两天两 session）</a></li><li class="depth-2"><a href="#62-视频片段如何抽样非常具体" data-for="62-视频片段如何抽样非常具体">6.2 视频片段如何抽样（非常具体）</a></li><li class="depth-2"><a href="#63-结果两层结果一起给" data-for="63-结果两层结果一起给">6.3 结果（两层结果一起给）</a></li><li class="depth-1"><a href="#7-过程数据验证反应时rt与眼动" data-for="7-过程数据验证反应时rt与眼动">7. 过程数据验证：反应时（RT）与眼动</a></li><li class="depth-2"><a href="#71-反应时预测从--树的结构--预测-rt" data-for="71-反应时预测从--树的结构--预测-rt">7.1 反应时预测（从 ” 树的结构 ” 预测 RT）</a></li><li class="depth-2"><a href="#72-眼动实验n10" data-for="72-眼动实验n10">7.2 眼动实验（n=10）</a></li><li class="depth-1"><a href="#8-专长经验如何改变规划学习实验--时间压力实验--指标定义" data-for="8-专长经验如何改变规划学习实验--时间压力实验--指标定义">8. 专长/经验如何改变规划：学习实验 + 时间压力实验 + 指标定义</a></li><li class="depth-2"><a href="#81-学习实验n305-次-session间隔-2-天" data-for="81-学习实验n305-次-session间隔-2-天">8.1 学习实验（n=30，5 次 session，间隔 ≤2 天）</a></li><li class="depth-2"><a href="#82-时间压力实验n30每步限时-51020-秒" data-for="82-时间压力实验n30每步限时-51020-秒">8.2 时间压力实验（n=30；每步限时 5/10/20 秒）</a></li><li class="depth-2"><a href="#83-三个--派生指标-derived-metrics把-10-参数压缩成-3-个更可解释量" data-for="83-三个--派生指标-derived-metrics把-10-参数压缩成-3-个更可解释量">8.3 三个 ” 派生指标 “（derived metrics）：把 10 参数压缩成 3 个更可解释量</a></li><li class="depth-1"><a href="#9-大规模移动端数据peak-合作" data-for="9-大规模移动端数据peak-合作">9. 大规模移动端数据（Peak 合作）</a></li><li class="depth-2"><a href="#91-数据收集与伦理" data-for="91-数据收集与伦理">9.1 数据收集与伦理</a></li><li class="depth-2"><a href="#92-数据规模与对手匹配" data-for="92-数据规模与对手匹配">9.2 数据规模与对手匹配</a></li><li class="depth-2"><a href="#93-分析子样本与分块" data-for="93-分析子样本与分块">9.3 分析子样本与分块</a></li><li class="depth-2"><a href="#94-移动端结果随经验增长" data-for="94-移动端结果随经验增长">9.4 移动端结果（随经验增长）</a></li><li class="depth-1"><a href="#10--规划深度-46-步--到底意味着什么作者专门澄清" data-for="10--规划深度-46-步--到底意味着什么作者专门澄清">10. ” 规划深度 4–6 步 ” 到底意味着什么（作者专门澄清）</a></li><li class="depth-1"><a href="#11-记忆与重建实验高手是否更像--模式识别机器-" data-for="11-记忆与重建实验高手是否更像--模式识别机器-">11. 记忆与重建实验：高手是否更像 ” 模式识别机器 “</a></li><li class="depth-2"><a href="#111-受试分组" data-for="111-受试分组">11.1 受试分组</a></li><li class="depth-2"><a href="#112-单-trial-流程与操作" data-for="112-单-trial-流程与操作">11.2 单 Trial 流程与操作</a></li><li class="depth-2"><a href="#113-刺激96-个局面如何构造" data-for="113-刺激96-个局面如何构造">11.3 刺激（96 个局面）如何构造</a></li><li class="depth-2"><a href="#114-结果要点含具体数值" data-for="114-结果要点含具体数值">11.4 结果要点（含具体数值）</a></li><li class="depth-1"><a href="#12-统一-elo-标尺bayeselo-的用法跨实验对齐强度" data-for="12-统一-elo-标尺bayeselo-的用法跨实验对齐强度">12. 统一 Elo 标尺：Bayeselo 的用法（跨实验对齐强度）</a></li><li class="depth-1"><a href="#13-模型拟合为什么这么贵怎么拟合" data-for="13-模型拟合为什么这么贵怎么拟合">13. 模型拟合：为什么这么贵、怎么拟合</a></li><li class="depth-2"><a href="#131-为什么解析似然不可得" data-for="131-为什么解析似然不可得">13.1 为什么解析似然不可得</a></li><li class="depth-2"><a href="#132-似然估计与优化" data-for="132-似然估计与优化">13.2 似然估计与优化</a></li><li class="depth-2"><a href="#133-计算成本与硬件" data-for="133-计算成本与硬件">13.3 计算成本与硬件</a></li><li class="depth-1"><a href="#14-扩展数据的关键内容模型验证稳健性可解释性" data-for="14-扩展数据的关键内容模型验证稳健性可解释性">14. 扩展数据的关键内容（模型验证/稳健性/可解释性）</a></li><li class="depth-2"><a href="#141-模型比较交叉验证-loglik-per-move" data-for="141-模型比较交叉验证-loglik-per-move">14.1 模型比较（交叉验证 Loglik per move）</a></li><li class="depth-2"><a href="#142-用--总结统计量--验证不只靠逐步预测" data-for="142-用--总结统计量--验证不只靠逐步预测">14.2 用 ” 总结统计量 ” 验证（不只靠逐步预测）</a></li><li class="depth-2"><a href="#143-个体差异也能预测主模型不仅拟合总体平均" data-for="143-个体差异也能预测主模型不仅拟合总体平均">14.3 个体差异也能预测（主模型不仅拟合总体平均）</a></li><li class="depth-2"><a href="#144-组件--到底解释了什么局面-用例局面展示" data-for="144-组件--到底解释了什么局面-用例局面展示">14.4 组件 ” 到底解释了什么局面 “（用例局面展示）</a></li><li class="depth-2"><a href="#145-实力相关性与反应时更细汇总" data-for="145-实力相关性与反应时更细汇总">14.5 实力相关性与反应时（更细汇总）</a></li><li class="depth-2"><a href="#146-稳健性表把-elo--指标相关性--对-20-模型规格逐行报告" data-for="146-稳健性表把-elo--指标相关性--对-20-模型规格逐行报告">14.6 稳健性表（把 “Elo- 指标相关性 ” 对 20+ 模型规格逐行报告）</a></li><li class="depth-1"><a href="#15-讨论与解释框架作者的核心解释" data-for="15-讨论与解释框架作者的核心解释">15. 讨论与解释框架（作者的核心解释）</a></li><li class="depth-1"><a href="#16-推广限制与未来方向作者明确写出的" data-for="16-推广限制与未来方向作者明确写出的">16. 推广、限制与未来方向（作者明确写出的）</a></li><li class="depth-1"><a href="#17-研究设计报告补充信息reporting-summary-里提供的要点" data-for="17-研究设计报告补充信息reporting-summary-里提供的要点">17. 研究设计/报告补充信息（Reporting Summary 里提供的要点）</a></li><li class="depth-2"><a href="#171-数据与软件" data-for="171-数据与软件">17.1 数据与软件</a></li><li class="depth-2"><a href="#172-样本策略与时间线非常具体" data-for="172-样本策略与时间线非常具体">17.2 样本策略与时间线（非常具体）</a></li><li class="depth-2"><a href="#173-被试与招募偏差说明reporting-summary-明确写出" data-for="173-被试与招募偏差说明reporting-summary-明确写出">17.3 被试与招募偏差说明（Reporting Summary 明确写出）</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

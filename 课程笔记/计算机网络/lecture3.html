@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>lecture3</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="lecture3"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="lecture3"/><meta name="twitter:description" content="第三讲 数据链路层 前言 数据链路层的地位 数据链路层位于网络层之下、物理层之上，负责在相邻结点之间，经由一条具体链路传送数据。它所面对的不是端到端通信，而是逐跳通信：主机向远端主机发送数据时，网络层负责选择路径，数据链路层则负责将网络层交下来的分组，在当前这一跳上封装成帧并可靠地送到下一跳。 当数据从源主机到达目的主机时，会依次经过主机、交换机、路由器等设备。不同设备实现数据链路层的方式不同，但凡参与一跳通信的设备，都必须具备相应的链路层功能。主机通常实现完整协议栈；交换机主要工作在链路层；路由器则在每个接口上实现链路层与物理层，以支持逐跳转发。 flowchart LR H1[主机 H1]..."/><meta property="og:description" content="第三讲 数据链路层 前言 数据链路层的地位 数据链路层位于网络层之下、物理层之上，负责在相邻结点之间，经由一条具体链路传送数据。它所面对的不是端到端通信，而是逐跳通信：主机向远端主机发送数据时，网络层负责选择路径，数据链路层则负责将网络层交下来的分组，在当前这一跳上封装成帧并可靠地送到下一跳。 当数据从源主机到达目的主机时，会依次经过主机、交换机、路由器等设备。不同设备实现数据链路层的方式不同，但凡参与一跳通信的设备，都必须具备相应的链路层功能。主机通常实现完整协议栈；交换机主要工作在链路层；路由器则在每个接口上实现链路层与物理层，以支持逐跳转发。 flowchart LR H1[主机 H1]..."/><meta property="og:image:alt" content="第三讲 数据链路层 前言 数据链路层的地位 数据链路层位于网络层之下、物理层之上，负责在相邻结点之间，经由一条具体链路传送数据。它所面对的不是端到端通信，而是逐跳通信：主机向远端主机发送数据时，网络层负责选择路径，数据链路层则负责将网络层交下来的分组，在当前这一跳上封装成帧并可靠地送到下一跳。 当数据从源主机到达目的主机时，会依次经过主机、交换机、路由器等设备。不同设备实现数据链路层的方式不同，但凡参与一跳通信的设备，都必须具备相应的链路层功能。主机通常实现完整协议栈；交换机主要工作在链路层；路由器则在每个接口上实现链路层与物理层，以支持逐跳转发。 flowchart LR H1[主机 H1]..."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/计算机网络/lecture3"/><meta property="twitter:url" content="https://localhost/课程笔记/计算机网络/lecture3"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="第三讲 数据链路层 前言 数据链路层的地位 数据链路层位于网络层之下、物理层之上，负责在相邻结点之间，经由一条具体链路传送数据。它所面对的不是端到端通信，而是逐跳通信：主机向远端主机发送数据时，网络层负责选择路径，数据链路层则负责将网络层交下来的分组，在当前这一跳上封装成帧并可靠地送到下一跳。 当数据从源主机到达目的主机时，会依次经过主机、交换机、路由器等设备。不同设备实现数据链路层的方式不同，但凡参与一跳通信的设备，都必须具备相应的链路层功能。主机通常实现完整协议栈；交换机主要工作在链路层；路由器则在每个接口上实现链路层与物理层，以支持逐跳转发。 flowchart LR H1[主机 H1]..."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/计算机网络/lecture3"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-133"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-133" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../课程笔记/计算机网络/">计算机网络</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lecture3</a></div></nav><h1 class="article-title">lecture3</h1><p show-comma="true" class="content-meta"><time datetime="2026-03-21T17:11:16.246Z">Mar 22, 2026</time><span>60 min read</span></p></div></div><article class="popover-hint"><h1 id="第三讲-数据链路层">第三讲 数据链路层<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第三讲-数据链路层" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="前言">前言<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#前言" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="数据链路层的地位">数据链路层的地位<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#数据链路层的地位" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>数据链路层位于网络层之下、物理层之上，负责在<strong>相邻结点</strong>之间，经由一条具体链路传送数据。它所面对的不是端到端通信，而是逐跳通信：主机向远端主机发送数据时，网络层负责选择路径，数据链路层则负责将网络层交下来的分组，在当前这一跳上封装成帧并可靠地送到下一跳。</p>
+<p>当数据从源主机到达目的主机时，会依次经过主机、交换机、路由器等设备。不同设备实现数据链路层的方式不同，但凡参与一跳通信的设备，都必须具备相应的链路层功能。主机通常实现完整协议栈；交换机主要工作在链路层；路由器则在每个接口上实现链路层与物理层，以支持逐跳转发。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    H1[主机 H1] --> R1[路由器 R1]\n    R1 --> R2[路由器 R2]\n    R2 --> R3[路由器 R3]\n    R3 --> H2[主机 H2]\n\n    subgraph 端到端视角\n    H1 -->|应用数据/报文段/IP分组| H2\n    end\n\n    subgraph 逐跳视角\n    H1 -->|帧| R1\n    R1 -->|帧| R2\n    R2 -->|帧| R3\n    R3 -->|帧| H2\n    end&quot;">flowchart LR
+    H1[主机 H1] --> R1[路由器 R1]
+    R1 --> R2[路由器 R2]
+    R2 --> R3[路由器 R3]
+    R3 --> H2[主机 H2]
+
+    subgraph 端到端视角
+    H1 -->|应用数据/报文段/IP分组| H2
+    end
+
+    subgraph 逐跳视角
+    H1 -->|帧| R1
+    R1 -->|帧| R2
+    R2 -->|帧| R3
+    R3 -->|帧| H2
+    end
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>数据链路层的重要性在于：网络层虽然面向全网，但每一跳的实际传输都必须落实到具体链路之上；不同链路可能采用不同的链路层协议，因此同一个 IP 分组在转发过程中，可以反复被拆出、重新封装为新的帧，再沿下一条链路继续传送。</p>
+<h3 id="数据链路层使用的两类信道">数据链路层使用的两类信道<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#数据链路层使用的两类信道" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>数据链路层面对的信道大体可分为两类。</p>
+<ol>
+<li><strong>点对点信道</strong>：一条链路只连接两个结点，通信关系是一对一的。</li>
+<li><strong>广播信道</strong>：多个结点共享同一传输介质，天然支持一对多传播，但需要额外机制协调多个结点对共享信道的使用。</li>
+</ol>
+<p>二者的差异并不只体现在拓扑上，更体现在协议任务上。点对点信道的核心问题是成帧、差错控制和流量控制；广播信道的核心问题则是<strong>共享介质的访问控制</strong>，即多个结点如何竞争、分配或预约共同的信道资源。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    A[数据链路层信道] --> B[点对点信道]\n    A --> C[广播信道]\n    B --> B1[一条链路只连接两个结点]\n    B --> B2[重点: 成帧、差错控制、流量控制]\n    C --> C1[多个结点共享介质]\n    C --> C2[重点: 介质访问控制 MAC]&quot;">flowchart TB
+    A[数据链路层信道] --> B[点对点信道]
+    A --> C[广播信道]
+    B --> B1[一条链路只连接两个结点]
+    B --> B2[重点: 成帧、差错控制、流量控制]
+    C --> C1[多个结点共享介质]
+    C --> C2[重点: 介质访问控制 MAC]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="定义和功能">定义和功能<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#定义和功能" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="基本术语">基本术语<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#基本术语" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li><strong>结点</strong>：主机、路由器、交换机等网络设备。</li>
+<li><strong>链路</strong>：连接相邻结点之间的一段物理线路或无线信道。</li>
+<li><strong>帧</strong>：数据链路层传输数据的基本单位，用于承载网络层交下来的分组。</li>
+</ul>
+<p>从严格意义上说，<strong>链路</strong>只是物理通路本身，而<strong>数据链路</strong>是在链路的基础上，再加上控制数据传输的协议以及相应的软硬件实现。也可以将二者称为<strong>物理链路</strong>与<strong>逻辑链路</strong>。</p>
+<h3 id="数据链路层的基本功能">数据链路层的基本功能<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#数据链路层的基本功能" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>数据链路层的核心任务是：在一条具体链路上，以帧为单位完成相邻结点之间的数据交换。围绕这一任务，典型功能包括：</p>
+<ol>
+<li><strong>成帧与解帧</strong>：确定一帧从哪里开始、到哪里结束。</li>
+<li><strong>透明传输</strong>：保证任意比特组合的数据都能作为载荷被正确传输，而不会与帧定界符混淆。</li>
+<li><strong>差错检测或纠正</strong>：发现甚至定位传输过程中的比特错误。</li>
+<li><strong>流量控制</strong>：限制发送方发送速率，使其不超过接收方和链路的承受能力。</li>
+<li><strong>寻址</strong>：在局域网等场景中，用链路层地址标识接收方。</li>
+<li><strong>链路管理</strong>：某些协议支持建立、维护和释放链路连接。</li>
+<li><strong>区分控制信息与数据信息</strong>：通过帧类型字段、控制字段等实现协议控制。</li>
+</ol>
+<p>这些功能并非所有协议都同时具备。点对点协议 PPP 仅提供成帧、透明传输和差错检测，不提供编号、确认和流量控制；而 HDLC 则具备更完整的链路控制能力。</p>
+<h2 id="端系统实现">端系统实现<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#端系统实现" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="网卡与链路层实现位置">网卡与链路层实现位置<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#网卡与链路层实现位置" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在主机中，数据链路层通常主要由<strong>网络适配器</strong>实现。网络适配器又称网卡或 NIC，它通过系统总线与 CPU 和内存连接，对外接入局域网或其他链路。</p>
+<p>网卡通常是硬件、驱动程序与固件的结合体，负责：</p>
+<ul>
+<li>将高层交下来的数据封装成帧；</li>
+<li>添加目的地址、源地址、校验字段等链路层控制信息；</li>
+<li>在发送方向上完成并行到串行的转换；</li>
+<li>在接收方向上完成串行到并行的转换；</li>
+<li>实施部分差错检测、地址检查、缓存和中断通知。</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    CPU[CPU/内存] --> BUS[系统总线]\n    BUS --> NIC[网络适配器 NIC]\n    NIC --> PHY[物理层接口]\n    PHY --> LINK[链路]\n    LINK --> PHY2[对端物理层接口]\n    PHY2 --> NIC2[对端 NIC]&quot;">flowchart LR
+    CPU[CPU/内存] --> BUS[系统总线]
+    BUS --> NIC[网络适配器 NIC]
+    NIC --> PHY[物理层接口]
+    PHY --> LINK[链路]
+    LINK --> PHY2[对端物理层接口]
+    PHY2 --> NIC2[对端 NIC]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="网卡之间的通信">网卡之间的通信<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#网卡之间的通信" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>从发端看，网卡接收网络层交下来的 IP 数据报，将其封装到帧中，并在必要时加入目的地址、控制字段和帧校验序列。随后，帧被转化为可在物理介质上传输的比特流。</p>
+<p>从收端看，网卡从物理介质接收比特流，识别帧边界，进行差错校验和地址检查；若该帧应由本机接收且校验通过，则将帧中的数据部分取出并交给网络层。</p>
+<p>这一过程说明，网络层与链路层的边界清晰而紧密：网络层提供要逐跳传输的分组，链路层负责在本跳把分组包装成可实际发送的帧。</p>
+<h3 id="以太网帧的基本结构">以太网帧的基本结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#以太网帧的基本结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>以太网发送时，物理层前面通常还会加上前同步码与帧开始定界符，用于位同步与帧起始标识。MAC 帧本体通常包括：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>字段</th><th style="text-align:right;">长度</th></tr></thead><tbody><tr><td>目的地址</td><td style="text-align:right;">6 字节</td></tr><tr><td>源地址</td><td style="text-align:right;">6 字节</td></tr><tr><td>类型</td><td style="text-align:right;">2 字节</td></tr><tr><td>数据</td><td style="text-align:right;">46～1500 字节</td></tr><tr><td>FCS</td><td style="text-align:right;">4 字节</td></tr></tbody></table></div>
+<p>其中：</p>
+<ul>
+<li><strong>目的地址/源地址</strong>用于链路层寻址；</li>
+<li><strong>类型字段</strong>标识上一层协议，如 IP；</li>
+<li><strong>数据字段</strong>承载网络层分组；</li>
+<li><strong>FCS</strong>用于差错检测。</li>
+</ul>
+<h3 id="异步传输与同步传输">异步传输与同步传输<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#异步传输与同步传输" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>链路层帧的传输可以依附于不同的物理层传输方式。</p>
+<ul>
+<li><strong>异步传输</strong>通常以字符为单位，使用起始位、数据位、校验位和停止位，结构简单、成本较低，适于低速传输。</li>
+<li><strong>同步传输</strong>要求收发双方时钟同步，帧更长，效率更高，适合长距离和高速链路。</li>
+</ul>
+<p>对链路层而言，物理层的同步机制是前提；链路层则在此之上处理帧边界、控制字段和错误控制。</p>
+<h2 id="点对点信道两点单向">点对点信道（两点单向）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#点对点信道两点单向" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="功能成帧与透明传输">功能：成帧与透明传输<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#功能成帧与透明传输" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="成帧的必要性">成帧的必要性<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#成帧的必要性" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>网络层交给链路层的是一个分组，但物理层看到的只是连续比特流。若不在比特流中划定帧的边界，接收方就无法判断某一帧从哪里开始、到哪里结束。因此，链路层必须进行<strong>成帧</strong>。</p>
+<p>成帧就是在数据前后添加首部和尾部，以形成一个完整的帧。首尾字段既承载控制信息，也承担定界作用。链路层还通常规定<strong>最大传送单元</strong> MTU，用于限制单帧可承载的数据长度。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    D[网络层数据] --> H[加入首部]\n    H --> T[加入尾部]\n    T --> F[形成帧]&quot;">flowchart LR
+    D[网络层数据] --> H[加入首部]
+    H --> T[加入尾部]
+    T --> F[形成帧]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="常见成帧方法">常见成帧方法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#常见成帧方法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>常见的帧定界方法包括：</p>
+<ol>
+<li>
+<p><strong>字节计数法</strong><br/>
+在首部中设置长度字段，指出本帧共有多少字节。其优点是简单，但若长度字段出错，接收方会失去帧同步。</p>
+</li>
+<li>
+<p><strong>控制字符法</strong><br/>
+使用特殊字符标识帧开始和结束，例如用 SOH 表示首部开始，用 EOT 表示帧结束。它适用于面向字符的数据。</p>
+</li>
+<li>
+<p><strong>比特定界法</strong><br/>
+采用特定的比特模式作为标志字段，例如 HDLC 中的 <code>01111110</code>。这适合面向比特的同步协议。</p>
+</li>
+</ol>
+<h4 id="透明传输问题">透明传输问题<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#透明传输问题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>如果帧定界符也可能出现在数据字段内部，接收方就可能把载荷误认为帧边界，导致数据被错误截断或拼接。因此，链路层必须保证：<strong>无论数据中出现何种比特组合，都能被当作普通数据传送，而不影响帧边界识别</strong>。这就是透明传输。</p>
+<h4 id="字节填充">字节填充<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#字节填充" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在控制字符法中，常用<strong>字节填充</strong>解决透明传输问题。其基本思想是：若数据中出现了与帧定界符相同的特殊字符，则在它前面插入一个转义字符 ESC；接收方在恢复数据时，将这些额外插入的 ESC 删除。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[原始数据中出现 SOH/EOT/ESC] --> B[发送端在前面插入 ESC]\n    B --> C[链路上传输]\n    C --> D[接收端识别 ESC]\n    D --> E[删除转义用 ESC]\n    E --> F[恢复原始数据]&quot;">flowchart LR
+    A[原始数据中出现 SOH/EOT/ESC] --> B[发送端在前面插入 ESC]
+    B --> C[链路上传输]
+    C --> D[接收端识别 ESC]
+    D --> E[删除转义用 ESC]
+    E --> F[恢复原始数据]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>字节填充适合面向字节的协议。它依赖发送方和接收方共同遵守同一套转义规则。</p>
+<h4 id="比特填充">比特填充<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#比特填充" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在面向比特的同步协议中，更常见的方法是<strong>比特填充</strong>。若帧标志字段为 <code>01111110</code>，则发送方在数据中每出现 5 个连续的 <code>1</code> 后，就自动插入一个 <code>0</code>；接收方检测到 5 个连续 <code>1</code> 后再删除其后的填充 <code>0</code>。这样，数据部分就不会产生与帧标志完全相同的比特模式。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[发送端扫描数据位流] --> B{出现五个连续1?}\n    B -- 否 --> A\n    B -- 是 --> C[插入一个0]\n    C --> A&quot;">flowchart LR
+    A[发送端扫描数据位流] --> B{出现五个连续1?}
+    B -- 否 --> A
+    B -- 是 --> C[插入一个0]
+    C --> A
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="透明传输的含义">透明传输的含义<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#透明传输的含义" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>透明传输并不意味着链路层 ” 什么都不做 “，而是意味着：链路层虽然在中间执行了填充、转义、定界等处理，但对上层看来，好像这些处理不存在，原始数据能够不失真地通过链路层。</p>
+<h3 id="功能差错控制">功能：差错控制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#功能差错控制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="比特差错与检错的必要性">比特差错与检错的必要性<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#比特差错与检错的必要性" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在实际传输中，信号会受到噪声、衰减和干扰影响，导致接收比特与发送比特不一致。设信道误码率为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">b</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，帧长为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span> 位，则一帧无差错传输的概率为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.1413em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">b</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">L</span></span></span></span></span></span></span></span></span></span></span></span>
+<p>帧越长，或误码率越高，无差错接收的概率就越低。因此，链路层需要通过冗余编码进行差错检测，必要时还可进行纠错。</p>
+<h4 id="检错码与纠错码">检错码与纠错码<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#检错码与纠错码" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>检错码</strong>：只能发现错误，不能定位错误位置，如奇偶校验、CRC。</li>
+<li><strong>纠错码</strong>：既能发现错误，也能指出错误位置并进行纠正，如汉明码。</li>
+</ul>
+<p>可用<strong>汉明距离</strong>刻画码字之间的最小差异。若最小码距为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mtight">m</span><span class="mtight">i</span><span class="mtight">n</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，则：</p>
+<ul>
+<li>为检测 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> 位错误，至少需要 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mtight">m</span><span class="mtight">i</span><span class="mtight">n</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">d</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>；</li>
+<li>为纠正 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> 位错误，至少需要 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mtight">m</span><span class="mtight">i</span><span class="mtight">n</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mord mathnormal">d</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>。</li>
+</ul>
+<p>这说明，纠错比检错需要更大的码距，也意味着更高的冗余开销。</p>
+<h4 id="奇偶校验">奇偶校验<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#奇偶校验" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>奇偶校验是在数据后附加一个冗余位，使整个码字中 <code>1</code> 的个数为奇数或偶数。它实现简单，但能力有限：</p>
+<ul>
+<li>一维奇偶校验可以检测单比特错误；</li>
+<li>二维奇偶校验不仅能检测单比特错误，还能在一定条件下纠正单比特错误。</li>
+</ul>
+<p>奇偶校验适合理解冗余检错的基本思想，但在现代高速数据链路中通常不足以胜任主检错机制。</p>
+<h4 id="汉明码">汉明码<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#汉明码" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>汉明码是一类典型的纠错码。其基本做法是将若干校验位插入到码字中编号为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0085em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span></span></span></span> 的位置，再根据各数据位对应的位置编号，确定其应参与哪些校验位的计算。接收端根据各校验位的检验结果形成综合症，从而定位出错位置，实现单比特纠错。</p>
+<p>汉明码说明：纠错的核心不是简单附加冗余，而是让冗余位对不同数据位形成可区分的约束模式。</p>
+<h4 id="交织与校验和">交织与校验和<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#交织与校验和" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在实际链路中，错误常常不是完全随机分布，而是以<strong>突发错</strong>的形式出现。交织技术通过重新排列发送次序，把连续的突发错打散为多个码字中的少量随机错，从而提高原有检错或纠错机制的效果。</p>
+<p>校验和则通过对若干数据单元求和并取反来发现错误。IP、TCP、UDP 等协议都使用这种方法，但链路层更常见的强检错方式仍然是 CRC。</p>
+<h4 id="循环冗余校验-crc">循环冗余校验 CRC<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#循环冗余校验-crc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>CRC 是数据链路层中最重要的检错方法之一。其基本思想是把待发送比特串看成一个二进制多项式 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span>，选择一个生成多项式 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">G</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span>，然后构造冗余位 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>，使得拼接后的码字可被 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">G</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span> 整除。</p>
+<p>发送端流程为：</p>
+<ol>
+<li>对原始数据后附加 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> 个 <code>0</code>；</li>
+<li>用模 2 除法除以生成多项式；</li>
+<li>取余数作为冗余码；</li>
+<li>将余数附加到原始数据后发送。</li>
+</ol>
+<p>接收端用同一生成多项式对收到的码字再次做模 2 除法：</p>
+<ul>
+<li>余数为 0，则接受；</li>
+<li>余数非 0，则判为出错并丢弃。</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    M[原始数据 M] --> Z[后附 r 个 0]\n    Z --> D[模2除以生成多项式 G]\n    D --> R[得到余数 R]\n    R --> C[\&quot;发送码字 M||R\&quot;]\n    C --> V[接收端再除以 G]\n    V --> J{余数是否为0}\n    J -- 是 --> OK[接受]\n    J -- 否 --> ERR[丢弃]&quot;">flowchart TD
+    M[原始数据 M] --> Z[后附 r 个 0]
+    Z --> D[模2除以生成多项式 G]
+    D --> R[得到余数 R]
+    R --> C[&quot;发送码字 M||R&quot;]
+    C --> V[接收端再除以 G]
+    V --> J{余数是否为0}
+    J -- 是 --> OK[接受]
+    J -- 否 --> ERR[丢弃]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>CRC 的优点在于：</p>
+<ul>
+<li>编码效率高；</li>
+<li>对突发错误特别有效；</li>
+<li>易于用移位寄存器和异或电路实现；</li>
+<li>可检测所有 1 位错误、所有 2 位错误、所有奇数位错误以及长度不超过 CRC 位数的突发错误。</li>
+</ul>
+<h4 id="fcs-与-crc-的关系">FCS 与 CRC 的关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#fcs-与-crc-的关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>链路层帧尾常带有 <strong>FCS</strong>（Frame Check Sequence，帧检验序列）。FCS 是附加在帧末尾的冗余码，而 CRC 是生成这种冗余码的一种方法。二者不可等同：CRC 是检错方法，FCS 是冗余结果。</p>
+<h3 id="功能流量控制">功能：流量控制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#功能流量控制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="从检错到可靠传输">从检错到可靠传输<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#从检错到可靠传输" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>仅有检错还不够。即使接收方能发现错误帧并将其丢弃，发送方仍然需要知道哪些帧没有成功到达。为此，链路层在某些协议中引入<strong>确认、重传和窗口控制</strong>机制。</p>
+<p>需要区分三个概念：</p>
+<ol>
+<li><strong>无比特差错</strong>：接收的帧通过了检错；</li>
+<li><strong>无差错接受</strong>：所有被接受的帧都可认为正确；</li>
+<li><strong>无差错传输</strong>：发送什么就最终收到什么。</li>
+</ol>
+<p>CRC 只能帮助实现无差错接受，不能单独实现无差错传输。若要做到可靠传输，必须配合确认与重传机制，即 <strong>ARQ</strong>。</p>
+<h4 id="停等协议">停等协议<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#停等协议" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>停等协议是最基本的可靠传输协议。发送方每发送一帧，就停止继续发送，等待接收方确认；若在规定时间内未收到确认，则重传该帧。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant A as 发送方\n    participant B as 接收方\n    A->>B: DATA 0\n    B-->>A: ACK 1\n    A->>B: DATA 1\n    B-->>A: ACK 0&quot;">sequenceDiagram
+    participant A as 发送方
+    participant B as 接收方
+    A->>B: DATA 0
+    B-->>A: ACK 1
+    A->>B: DATA 1
+    B-->>A: ACK 0
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>它解决的问题包括：</p>
+<ul>
+<li>数据帧出错或丢失；</li>
+<li>确认帧丢失；</li>
+<li>延迟到达的重复帧。</li>
+</ul>
+<p>为避免重复交付，数据帧必须带有序号；确认帧也必须能表明 ” 期望收到的下一个序号 “。在最简单的停等协议中，1 比特序号即可循环使用。</p>
+<p>发送方的核心逻辑是：</p>
+<ol>
+<li>发送数据帧并缓存副本；</li>
+<li>启动超时定时器；</li>
+<li>收到正确确认后，删除缓存并发送下一帧；</li>
+<li>若超时，则重传缓存帧。</li>
+</ol>
+<p>接收方的核心逻辑是：</p>
+<ol>
+<li>收到损坏帧则丢弃；</li>
+<li>收到正确的新帧，则交付上层并回送确认；</li>
+<li>收到正确但重复的帧，则丢弃数据但重发确认。</li>
+</ol>
+<h4 id="停等协议的利用率">停等协议的利用率<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#停等协议的利用率" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>设数据帧发送时间为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9012em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>，传播时延为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9012em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>，确认帧发送时间为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7651em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">a</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，则停等协议的链路利用率可表示为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2642em;vertical-align:-0.9721em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.2921em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">a</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9721em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+<p>若忽略处理时间与确认帧发送时间，定义</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2642em;vertical-align:-0.9721em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.2921em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">t</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9721em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+<p>则近似有：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0908em;vertical-align:-0.7693em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">2</span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7693em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+<p>可见，当传播时延大而帧很短时，停等协议的大部分时间都耗费在等待确认上，链路利用率很低。它简单，但不适于长时延高带宽链路。</p>
+<h4 id="连续-arq-与滑动窗口">连续 ARQ 与滑动窗口<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#连续-arq-与滑动窗口" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>为提高链路利用率，发送方可以在收到确认前连续发送多个帧。这就引出了<strong>滑动窗口协议</strong>。发送端和接收端分别维护发送窗口与接收窗口。发送窗口限制未确认帧的最大数量，接收窗口规定当前允许接收的序号范围。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[发送窗口] --> B[允许连续发送多个未确认帧]\n    B --> C[确认到达后窗口前移]\n    C --> D[超时则按协议规则重传]&quot;">flowchart LR
+    A[发送窗口] --> B[允许连续发送多个未确认帧]
+    B --> C[确认到达后窗口前移]
+    C --> D[超时则按协议规则重传]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="回退-ngo-back-n">回退 N（Go-Back-N）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#回退-ngo-back-n" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在连续 ARQ 中，若接收方只接收按序到达的帧，则其接收窗口大小为 1。若某一帧丢失，后续虽已到达但因失序而全部丢弃；发送方超时后，从出错帧开始将窗口内相关帧全部重传。这就是 <strong>Go-Back-N</strong>。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant A as 发送方\n    participant B as 接收方\n    A->>B: DATA 0\n    B-->>A: ACK 1\n    A->>B: DATA 1\n    B-->>A: ACK 2\n    A-xB: DATA 2 丢失\n    A->>B: DATA 3\n    B-->>A: ACK 2\n    A->>B: DATA 4\n    B-->>A: ACK 2\n    A->>B: DATA 5\n    B-->>A: ACK 2\n    A->>B: 超时后重传 DATA 2,3,4,5&quot;">sequenceDiagram
+    participant A as 发送方
+    participant B as 接收方
+    A->>B: DATA 0
+    B-->>A: ACK 1
+    A->>B: DATA 1
+    B-->>A: ACK 2
+    A-xB: DATA 2 丢失
+    A->>B: DATA 3
+    B-->>A: ACK 2
+    A->>B: DATA 4
+    B-->>A: ACK 2
+    A->>B: DATA 5
+    B-->>A: ACK 2
+    A->>B: 超时后重传 DATA 2,3,4,5
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>Go-Back-N 的优点是接收端简单，不需要缓存大量失序帧；缺点是在误码或丢帧较多时，会重复重传已经正确到达的帧。</p>
+<p>当帧序号使用 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 比特，且接收窗口为 1 时，发送窗口必须满足：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.136em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7977em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span></span>
+<p>否则可能导致新旧帧序号重叠而无法区分。</p>
+<h4 id="选择重传selective-repeat">选择重传（Selective Repeat）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#选择重传selective-repeat" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>选择重传进一步提高了效率。接收端允许接收窗口内的失序帧，并将其缓存，待缺失帧补齐后再按序交付上层。发送方仅重传被确认丢失的特定帧，而不是从某一点开始整段回退。</p>
+<p>它减少了不必要的重传，但代价是：</p>
+<ul>
+<li>接收端需要缓存失序帧；</li>
+<li>协议状态更复杂；</li>
+<li>序号空间与窗口大小必须更谨慎地设计。</li>
+</ul>
+<p>为避免新旧帧序号在接收窗口中重叠，若帧序号用 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 比特表示，则选择重传中接收窗口必须满足：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.136em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span></span></span></span></span>
+<p>这一约束本质上是为了让 ” 仍可能重传的旧帧 ” 和 ” 未来真正的新帧 ” 在序号空间中不发生可见重叠。</p>
+<h4 id="累计确认与捎带确认">累计确认与捎带确认<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#累计确认与捎带确认" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>为了减少确认开销，链路层常采用两种优化：</p>
+<ol>
+<li><strong>累计确认</strong>：确认序号 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 表示序号小于 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 的帧都已正确收到，并期望下一帧为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span>。</li>
+<li><strong>捎带确认</strong>：当接收方也有数据要发回时，将确认信息附在数据帧中一并发送。</li>
+</ol>
+<p>这两种方法在全双工数据交换中尤其常见，可显著降低纯控制帧所占比例。</p>
+<h3 id="实现ppp-协议">实现：PPP 协议<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#实现ppp-协议" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="ppp-的定位">PPP 的定位<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ppp-的定位" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>PPP（Point-to-Point Protocol）是最常见的点对点链路层协议之一，广泛用于用户主机到 ISP 的接入链路等场景。它主要解决点对点链路上的封装、透明传输、参数协商和网络层配置问题。</p>
+<p>PPP 的设计目标并不是做 ” 功能最强 ” 的链路层协议，而是在点对点链路上提供<strong>足够通用且足够简单</strong>的封装和协商能力。</p>
+<h4 id="ppp-的设计需求">PPP 的设计需求<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ppp-的设计需求" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>PPP 需要满足以下要求：</p>
+<ul>
+<li>简单；</li>
+<li>支持成帧和透明传输；</li>
+<li>支持多种网络层协议；</li>
+<li>能运行于多种类型链路；</li>
+<li>能进行差错检测；</li>
+<li>能检测链路状态；</li>
+<li>能协商 MTU；</li>
+<li>能协商网络层地址；</li>
+<li>能协商数据压缩等附加功能。</li>
+</ul>
+<p>与此相对，PPP <strong>不要求</strong>提供：</p>
+<ul>
+<li>纠错；</li>
+<li>流量控制；</li>
+<li>序号与确认；</li>
+<li>多点线路支持；</li>
+<li>半双工或单工特化支持。</li>
+</ul>
+<p>其背后思想是：在点对点链路误码率已较低时，复杂的链路层可靠机制并不划算；而端到端可靠性本来也不应仅由链路层承担。</p>
+<h4 id="ppp-的组成">PPP 的组成<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ppp-的组成" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>PPP 由三部分组成：</p>
+<ol>
+<li><strong>封装方法</strong>：规定如何把网络层分组装入 PPP 帧；</li>
+<li><strong>LCP</strong>（Link Control Protocol）：用于建立、配置、测试和释放链路；</li>
+<li><strong>NCP</strong>（Network Control Protocol）：用于协商具体网络层参数，例如 IP 地址配置。</li>
+</ol>
+<h4 id="ppp-帧格式">PPP 帧格式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ppp-帧格式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>PPP 帧的典型格式如下：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>字段</th><th style="text-align:right;">长度</th><th>作用</th></tr></thead><tbody><tr><td>Flag</td><td style="text-align:right;">1 字节</td><td>帧定界，取值 <code>0x7E</code></td></tr><tr><td>Address</td><td style="text-align:right;">1 字节</td><td>常置为 <code>0xFF</code>，实际不起寻址作用</td></tr><tr><td>Control</td><td style="text-align:right;">1 字节</td><td>常置为 <code>0x03</code></td></tr><tr><td>Protocol</td><td style="text-align:right;">2 字节</td><td>标识信息字段承载的上层协议</td></tr><tr><td>Information</td><td style="text-align:right;">可变</td><td>承载 IP 数据报、LCP、NCP 等</td></tr><tr><td>FCS</td><td style="text-align:right;">2 或 4 字节</td><td>差错检测</td></tr><tr><td>Flag</td><td style="text-align:right;">1 字节</td><td>帧结束标志</td></tr></tbody></table></div>
+<p>其中，Protocol 字段常见取值包括：</p>
+<ul>
+<li><code>0x0021</code>：IP 数据报；</li>
+<li><code>0x8021</code>：网络控制协议数据；</li>
+<li><code>0xC021</code>：链路控制协议数据；</li>
+<li><code>0xC023</code>：鉴别数据。</li>
+</ul>
+<h4 id="ppp-的透明传输">PPP 的透明传输<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ppp-的透明传输" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>PPP 的透明传输方式依链路类型而定。</p>
+<ol>
+<li>
+<p><strong>异步链路</strong>：采用字符填充。</p>
+<ul>
+<li><code>0x7E</code> 转义为 <code>(0x7D, 0x5E)</code>；</li>
+<li><code>0x7D</code> 转义为 <code>(0x7D, 0x5D)</code>；</li>
+<li>小于 <code>0x20</code> 的控制字符也需按规则转义。</li>
+</ul>
+</li>
+<li>
+<p><strong>同步链路</strong>：采用零比特填充。<br/>
+当连续出现 5 个 <code>1</code> 时插入一个 <code>0</code>，接收端再删除该填充位。</p>
+</li>
+</ol>
+<h4 id="ppp-为什么不提供可靠传输">PPP 为什么不提供可靠传输<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ppp-为什么不提供可靠传输" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>PPP 不使用序号和确认，不负责链路层重传。原因有三：</p>
+<ol>
+<li>点对点链路通常质量较好，复杂 ARQ 的收益有限；</li>
+<li>PPP 承载的往往是 IP 数据报，链路层的可靠并不等于端到端可靠；</li>
+<li>PPP 追求实现简单和良好的互操作性。</li>
+</ol>
+<p>因此，PPP 只保证<strong>无差错接受</strong>，不保证链路层上的可靠交付。</p>
+<h4 id="ppp-的工作状态">PPP 的工作状态<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ppp-的工作状态" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>PPP 的工作通常经历如下阶段：</p>
+<ol>
+<li><strong>链路建立</strong>：物理连接建立后，由 LCP 协商链路参数；</li>
+<li><strong>鉴别</strong>：若配置了鉴别机制，则执行身份认证；</li>
+<li><strong>网络层配置</strong>：由 NCP 协商网络层参数，如分配临时 IP 地址；</li>
+<li><strong>链路打开</strong>：进入正常数据传输阶段；</li>
+<li><strong>终止</strong>：通信结束后，先释放网络层配置，再释放链路与物理连接。</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;stateDiagram-v2\n    [*] --> 静止\n    静止 --> 链路建立: 物理层连接建立\n    链路建立 --> 鉴别: LCP 配置协商成功\n    链路建立 --> 终止: LCP 协商失败\n    鉴别 --> 网络层协议: 鉴别成功或无需鉴别\n    鉴别 --> 终止: 鉴别失败\n    网络层协议 --> 链路打开: NCP 配置完成\n    链路打开 --> 终止: 关闭请求/链路故障\n    终止 --> 静止: LCP 终止完成&quot;">stateDiagram-v2
+    [*] --> 静止
+    静止 --> 链路建立: 物理层连接建立
+    链路建立 --> 鉴别: LCP 配置协商成功
+    链路建立 --> 终止: LCP 协商失败
+    鉴别 --> 网络层协议: 鉴别成功或无需鉴别
+    鉴别 --> 终止: 鉴别失败
+    网络层协议 --> 链路打开: NCP 配置完成
+    链路打开 --> 终止: 关闭请求/链路故障
+    终止 --> 静止: LCP 终止完成
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>PPP 的这一结构说明，它虽然立足于数据链路层，但实际还触及了物理连接建立与网络层配置，因此是一种具有跨层协商特征的协议。</p>
+<h3 id="实现hdlc-协议">实现：HDLC 协议<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#实现hdlc-协议" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="hdlc-的定位">HDLC 的定位<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#hdlc-的定位" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>HDLC（High-Level Data Link Control）是面向比特的同步链路控制协议。它由 ISO 发展而来，目标是为链路层提供高效率、较完整的控制能力。与 PPP 相比，HDLC 更强调面向比特的同步传输、编号、确认以及链路控制。</p>
+<h4 id="hdlc-帧格式">HDLC 帧格式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#hdlc-帧格式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>HDLC 帧采用如下结构：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>字段</th><th style="text-align:right;">长度</th><th>作用</th></tr></thead><tbody><tr><td>Flag</td><td style="text-align:right;">8 bit</td><td>帧定界，<code>01111110</code></td></tr><tr><td>Address</td><td style="text-align:right;">8 bit</td><td>地址或命令/响应标识</td></tr><tr><td>Control</td><td style="text-align:right;">8 bit</td><td>帧类型、序号与控制信息</td></tr><tr><td>Information</td><td style="text-align:right;">可变</td><td>用户数据或控制数据</td></tr><tr><td>FCS</td><td style="text-align:right;">16 bit</td><td>CRC 校验</td></tr><tr><td>Flag</td><td style="text-align:right;">8 bit</td><td>帧结束</td></tr></tbody></table></div>
+<p>HDLC 使用与标志字段相同的 <code>01111110</code> 作为帧边界，因此必须使用零比特填充来保证透明传输。</p>
+<h4 id="hdlc-的三类帧">HDLC 的三类帧<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#hdlc-的三类帧" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>HDLC 根据控制字段的格式，将帧分为三类。</p>
+<ol>
+<li>
+<p><strong>信息帧 I</strong><br/>
+用于承载用户数据，控制字段中包含发送序号 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mclose">)</span></span></span></span> 和接收序号 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mclose">)</span></span></span></span>，支持捎带确认。</p>
+</li>
+<li>
+<p><strong>监控帧 S</strong><br/>
+不携带用户数据，用于单独确认、流量控制与差错恢复。</p>
+</li>
+<li>
+<p><strong>无编号帧 U</strong><br/>
+用于链路建立、断开、模式设置、复位等链路管理功能。</p>
+</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    A[HDLC 帧] --> B[I 帧]\n    A --> C[S 帧]\n    A --> D[U 帧]\n    B --> B1[承载用户数据]\n    B --> B2[\&quot;含 N(S)、N(R)\&quot;]\n    C --> C1[确认/流量控制/重传控制]\n    D --> D1[链路管理]&quot;">flowchart TB
+    A[HDLC 帧] --> B[I 帧]
+    A --> C[S 帧]
+    A --> D[U 帧]
+    B --> B1[承载用户数据]
+    B --> B2[&quot;含 N(S)、N(R)&quot;]
+    C --> C1[确认/流量控制/重传控制]
+    D --> D1[链路管理]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="i-帧">I 帧<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#i-帧" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>I 帧既承载数据，也能通过 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mclose">)</span></span></span></span> 实现对已收到帧的累计确认。控制字段中的 P/F 位可用于查询与响应控制。</p>
+<h4 id="s-帧">S 帧<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#s-帧" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>S 帧包括四种典型类型：</p>
+<ul>
+<li><strong>RR</strong>（Receive Ready）：接收方准备好继续接收；</li>
+<li><strong>RNR</strong>（Receive Not Ready）：接收方暂时忙，要求对方暂停发送；</li>
+<li><strong>REJ</strong>（Reject）：否定确认，要求从某帧开始回退重传；</li>
+<li><strong>SREJ</strong>（Selective Reject）：选择性否定确认，仅要求重传指定帧。</li>
+</ul>
+<p>这说明 HDLC 同时具备流量控制与差错恢复能力，既可以支持类似 Go-Back-N 的回退重传，也可以在特定变种中支持选择重传。</p>
+<h4 id="u-帧">U 帧<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#u-帧" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>U 帧不携带序号，主要用于链路管理，如：</p>
+<ul>
+<li><code>SABM</code>：设置异步平衡模式；</li>
+<li><code>DISC</code>：断开链路；</li>
+<li><code>UA</code>：确认无编号帧；</li>
+<li><code>DM</code>：断开模式；</li>
+<li><code>RSET</code>：重置序号状态。</li>
+</ul>
+<h4 id="hdlc-的校验与工作方式">HDLC 的校验与工作方式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#hdlc-的校验与工作方式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>HDLC 常采用 CRC-CCITT 作为 FCS 生成方法，生成多项式为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">G</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9474em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">16</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.9474em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">12</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.9474em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">5</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span></span>
+<p>HDLC 既可用于非平衡配置，也可用于平衡配置。在非平衡配置中，主站控制从站；在平衡配置中，两端均可独立发起控制与数据交换。</p>
+<p>从工程角度看，HDLC 代表了 ” 功能完备型 ” 链路层协议：它不仅解决成帧和透明传输，还将可靠传输、流量控制和链路管理完整纳入协议内部。</p>
+<h2 id="广播信道多点共享">广播信道（多点共享）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#广播信道多点共享" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="功能信道分配">功能：信道分配<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#功能信道分配" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="共享信道带来的问题">共享信道带来的问题<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#共享信道带来的问题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在广播信道中，多个结点共享同一物理介质。若两个或更多结点同时发送，其信号会互相干扰，导致碰撞。共享介质因此带来一个基本问题：<strong>谁可以在什么时候使用信道</strong>。</p>
+<p>这正是 MAC（Medium Access Control，介质访问控制）子层要解决的问题。</p>
+<h4 id="mac-的目标与分类">MAC 的目标与分类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mac-的目标与分类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>理想的 MAC 协议希望做到：</p>
+<ul>
+<li>若只有一个结点发送，则它应能独占全部速率 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>；</li>
+<li>若有 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span> 个结点同时发送，则各结点平均应获得 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span>；</li>
+<li>协议应尽量分布式、简单、少依赖集中控制。</li>
+</ul>
+<p>MAC 协议大体可分为三类：</p>
+<ol>
+<li><strong>信道划分</strong>：将信道分割为时隙、频带或码字；</li>
+<li><strong>随机接入</strong>：允许竞争，发生碰撞后恢复；</li>
+<li><strong>受控接入/无冲突协议</strong>：先预约或轮询，再无碰撞发送。</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[MAC 协议] --> B[信道划分]\n    A --> C[随机接入]\n    A --> D[无冲突/受控接入]\n    B --> B1[TDMA]\n    B --> B2[FDMA]\n    B --> B3[CDMA]\n    C --> C1[ALOHA]\n    C --> C2[时隙 ALOHA]\n    C --> C3[CSMA]\n    C --> C4[CSMA/CD]\n    C --> C5[CSMA/CA]\n    D --> D1[位图预约]\n    D --> D2[轮询/令牌]\n    D --> D3[有限竞争]&quot;">flowchart LR
+    A[MAC 协议] --> B[信道划分]
+    A --> C[随机接入]
+    A --> D[无冲突/受控接入]
+    B --> B1[TDMA]
+    B --> B2[FDMA]
+    B --> B3[CDMA]
+    C --> C1[ALOHA]
+    C --> C2[时隙 ALOHA]
+    C --> C3[CSMA]
+    C --> C4[CSMA/CD]
+    C --> C5[CSMA/CA]
+    D --> D1[位图预约]
+    D --> D2[轮询/令牌]
+    D --> D3[有限竞争]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="信道划分方法">信道划分方法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#信道划分方法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>TDMA</strong>：把时间划分为轮与时隙，每个站在固定时隙发送。优点是无碰撞；缺点是空闲站点的时隙会被浪费。</li>
+<li><strong>FDMA</strong>：把频谱划分为多个频段，每个站占用一个固定频段。优点是互不冲突；缺点是频段未用时也会闲置。</li>
+</ul>
+<p>对于突发业务，静态划分会降低利用率并增大平均延迟，因此需要动态信道分配机制。</p>
+<h4 id="aloha-与时隙-aloha">ALOHA 与时隙 ALOHA<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#aloha-与时隙-aloha" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p><strong>纯 ALOHA</strong> 中，结点有帧就立即发送。由于发送时刻任意，某帧的易损时间是两个帧长，因此其吞吐量为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8913em;"></span><span class="mord mathnormal">G</span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">2</span><span class="mord mathnormal mtight">G</span></span></span></span></span></span></span></span></span></span></span></span></span>
+<p>最大值在 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">G</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1901em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span> 时取得：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mtight">m</span><span class="mtight">a</span><span class="mtight">x</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0074em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span><span class="mord mathnormal">e</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8056em;vertical-align:-0.0556em;"></span><span class="mord">18.4%</span></span></span></span></span>
+<p><strong>时隙 ALOHA</strong> 将时间离散成等长时隙，结点只能在时隙边界发送。这样易损时间缩短为一个时隙，吞吐量提高为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8913em;"></span><span class="mord mathnormal">G</span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mathnormal mtight">G</span></span></span></span></span></span></span></span></span></span></span></span></span>
+<p>其最大值为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mtight">m</span><span class="mtight">a</span><span class="mtight">x</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0074em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">e</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8056em;vertical-align:-0.0556em;"></span><span class="mord">36.8%</span></span></span></span></span>
+<p>时隙化通过同步换取了更高利用率，但仍会因碰撞而浪费时隙。</p>
+<h4 id="csma">CSMA<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#csma" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>CSMA 在发送前先侦听信道，若空闲则发送，若忙则等待，从而降低碰撞概率。典型变种包括：</p>
+<ul>
+<li>1- 坚持 CSMA；</li>
+<li>非坚持 CSMA；</li>
+<li><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>- 坚持 CSMA。</li>
+</ul>
+<p>CSMA 改进了 ALOHA，但无法彻底消除碰撞，因为传播时延使得两个远端结点可能都认为信道空闲而几乎同时发送。</p>
+<h4 id="无冲突协议与有限竞争">无冲突协议与有限竞争<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#无冲突协议与有限竞争" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>当业务负载较高、对实时性有要求时，可采用预约或轮询等无冲突协议：</p>
+<ul>
+<li><strong>位图协议</strong>：每个站在自己的预约时隙中发送一个比特，表明自己是否有数据待发；</li>
+<li><strong>轮询/令牌</strong>：由主结点依次邀请发送，或令牌在结点间循环；</li>
+<li><strong>有限竞争协议</strong>：将站点分组，在不同竞争时隙内限制竞争者数量，以兼顾低负载时的低延迟和高负载时的高利用率。</li>
+</ul>
+<h3 id="碰撞检测--以太网">碰撞检测 + 以太网<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#碰撞检测--以太网" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="局域网与以太网">局域网与以太网<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#局域网与以太网" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>局域网的典型特点是：地理范围有限、常由单一组织拥有、适合资源共享。以太网是最成功的局域网技术之一。历史上它最初采用总线拓扑，多个站共享一根同轴电缆；后续演化出双绞线星形布线，但其经典 MAC 思想来自共享总线环境。</p>
+<h4 id="以太网的基本设计思想">以太网的基本设计思想<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#以太网的基本设计思想" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>经典以太网采取了两项重要设计：</p>
+<ol>
+<li>
+<p><strong>无连接、尽力而为的服务</strong><br/>
+发送前不建立连接，不对帧编号，不要求接收方回确认。若帧出错则直接丢弃，是否重传交给上层决定。</p>
+</li>
+<li>
+<p><strong>CSMA/CD</strong><br/>
+在共享有线介质上，发送前载波监听，发送中碰撞检测，冲突后退避重传。</p>
+</li>
+</ol>
+<h4 id="为什么需要碰撞检测">为什么需要碰撞检测<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#为什么需要碰撞检测" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>即便发送前侦听到信道空闲，也不意味着远端没有站在几乎同一时刻开始发送。由于信号传播需要时间，结点 A 尚未来得及听到结点 B 的信号时，两者都可能已开始发送。这种由传播时延造成的不确定性，使得<strong>边发边听</strong>成为必要条件。</p>
+<h4 id="csmacd-的基本过程">CSMA/CD 的基本过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#csmacd-的基本过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[准备发送] --> B{信道空闲?}\n    B -- 否 --> C[持续侦听]\n    C --> B\n    B -- 是 --> D[开始发送并同时检测碰撞]\n    D --> E{检测到碰撞?}\n    E -- 否 --> F[继续发送直到完成]\n    E -- 是 --> G[立即停止发送]\n    G --> H[执行二进制指数退避]\n    H --> A&quot;">flowchart TD
+    A[准备发送] --> B{信道空闲?}
+    B -- 否 --> C[持续侦听]
+    C --> B
+    B -- 是 --> D[开始发送并同时检测碰撞]
+    D --> E{检测到碰撞?}
+    E -- 否 --> F[继续发送直到完成]
+    E -- 是 --> G[立即停止发送]
+    G --> H[执行二进制指数退避]
+    H --> A
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>其关键点在于：</p>
+<ul>
+<li><strong>载波监听</strong>：发送前侦听信道状态；</li>
+<li><strong>碰撞检测</strong>：发送中检测总线电压异常增大；</li>
+<li><strong>立即终止</strong>：一旦发现碰撞，停止发送以减少浪费；</li>
+<li><strong>随机退避</strong>：等待随机时延后重传。</li>
+</ul>
+<h4 id="争用期与最短帧长">争用期与最短帧长<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#争用期与最短帧长" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>设端到端单程传播时延为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span></span>，则发送方最迟在 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span></span> 内一定能够知道本次发送是否发生碰撞。这个时间称为<strong>争用期</strong>或碰撞窗口。</p>
+<p>经典 10 Mb/s 以太网规定争用期为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">51.2</span><span class="mspace"> </span><span class="mord mathnormal">μ</span><span class="mord mathnormal">s</span></span></span></span>，在此期间可发送 512 bit，即 64 字节。因此：</p>
+<ul>
+<li>若一帧在前 64 字节内未碰撞，则后续也不会再发生碰撞；</li>
+<li>若帧长小于 64 字节，发送方可能在碰撞信息返回前已发完，无法检测碰撞。</li>
+</ul>
+<p>所以以太网规定<strong>最短有效帧长为 64 字节</strong>。小于该长度的异常帧视为碰撞产生的无效帧。</p>
+<h4 id="二进制指数退避">二进制指数退避<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#二进制指数退避" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>碰撞后的重传不是立即进行，而是等待随机退避时间。若第 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> 次重传前发生碰撞，则从区间</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1491em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8991em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span></span>
+<p>中随机选一个整数 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span>，实际退避时间为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> 个争用期。通常取</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">min</span><span class="mopen">(</span><span class="mord text"><span class="mord cjk_fallback">重传次数</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">10</span><span class="mclose">)</span></span></span></span></span>
+<p>若重传达到 16 次仍失败，则放弃该帧并向高层报告。</p>
+<p>这一策略的作用是：碰撞越频繁，竞争者越多，退避窗口就越大，从而降低后续再次碰撞的概率。</p>
+<h4 id="以太网利用率与参数-a">以太网利用率与参数 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#以太网利用率与参数-a" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>设帧发送时间为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，单程传播时延为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span></span>，定义</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.9436em;vertical-align:-0.836em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1076em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+<p>则 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span> 越小，说明传播时延相对帧发送时间越小，以太网利用率越高。要减小 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">a</span></span></span></span>，可以：</p>
+<ul>
+<li>缩短网络物理范围，减小 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">τ</span></span></span></span>；</li>
+<li>增大帧长，增大 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</li>
+</ul>
+<p>这也是经典共享总线以太网对覆盖范围和最短帧长都施加限制的根本原因。</p>
+<h4 id="csmacd-与-arq-的边界">CSMA/CD 与 ARQ 的边界<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#csmacd-与-arq-的边界" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>CSMA/CD 与点对点链路上的 ARQ 目标不同：</p>
+<ul>
+<li><strong>CSMA/CD</strong> 关注共享介质上的冲突检测与接入控制，发送失败主要理解为碰撞；</li>
+<li><strong>ARQ</strong> 关注确认、重传和可靠传输，发送失败主要理解为差错或丢失。</li>
+</ul>
+<p>因此，CSMA/CD 并不等于可靠传输协议。它负责减少碰撞浪费，而真正的端到端可靠性交由高层承担。</p>
+<h3 id="实现扩展以太网">实现：扩展以太网<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#实现扩展以太网" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="从总线到星形以太网">从总线到星形以太网<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#从总线到星形以太网" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>随着双绞线和集线器的发展，以太网逐渐从单根总线演化为星形拓扑。10BASE-T 使用双绞线连接主机与集线器，物理上是星形，逻辑上仍是共享介质：集线器只是在物理层把一个端口收到的信号复制到所有端口。</p>
+<h4 id="集线器与交换机">集线器与交换机<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#集线器与交换机" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>集线器</strong>工作在物理层，本质上是多端口中继器。它不缓存帧，不识别 MAC 地址，也不做碰撞检测；与其相连的所有主机仍处于同一个碰撞域。</li>
+<li><strong>交换机</strong>工作在链路层，能够缓存帧、学习 MAC 地址并按端口有选择地转发。交换机将每条链路分割为独立碰撞域，使多个结点能够同时通信。</li>
+</ul>
+<h4 id="交换带来的变化">交换带来的变化<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#交换带来的变化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>交换式以太网的关键收益包括：</p>
+<ol>
+<li><strong>多对主机可并发传输</strong>；</li>
+<li><strong>链路彼此独立，不再共享同一碰撞域</strong>；</li>
+<li><strong>可支持全双工通信</strong>；</li>
+<li><strong>更安全</strong>，普通端口无法像集线器那样直接看到所有帧。</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[主机 A] --> S[交换机]\n    B[主机 B] --> S\n    C[主机 C] --> S\n    D[主机 D] --> S\n    A &lt;-->|独立链路| S\n    B &lt;-->|独立链路| S\n    C &lt;-->|独立链路| S\n    D &lt;-->|独立链路| S&quot;">flowchart LR
+    A[主机 A] --> S[交换机]
+    B[主机 B] --> S
+    C[主机 C] --> S
+    D[主机 D] --> S
+    A &lt;-->|独立链路| S
+    B &lt;-->|独立链路| S
+    C &lt;-->|独立链路| S
+    D &lt;-->|独立链路| S
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="mac-地址与以太网帧">MAC 地址与以太网帧<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#mac-地址与以太网帧" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>现代以太网主要采用 Ethernet V2 帧格式。MAC 地址为 48 位，用于链路层寻址。目的地址可以是：</p>
+<ul>
+<li>单播地址；</li>
+<li>组播地址；</li>
+<li>广播地址。</li>
+</ul>
+<p>交换机与网卡都依赖 MAC 地址完成本地网络内的转发与接收判断。</p>
+<p>以太网 V2 帧的关键特点包括：</p>
+<ul>
+<li>类型字段指示上层协议；</li>
+<li>数据字段最少 46 字节、最多 1500 字节；</li>
+<li>帧总长最少 64 字节；</li>
+<li>采用 FCS 检错；</li>
+<li>对无效帧直接丢弃，不负责重传。</li>
+</ul>
+<h4 id="高速以太网">高速以太网<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#高速以太网" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>从 10 Mb/s 演化到 100 Mb/s、1 Gb/s 及更高速率后，以太网仍尽量保持帧格式兼容。对半双工千兆以太网，为维持冲突检测所需的最小发送时间，引入了<strong>载波延伸</strong>和<strong>帧突发</strong>等机制；而在全双工模式下，由于不再存在共享碰撞域，CSMA/CD 可以被取消。</p>
+<h3 id="碰撞避免--无线局域网">碰撞避免 + 无线局域网<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#碰撞避免--无线局域网" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="无线局域网的特点">无线局域网的特点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#无线局域网的特点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>无线局域网采用共享无线信道，既有广播信道的竞争问题，又有无线传播的特殊困难：</p>
+<ul>
+<li>信号衰减明显；</li>
+<li>受其他设备干扰；</li>
+<li>存在多径传播；</li>
+<li>SNR 随位置移动而变化；</li>
+<li>很难像有线那样边发边听。</li>
+</ul>
+<p>因此，802.11 不采用 CSMA/CD，而采用 <strong>CSMA/CA</strong>，即载波监听多路访问/碰撞避免。</p>
+<h4 id="wlan-的组成方式">WLAN 的组成方式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#wlan-的组成方式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>802.11 典型组织方式包括：</p>
+<ol>
+<li><strong>基础设施模式</strong><br/>
+以接入点 AP 为中心，主机先与 AP 关联，再通过 AP 接入有线网络。</li>
+<li><strong>ad hoc 模式</strong><br/>
+无固定基础设施，节点之间直接通信；若要多跳，还需要网络层路由机制。</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    subgraph BSS1[基础设施模式]\n        H1[无线主机] --> AP1[AP]\n        H2[无线主机] --> AP1\n        AP1 --> NET[有线网络/Internet]\n    end&quot;">flowchart LR
+    subgraph BSS1[基础设施模式]
+        H1[无线主机] --> AP1[AP]
+        H2[无线主机] --> AP1
+        AP1 --> NET[有线网络/Internet]
+    end
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="为什么-wlan-不采用-csmacd">为什么 WLAN 不采用 CSMA/CD<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#为什么-wlan-不采用-csmacd" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>无线环境中，发送节点发出的信号功率远大于自己能接收到的远端信号，难以在发送同时可靠检测碰撞；同时，隐蔽结点问题意味着两个发送方可能彼此听不见，但其信号却会在某个接收点相撞。因此，碰撞检测难以实现，只能改为碰撞避免。</p>
+<h4 id="隐蔽结点与暴露结点">隐蔽结点与暴露结点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#隐蔽结点与暴露结点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>隐蔽结点</strong>：两个发送方彼此不可听见，却都能向同一接收方发送，导致接收方处发生碰撞。</li>
+<li><strong>暴露结点</strong>：某发送方侦听到邻居发送而错误地放弃发送，尽管其发送本不会影响目标接收方，导致信道利用率下降。</li>
+</ul>
+<p>隐蔽结点是 802.11 设计 RTS/CTS 机制的重要动机；暴露结点则说明，仅凭本地监听不能完全描述无线信道中的干扰关系。</p>
+<h4 id="80211-的基本-csmaca-过程">802.11 的基本 CSMA/CA 过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#80211-的基本-csmaca-过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>当结点要发送数据时：</p>
+<ol>
+<li>持续监听信道；</li>
+<li>若信道空闲持续达到 DIFS，则准备发送；</li>
+<li>若信道忙，则启动随机退避计时器；</li>
+<li>退避计时器仅在信道空闲时递减，信道忙则冻结；</li>
+<li>计时归零后发送数据；</li>
+<li>接收端若正确收到，则在 SIFS 后返回 ACK；</li>
+<li>若发送端未收到 ACK，则推测此次发送失败，扩大退避窗口并重试。</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant S as 发送方\n    participant R as 接收方\n    S->>S: 监听信道\n    S->>S: 信道空闲达到 DIFS\n    S->>R: DATA\n    R-->>S: SIFS 后发送 ACK&quot;">sequenceDiagram
+    participant S as 发送方
+    participant R as 接收方
+    S->>S: 监听信道
+    S->>S: 信道空闲达到 DIFS
+    S->>R: DATA
+    R-->>S: SIFS 后发送 ACK
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>ACK 在无线链路中十分重要，因为发送端不能通过碰撞检测判断发送是否成功，只能通过 ” 是否收到 ACK” 来间接推断。</p>
+<h4 id="rtscts-预约机制">RTS/CTS 预约机制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#rtscts-预约机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>为缓解隐蔽结点问题，802.11 可在发送大数据帧前先进行 RTS/CTS 握手：</p>
+<ol>
+<li>发送方先发 RTS，请求占用信道；</li>
+<li>接收方若准备好接收，则发 CTS；</li>
+<li>周围结点听到 RTS 或 CTS 后，设置 NAV，推迟发送；</li>
+<li>发送方再发数据帧；</li>
+<li>接收方返回 ACK。</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant A as 发送方\n    participant B as 接收方\n    participant N as 邻近结点\n    A->>B: RTS\n    B-->>A: CTS\n    Note over N: 根据 RTS/CTS 设置 NAV，延迟接入\n    A->>B: DATA\n    B-->>A: ACK&quot;">sequenceDiagram
+    participant A as 发送方
+    participant B as 接收方
+    participant N as 邻近结点
+    A->>B: RTS
+    B-->>A: CTS
+    Note over N: 根据 RTS/CTS 设置 NAV，延迟接入
+    A->>B: DATA
+    B-->>A: ACK
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>RTS/CTS 不能完全消灭碰撞，但它把 ” 可能发生碰撞的对象 ” 从长数据帧缩短成更短的预约帧，从而降低浪费。</p>
+<h4 id="物理与虚拟载波侦听">物理与虚拟载波侦听<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#物理与虚拟载波侦听" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>802.11 同时使用两种 ” 听 ” 信道的方法：</p>
+<ul>
+<li><strong>物理载波侦听</strong>：检测信号能量、相关比特或 RSS；</li>
+<li><strong>虚拟载波侦听</strong>：根据 RTS/CTS 等帧中的持续时间字段设置 NAV，逻辑上认为信道已被占用。</li>
+</ul>
+<p>此外，802.11 还定义了不同优先级的帧间间隔，如 SIFS、PIFS、DIFS，以保证 ACK、CTS 等短控制帧优先于新的普通数据竞争。</p>
+<h2 id="组网">组网<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#组网" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="功能自学习转发">功能：自学习转发<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#功能自学习转发" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="交换机为何需要自学习">交换机为何需要自学习<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#交换机为何需要自学习" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>交换机面临的核心问题是：收到一个以太网帧后，应从哪个端口转发出去。若预先人工配置每个主机在哪个端口，网络规模稍大就会难以维护。因此，以太网交换机普遍采用<strong>即插即用的自学习机制</strong>。</p>
+<h4 id="交换表">交换表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#交换表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>交换机维护一张交换表，典型表项包括：</p>
+<ul>
+<li>MAC 地址；</li>
+<li>对应端口；</li>
+<li>时间戳或老化信息。</li>
+</ul>
+<p>其基本原则是：</p>
+<ul>
+<li><strong>基于源地址学习</strong>：从收到帧的源 MAC 地址，知道 ” 该主机位于哪个端口后面 ”；</li>
+<li><strong>基于目的地址转发</strong>：查表决定该帧应从哪个端口发出。</li>
+</ul>
+<h4 id="自学习与转发流程">自学习与转发流程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#自学习与转发流程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[交换机收到帧] --> B[读取源 MAC 与入端口]\n    B --> C[更新/新增交换表项]\n    C --> D[读取目的 MAC]\n    D --> E{目的 MAC 是否已知?}\n    E -- 是 --> F{出端口是否等于入端口?}\n    F -- 是 --> G[过滤/丢弃]\n    F -- 否 --> H[仅向对应端口转发]\n    E -- 否 --> I[除入端口外泛洪]&quot;">flowchart TD
+    A[交换机收到帧] --> B[读取源 MAC 与入端口]
+    B --> C[更新/新增交换表项]
+    C --> D[读取目的 MAC]
+    D --> E{目的 MAC 是否已知?}
+    E -- 是 --> F{出端口是否等于入端口?}
+    F -- 是 --> G[过滤/丢弃]
+    F -- 否 --> H[仅向对应端口转发]
+    E -- 否 --> I[除入端口外泛洪]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>其含义是：</p>
+<ul>
+<li>若已知目的主机所在端口，则定向转发；</li>
+<li>若未知，则向除入端口外的所有端口泛洪；</li>
+<li>若目的主机就在入端口所在网段，则无需转发。</li>
+</ul>
+<p>这一机制保证交换机能在不依赖人工配置的情况下逐步学习整个二层网络的拓扑。</p>
+<h4 id="多交换机环境">多交换机环境<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#多交换机环境" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在多交换机互联时，自学习仍然成立。某主机发往未知目的时，帧会逐级泛洪；当对方回应后，中间各交换机就能沿回程路径学习到源主机的位置。经过若干轮通信，交换表逐渐收敛，后续通信转为定向转发。</p>
+<h3 id="功能生成树协议">功能：生成树协议<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#功能生成树协议" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="为什么需要生成树">为什么需要生成树<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#为什么需要生成树" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>为了提高可靠性，交换机之间往往会部署冗余链路。然而冗余链路会带来二层环路，造成：</p>
+<ul>
+<li>广播帧无限循环；</li>
+<li>未知单播泛洪不断复制；</li>
+<li>交换表频繁震荡；</li>
+<li>网络资源被耗尽。</li>
+</ul>
+<p>因此，二层网络必须在 ” 物理上允许有环 ” 与 ” 逻辑上转发无环 ” 之间取得平衡。</p>
+<h4 id="生成树的基本思想">生成树的基本思想<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#生成树的基本思想" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>生成树协议通过交换配置信息，在交换机图中选择一棵覆盖所有交换机的无环树，仅保留树上的转发链路，将其他冗余链路置于阻塞状态。</p>
+<p>其核心步骤包括：</p>
+<ol>
+<li>选举根桥；</li>
+<li>每个交换机选择到根桥的最短路径；</li>
+<li>为每个网段确定指定桥；</li>
+<li>将非树边对应端口阻塞。</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    B1[交换机 B1] --- B2[交换机 B2]\n    B2 --- B3[交换机 B3]\n    B3 --- B4[交换机 B4]\n    B4 --- B1\n    B2 --- B4&quot;">flowchart LR
+    B1[交换机 B1] --- B2[交换机 B2]
+    B2 --- B3[交换机 B3]
+    B3 --- B4[交换机 B4]
+    B4 --- B1
+    B2 --- B4
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    B1[根桥 B1] --- B2[交换机 B2]\n    B2 --- B3[交换机 B3]\n    B3 --- B4[交换机 B4]\n    %% 其他冗余边被阻塞，不参与转发&quot;">flowchart LR
+    B1[根桥 B1] --- B2[交换机 B2]
+    B2 --- B3[交换机 B3]
+    B3 --- B4[交换机 B4]
+    %% 其他冗余边被阻塞，不参与转发
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>课件中强调，交换机之间通过特定组播地址交换配置信息，依据桥标识和路径代价分布式地构造生成树。这样既保留了物理冗余带来的容错能力，又避免了逻辑转发环路。</p>
+<h3 id="功能vlan">功能：VLAN<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#功能vlan" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="vlan-的动机">VLAN 的动机<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vlan-的动机" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在没有 VLAN 时，同一个交换基础设施通常构成一个大的二层广播域。这样会带来三个问题：</p>
+<ol>
+<li><strong>广播流量范围过大</strong>，ARP、DHCP、未知单播等会扩散到整个 LAN；</li>
+<li><strong>安全与隔离不足</strong>，不同部门主机处于同一广播域；</li>
+<li><strong>网络组织缺乏灵活性</strong>，物理位置变化会直接影响二层连接关系。</li>
+</ol>
+<p>VLAN 通过在同一物理交换网络上划分多个逻辑局域网，解决上述问题。</p>
+<h4 id="基于端口的-vlan">基于端口的 VLAN<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#基于端口的-vlan" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>最常见的是<strong>基于端口的 VLAN</strong>。交换机管理软件将若干端口划入同一 VLAN，使得这些端口之间互相可达，而不同 VLAN 之间二层广播被隔离。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    subgraph Switch[交换机]\n        P1[端口1]\n        P2[端口2]\n        P3[端口3]\n        P4[端口4]\n        P5[端口5]\n        P6[端口6]\n    end\n    subgraph VLAN10[VLAN 10]\n        P1\n        P2\n        P3\n    end\n    subgraph VLAN20[VLAN 20]\n        P4\n        P5\n        P6\n    end&quot;">flowchart LR
+    subgraph Switch[交换机]
+        P1[端口1]
+        P2[端口2]
+        P3[端口3]
+        P4[端口4]
+        P5[端口5]
+        P6[端口6]
+    end
+    subgraph VLAN10[VLAN 10]
+        P1
+        P2
+        P3
+    end
+    subgraph VLAN20[VLAN 20]
+        P4
+        P5
+        P6
+    end
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>VLAN 之间若要通信，必须通过三层设备转发。因此，VLAN 是链路层隔离机制，而跨 VLAN 通信属于网络层功能。</p>
+<h4 id="跨交换机的-vlan-与-8021q">跨交换机的 VLAN 与 802.1Q<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#跨交换机的-vlan-与-8021q" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>当同一 VLAN 跨越多个交换机时，交换机之间的中继链路必须知道 ” 这个帧属于哪个 VLAN”。为此，引入 IEEE 802.1Q 标记。</p>
+<p>802.1Q 在以太网帧中增加 4 字节标签，其中包含：</p>
+<ul>
+<li>协议标识；</li>
+<li>优先级；</li>
+<li>12 位 VLAN ID。</li>
+</ul>
+<p>交换机端口分为：</p>
+<ul>
+<li><strong>Access 端口</strong>：连接普通主机，不向主机暴露 VLAN 标签；</li>
+<li><strong>Tag Aware / Trunk 端口</strong>：交换机之间传输带标签的帧。</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    H1[主机 H1] -->|Access| S1[交换机 S1]\n    H2[主机 H2] -->|Access| S2[交换机 S2]\n    S1 -->|Trunk: 携带 802.1Q 标签| S2&quot;">flowchart LR
+    H1[主机 H1] -->|Access| S1[交换机 S1]
+    H2[主机 H2] -->|Access| S2[交换机 S2]
+    S1 -->|Trunk: 携带 802.1Q 标签| S2
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这意味着：</p>
+<ul>
+<li>帧在交换机内部及中继链路上可以保留 VLAN 身份；</li>
+<li>到达接入端口时，标签会被剥离；</li>
+<li>同一物理基础设施上可承载多个逻辑广播域。</li>
+</ul>
+<h4 id="vlan-的作用">VLAN 的作用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#vlan-的作用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>VLAN 的主要价值包括：</p>
+<ul>
+<li>缩小广播域；</li>
+<li>提高安全性与隔离性；</li>
+<li>按组织或业务逻辑而非物理位置组织网络；</li>
+<li>改善带宽利用与管理灵活性。</li>
+</ul>
+<h2 id="总结">总结<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#总结" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>数据链路层的核心任务是把网络层分组落实为具体链路上的逐跳传输。围绕这一目标，它需要解决两类截然不同的问题：</p>
+<ol>
+<li>
+<p><strong>点对点信道上的帧传输问题</strong>：<br/>
+包括成帧、透明传输、差错检测、流量控制以及必要时的可靠传输。PPP 代表了简洁的点对点封装与协商机制；HDLC 代表了功能更完备的同步链路控制机制。</p>
+</li>
+<li>
+<p><strong>广播信道上的共享介质接入问题</strong>：<br/>
+包括信道划分、随机接入、碰撞检测与碰撞避免。经典以太网通过 CSMA/CD 处理有线共享介质中的冲突；无线局域网通过 CSMA/CA、ACK 与 RTS/CTS 处理无线竞争环境。</p>
+</li>
+</ol>
+<p>在局域网组网层面，交换机进一步将数据链路层从 ” 共享总线 ” 推进到 ” 交换网络 ”：</p>
+<ul>
+<li>通过<strong>自学习转发</strong>实现即插即用；</li>
+<li>通过<strong>生成树协议</strong>消除二层环路；</li>
+<li>通过<strong>VLAN</strong>在同一物理网络上建立多个逻辑广播域。</li>
+</ul>
+<p>从工程上看，数据链路层并不是单一协议，而是一组围绕 ” 逐跳传输 ” 和 ” 本地介质共享 ” 展开的机制集合。它既要向下适应具体介质的物理特性，又要向上为网络层提供稳定、清晰而高效的逐跳传输服务。</p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-77" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#第三讲-数据链路层" data-for="第三讲-数据链路层">第三讲 数据链路层</a></li><li class="depth-1"><a href="#前言" data-for="前言">前言</a></li><li class="depth-2"><a href="#数据链路层的地位" data-for="数据链路层的地位">数据链路层的地位</a></li><li class="depth-2"><a href="#数据链路层使用的两类信道" data-for="数据链路层使用的两类信道">数据链路层使用的两类信道</a></li><li class="depth-1"><a href="#定义和功能" data-for="定义和功能">定义和功能</a></li><li class="depth-2"><a href="#基本术语" data-for="基本术语">基本术语</a></li><li class="depth-2"><a href="#数据链路层的基本功能" data-for="数据链路层的基本功能">数据链路层的基本功能</a></li><li class="depth-1"><a href="#端系统实现" data-for="端系统实现">端系统实现</a></li><li class="depth-2"><a href="#网卡与链路层实现位置" data-for="网卡与链路层实现位置">网卡与链路层实现位置</a></li><li class="depth-2"><a href="#网卡之间的通信" data-for="网卡之间的通信">网卡之间的通信</a></li><li class="depth-2"><a href="#以太网帧的基本结构" data-for="以太网帧的基本结构">以太网帧的基本结构</a></li><li class="depth-2"><a href="#异步传输与同步传输" data-for="异步传输与同步传输">异步传输与同步传输</a></li><li class="depth-1"><a href="#点对点信道两点单向" data-for="点对点信道两点单向">点对点信道（两点单向）</a></li><li class="depth-2"><a href="#功能成帧与透明传输" data-for="功能成帧与透明传输">功能：成帧与透明传输</a></li><li class="depth-2"><a href="#功能差错控制" data-for="功能差错控制">功能：差错控制</a></li><li class="depth-2"><a href="#功能流量控制" data-for="功能流量控制">功能：流量控制</a></li><li class="depth-2"><a href="#实现ppp-协议" data-for="实现ppp-协议">实现：PPP 协议</a></li><li class="depth-2"><a href="#实现hdlc-协议" data-for="实现hdlc-协议">实现：HDLC 协议</a></li><li class="depth-1"><a href="#广播信道多点共享" data-for="广播信道多点共享">广播信道（多点共享）</a></li><li class="depth-2"><a href="#功能信道分配" data-for="功能信道分配">功能：信道分配</a></li><li class="depth-2"><a href="#碰撞检测--以太网" data-for="碰撞检测--以太网">碰撞检测 + 以太网</a></li><li class="depth-2"><a href="#实现扩展以太网" data-for="实现扩展以太网">实现：扩展以太网</a></li><li class="depth-2"><a href="#碰撞避免--无线局域网" data-for="碰撞避免--无线局域网">碰撞避免 + 无线局域网</a></li><li class="depth-1"><a href="#组网" data-for="组网">组网</a></li><li class="depth-2"><a href="#功能自学习转发" data-for="功能自学习转发">功能：自学习转发</a></li><li class="depth-2"><a href="#功能生成树协议" data-for="功能生成树协议">功能：生成树协议</a></li><li class="depth-2"><a href="#功能vlan" data-for="功能vlan">功能：VLAN</a></li><li class="depth-1"><a href="#总结" data-for="总结">总结</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../课程笔记/计算机网络/" class="internal">index</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

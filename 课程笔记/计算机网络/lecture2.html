@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>lecture2</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="lecture2"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="lecture2"/><meta name="twitter:description" content="第二讲 物理层 1."/><meta property="og:description" content="第二讲 物理层 1."/><meta property="og:image:alt" content="第二讲 物理层 1."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/计算机网络/lecture2"/><meta property="twitter:url" content="https://localhost/课程笔记/计算机网络/lecture2"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="第二讲 物理层 1."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/计算机网络/lecture2"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-132"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-132" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../课程笔记/计算机网络/">计算机网络</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lecture2</a></div></nav><h1 class="article-title">lecture2</h1><p show-comma="true" class="content-meta"><time datetime="2026-03-21T17:11:16.244Z">Mar 22, 2026</time><span>44 min read</span></p></div></div><article class="popover-hint"><h1 id="第二讲-物理层">第二讲 物理层<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第二讲-物理层" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="1-物理层的职责与接口特性">1. 物理层的职责与接口特性<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-物理层的职责与接口特性" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>物理层的任务是在物理介质上可靠地传输比特流。它关心的不是某一种具体传输介质本身，而是如何在各种传输媒体与通信手段存在差异的条件下，向上层提供一致的 ” 比特传输能力 “。因此，物理层的核心问题是：如何定义接口，如何刻画信号，如何使发送端产生可传输的物理信号，并使接收端能够正确恢复出比特序列。</p>
+<p>从 OSI 的角度看，物理层需要规定接口的四类特性：</p>
+<ol>
+<li><strong>机械特性</strong>：接线器的形状、尺寸、引脚数、排列方式以及锁定装置。</li>
+<li><strong>电气特性</strong>：各条线上允许出现的电压范围与电信号约束。</li>
+<li><strong>功能特性</strong>：某条线上某一电平或信号的含义。</li>
+<li><strong>过程特性</strong>：不同功能事件出现的顺序与时序关系。</li>
+</ol>
+<p>物理层向上层提供的不是 ” 报文 &quot;&quot; 帧 ” 或 ” 分组 “，而是发送与接收比特流的能力。连接的建立、维持与释放，也是在这一层的能力边界内讨论的。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[上层数据] --> B[物理层接口约定]\n    B --> C[信号形成]\n    C --> D[传输介质]\n    D --> E[信号接收与恢复]\n    E --> F[比特流输出]\n\n    B1[机械特性]\n    B2[电气特性]\n    B3[功能特性]\n    B4[过程特性]\n\n    B --- B1\n    B --- B2\n    B --- B3\n    B --- B4&quot;">flowchart LR
+    A[上层数据] --> B[物理层接口约定]
+    B --> C[信号形成]
+    C --> D[传输介质]
+    D --> E[信号接收与恢复]
+    E --> F[比特流输出]
+
+    B1[机械特性]
+    B2[电气特性]
+    B3[功能特性]
+    B4[过程特性]
+
+    B --- B1
+    B --- B2
+    B --- B3
+    B --- B4
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="2-数据通信的原理">2. 数据通信的原理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-数据通信的原理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="21-数据通信系统的基本模型">2.1 数据通信系统的基本模型<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#21-数据通信系统的基本模型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>一个数据通信系统可以抽象为三部分：源系统、传输系统和目的系统。源系统负责产生数据并将其转换为适合传输的信号；传输系统负责在信道中搬运信号；目的系统负责从接收信号中恢复数据。</p>
+<p>在更抽象的表述中，通信系统可以写成：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">信源</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">发送器</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">信道</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">接收器</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">信宿</span></span></span></span></span></span>
+<p>其中噪声源会在信道中对传输信号产生影响。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    S[信源 / Source] --> T[发送器 / Transmitter]\n    T --> C[信道 / Channel]\n    N[噪声源 / Noise] -.-> C\n    C --> R[接收器 / Receiver]\n    R --> D[信宿 / Destination]&quot;">flowchart LR
+    S[信源 / Source] --> T[发送器 / Transmitter]
+    T --> C[信道 / Channel]
+    N[噪声源 / Noise] -.-> C
+    C --> R[接收器 / Receiver]
+    R --> D[信宿 / Destination]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="22-数据信号与码元">2.2 数据、信号与码元<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#22-数据信号与码元" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>数据</strong>是承载信息的实体，如比特序列。<br/>
+<strong>信号</strong>是数据的电气或电磁表现，是信息在物理世界中的可传输形式。</p>
+<p>按照连续性不同，信号可以分为两类：</p>
+<ul>
+<li><strong>模拟信号</strong>：幅值连续，时间通常也连续。</li>
+<li><strong>数字信号</strong>：幅值离散，时间上通常按离散间隔变化。</li>
+</ul>
+<p>在时域中表示数字信号时，表示不同离散值的基本波形称为<strong>码元</strong>或<strong>符号</strong>。一个码元不一定只表示 1 个比特；若一个码元有 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span> 种不同状态，则它最多可以表示 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9386em;vertical-align:-0.2441em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span> 个比特。</p>
+<h3 id="23-信道与通信方式">2.3 信道与通信方式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#23-信道与通信方式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>信道可以理解为沿某一方向传送信息的媒体，其实现通常由<strong>传输设备 + 传输介质</strong>共同构成。</p>
+<p>按通信方向划分，有三种基本方式：</p>
+<ul>
+<li><strong>单工</strong>：只能单向传输。</li>
+<li><strong>半双工</strong>：双方都能发送，但不能同时发送。</li>
+<li><strong>全双工</strong>：双方可以同时发送与接收。</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    A[通信方式]\n    A --> B[单工]\n    A --> C[半双工]\n    A --> D[全双工]\n\n    B --> B1[仅 A→B]\n    C --> C1[A↔B 交替]\n    D --> D1[A↔B 同时]&quot;">flowchart TB
+    A[通信方式]
+    A --> B[单工]
+    A --> C[半双工]
+    A --> D[全双工]
+
+    B --> B1[仅 A→B]
+    C --> C1[A↔B 交替]
+    D --> D1[A↔B 同时]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="24-物理层中的关键参数">2.4 物理层中的关键参数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#24-物理层中的关键参数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>物理层分析经常涉及以下参数：</p>
+<ul>
+<li><strong>信号功率</strong> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span></li>
+<li><strong>噪声功率</strong> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span></li>
+<li><strong>信道带宽</strong> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span></li>
+<li><strong>信噪比</strong> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span></li>
+<li><strong>数据率</strong>：单位时间传输的比特数，单位为 bit/s</li>
+<li><strong>误码率</strong>：传输错误概率</li>
+</ul>
+<p>信噪比常用分贝表示：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">SNR</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="mord">10</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">10</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span></span></span>
+<p>例如，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">10</span><span class="mord text"><span class="mord"> dB</span></span></span></span></span> 表示功率比约为 10，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">20</span><span class="mord text"><span class="mord"> dB</span></span></span></span></span> 表示约为 100，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">3</span><span class="mord text"><span class="mord"> dB</span></span></span></span></span> 表示约为 2。</p>
+<h3 id="25-信号衰减与频谱">2.5 信号、衰减与频谱<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#25-信号衰减与频谱" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>信号本质上是随时间变化的物理量。对于正弦载波，可写为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">s</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">sin</span><span class="mopen">(</span><span class="mord">2</span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">φ</span><span class="mclose">)</span></span></span></span></span>
+<p>其中 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> 为幅度，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span> 为频率，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">φ</span></span></span></span> 为相位。信号经过信道时会发生衰减、失真与噪声叠加。若发送功率为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>、接收功率为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，则衰减可用分贝表示为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="mord">10</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">10</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">s</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord text"><span class="mord"> dB</span></span></span></span></span></span>
+<p>任意周期信号都可以分解为不同频率分量的叠加，因此既可以在时域中观察波形，也可以在频域中观察其频谱。频谱分析揭示了一个基本事实：<strong>信道能通过的频率范围决定了它能多忠实地传送原始波形</strong>。</p>
+<hr/>
+<h2 id="3-通信理论">3. 通信理论<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-通信理论" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="31-傅里叶分析与带宽限制">3.1 傅里叶分析与带宽限制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#31-傅里叶分析与带宽限制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>周期信号 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">)</span></span></span></span> 可以用傅里叶级数表示为若干谐波分量之和。其含义并不在于机械地记忆公式，而在于把 ” 复杂波形 ” 解释为 ” 多个频率分量的叠加 ”。</p>
+<p>这一定义直接导出一个工程结论：若信道只能通过有限带宽，那么高频分量会被削弱或滤除，接收端看到的波形就会变钝、变形，严重时便无法正确判决码元。带宽越宽，能保留的谐波越多，波形越接近原始发送信号。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[原始数字波形] --> B[频谱分解]\n    B --> C[信道仅允许有限频率通过]\n    C --> D[高频分量被削弱]\n    D --> E[接收波形失真]\n    E --> F[判决困难或产生误码]&quot;">flowchart LR
+    A[原始数字波形] --> B[频谱分解]
+    B --> C[信道仅允许有限频率通过]
+    C --> D[高频分量被削弱]
+    D --> E[接收波形失真]
+    E --> F[判决困难或产生误码]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="32-奈奎斯特定理无噪声条件下的码元速率上限">3.2 奈奎斯特定理：无噪声条件下的码元速率上限<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#32-奈奎斯特定理无噪声条件下的码元速率上限" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在理想无噪声且带宽受限的信道中，为避免码间串扰，最大数据率满足：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0077em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mtight">m</span><span class="mtight">a</span><span class="mtight">x</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.9386em;vertical-align:-0.2441em;"></span><span class="mord">2</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span></span>
+<p>其中：</p>
+<ul>
+<li><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> 为信道带宽；</li>
+<li><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span> 为码元状态数；</li>
+<li><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">2</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> 对应最大符号率；</li>
+<li><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9386em;vertical-align:-0.2441em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span> 对应每个符号能够携带的比特数。</li>
+</ul>
+<p>这一公式说明，提高数据率有两条路径：</p>
+<ol>
+<li>增加带宽 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span>；</li>
+<li>增加每个码元可区分的状态数 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>。</li>
+</ol>
+<p>但第二条路径并非没有代价：状态数越多，接收判决越困难，对噪声和失真的容忍度越低。</p>
+<h3 id="33-香农公式有噪声条件下的比特率上限">3.3 香农公式：有噪声条件下的比特率上限<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#33-香农公式有噪声条件下的比特率上限" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在带宽受限且存在高斯白噪声的条件下，信道极限容量为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.207em;"><span style="top:-2.4559em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2441em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span></span></span>
+<p>这一定理说明，能否 ” 无差错 ” 传输最终受两类资源约束：</p>
+<ul>
+<li>频率资源：带宽 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span></li>
+<li>能量资源：信噪比 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span></li>
+</ul>
+<p>香农公式中的 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span> 是理论极限，而不是任何系统都能轻易达到的实际速率。实际系统通常低于这一极限，但它给出了物理层设计的根本边界。</p>
+<h3 id="34-奈奎斯特与香农的分工">3.4 奈奎斯特与香农的分工<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#34-奈奎斯特与香农的分工" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>奈奎斯特关注的是<strong>带宽限制导致的码间串扰问题</strong>，更接近 ” 符号变化能有多快 “；香农关注的是<strong>噪声存在时信息无差错传输的极限</strong>，更接近 ” 有效比特率能有多高 “。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    A[信道速率上限]\n    A --> B[带宽限制]\n    A --> C[噪声限制]\n\n    B --> B1[奈奎斯特定理]\n    B1 --> B2[最大符号率受限]\n    B2 --> B3[避免码间串扰]\n\n    C --> C1[香农公式]\n    C1 --> C2[最大无差错比特率受限]\n    C2 --> C3[受 S/N 与 B 共同影响]&quot;">flowchart TB
+    A[信道速率上限]
+    A --> B[带宽限制]
+    A --> C[噪声限制]
+
+    B --> B1[奈奎斯特定理]
+    B1 --> B2[最大符号率受限]
+    B2 --> B3[避免码间串扰]
+
+    C --> C1[香农公式]
+    C1 --> C2[最大无差错比特率受限]
+    C2 --> C3[受 S/N 与 B 共同影响]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="35-同步接收端为什么必须--跟上发送端-">3.5 同步：接收端为什么必须 ” 跟上发送端 ”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#35-同步接收端为什么必须--跟上发送端-" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>传输不仅要求 ” 信号到达 “，还要求接收端知道每一位的边界在哪里，这就是<strong>同步</strong>问题。</p>
+<ul>
+<li><strong>异步传输</strong>：通常以字符为单位，字符之间间隔可变。每个字符带起始位、数据位、可选校验位和停止位。实现简单，但开销较大，适于低速传输。</li>
+<li><strong>同步传输</strong>：发送与接收在位级保持同步，通常通过专门时钟线或从接收信号中提取时钟。帧更长，效率更高，更适于高速和长距离场景。</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[同步问题] --> B[异步传输]\n    A --> C[同步传输]\n\n    B --> B1[按字符发送]\n    B --> B2[起始位/停止位]\n    B --> B3[字符间隔可变]\n    B --> B4[实现简单 适合低速]\n\n    C --> C1[按位持续同步]\n    C --> C2[从时钟线或信号中恢复时钟]\n    C --> C3[长帧]\n    C --> C4[效率高 适合高速]&quot;">flowchart LR
+    A[同步问题] --> B[异步传输]
+    A --> C[同步传输]
+
+    B --> B1[按字符发送]
+    B --> B2[起始位/停止位]
+    B --> B3[字符间隔可变]
+    B --> B4[实现简单 适合低速]
+
+    C --> C1[按位持续同步]
+    C --> C2[从时钟线或信号中恢复时钟]
+    C --> C3[长帧]
+    C --> C4[效率高 适合高速]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="4-编码调制">4. 编码调制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-编码调制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="41-基带信号与调制的必要性">4.1 基带信号与调制的必要性<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#41-基带信号与调制的必要性" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>来自信源的原始数字信号称为<strong>基带信号</strong>。计算机输出的比特流本质上就是基带信号。基带信号往往包含低频甚至直流分量，而很多信道并不能直接传输这些成分；此外，在长距离场景中，基带信号容易衰减、畸变，且多个基带信号难以直接共享同一信道。</p>
+<p>因此，需要对基带信号进行处理。按是否搬移频谱，可分为两类：</p>
+<ul>
+<li><strong>基带调制</strong>：不搬移频谱，只改变基带波形以适应信道，又称<strong>编码</strong>。</li>
+<li><strong>带通调制</strong>：利用载波把信号搬移到某一频段进行传输。</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[基带数据] --> B{是否搬移到载波频段}\n    B -->|否| C[基带调制 / 编码]\n    B -->|是| D[带通调制]\n\n    C --> C1[输出仍是基带信号]\n    D --> D1[输出为带通信号]&quot;">flowchart LR
+    A[基带数据] --> B{是否搬移到载波频段}
+    B -->|否| C[基带调制 / 编码]
+    B -->|是| D[带通调制]
+
+    C --> C1[输出仍是基带信号]
+    D --> D1[输出为带通信号]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="42-基带编码">4.2 基带编码<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#42-基带编码" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="421-nrz">4.2.1 NRZ<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#421-nrz" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>NRZ（Non-Return-to-Zero）用固定高低电平表示 0 和 1。它的实现简单，带宽利用率较高，但存在两个根本问题：</p>
+<ol>
+<li><strong>时钟恢复困难</strong>：若长时间连续发送相同比特，信号没有跳变，接收端难以提取位同步。</li>
+<li><strong>基线漂移</strong>：连续长串 0 或 1 会改变平均电平，使判决门限漂移。</li>
+</ol>
+<p>对 NRZ 而言，若带宽为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span>，则根据奈奎斯特思想，可认为数据率上限约为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">2</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span></span>
+<h4 id="422-nrzi">4.2.2 NRZI<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#422-nrzi" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>NRZI（Non-Return-to-Zero Inverted）是一种差分编码。它用 ” 有无跳变 ” 而非绝对电平表示比特，常见定义是 ” 跳变表示 1，不跳变表示 0”。这样可以缓解连续 1 带来的问题，但连续 0 时仍可能长期无跳变，因此同步问题并未根本消失。</p>
+<h4 id="423-曼彻斯特编码与差分曼彻斯特编码">4.2.3 曼彻斯特编码与差分曼彻斯特编码<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#423-曼彻斯特编码与差分曼彻斯特编码" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>曼彻斯特编码在每个比特周期中间都发生一次跳变，因此天然携带时钟信息，具有良好的<strong>自同步能力</strong>。代价是频率成分更高、带宽开销更大，其数据率通常只有带宽的同数量级：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span></span>
+<p>差分曼彻斯特编码进一步引入差分思想：位中间始终有跳变，而位开始处是否跳变表示不同比特值。它兼顾了自同步能力与对极性反转的鲁棒性。</p>
+<h3 id="43-常见基带编码的比较">4.3 常见基带编码的比较<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#43-常见基带编码的比较" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    A[基带编码]\n    A --> B[NRZ]\n    A --> C[NRZI]\n    A --> D[曼彻斯特]\n    A --> E[差分曼彻斯特]\n\n    B --> B1[简单]\n    B --> B2[带宽效率较高]\n    B --> B3[无自同步能力]\n\n    C --> C1[差分表示]\n    C --> C2[缓解连续 1 问题]\n    C --> C3[连续 0 仍困难]\n\n    D --> D1[位中间必跳变]\n    D --> D2[可恢复时钟]\n    D --> D3[带宽开销较大]\n\n    E --> E1[保持自同步]\n    E --> E2[对极性反转更稳健]&quot;">flowchart TB
+    A[基带编码]
+    A --> B[NRZ]
+    A --> C[NRZI]
+    A --> D[曼彻斯特]
+    A --> E[差分曼彻斯特]
+
+    B --> B1[简单]
+    B --> B2[带宽效率较高]
+    B --> B3[无自同步能力]
+
+    C --> C1[差分表示]
+    C --> C2[缓解连续 1 问题]
+    C --> C3[连续 0 仍困难]
+
+    D --> D1[位中间必跳变]
+    D --> D2[可恢复时钟]
+    D --> D3[带宽开销较大]
+
+    E --> E1[保持自同步]
+    E --> E2[对极性反转更稳健]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="44-带通调制">4.4 带通调制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#44-带通调制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>带通调制的目标，是把基带信号映射到载波的某种参数变化上。若载波写为</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">s</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">sin</span><span class="mopen">(</span><span class="mord">2</span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">φ</span><span class="mclose">)</span></span></span></span></span>
+<p>则可调制的典型参数为：</p>
+<ul>
+<li>幅度 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span></li>
+<li>频率 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span></span></span></span></li>
+<li>相位 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">φ</span></span></span></span></li>
+</ul>
+<p>因此最基本的数字调制包括：</p>
+<ul>
+<li><strong>ASK / 调幅</strong>：用不同幅度表示不同符号；</li>
+<li><strong>FSK / 调频</strong>：用不同频率表示不同符号；</li>
+<li><strong>PSK / 调相</strong>：用不同相位表示不同符号。</li>
+</ul>
+<h4 id="441-askfskpsk-的特点">4.4.1 ASK、FSK、PSK 的特点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#441-askfskpsk-的特点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<ul>
+<li><strong>调幅</strong>实现简单，但抗干扰能力较弱；</li>
+<li><strong>调频</strong>抗干扰优于调幅，但频带利用率不高；</li>
+<li><strong>调相</strong>尤其是 BPSK，具有较好的抗噪声性能，是很多更复杂调制方式的基础。</li>
+</ul>
+<h4 id="442-qpsk-与-qam">4.4.2 QPSK 与 QAM<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#442-qpsk-与-qam" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>为提高每个符号承载的比特数，可以使用多元调制。</p>
+<ul>
+<li><strong>QPSK</strong>：使用四种相位，每个符号表示 2 比特；</li>
+<li><strong>QAM</strong>：联合使用振幅与相位。<br/>
+例如：
+<ul>
+<li>QAM-16：16 个星座点，每符号表示 4 比特；</li>
+<li>QAM-64：64 个星座点，每符号表示 6 比特。</li>
+</ul>
+</li>
+</ul>
+<p>多元调制的本质，是在单位时间内让每个码元携带更多比特；但星座点越密，点间距离越近，对噪声、频偏、相位误差的容忍度越低，误码率越容易升高。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[提高数据率] --> B[增大带宽]\n    A --> C[提高每符号比特数]\n\n    C --> D[QPSK: 2 bit/符号]\n    C --> E[QAM-16: 4 bit/符号]\n    C --> F[QAM-64: 6 bit/符号]\n\n    F --> G[判决更难]\n    E --> G\n    D --> G\n    G --> H[对 SNR 的要求更高]&quot;">flowchart LR
+    A[提高数据率] --> B[增大带宽]
+    A --> C[提高每符号比特数]
+
+    C --> D[QPSK: 2 bit/符号]
+    C --> E[QAM-16: 4 bit/符号]
+    C --> F[QAM-64: 6 bit/符号]
+
+    F --> G[判决更难]
+    E --> G
+    D --> G
+    G --> H[对 SNR 的要求更高]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="45-编码与调制的边界">4.5 编码与调制的边界<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#45-编码与调制的边界" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在本课程语境中，<strong>基带调制</strong>通常直接称为 ” 编码 “，而<strong>带通调制</strong>才称为 ” 调制 “。两者都在物理层内工作，但解决的问题不同：</p>
+<ul>
+<li>编码解决的是 ” 如何把比特变成适合线路的数字波形 ”；</li>
+<li>调制解决的是 ” 如何把基带数据搬移到某个适合传输的频段 “。</li>
+</ul>
+<hr/>
+<h2 id="5-信道复用">5. 信道复用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-信道复用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="51-复用的基本思想">5.1 复用的基本思想<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#51-复用的基本思想" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>当单个信源速率远低于信道总速率时，让每个用户独占一条物理线路会造成巨大浪费。复用的目标，就是让多路信号共享一条高带宽传输线路，在接收端再完成分离。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A1[用户A] --> M[复用器]\n    B1[用户B] --> M\n    C1[用户C] --> M\n    M --> CH[共享信道]\n    CH --> D[分用器]\n    D --> A2[用户A数据]\n    D --> B2[用户B数据]\n    D --> C2[用户C数据]&quot;">flowchart LR
+    A1[用户A] --> M[复用器]
+    B1[用户B] --> M
+    C1[用户C] --> M
+    M --> CH[共享信道]
+    CH --> D[分用器]
+    D --> A2[用户A数据]
+    D --> B2[用户B数据]
+    D --> C2[用户C数据]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="52-频分复用-fdm">5.2 频分复用 FDM<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#52-频分复用-fdm" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>频分复用把总带宽分成若干互不重叠的子频带。每个用户长期占用其中一段频率范围，并在其上持续传输。</p>
+<p>其关键特点是：</p>
+<ul>
+<li>多个用户<strong>同时</strong>发送；</li>
+<li>每个用户占用<strong>不同频带</strong>；</li>
+<li>相邻子信道之间常需设置<strong>保护带</strong>，以缓解滤波器非理想造成的串扰。</li>
+</ul>
+<p>FDM 常见于广播电视系统、早期电话干线系统等。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    A[总频带] --> B[子频带1]\n    A --> C[子频带2]\n    A --> D[子频带3]\n    B --> B1[用户A]\n    C --> C1[用户B]\n    D --> D1[用户C]&quot;">flowchart TB
+    A[总频带] --> B[子频带1]
+    A --> C[子频带2]
+    A --> D[子频带3]
+    B --> B1[用户A]
+    C --> C1[用户B]
+    D --> D1[用户C]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="53-ofdm正交子载波思想">5.3 OFDM：正交子载波思想<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#53-ofdm正交子载波思想" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>OFDM 并不是简单的 ” 分出很多互不相交的保护带 “，而是使用一组<strong>严格正交</strong>的子载波。这样，各子载波频谱虽然重叠，但在采样点上彼此正交，因此可以在不留传统保护带的情况下高效利用频谱。</p>
+<p>OFDM 的重要特征包括：</p>
+<ul>
+<li>多个子载波可并行传输；</li>
+<li>每个子载波可使用不同的调制方式；</li>
+<li>便于根据各子载波信道质量自适应分配比特数；</li>
+<li>可以利用 IFFT/FFT 高效实现。</li>
+</ul>
+<p>它在思想上兼具 ” 分而治之 ” 和 ” 频谱高效复用 ” 两种优点，因此在现代宽带无线与有线系统中都极其重要。</p>
+<h3 id="54-波分复用-wdm">5.4 波分复用 WDM<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#54-波分复用-wdm" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在光纤中，不同波长的光可以类比为不同频率的子信道，因此 WDM 本质上是<strong>光域中的频分复用</strong>。它使得一根光纤上可以同时承载多个光载波，大幅提升总容量。</p>
+<h3 id="55-时分复用-tdm">5.5 时分复用 TDM<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#55-时分复用-tdm" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>时分复用把时间划分为周期性出现的帧，每个用户在每帧中占用固定时隙。所有用户共享同一频带，但在不同时间发送。</p>
+<p>TDM 的关键前提是<strong>严格同步</strong>：用户必须知道自己的时隙边界，且时隙之间常需设置保护间隔以容忍同步偏差和远近效应。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    F1[TDM帧1: A | B | C | D] --> F2[TDM帧2: A | B | C | D]\n    F2 --> F3[TDM帧3: A | B | C | D]&quot;">flowchart LR
+    F1[TDM帧1: A | B | C | D] --> F2[TDM帧2: A | B | C | D]
+    F2 --> F3[TDM帧3: A | B | C | D]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>TDM 的问题在于：若某用户在某一轮没有数据，该用户时隙仍然空置，线路利用率下降。对于突发性很强的计算机数据，这种浪费尤为明显。</p>
+<h3 id="56-统计时分复用-stdm">5.6 统计时分复用 STDM<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#56-统计时分复用-stdm" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>统计时分复用不再为每个用户永久保留固定时隙，而是按需动态分配。其核心思想是：谁有数据，谁占用时隙。这样更适合计算机网络中的突发数据流，能够显著提高链路利用率。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[固定 TDM]\n    A --> A1[每轮固定给每个用户分槽]\n    A --> A2[空闲用户时隙会浪费]\n\n    B[统计 TDM]\n    B --> B1[按需分配时隙]\n    B --> B2[适合突发数据]\n    B --> B3[利用率更高]&quot;">flowchart LR
+    A[固定 TDM]
+    A --> A1[每轮固定给每个用户分槽]
+    A --> A2[空闲用户时隙会浪费]
+
+    B[统计 TDM]
+    B --> B1[按需分配时隙]
+    B --> B2[适合突发数据]
+    B --> B3[利用率更高]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="57-码分复用-cdm--cdma">5.7 码分复用 CDM / CDMA<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#57-码分复用-cdm--cdma" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>码分复用不在频域或时域切分资源，而是让多个用户在<strong>同一时间、同一频带</strong>上传输，只是每个用户使用不同的码片序列。不同码序列在理想情况下互相正交，因此可以在接收端通过相关运算把目标用户的数据 ” 解扩 ” 出来。</p>
+<h4 id="571-码片序列与扩频">5.7.1 码片序列与扩频<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#571-码片序列与扩频" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>设原始数据率为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> bit/s，若每个比特扩展为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> 个码片，则发送码率变为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">mb</span></span></span></span>，带宽也相应扩展为原来的 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> 倍。这就是<strong>扩频</strong>。</p>
+<p>发送规则通常是：</p>
+<ul>
+<li>发送比特 1：发送自身码片序列；</li>
+<li>发送比特 0：发送该码片序列的反码。</li>
+</ul>
+<h4 id="572-正交性与解码">5.7.2 正交性与解码<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#572-正交性与解码" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>若用户 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span> 和用户 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> 的码片向量正交，则有：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span></span>
+<p>而用户自己的码片与自身的规格化内积为 1，与其反码的规格化内积为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">−</span><span class="mord">1</span></span></span></span>。因此，接收端拿目标码序列去相关，就可以在混叠信号中恢复对应用户的比特。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[用户A数据] --> EA[乘以码序列 CA]\n    B[用户B数据] --> EB[乘以码序列 CB]\n    EA --> SUM[同频同时间叠加]\n    EB --> SUM\n    SUM --> RA[与 CA 做相关]\n    SUM --> RB[与 CB 做相关]\n    RA --> OA[恢复用户A数据]\n    RB --> OB[恢复用户B数据]&quot;">flowchart LR
+    A[用户A数据] --> EA[乘以码序列 CA]
+    B[用户B数据] --> EB[乘以码序列 CB]
+    EA --> SUM[同频同时间叠加]
+    EB --> SUM
+    SUM --> RA[与 CA 做相关]
+    SUM --> RB[与 CB 做相关]
+    RA --> OA[恢复用户A数据]
+    RB --> OB[恢复用户B数据]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="573-cdma-的工程特征">5.7.3 CDMA 的工程特征<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#573-cdma-的工程特征" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>CDMA 具有以下特点：</p>
+<ul>
+<li>抗干扰能力强；</li>
+<li>频谱展宽后不易被检测，具有一定隐蔽性；</li>
+<li>可用于蜂窝、卫星等无线广播型信道；</li>
+<li>需要较严格的功率控制，否则强用户会淹没弱用户。</li>
+</ul>
+<hr/>
+<h2 id="6-传输介质">6. 传输介质<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-传输介质" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="61-传输介质的分类">6.1 传输介质的分类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#61-传输介质的分类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>传输介质是发送器与接收器之间的物理通路，可分为：</p>
+<ul>
+<li><strong>有线传输介质</strong>：电磁波沿固体介质传播，如铜线、同轴电缆、光纤；</li>
+<li><strong>无线传输介质</strong>：电磁波在自由空间传播。</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    A[传输介质]\n    A --> B[有线]\n    A --> C[无线]\n\n    B --> B1[双绞线]\n    B --> B2[同轴电缆]\n    B --> B3[光纤]\n\n    C --> C1[无线电]\n    C --> C2[微波]\n    C --> C3[卫星]\n    C --> C4[红外/激光]&quot;">flowchart TB
+    A[传输介质]
+    A --> B[有线]
+    A --> C[无线]
+
+    B --> B1[双绞线]
+    B --> B2[同轴电缆]
+    B --> B3[光纤]
+
+    C --> C1[无线电]
+    C --> C2[微波]
+    C --> C3[卫星]
+    C --> C4[红外/激光]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="62-有线介质">6.2 有线介质<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#62-有线介质" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="621-双绞线">6.2.1 双绞线<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#621-双绞线" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>双绞线由两根彼此绝缘的导线绞合而成。其关键物理思想是：外部干扰在两条线上大致一致，形成共模噪声，而接收端使用差分方式提取信号，从而抑制干扰。</p>
+<p>双绞线分为：</p>
+<ul>
+<li><strong>UTP</strong>：无屏蔽双绞线</li>
+<li><strong>STP</strong>：屏蔽双绞线</li>
+</ul>
+<p>它既可用于模拟传输，也可用于数字传输，局域网接入场景极为常见。双绞线成本低、施工方便，但带宽与传输距离都有限。课程中给出的典型工程尺度是：以太网接入常见距离约为 100 m。</p>
+<p>在类别上，常见关注点是：</p>
+<ul>
+<li>Cat5：百兆级应用</li>
+<li>Cat5e：可支持千兆级应用</li>
+<li>Cat6 / Cat7：用于更高速率与更严格串扰约束场景</li>
+</ul>
+<h4 id="622-同轴电缆">6.2.2 同轴电缆<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#622-同轴电缆" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>同轴电缆由中心导体、绝缘层、外导体屏蔽层和保护外皮组成。其结构天然具有良好的抗干扰能力，因此适于较高数据率传输。</p>
+<p>按用途可分为：</p>
+<ul>
+<li><strong>50 Ω 同轴电缆</strong>：更常见于数字传输和局域网历史系统；</li>
+<li><strong>75 Ω 同轴电缆</strong>：更常见于有线电视和模拟视频系统。</li>
+</ul>
+<p>历史上，以太网曾使用基带同轴电缆，例如 10Base-5 与 10Base-2。对于同轴电缆，阻抗匹配很重要；终端不匹配会引起反射，破坏信号质量。</p>
+<h4 id="623-光纤">6.2.3 光纤<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#623-光纤" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>光纤以光信号作为载体，核心原理是纤芯折射率高于包层，使光在满足临界角条件时发生<strong>全反射</strong>，从而沿纤芯传播。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[光从纤芯射向包层界面]\n    A --> B{入射角是否大于临界角}\n    B -->|是| C[发生全反射]\n    C --> D[沿纤芯继续传播]\n    B -->|否| E[折射泄漏]&quot;">flowchart LR
+    A[光从纤芯射向包层界面]
+    A --> B{入射角是否大于临界角}
+    B -->|是| C[发生全反射]
+    C --> D[沿纤芯继续传播]
+    B -->|否| E[折射泄漏]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>光纤按传播模式分为：</p>
+<ul>
+<li><strong>多模光纤</strong>：多条不同路径同时传播，易产生模间色散；</li>
+<li><strong>单模光纤</strong>：基本只有单一路径传播，适于更高速率与更长距离。</li>
+</ul>
+<p>光纤系统通常由三部分组成：</p>
+<ol>
+<li><strong>光源</strong>：LED 或激光器，把电信号变为光脉冲；</li>
+<li><strong>光纤链路</strong>：负责长距离传输；</li>
+<li><strong>光检测器</strong>：光电二极管等，把光信号恢复为电信号。</li>
+</ol>
+<p>光纤的主要优点是：</p>
+<ul>
+<li>通信容量极大；</li>
+<li>衰减小，中继距离长；</li>
+<li>抗电磁干扰与抗雷击能力强；</li>
+<li>无串音，保密性好；</li>
+<li>体积小、重量轻。</li>
+</ul>
+<h3 id="63-无线介质">6.3 无线介质<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#63-无线介质" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="631-无线电与频谱管理">6.3.1 无线电与频谱管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#631-无线电与频谱管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>无线传输使用自由空间作为介质。不同频段具有不同传播特性与应用边界。无线信号在空间中容易产生同频干扰，因此频谱需要由管理机构分配；少量频段，如部分 ISM 频段，可供低功率设备开放使用。</p>
+<h4 id="632-微波通信">6.3.2 微波通信<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#632-微波通信" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>微波具有较强方向性，常用于点到点视距通信。它的基本工程特征包括：</p>
+<ul>
+<li>频率较高；</li>
+<li>天线可以形成窄波束；</li>
+<li>以视距传播为主；</li>
+<li>远距离时需要中继站；</li>
+<li>易受多径、天气和地球曲率影响。</li>
+</ul>
+<p>自由空间传播下，接收功率与距离平方成反比，可写为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.604em;vertical-align:-0.95em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">4</span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span><span class="mord mathnormal">d</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">λ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.654em;"><span style="top:-3.9029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span>
+<p>该式揭示了一个基本事实：距离增大时，路径损耗迅速加剧。</p>
+<h4 id="633-卫星通信">6.3.3 卫星通信<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#633-卫星通信" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>卫星通信本质上是把卫星当作更高处的微波中继站。地球同步卫星位于高空固定轨道，覆盖面广，适于广播式业务，但传播时延较大。低轨卫星则轨道更低、时延更小，但需要多颗卫星组成星座，持续完成覆盖切换。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[地面站A] -->|上行链路| S[卫星转发器]\n    S -->|下行链路| B[地面站B]&quot;">flowchart LR
+    A[地面站A] -->|上行链路| S[卫星转发器]
+    S -->|下行链路| B[地面站B]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="7-通信系统">7. 通信系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-通信系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h2 id="71-公用电话网与-adsl">7.1 公用电话网与 ADSL<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#71-公用电话网与-adsl" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="711-pstn-的基本结构">7.1.1 PSTN 的基本结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#711-pstn-的基本结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>公用电话交换网由以下部分构成：</p>
+<ul>
+<li><strong>本地环路</strong>：连接用户与端局，传统上多为模拟双绞线；</li>
+<li><strong>交换局</strong>：完成呼叫转接；</li>
+<li><strong>中继线 / 干线</strong>：连接各交换局，通常为高速数字链路。</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    U1[用户] --> E1[端局]\n    U2[用户] --> E1\n    E1 --> T1[长途局]\n    T1 --> C1[中心交换局]\n    C1 --> T2[长途局]\n    T2 --> E2[端局]\n    E2 --> U3[用户]&quot;">flowchart LR
+    U1[用户] --> E1[端局]
+    U2[用户] --> E1
+    E1 --> T1[长途局]
+    T1 --> C1[中心交换局]
+    C1 --> T2[长途局]
+    T2 --> E2[端局]
+    E2 --> U3[用户]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>从系统演化上看，电话网从早期模拟干线、FDM 复用，逐步发展为数字干线、PCM/TDM 复用。本地环路之所以长期保留铜线，是因为用户侧距离短、成本敏感，而干线侧则更适合高容量数字传输。</p>
+<h3 id="712-pcmt1-与-e1">7.1.2 PCM、T1 与 E1<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#712-pcmt1-与-e1" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>PCM 的目标，是在电话局间中继线上传送多路话音。其历史问题在于不同地区形成了不同标准：</p>
+<ul>
+<li><strong>T1</strong>：24 路，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1.544</span><span class="mord text"><span class="mord"> Mbit/s</span></span></span></span></span></li>
+<li><strong>E1</strong>：30 路业务信道加控制与同步，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">2.048</span><span class="mord text"><span class="mord"> Mbit/s</span></span></span></span></span></li>
+</ul>
+<p>T1 的总速率可写为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[(</span><span class="mord">7</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">24</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">8</span><span class="mord text"><span class="mord">kHz</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1.544</span><span class="mord text"><span class="mord"> Mbit/s</span></span></span></span></span></span>
+<p>E1 的总速率可写为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">32</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">8</span><span class="mord text"><span class="mord">kHz</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">2.048</span><span class="mord text"><span class="mord"> Mbit/s</span></span></span></span></span></span>
+<p>其中 T1/E1 都体现了 TDM 的思想：在固定时间帧中周期性为各路话音分配时隙。</p>
+<h3 id="713-pdh-到-sonetsdh">7.1.3 PDH 到 SONET/SDH<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#713-pdh-到-sonetsdh" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>旧式 PCM 系统存在两个根本问题：</p>
+<ol>
+<li>速率标准不统一；</li>
+<li>高速场景下收发时钟并不严格同步。</li>
+</ol>
+<p>PDH 属于准同步体系，各路时钟允许有小偏差，复接时需要插入额外脉冲，结构复杂。为解决这一问题，后续发展出 SONET/SDH，同步时钟来源统一，便于复接、分接和国际标准化。</p>
+<p>SONET 的基本速率等级为 STS-1 / OC-1：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">810</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">8</span><span class="mord text"><span class="mord">kHz</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">51.84</span><span class="mord text"><span class="mord"> Mbit/s</span></span></span></span></span></span>
+<p>SDH 以 STM-1 为基本等级：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">155.52</span><span class="mord text"><span class="mord"> Mbit/s</span></span></span></span></span></span>
+<p>可以把 SONET/SDH 理解为：在光纤高速传输时代，对 ” 速率等级、帧结构、复用方式、同步方式 ” 进行统一规范的体系。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[PDH / 准同步] --> B[标准不统一]\n    A --> C[复接复杂]\n    A --> D[高速同步困难]\n\n    E[SONET / SDH] --> F[统一速率等级]\n    E --> G[全网同步]\n    E --> H[易于复接与分接]&quot;">flowchart LR
+    A[PDH / 准同步] --> B[标准不统一]
+    A --> C[复接复杂]
+    A --> D[高速同步困难]
+
+    E[SONET / SDH] --> F[统一速率等级]
+    E --> G[全网同步]
+    E --> H[易于复接与分接]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="714-宽带接入与-adsl-的出发点">7.1.4 宽带接入与 ADSL 的出发点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#714-宽带接入与-adsl-的出发点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>宽带接入的本质，是让用户侧最后一段接入链路能够承载更高数据率的互联网业务。早期拨号上网受限于电话用户线与模拟调制解调器，速率很低。ADSL 的思路不是推翻既有电话铜线，而是在原有用户线之上进行频谱再利用。</p>
+<p>其关键观察是：</p>
+<ul>
+<li>电话业务只占用了低频窄带；</li>
+<li>用户线本身实际上可以通过更高频率成分；</li>
+<li>因而可把低频留给电话，把高频留给数据业务。</li>
+</ul>
+<h3 id="715-adsl-的机制">7.1.5 ADSL 的机制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#715-adsl-的机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>ADSL 是非对称数字用户线。它把用户线频谱切分为三部分：</p>
+<ul>
+<li><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord">4</span><span class="mord text"><span class="mord"> kHz</span></span></span></span></span>：传统电话</li>
+<li>较低高频段：上行</li>
+<li>更宽高频段：下行</li>
+</ul>
+<p>非对称的原因在于居民接入普遍以下行为主，因此把更多频谱资源分配给下行。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[一对铜线] --> B[低频: 电话]\n    A --> C[中高频: 上行数据]\n    A --> D[更高频: 下行数据]&quot;">flowchart LR
+    A[一对铜线] --> B[低频: 电话]
+    A --> C[中高频: 上行数据]
+    A --> D[更高频: 下行数据]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>ADSL 在用户端与端局端都需要调制解调器，并借助分离器把电话信号与 DSL 信号分开。端局侧通过 DSLAM 汇聚大量用户线数据，再接入上层网络。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    U[用户设备] --> S1[分离器]\n    P[电话机] --> S1\n    S1 --> L[用户线]\n\n    L --> S2[端局分离器]\n    S2 --> T[本地电话网]\n    S2 --> M[ADSL 调制解调器 / ATU-C]\n    M --> D[DSLAM]\n    D --> I[ISP / 区域宽带网]&quot;">flowchart LR
+    U[用户设备] --> S1[分离器]
+    P[电话机] --> S1
+    S1 --> L[用户线]
+
+    L --> S2[端局分离器]
+    S2 --> T[本地电话网]
+    S2 --> M[ADSL 调制解调器 / ATU-C]
+    M --> D[DSLAM]
+    D --> I[ISP / 区域宽带网]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="716-dmtadsl-的实现方式">7.1.6 DMT：ADSL 的实现方式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#716-dmtadsl-的实现方式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>ADSL 常采用 DMT（离散多音调）技术。其本质是在一对铜线上并行使用大量窄带子信道，每个子信道可看作一个小型调制解调器。不同子信道根据实际信道质量分配不同调制方式与比特数。</p>
+<p>这一机制体现了两层思想：</p>
+<ol>
+<li>在频域上使用多子信道并行传输；</li>
+<li>在每个子信道上根据信道状况进行自适应分配。</li>
+</ol>
+<p>因此，ADSL 实际数据率并不是固定常数，而与用户线长度、线径、串扰、噪声水平等因素密切相关。线路越长、条件越差，可用速率越低；线路质量极差时甚至无法开通。</p>
+<h3 id="717-adsl2-与-adsl2">7.1.7 ADSL2 与 ADSL2+<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#717-adsl2-与-adsl2" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>ADSL2 与 ADSL2+ 在保留原理不变的前提下，通过扩大可用频谱、提升调制效率、引入无缝速率自适应等方式提高性能。它们的意义不在于 ” 重新发明接入方式 “，而在于对已有铜线条件进行更精细的频谱利用与链路管理。</p>
+<hr/>
+<h2 id="72-有线电视网与-hfc">7.2 有线电视网与 HFC<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#72-有线电视网与-hfc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="721-hfc-的出发点">7.2.1 HFC 的出发点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#721-hfc-的出发点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>传统 CATV 网是树形同轴电缆网络，主要面向单向电视广播。HFC（Hybrid Fiber Coax）是在此基础上发展起来的宽带接入体系，其目标是：保留既有覆盖广泛的电视电缆网络，同时引入更高容量和双向能力。</p>
+<h3 id="722-hfc-的结构">7.2.2 HFC 的结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#722-hfc-的结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>HFC 的主干部分改用光纤，从头端到光纤节点完成长距离高带宽传输；在光纤节点以下，仍使用同轴电缆分配到大量家庭用户。因此，它是一种 ” 光纤 + 同轴 ” 的混合系统。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    H[头端 Headend] --> F[光纤干线]\n    F --> N[光纤节点 / 光电转换]\n    N --> C1[同轴分配网]\n    C1 --> U1[用户1]\n    C1 --> U2[用户2]\n    C1 --> U3[用户3]&quot;">flowchart LR
+    H[头端 Headend] --> F[光纤干线]
+    F --> N[光纤节点 / 光电转换]
+    N --> C1[同轴分配网]
+    C1 --> U1[用户1]
+    C1 --> U2[用户2]
+    C1 --> U3[用户3]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="723-hfc-的频谱分配与业务特征">7.2.3 HFC 的频谱分配与业务特征<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#723-hfc-的频谱分配与业务特征" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>HFC 在同轴电缆上采用频分方式划分上行、下行与广播业务频段。其总体特征是：</p>
+<ul>
+<li>以<strong>下行为主</strong>；</li>
+<li>上下行带宽<strong>非对称</strong>；</li>
+<li>电视与数据在同一物理基础设施上共存；</li>
+<li>同一段同轴电缆上的用户<strong>共享传输资源</strong>。</li>
+</ul>
+<p>因此，HFC 与 ADSL 的关键差别在于：ADSL 的本地铜线通常是用户独占的，而 HFC 中同轴段往往是多个用户共享的。</p>
+<h3 id="724-cable-modem">7.2.4 Cable Modem<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#724-cable-modem" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>电缆调制解调器是 HFC 的用户侧接入设备。下行通常可以提供较高带宽；而上行由于多用户共享，需要通过竞争或调度机制申请发送机会。这一结构决定了 HFC 的性能不仅取决于线路质量，也取决于同时在线用户数量与上行调度机制。</p>
+<h3 id="725-adsl-与-hfc-的对比">7.2.5 ADSL 与 HFC 的对比<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#725-adsl-与-hfc-的对比" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    A[ADSL]\n    A --> A1[用户本地环路独占]\n    A --> A2[受用户到端局距离影响大]\n    A --> A3[铜线频谱切分 电话+数据]\n\n    B[HFC]\n    B --> B1[同轴段多用户共享]\n    B --> B2[下行为主]\n    B --> B3[性能受共享负载影响]&quot;">flowchart TB
+    A[ADSL]
+    A --> A1[用户本地环路独占]
+    A --> A2[受用户到端局距离影响大]
+    A --> A3[铜线频谱切分 电话+数据]
+
+    B[HFC]
+    B --> B1[同轴段多用户共享]
+    B --> B2[下行为主]
+    B --> B3[性能受共享负载影响]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="73-fttx-光接入">7.3 FTTx 光接入<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#73-fttx-光接入" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>FTTx 表示 ” 光纤到某处 ” 的一类接入方案，其共同思路是：尽可能把光纤向用户侧推进，从而提升接入带宽并降低铜线段长度。</p>
+<p>常见形式包括：</p>
+<ul>
+<li><strong>FTTH</strong>：光纤到户</li>
+<li><strong>FTTB</strong>：光纤到楼</li>
+<li><strong>FTTC</strong>：光纤到路边</li>
+</ul>
+<p>它们的差别并不在于核心原理，而在于光纤终止点的位置不同，以及从该点到最终用户的介质不同。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    H[局端] --> O[光纤干线]\n    O --> S[光分路器]\n    S --> H1[FTTH: 直接到家庭]\n    S --> B1[FTTB: 到楼内]\n    S --> C1[FTTC: 到路边机柜]&quot;">flowchart LR
+    H[局端] --> O[光纤干线]
+    O --> S[光分路器]
+    S --> H1[FTTH: 直接到家庭]
+    S --> B1[FTTB: 到楼内]
+    S --> C1[FTTC: 到路边机柜]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>FTTx 代表了接入网长期演进方向：让高容量光纤越来越靠近用户，逐步减少最后一段铜线的限制。</p>
+<hr/>
+<h2 id="74-移动通信网">7.4 移动通信网<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#74-移动通信网" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="741-蜂窝思想与频率复用">7.4.1 蜂窝思想与频率复用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#741-蜂窝思想与频率复用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>移动通信系统的核心，不是单一一条大覆盖链路，而是把地理区域划分为多个小区，在不同小区重复使用同一频谱资源。这样可以在有限频谱下支持更多用户。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    A[蜂窝小区1]\n    B[蜂窝小区2]\n    C[蜂窝小区3]\n    D[蜂窝小区4]\n\n    A --- B\n    B --- C\n    C --- D\n    A --- D\n\n    A1[相同频点可在足够远处重用]&quot;">flowchart TB
+    A[蜂窝小区1]
+    B[蜂窝小区2]
+    C[蜂窝小区3]
+    D[蜂窝小区4]
+
+    A --- B
+    B --- C
+    C --- D
+    A --- D
+
+    A1[相同频点可在足够远处重用]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>小区越小，频率复用越密，系统容量越高；但同时基站数量、切换复杂度与网络建设成本也会上升。</p>
+<h3 id="742-gsm-的复用结构">7.4.2 GSM 的复用结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#742-gsm-的复用结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>GSM 在物理层上体现了 ” 频分 + 时分 ” 的组合思想：</p>
+<ol>
+<li>先在频域上划分出多个 200 kHz 子信道；</li>
+<li>再在每个子信道上使用 TDM，把时间切成多个时隙分配给不同用户。</li>
+</ol>
+<p>因此，GSM 不是只靠一种复用方式工作，而是把 FDM 与 TDM 组合起来，用于移动接入这一共享无线信道场景。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[总频带] --> B[200kHz 子信道1]\n    A --> C[200kHz 子信道2]\n    B --> B1[时隙1]\n    B --> B2[时隙2]\n    B --> B3[时隙3]\n    C --> C1[时隙1]\n    C --> C2[时隙2]&quot;">flowchart LR
+    A[总频带] --> B[200kHz 子信道1]
+    A --> C[200kHz 子信道2]
+    B --> B1[时隙1]
+    B --> B2[时隙2]
+    B --> B3[时隙3]
+    C --> C1[时隙1]
+    C --> C2[时隙2]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="743-从-1g-到-5g-的演进方向">7.4.3 从 1G 到 5G 的演进方向<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#743-从-1g-到-5g-的演进方向" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>移动通信代际演进，可以粗略理解为：</p>
+<ul>
+<li>1G：模拟话音；</li>
+<li>2G：数字话音；</li>
+<li>3G：数字话音与数据；</li>
+<li>4G：高速数据；</li>
+<li>5G：更高带宽、更低时延、更密集组网。</li>
+</ul>
+<p>5G 的重要物理层特征包括：</p>
+<ul>
+<li>使用更高频段，获得更宽带宽；</li>
+<li>小区进一步缩小，基站更密；</li>
+<li>引入大规模 MIMO；</li>
+<li>通过波束赋形提高定向传输能力；</li>
+<li>支持 D2D 等更灵活的链路形式。</li>
+</ul>
+<p>频率越高，虽然可用带宽越大，但传播越接近直线、覆盖越小、衰减越明显，因此系统必须通过微基站部署与天线阵列技术来补偿传播劣势。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[更高频率] --> B[更宽带宽]\n    A --> C[更大传播损耗]\n    C --> D[更小小区]\n    D --> E[更密基站]\n    E --> F[波束赋形 / 大规模 MIMO]&quot;">flowchart LR
+    A[更高频率] --> B[更宽带宽]
+    A --> C[更大传播损耗]
+    C --> D[更小小区]
+    D --> E[更密基站]
+    E --> F[波束赋形 / 大规模 MIMO]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="8-本讲知识主线总结">8. 本讲知识主线总结<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-本讲知识主线总结" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>物理层研究的不是 ” 信息内容 “，而是<strong>比特如何变成信号，信号如何在介质中传播，以及传播能力受什么物理边界约束</strong>。这一层的知识主线可以概括为以下链条：</p>
+<ol>
+<li>数据必须变成可传输信号；</li>
+<li>信号经过信道会受到带宽、噪声、衰减和失真的约束；</li>
+<li>奈奎斯特定理和香农公式给出了速率上界；</li>
+<li>同步机制决定接收端能否正确判定位边界；</li>
+<li>编码与调制决定比特如何映射到可传输波形；</li>
+<li>复用决定多个用户如何共享物理资源；</li>
+<li>不同传输介质决定可用频段、距离、成本与抗干扰能力；</li>
+<li>电话网、ADSL、HFC、FTTx 与移动通信网，都是在这些共同物理原理上形成的不同系统实现。</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[数据] --> B[编码/调制]\n    B --> C[信号]\n    C --> D[信道传播]\n    D --> E[带宽/噪声/衰减限制]\n    E --> F[同步与判决]\n    F --> G[恢复比特]\n    G --> H[系统实现: 电话网/ADSL/HFC/FTTx/移动网]&quot;">flowchart LR
+    A[数据] --> B[编码/调制]
+    B --> C[信号]
+    C --> D[信道传播]
+    D --> E[带宽/噪声/衰减限制]
+    E --> F[同步与判决]
+    F --> G[恢复比特]
+    G --> H[系统实现: 电话网/ADSL/HFC/FTTx/移动网]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-76" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#第二讲-物理层" data-for="第二讲-物理层">第二讲 物理层</a></li><li class="depth-1"><a href="#1-物理层的职责与接口特性" data-for="1-物理层的职责与接口特性">1. 物理层的职责与接口特性</a></li><li class="depth-1"><a href="#2-数据通信的原理" data-for="2-数据通信的原理">2. 数据通信的原理</a></li><li class="depth-2"><a href="#21-数据通信系统的基本模型" data-for="21-数据通信系统的基本模型">2.1 数据通信系统的基本模型</a></li><li class="depth-2"><a href="#22-数据信号与码元" data-for="22-数据信号与码元">2.2 数据、信号与码元</a></li><li class="depth-2"><a href="#23-信道与通信方式" data-for="23-信道与通信方式">2.3 信道与通信方式</a></li><li class="depth-2"><a href="#24-物理层中的关键参数" data-for="24-物理层中的关键参数">2.4 物理层中的关键参数</a></li><li class="depth-2"><a href="#25-信号衰减与频谱" data-for="25-信号衰减与频谱">2.5 信号、衰减与频谱</a></li><li class="depth-1"><a href="#3-通信理论" data-for="3-通信理论">3. 通信理论</a></li><li class="depth-2"><a href="#31-傅里叶分析与带宽限制" data-for="31-傅里叶分析与带宽限制">3.1 傅里叶分析与带宽限制</a></li><li class="depth-2"><a href="#32-奈奎斯特定理无噪声条件下的码元速率上限" data-for="32-奈奎斯特定理无噪声条件下的码元速率上限">3.2 奈奎斯特定理：无噪声条件下的码元速率上限</a></li><li class="depth-2"><a href="#33-香农公式有噪声条件下的比特率上限" data-for="33-香农公式有噪声条件下的比特率上限">3.3 香农公式：有噪声条件下的比特率上限</a></li><li class="depth-2"><a href="#34-奈奎斯特与香农的分工" data-for="34-奈奎斯特与香农的分工">3.4 奈奎斯特与香农的分工</a></li><li class="depth-2"><a href="#35-同步接收端为什么必须--跟上发送端-" data-for="35-同步接收端为什么必须--跟上发送端-">3.5 同步：接收端为什么必须 ” 跟上发送端 ”</a></li><li class="depth-1"><a href="#4-编码调制" data-for="4-编码调制">4. 编码调制</a></li><li class="depth-2"><a href="#41-基带信号与调制的必要性" data-for="41-基带信号与调制的必要性">4.1 基带信号与调制的必要性</a></li><li class="depth-2"><a href="#42-基带编码" data-for="42-基带编码">4.2 基带编码</a></li><li class="depth-2"><a href="#43-常见基带编码的比较" data-for="43-常见基带编码的比较">4.3 常见基带编码的比较</a></li><li class="depth-2"><a href="#44-带通调制" data-for="44-带通调制">4.4 带通调制</a></li><li class="depth-2"><a href="#45-编码与调制的边界" data-for="45-编码与调制的边界">4.5 编码与调制的边界</a></li><li class="depth-1"><a href="#5-信道复用" data-for="5-信道复用">5. 信道复用</a></li><li class="depth-2"><a href="#51-复用的基本思想" data-for="51-复用的基本思想">5.1 复用的基本思想</a></li><li class="depth-2"><a href="#52-频分复用-fdm" data-for="52-频分复用-fdm">5.2 频分复用 FDM</a></li><li class="depth-2"><a href="#53-ofdm正交子载波思想" data-for="53-ofdm正交子载波思想">5.3 OFDM：正交子载波思想</a></li><li class="depth-2"><a href="#54-波分复用-wdm" data-for="54-波分复用-wdm">5.4 波分复用 WDM</a></li><li class="depth-2"><a href="#55-时分复用-tdm" data-for="55-时分复用-tdm">5.5 时分复用 TDM</a></li><li class="depth-2"><a href="#56-统计时分复用-stdm" data-for="56-统计时分复用-stdm">5.6 统计时分复用 STDM</a></li><li class="depth-2"><a href="#57-码分复用-cdm--cdma" data-for="57-码分复用-cdm--cdma">5.7 码分复用 CDM / CDMA</a></li><li class="depth-1"><a href="#6-传输介质" data-for="6-传输介质">6. 传输介质</a></li><li class="depth-2"><a href="#61-传输介质的分类" data-for="61-传输介质的分类">6.1 传输介质的分类</a></li><li class="depth-2"><a href="#62-有线介质" data-for="62-有线介质">6.2 有线介质</a></li><li class="depth-2"><a href="#63-无线介质" data-for="63-无线介质">6.3 无线介质</a></li><li class="depth-1"><a href="#7-通信系统" data-for="7-通信系统">7. 通信系统</a></li><li class="depth-1"><a href="#71-公用电话网与-adsl" data-for="71-公用电话网与-adsl">7.1 公用电话网与 ADSL</a></li><li class="depth-2"><a href="#711-pstn-的基本结构" data-for="711-pstn-的基本结构">7.1.1 PSTN 的基本结构</a></li><li class="depth-2"><a href="#712-pcmt1-与-e1" data-for="712-pcmt1-与-e1">7.1.2 PCM、T1 与 E1</a></li><li class="depth-2"><a href="#713-pdh-到-sonetsdh" data-for="713-pdh-到-sonetsdh">7.1.3 PDH 到 SONET/SDH</a></li><li class="depth-2"><a href="#714-宽带接入与-adsl-的出发点" data-for="714-宽带接入与-adsl-的出发点">7.1.4 宽带接入与 ADSL 的出发点</a></li><li class="depth-2"><a href="#715-adsl-的机制" data-for="715-adsl-的机制">7.1.5 ADSL 的机制</a></li><li class="depth-2"><a href="#716-dmtadsl-的实现方式" data-for="716-dmtadsl-的实现方式">7.1.6 DMT：ADSL 的实现方式</a></li><li class="depth-2"><a href="#717-adsl2-与-adsl2" data-for="717-adsl2-与-adsl2">7.1.7 ADSL2 与 ADSL2+</a></li><li class="depth-1"><a href="#72-有线电视网与-hfc" data-for="72-有线电视网与-hfc">7.2 有线电视网与 HFC</a></li><li class="depth-2"><a href="#721-hfc-的出发点" data-for="721-hfc-的出发点">7.2.1 HFC 的出发点</a></li><li class="depth-2"><a href="#722-hfc-的结构" data-for="722-hfc-的结构">7.2.2 HFC 的结构</a></li><li class="depth-2"><a href="#723-hfc-的频谱分配与业务特征" data-for="723-hfc-的频谱分配与业务特征">7.2.3 HFC 的频谱分配与业务特征</a></li><li class="depth-2"><a href="#724-cable-modem" data-for="724-cable-modem">7.2.4 Cable Modem</a></li><li class="depth-2"><a href="#725-adsl-与-hfc-的对比" data-for="725-adsl-与-hfc-的对比">7.2.5 ADSL 与 HFC 的对比</a></li><li class="depth-1"><a href="#73-fttx-光接入" data-for="73-fttx-光接入">7.3 FTTx 光接入</a></li><li class="depth-1"><a href="#74-移动通信网" data-for="74-移动通信网">7.4 移动通信网</a></li><li class="depth-2"><a href="#741-蜂窝思想与频率复用" data-for="741-蜂窝思想与频率复用">7.4.1 蜂窝思想与频率复用</a></li><li class="depth-2"><a href="#742-gsm-的复用结构" data-for="742-gsm-的复用结构">7.4.2 GSM 的复用结构</a></li><li class="depth-2"><a href="#743-从-1g-到-5g-的演进方向" data-for="743-从-1g-到-5g-的演进方向">7.4.3 从 1G 到 5G 的演进方向</a></li><li class="depth-1"><a href="#8-本讲知识主线总结" data-for="8-本讲知识主线总结">8. 本讲知识主线总结</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../课程笔记/计算机网络/" class="internal">index</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>
