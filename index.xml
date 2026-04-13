@@ -10,61 +10,61 @@
     <link>https://localhost/template/template1</link>
     <guid>https://localhost/template/template1</guid>
     <description><![CDATA[  ]]></description>
-    <pubDate>Mon, 13 Apr 2026 04:10:26 GMT</pubDate>
-  </item><item>
-    <title>prompt2</title>
-    <link>https://localhost/prompt/prompt2</link>
-    <guid>https://localhost/prompt/prompt2</guid>
-    <description><![CDATA[ 你现在的任务不是总结课件，也不是写讲课提纲，而是基于我提供的 PDF、PPT、PPTX、Markdown（.md）课程材料与现有 Markdown 笔记，整理出一份可直接作为“教材式课程笔记”使用的完整正文。 【任务定位】 成品应当像课程教材中的章节笔记，而不是课堂讲稿、课件摘要、读书笔记、提纲或材料评论。 文风应当正式、清晰、克制、稳定，适合作为长期保存与反复复习的参考文本。 输出内容应直接陈述知识本身，不解释整理过程，不与读者对话，不评论材料来源。 内容既要保留学科主线，也要落实到定义、机制、条件、公式、步骤、例子、边界与应用意义。 【输入材料处理原则】 所有输入材料，无论是 PDF、PP... ]]></description>
-    <pubDate>Mon, 13 Apr 2026 04:10:26 GMT</pubDate>
+    <pubDate>Mon, 13 Apr 2026 04:25:33 GMT</pubDate>
   </item><item>
     <title>prompt1</title>
     <link>https://localhost/prompt/prompt1</link>
     <guid>https://localhost/prompt/prompt1</guid>
     <description><![CDATA[ 你现在的任务不是总结课件，也不是写讲课提纲，而是基于我提供的 PDF、PPT、PPTX、Markdown（.md）课程材料与现有 Markdown 笔记，整理出一份可直接作为“教材式课程笔记”使用的完整正文。 要求如下： 【定位】 成品应当像一门课程教材中的章节笔记，而不是课堂讲稿、课件摘要、读书笔记或提纲。 文风应当正式、清晰、克制、稳定，适合作为长期保存和反复复习的参考材料。 内容应当直接陈述知识本身，而不是评论材料、解释整理过程，或与读者对话。 叙述应体现该学科的知识特点：既要说明核心概念、基本原理和整体框架，也要落实到关键机制、结构关系、分析步骤、公式含义、典型实例、适用条件与实际意义... ]]></description>
-    <pubDate>Mon, 13 Apr 2026 04:10:26 GMT</pubDate>
+    <pubDate>Mon, 13 Apr 2026 04:25:33 GMT</pubDate>
+  </item><item>
+    <title>prompt2</title>
+    <link>https://localhost/prompt/prompt2</link>
+    <guid>https://localhost/prompt/prompt2</guid>
+    <description><![CDATA[ 你现在的任务不是总结课件，也不是写讲课提纲，而是基于我提供的 PDF、PPT、PPTX、Markdown（.md）课程材料与现有 Markdown 笔记，整理出一份可直接作为“教材式课程笔记”使用的完整正文。 【任务定位】 成品应当像课程教材中的章节笔记，而不是课堂讲稿、课件摘要、读书笔记、提纲或材料评论。 文风应当正式、清晰、克制、稳定，适合作为长期保存与反复复习的参考文本。 输出内容应直接陈述知识本身，不解释整理过程，不与读者对话，不评论材料来源。 内容既要保留学科主线，也要落实到定义、机制、条件、公式、步骤、例子、边界与应用意义。 【输入材料处理原则】 所有输入材料，无论是 PDF、PP... ]]></description>
+    <pubDate>Mon, 13 Apr 2026 04:25:33 GMT</pubDate>
   </item><item>
     <title>p3</title>
     <link>https://localhost/prompt/p3</link>
     <guid>https://localhost/prompt/p3</guid>
     <description><![CDATA[ 请对这篇论文进行结构化分析，帮助我快速把握其背景、方法、结果与价值。 请按以下格式输出： 1. 基本信息 标题 作者 年份 期刊/会议 论文类型 2. 研究背景 该研究属于什么主题 该领域已有研究进展 当前存在什么缺口、争议或未解决问题 本文为何有必要开展 3. ]]></description>
-    <pubDate>Mon, 13 Apr 2026 04:10:26 GMT</pubDate>
-  </item><item>
-    <title>ob</title>
-    <link>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob</link>
-    <guid>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob</guid>
-    <description><![CDATA[ 人和组织的行为动力学 * 核心概念与定义 组织管理心理学是一门专注于研究人（包括个体和群体）在组织中的行为的学科。其研究不仅仅停留在理论层面，更旨在通过科学的方法实现对组织行为的深度把控。 组织与管理的本质 组织：指两个或两个以上的个体以一定方式有意识地联系在一起，为达到共同的目标而按照一定规则从事活动的群体或社会单位。 管理：是让别人同自己一起工作，并通过别人来达到组织目标的过程。其实质在于 ” 使别人为组织目标而工作 ”。 本学科的研究目标遵循一套严密的逻辑递进关系，即： 描述：客观记录员工在不同情境下的行为表现。 解释：深入分析员工为什么会有这些行为。 预测：基于现有规律推断员工未来的行... ]]></description>
-    <pubDate>Mon, 13 Apr 2026 04:10:26 GMT</pubDate>
+    <pubDate>Mon, 13 Apr 2026 04:25:33 GMT</pubDate>
   </item><item>
     <title>index</title>
     <link>https://localhost/</link>
     <guid>https://localhost/</guid>
     <description><![CDATA[  About Me Hi, I’m shihuaidexianyu. ]]></description>
-    <pubDate>Mon, 13 Apr 2026 04:10:26 GMT</pubDate>
+    <pubDate>Mon, 13 Apr 2026 04:25:33 GMT</pubDate>
+  </item><item>
+    <title>ob</title>
+    <link>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob</link>
+    <guid>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob</guid>
+    <description><![CDATA[ 人和组织的行为动力学 * 核心概念与定义 组织管理心理学是一门专注于研究人（包括个体和群体）在组织中的行为的学科。其研究不仅仅停留在理论层面，更旨在通过科学的方法实现对组织行为的深度把控。 组织与管理的本质 组织：指两个或两个以上的个体以一定方式有意识地联系在一起，为达到共同的目标而按照一定规则从事活动的群体或社会单位。 管理：是让别人同自己一起工作，并通过别人来达到组织目标的过程。其实质在于 ” 使别人为组织目标而工作 ”。 本学科的研究目标遵循一套严密的逻辑递进关系，即： 描述：客观记录员工在不同情境下的行为表现。 解释：深入分析员工为什么会有这些行为。 预测：基于现有规律推断员工未来的行... ]]></description>
+    <pubDate>Mon, 13 Apr 2026 04:25:33 GMT</pubDate>
   </item><item>
     <title>ob_distill</title>
     <link>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob_distill</link>
     <guid>https://localhost/Archive/%E7%BB%84%E7%BB%87%E7%AE%A1%E7%90%86%E5%BF%83%E7%90%86%E5%AD%A6/ob_distill</guid>
     <description><![CDATA[ 整体建构 把 OB 看作三个层级的输入 - 处理 - 输出系统 微观内核 个人特征与能力 传记特征 这些是简历上显而易见的信息，但对行为有稳定的预测作用。 年龄： 效应：年龄越大，离职率越低（机会少、福利绑定）；缺勤率越低（责任感强）；工作满意度通常较高。 误区：常被误认为生产率低，但实际上经验和技能往往能弥补体力的衰退。 性别： 核心结论：在工作绩效和分析解决问题能力上，男女没有显著差异。 差异点：女性的缺勤率往往高于男性，这主要归因于社会文化赋予女性更多的家庭照顾责任。 婚姻状况： 已婚员工通常缺勤率更低、离职率更低、满意度更高。原因在于婚姻带来的家庭责任感增加了对稳定工作的需求。 任职年... ]]></description>
-    <pubDate>Mon, 13 Apr 2026 04:10:26 GMT</pubDate>
+    <pubDate>Mon, 13 Apr 2026 04:25:32 GMT</pubDate>
   </item><item>
     <title>认知心理学</title>
     <link>https://localhost/Archive/%E8%AE%A4%E7%9F%A5%E5%BF%83%E7%90%86%E5%AD%A6</link>
     <guid>https://localhost/Archive/%E8%AE%A4%E7%9F%A5%E5%BF%83%E7%90%86%E5%AD%A6</guid>
     <description><![CDATA[ 认知心理学导论 * 心智与认知心理学的定义 心智（The Mind）的本质 结构主义： 心智创造和控制心理功能，例如知觉（perception）、记忆（memory）、情绪 （emotions）、语言（language）、决策（deciding）、思维（thinking）和推理 （reasoning）。 结构主义认为心智是这些功能的组合。 功能主义：心智是一个创造世界表征的系统，使我们能够在世界中行动以实现我们的目标。 这种观点强调心智的功能、生存和目标导向性（Goal-directed）。 认知心理学的定义 认知心理学是对心智（Mind）的研究，具体而言，它是对**心理过程（Mental P... ]]></description>
-    <pubDate>Mon, 13 Apr 2026 04:10:26 GMT</pubDate>
+    <pubDate>Mon, 13 Apr 2026 04:25:32 GMT</pubDate>
   </item><item>
     <title>main</title>
     <link>https://localhost/Archive/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%9F%BA%E7%A1%80/main</link>
     <guid>https://localhost/Archive/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E5%9F%BA%E7%A1%80/main</guid>
     <description><![CDATA[ 机器学习 基本定义 机器学习 是研究如何设计算法，使得模型基于数据经验，不断提高在特定任务上的表现。 任务（Task）：分类、回归、聚类、强化学习等 经验（Experience）：训练数据 表现（Performance）：损失函数、准确率等评价指标 有监督学习：如分类与回归，需要带标签训练数据 无监督学习：如聚类、密度估计、降维，不需要标签 半监督学习：部分数据有标签，结合无监督策略 弱监督学习：标签不完全或不准确 强化学习：通过与环境交互进行学习 常见损失函数 不同的任务采用不同的损失函数，以下是机器学习中常见的几类损失函数： 0/1 损失（分类）：用于最简单的准确率衡量 \text{los... ]]></description>
-    <pubDate>Mon, 13 Apr 2026 04:10:26 GMT</pubDate>
+    <pubDate>Mon, 13 Apr 2026 04:25:32 GMT</pubDate>
   </item><item>
     <title>离散数学基础</title>
     <link>https://localhost/Archive/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80</link>
     <guid>https://localhost/Archive/%E7%A6%BB%E6%95%A3%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80</guid>
     <description><![CDATA[ 第 5 章 图的基本概念 1. 图的定义及运算 1. ]]></description>
-    <pubDate>Mon, 13 Apr 2026 04:10:26 GMT</pubDate>
+    <pubDate>Mon, 13 Apr 2026 04:25:32 GMT</pubDate>
   </item>
     </channel>
   </rss>
