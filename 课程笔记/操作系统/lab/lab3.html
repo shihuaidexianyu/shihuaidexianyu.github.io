@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>lab3</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="lab3"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="lab3"/><meta name="twitter:description" content="xv6 内存分配机制 0."/><meta property="og:description" content="xv6 内存分配机制 0."/><meta property="og:image:alt" content="xv6 内存分配机制 0."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/lab/lab3"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/lab/lab3"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="xv6 内存分配机制 0."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/lab/lab3"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-230"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-230" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/lab/">lab</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lab3</a></div></nav><h1 class="article-title">lab3</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-14T11:58:43.695Z">Apr 14, 2026</time><span>23 min read</span></p></div></div><article class="popover-hint"><h1 id="xv6-内存分配机制">xv6 内存分配机制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#xv6-内存分配机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="0-核心概念">0. 核心概念<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#0-核心概念" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在 xv6 中，<code>brk</code> 用于调整进程用户地址空间的大小，<code>kalloc</code> 用于分配真实的物理页，而页表负责建立虚拟地址到物理地址之间的映射关系。</p>
+<p>从调用链上看，堆增长的大致路径为：</p>
+<p><code>brk → growproc → uvmalloc → mappages → walk → kalloc</code></p>
+<p>堆收缩的大致路径为：</p>
+<p><code>uvmdealloc → vmunmap → walk → kfree</code></p>
+<p>在这一机制中，需要区分三个层次：</p>
+<ol>
+<li>进程逻辑上拥有多大的地址空间</li>
+<li>页表中是否已经建立映射</li>
+<li>底层是否已经分配真实物理页</li>
+</ol>
+<hr/>
+<h2 id="1-需要区分的几个对象">1. 需要区分的几个对象<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-需要区分的几个对象" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="11-堆顶-sz">1.1 堆顶 <code>sz</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-堆顶-sz" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>proc.sz</code> 表示当前进程用户地址空间的大小，单位是字节。<br/>
+它描述的是进程当前“逻辑上拥有多少用户空间”，而不是已经分配了多少物理内存。</p>
+<p>在 <code>sys_brk</code> 中，通常会读取当前进程的 <code>sz</code>，根据用户传入的新地址计算增量，并调用 <code>growproc</code> 进行扩展或收缩。</p>
+<h3 id="12-虚拟页">1.2 虚拟页<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-虚拟页" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>进程访问的是虚拟地址空间。<br/>
+虚拟地址空间按页划分，每一页对应一个固定大小的地址区间。<br/>
+CPU 在访问内存时，首先使用虚拟地址，再通过页表将其翻译为物理地址。</p>
+<h3 id="13-页表项-pte">1.3 页表项 PTE<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#13-页表项-pte" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>页表项用于记录映射关系。<br/>
+一个页表项通常包含：</p>
+<ul>
+<li>目标物理页号</li>
+<li>有效位</li>
+<li>读写执行权限</li>
+<li>用户态可访问标记等</li>
+</ul>
+<p>页表项本质上是“地址翻译规则”的具体载体。</p>
+<h3 id="14-物理页">1.4 物理页<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#14-物理页" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>物理页是物理内存中的基本分配单位，通常大小为 4KB。<br/>
+<code>kalloc()</code> 从空闲页链表中取出一个物理页，<code>kfree()</code> 则将其归还到空闲页链表。</p>
+<hr/>
+<h2 id="2-从-brk-到可访问内存的总体流程">2. 从 <code>brk</code> 到可访问内存的总体流程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-从-brk-到可访问内存的总体流程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;用户调用 brk(new_addr)\&quot;] --> B[sys_brk]\n    B --> C{new_addr == 0?}\n    C -- 是 --> D[返回当前 p->sz]\n    C -- 否 --> E[delta = new_addr - old_sz]\n    E --> F[\&quot;growproc(delta)\&quot;]\n\n    F --> G{delta > 0?}\n    G -- 是 --> H[uvmalloc]\n    G -- 否 --> I[uvmdealloc]\n\n    H --> J[kalloc 分配物理页]\n    J --> K[memset 清零]\n    K --> L[mappages 建立映射]\n    L --> M[walk 找到或创建 PTE]\n    M --> N[把 PA 和权限写入 PTE]\n\n    I --> O[vmunmap 解除映射]\n    O --> P[walk 找到 PTE]\n    P --> Q[kfree 归还物理页]&quot;">flowchart TD
+    A[&quot;用户调用 brk(new_addr)&quot;] --> B[sys_brk]
+    B --> C{new_addr == 0?}
+    C -- 是 --> D[返回当前 p->sz]
+    C -- 否 --> E[delta = new_addr - old_sz]
+    E --> F[&quot;growproc(delta)&quot;]
+
+    F --> G{delta > 0?}
+    G -- 是 --> H[uvmalloc]
+    G -- 否 --> I[uvmdealloc]
+
+    H --> J[kalloc 分配物理页]
+    J --> K[memset 清零]
+    K --> L[mappages 建立映射]
+    L --> M[walk 找到或创建 PTE]
+    M --> N[把 PA 和权限写入 PTE]
+
+    I --> O[vmunmap 解除映射]
+    O --> P[walk 找到 PTE]
+    P --> Q[kfree 归还物理页]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这个流程体现了 xv6 内存分配的分层结构：</p>
+<ul>
+<li><code>brk</code> 负责提出地址空间变更请求</li>
+<li><code>growproc</code> 负责决定扩容还是缩容</li>
+<li><code>uvmalloc/uvmdealloc</code> 负责处理虚拟地址区间</li>
+<li><code>mappages/vmunmap</code> 负责建立或拆除页表映射</li>
+<li><code>walk</code> 负责遍历页表</li>
+<li><code>kalloc/kfree</code> 负责实际物理页的分配与释放</li>
+</ul>
+<hr/>
+<h2 id="3-为什么接口按字节变化而底层按页分配">3. 为什么接口按字节变化，而底层按页分配<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-为什么接口按字节变化而底层按页分配" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>进程从接口上看，可以按字节调整堆顶位置；但内核在实际实现中，始终以页为单位进行物理内存管理。</p>
+<p><code>uvmalloc</code> 在处理扩容时，会先将 <code>oldsz</code> 向上对齐到页边界，然后按页循环处理新增区间。<br/>
+因此，地址空间的逻辑增长可以是 1 字节、64 字节或任意大小，但是否需要真正分配新的物理页，取决于新的堆顶是否跨过新的页边界。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[用户视角: 再申请 64B] --> B[内核视角: 是否跨过新页边界]\n    B --> C{跨页了吗?}\n    C -- 没跨页 --> D[仅修改 sz]\n    C -- 跨页 --> E[kalloc 新物理页]\n    E --> F[mappages 建立映射]&quot;">flowchart TD
+    A[用户视角: 再申请 64B] --> B[内核视角: 是否跨过新页边界]
+    B --> C{跨页了吗?}
+    C -- 没跨页 --> D[仅修改 sz]
+    C -- 跨页 --> E[kalloc 新物理页]
+    E --> F[mappages 建立映射]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="示例">示例<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#示例" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>假设页大小为 4096B。</p>
+<ul>
+<li>当前 <code>sz = 5000</code></li>
+<li>调用 <code>brk(5064)</code></li>
+</ul>
+<p>这次增长只有 64B。<br/>
+如果这 64B 没有跨越新的页边界，那么可能只需修改 <code>sz</code>；<br/>
+如果扩展后覆盖到新的虚拟页，则需要分配新的物理页，并建立新的映射。</p>
+<p>因此，<code>sz</code> 是字节级边界，而页表和物理分配机制是页级机制。</p>
+<hr/>
+<h2 id="4-sys_brk调整堆顶的系统调用入口">4. <code>sys_brk</code>：调整堆顶的系统调用入口<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-sys_brk调整堆顶的系统调用入口" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>sys_brk</code> 的作用主要是接收用户请求，并把它转换为对地址空间的调整操作。</p>
+<p>其主要逻辑可概括为：</p>
+<ol>
+<li>读取用户传入的新地址 <code>new_addr</code></li>
+<li>获取当前进程的旧堆顶 <code>old_sz = p->sz</code></li>
+<li>如果 <code>new_addr == 0</code>，返回当前堆顶</li>
+<li>否则计算增量 <code>delta = new_addr - old_sz</code></li>
+<li>调用 <code>growproc(delta)</code></li>
+</ol>
+<p>因此，<code>sys_brk</code> 并不直接完成物理页分配或页表映射，它只是堆增长机制的入口。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant U as 用户程序\n    participant S as sys_brk\n    participant G as growproc\n\n    U->>S: brk(new_addr)\n    S->>S: old = p->sz\n    alt new_addr == 0\n        S-->>U: 返回 old\n    else 调整堆\n        S->>G: growproc(new_addr - old)\n        G-->>S: 成功/失败\n        S-->>U: 返回结果\n    end&quot;">sequenceDiagram
+    participant U as 用户程序
+    participant S as sys_brk
+    participant G as growproc
+
+    U->>S: brk(new_addr)
+    S->>S: old = p->sz
+    alt new_addr == 0
+        S-->>U: 返回 old
+    else 调整堆
+        S->>G: growproc(new_addr - old)
+        G-->>S: 成功/失败
+        S-->>U: 返回结果
+    end
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="5-growproc决定扩容还是缩容">5. <code>growproc</code>：决定扩容还是缩容<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-growproc决定扩容还是缩容" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>growproc</code> 是地址空间调整过程中的分发层。<br/>
+它根据增量 <code>n</code> 的正负决定调用哪条路径：</p>
+<ul>
+<li><code>n > 0</code>：调用 <code>uvmalloc</code></li>
+<li><code>n &lt; 0</code>：调用 <code>uvmdealloc</code></li>
+</ul>
+<p>因此，<code>growproc</code> 的职责不是执行具体的页分配或释放，而是根据地址空间变化方向，把请求转发到相应的实现函数。</p>
+<hr/>
+<h2 id="6-uvmalloc为新增虚拟地址区间建立可访问空间">6. <code>uvmalloc</code>：为新增虚拟地址区间建立可访问空间<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-uvmalloc为新增虚拟地址区间建立可访问空间" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>uvmalloc</code> 用于扩展用户地址空间。<br/>
+其主要过程包括：</p>
+<ol>
+<li>将 <code>oldsz</code> 向上对齐到页边界</li>
+<li>按页遍历新增的虚拟地址区间</li>
+<li>对每一页调用 <code>kalloc()</code> 分配物理页</li>
+<li>对物理页执行清零</li>
+<li>使用 <code>mappages()</code> 建立虚拟页到物理页的映射</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;uvmalloc(oldsz, newsz)\&quot;] --> B[oldsz 向上页对齐]\n    B --> C[遍历每个新增虚拟页 a]\n    C --> D[kalloc 获取 1 个物理页 mem]\n    D --> E[\&quot;memset(mem, 0, PGSIZE)\&quot;]\n    E --> F[mappages 建立映射]\n    F --> G[继续下一页]&quot;">flowchart TD
+    A[&quot;uvmalloc(oldsz, newsz)&quot;] --> B[oldsz 向上页对齐]
+    B --> C[遍历每个新增虚拟页 a]
+    C --> D[kalloc 获取 1 个物理页 mem]
+    D --> E[&quot;memset(mem, 0, PGSIZE)&quot;]
+    E --> F[mappages 建立映射]
+    F --> G[继续下一页]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="物理页清零的原因">物理页清零的原因<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#物理页清零的原因" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>新分配的物理页通常需要清零，以避免旧数据残留。<br/>
+这样可以确保新映射到用户空间的页面在初始状态下内容可控，并避免泄露先前使用者的数据。</p>
+<hr/>
+<h2 id="7-mappages建立虚拟页到物理页的映射">7. <code>mappages</code>：建立虚拟页到物理页的映射<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-mappages建立虚拟页到物理页的映射" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>mappages</code> 的职责是在页表中写入映射关系。<br/>
+它并不负责分配物理页，而是在已有物理页的前提下，把该物理页映射到指定虚拟地址。</p>
+<p>其核心过程为：</p>
+<ol>
+<li>调用 <code>walk(pagetable, va, alloc)</code> 找到目标虚拟地址对应的最终页表项地址</li>
+<li>将物理页号、权限位和有效位写入该页表项</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[虚拟地址 va] --> B[walk 找到最终 PTE]\n    B --> C[组合物理页号与权限位]\n    C --> D[写入 PTE]\n    D --> E[映射建立完成]&quot;">flowchart TD
+    A[虚拟地址 va] --> B[walk 找到最终 PTE]
+    B --> C[组合物理页号与权限位]
+    C --> D[写入 PTE]
+    D --> E[映射建立完成]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>因此可以明确区分：</p>
+<ul>
+<li><code>kalloc</code> 负责提供物理页</li>
+<li><code>mappages</code> 负责建立映射关系</li>
+</ul>
+<p>二者分别对应“资源分配”和“地址翻译配置”两个不同层面。</p>
+<hr/>
+<h2 id="8-walk在三级页表中定位目标页表项">8. <code>walk</code>：在三级页表中定位目标页表项<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-walk在三级页表中定位目标页表项" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在 Sv39 机制下，页表采用三级结构。<br/>
+虚拟地址会被拆分为：</p>
+<ul>
+<li>第 2 级索引</li>
+<li>第 1 级索引</li>
+<li>第 0 级索引</li>
+<li>页内偏移</li>
+</ul>
+<p><code>walk</code> 的任务是依据这三级索引，从顶层页表逐层向下查找，最终定位到某个虚拟页对应的叶子页表项。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    VA[虚拟地址 VA]\n    VA --> L2[取 L2 索引]\n    L2 --> PT2[顶级页表]\n    PT2 --> L1[取 L1 索引]\n    L1 --> PT1[二级页表]\n    PT1 --> L0[取 L0 索引]\n    L0 --> PT0[三级页表]\n    PT0 --> PTE[最终叶子 PTE]\n    PTE --> OFF[页内偏移]&quot;">flowchart TD
+    VA[虚拟地址 VA]
+    VA --> L2[取 L2 索引]
+    L2 --> PT2[顶级页表]
+    PT2 --> L1[取 L1 索引]
+    L1 --> PT1[二级页表]
+    PT1 --> L0[取 L0 索引]
+    L0 --> PT0[三级页表]
+    PT0 --> PTE[最终叶子 PTE]
+    PTE --> OFF[页内偏移]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="walk-的两种行为"><code>walk</code> 的两种行为<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#walk-的两种行为" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="81-下一级页表已存在">8.1 下一级页表已存在<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#81-下一级页表已存在" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>若当前层页表项有效，说明它已经指向下一级页表。<br/>
+此时 <code>walk</code> 会沿该指针继续向下遍历。</p>
+<h4 id="82-下一级页表不存在">8.2 下一级页表不存在<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#82-下一级页表不存在" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>若当前层页表项无效，而 <code>alloc = 1</code>，则 <code>walk</code> 会：</p>
+<ol>
+<li>调用 <code>kalloc()</code> 分配新的页表页</li>
+<li>将该页表页清零</li>
+<li>把它的地址写入当前层页表项</li>
+<li>继续向下遍历</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;walk(pagetable, va, alloc)\&quot;] --> B[从 level=2 开始]\n    B --> C{当前层 PTE 有效?}\n    C -- 是 --> D[进入下一级页表]\n    D --> E{已到叶子层?}\n    E -- 否 --> C\n    E -- 是 --> F[返回最终 PTE 地址]\n\n    C -- 否 --> G{alloc == 1?}\n    G -- 否 --> H[返回 NULL]\n    G -- 是 --> I[kalloc 新页表页]\n    I --> J[memset 清零]\n    J --> K[写入当前层 PTE]\n    K --> E&quot;">flowchart TD
+    A[&quot;walk(pagetable, va, alloc)&quot;] --> B[从 level=2 开始]
+    B --> C{当前层 PTE 有效?}
+    C -- 是 --> D[进入下一级页表]
+    D --> E{已到叶子层?}
+    E -- 否 --> C
+    E -- 是 --> F[返回最终 PTE 地址]
+
+    C -- 否 --> G{alloc == 1?}
+    G -- 否 --> H[返回 NULL]
+    G -- 是 --> I[kalloc 新页表页]
+    I --> J[memset 清零]
+    J --> K[写入当前层 PTE]
+    K --> E
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这说明：<br/>
+在建立某个数据页映射时，系统除了可能分配数据页本身，还可能额外分配新的页表页。</p>
+<hr/>
+<h2 id="9-kalloc--kfree物理页分配器">9. <code>kalloc / kfree</code>：物理页分配器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-kalloc--kfree物理页分配器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>xv6 的物理内存分配器采用空闲页链表实现。<br/>
+空闲链表中的每个节点代表一个未使用的物理页。</p>
+<p>其操作方式如下：</p>
+<ul>
+<li><code>kalloc()</code>：从空闲链表中取出一个页</li>
+<li><code>kfree()</code>：将一个页重新放回空闲链表</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[free list 空闲页链表] --> B[kalloc: 取出表头页]\n    B --> C[返回 1 个 4KB 物理页]\n    D[待释放的物理页] --> E[kfree]\n    E --> F[挂回 free list 表头]&quot;">flowchart TD
+    A[free list 空闲页链表] --> B[kalloc: 取出表头页]
+    B --> C[返回 1 个 4KB 物理页]
+    D[待释放的物理页] --> E[kfree]
+    E --> F[挂回 free list 表头]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>由于分配粒度固定为页，因此该分配器结构简单，适合 xv6 这样的教学系统。</p>
+<hr/>
+<h2 id="10-释放路径uvmdealloc--vmunmap--walk--kfree">10. 释放路径：<code>uvmdealloc → vmunmap → walk → kfree</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-释放路径uvmdealloc--vmunmap--walk--kfree" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>当进程缩小堆或释放用户空间时，会沿相反方向执行回收流程：</p>
+<ol>
+<li>确定哪些虚拟页不再需要</li>
+<li>通过页表找到这些虚拟页对应的页表项</li>
+<li>解除映射关系</li>
+<li>将对应物理页归还给分配器</li>
+</ol>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[缩小堆 / 释放内存] --> B[uvmdealloc]\n    B --> C[vmunmap]\n    C --> D[walk 找到对应 PTE]\n    D --> E[清除映射]\n    E --> F{需要释放物理页?}\n    F -- 是 --> G[kfree]\n    F -- 否 --> H[仅解除映射]&quot;">flowchart TD
+    A[缩小堆 / 释放内存] --> B[uvmdealloc]
+    B --> C[vmunmap]
+    C --> D[walk 找到对应 PTE]
+    D --> E[清除映射]
+    E --> F{需要释放物理页?}
+    F -- 是 --> G[kfree]
+    F -- 否 --> H[仅解除映射]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这里的顺序很重要：<br/>
+必须先拆除页表映射，再归还物理页。<br/>
+否则，页表中仍可能保留指向已释放页的条目，从而导致错误访问。</p>
+<hr/>
+<h2 id="11-整体机制的分层理解">11. 整体机制的分层理解<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-整体机制的分层理解" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[用户层: brk / sbrk 等堆增长请求]\n    A --> B[进程层: growproc]\n    B --> C[虚拟内存层: uvmalloc / uvmdealloc]\n    C --> D[页表层: mappages / vmunmap]\n    D --> E[页表遍历层: walk]\n    E --> F[物理内存层: kalloc / kfree]\n    F --> G[真实物理页]&quot;">flowchart TD
+    A[用户层: brk / sbrk 等堆增长请求]
+    A --> B[进程层: growproc]
+    B --> C[虚拟内存层: uvmalloc / uvmdealloc]
+    C --> D[页表层: mappages / vmunmap]
+    D --> E[页表遍历层: walk]
+    E --> F[物理内存层: kalloc / kfree]
+    F --> G[真实物理页]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这一分层说明：</p>
+<ul>
+<li>上层接口表达的是“地址空间需求”</li>
+<li>中层负责管理虚拟地址区间</li>
+<li>页表层负责维护映射关系</li>
+<li>最底层才真正操作物理页</li>
+</ul>
+<hr/>
+<h2 id="12-示例brkcur--64-的执行过程">12. 示例：<code>brk(cur + 64)</code> 的执行过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-示例brkcur--64-的执行过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;sequenceDiagram\n    participant U as 用户程序\n    participant SB as sys_brk\n    participant GP as growproc\n    participant UV as uvmalloc\n    participant MP as mappages\n    participant WK as walk\n    participant KA as kalloc\n\n    U->>SB: brk(cur + 64)\n    SB->>SB: old = p->sz\n    SB->>GP: growproc(64)\n    GP->>UV: uvmalloc(old, old+64)\n\n    alt 未跨越新页边界\n        UV-->>GP: 无需分配新物理页\n    else 跨入新页\n        UV->>KA: kalloc()\n        KA-->>UV: 返回新物理页\n        UV->>MP: 建立映射\n        MP->>WK: walk(..., alloc=1)\n        WK-->>MP: 返回目标 PTE\n        MP-->>UV: 写入 PTE\n    end\n\n    UV-->>GP: 返回 newsz\n    GP-->>SB: 更新 p->sz\n    SB-->>U: 成功&quot;">sequenceDiagram
+    participant U as 用户程序
+    participant SB as sys_brk
+    participant GP as growproc
+    participant UV as uvmalloc
+    participant MP as mappages
+    participant WK as walk
+    participant KA as kalloc
+
+    U->>SB: brk(cur + 64)
+    SB->>SB: old = p->sz
+    SB->>GP: growproc(64)
+    GP->>UV: uvmalloc(old, old+64)
+
+    alt 未跨越新页边界
+        UV-->>GP: 无需分配新物理页
+    else 跨入新页
+        UV->>KA: kalloc()
+        KA-->>UV: 返回新物理页
+        UV->>MP: 建立映射
+        MP->>WK: walk(..., alloc=1)
+        WK-->>MP: 返回目标 PTE
+        MP-->>UV: 写入 PTE
+    end
+
+    UV-->>GP: 返回 newsz
+    GP-->>SB: 更新 p->sz
+    SB-->>U: 成功
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这个例子说明：</p>
+<p>用户请求增加 64B，并不意味着系统一定会分配 64B 的物理内存。<br/>
+只有在新增地址空间跨越页边界时，内核才需要分配新的物理页并建立映射。</p>
+<hr/>
+<h2 id="13-容易混淆的几点">13. 容易混淆的几点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#13-容易混淆的几点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="131-brk-与-kalloc-不属于同一层">13.1 <code>brk</code> 与 <code>kalloc</code> 不属于同一层<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#131-brk-与-kalloc-不属于同一层" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>brk</code> 是用户地址空间调整接口。<br/>
+<code>kalloc</code> 是物理页分配器。<br/>
+二者之间还经过 <code>growproc</code>、<code>uvmalloc</code>、<code>mappages</code>、<code>walk</code> 等多层处理。</p>
+<h3 id="132-mappages-不是物理页分配器">13.2 <code>mappages</code> 不是物理页分配器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#132-mappages-不是物理页分配器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>mappages</code> 只负责写页表项。<br/>
+它不从空闲内存池中取页。<br/>
+物理页的实际来源是 <code>kalloc</code>。</p>
+<h3 id="133-walk-不仅用于查询">13.3 <code>walk</code> 不仅用于查询<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#133-walk-不仅用于查询" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>当 <code>alloc = 1</code> 时，<code>walk</code> 在发现中间层页表缺失时，会主动分配新的页表页并补齐页表层级。</p>
+<h3 id="134-地址空间按字节变化与底层按页分配并不矛盾">13.4 地址空间按字节变化，与底层按页分配并不矛盾<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#134-地址空间按字节变化与底层按页分配并不矛盾" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>前者是进程接口层面的语义。<br/>
+后者是内核实现层面的管理粒度。<br/>
+因此，堆顶调整与物理页分配之间并不是一一对应关系。</p>
+<hr/>
+<h2 id="14-总结">14. 总结<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#14-总结" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>xv6 的内存分配机制可以概括为如下过程：</p>
+<p><code>brk</code> 负责提出堆顶调整请求；<br/>
+<code>growproc</code> 根据增减方向调用 <code>uvmalloc</code> 或 <code>uvmdealloc</code>；<br/>
+<code>uvmalloc</code> 按页处理新增虚拟地址区间，调用 <code>kalloc</code> 分配物理页并清零，再通过 <code>mappages</code> 建立映射；<br/>
+<code>mappages</code> 使用 <code>walk</code> 找到最终页表项，将物理页号和权限写入页表；<br/>
+如果页表层级缺失，<code>walk</code> 会在需要时额外分配页表页；<br/>
+释放内存时则执行相反过程，先拆除映射，再通过 <code>kfree</code> 回收物理页。</p>
+<hr/>
+<h1 id="xv6-mmap--munmap-实现笔记">xv6 mmap / munmap 实现笔记<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#xv6-mmap--munmap-实现笔记" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="1-任务目标">1. 任务目标<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-任务目标" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>补全 <code>kernel/sysproc.c</code> 中的两个空函数：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">uint64 </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">sys_mmap</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">void</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) { }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">uint64 </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">sys_munmap</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">void</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) { }</span></span></code></pre></figure>
+<p>使其能够正确处理用户态的 <code>mmap</code> / <code>munmap</code> 系统调用，并通过相关的测例。</p>
+<hr/>
+<h2 id="2-问题分析从-unknown-sys-call-80-说起">2. 问题分析：从 “unknown sys call 80” 说起<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-问题分析从-unknown-sys-call-80-说起" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在最初只补全了 <code>sys_mmap</code> 和 <code>sys_munmap</code> 的函数体后，运行测例出现了：</p>
+<pre><code>pid 27 mmap: unknown sys call 80
+file len: 0
+mmap error.
+</code></pre>
+<p><strong>原因</strong>：测例使用的是 <strong>Linux RISC-V ABI</strong> 的系统调用号。它在调用 <code>mmap</code> 之前，先用 <code>fstat(fd, &amp;st)</code> 获取文件大小，而 Linux 上 <code>fstat</code> 的编号是 <code>80</code>，内核里原来的 <code>SYS_fstat</code> 定义为 <code>8</code>（xv6 旧编号）。</p>
+<p><strong>修复</strong>：在 <code>kernel/include/sysnum.h</code> 中修正编号：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> SYS_fstat</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 80</span></span></code></pre></figure>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>系统调用号对齐 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>如果后续再出现 <code>unknown sys call XX</code>，多半也是编号没对齐 Linux ABI。常见号：</p>
+<ul>
+<li><code>read</code> = 63, <code>write</code> = 64, <code>open</code> = 55, <code>close</code> = 57 等。</li>
+</ul>
+</div>
+</blockquote>
+<hr/>
+<h2 id="3-基础设施为每个进程引入-vma">3. 基础设施：为每个进程引入 VMA<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-基础设施为每个进程引入-vma" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p><code>mmap</code> 需要记录“哪段虚拟地址映射了哪个文件的哪一段”。xv6 原生没有 VMA（Virtual Memory Area）结构，需要先补数据结构。</p>
+<h3 id="31-新增-struct-vmakernelincludeproch">3.1 新增 <code>struct vma</code>（<code>kernel/include/proc.h</code>）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#31-新增-struct-vmakernelincludeproch" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> NVMA</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 16</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> vma {</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> used;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  uint64 addr;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">      // 起始虚拟地址</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> len;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">          // 映射长度（页对齐后）</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> prot;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">         // PROT_READ / PROT_WRITE / PROT_EXEC</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> flags;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        // MAP_SHARED / MAP_PRIVATE / MAP_ANONYMOUS / MAP_FIXED</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> file </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">*</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">f;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   // 关联文件（匿名映射为 0）</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  uint64 offset;</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">    // 文件内偏移</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">};</span></span></code></pre></figure>
+<p>然后在 <code>struct proc</code> 中增加：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">struct</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> vma </span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">vma</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[NVMA];</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   // mmap 区域表</span></span></code></pre></figure>
+<h3 id="32-定义-mmap-区域起始地址kernelincludememlayouth">3.2 定义 mmap 区域起始地址（<code>kernel/include/memlayout.h</code>）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#32-定义-mmap-区域起始地址kernelincludememlayouth" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> MMAP_START</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  0x</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">60000000</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">L</span></span></code></pre></figure>
+<p>这个地址选得比常规堆高，且低于 <code>TRAMPOLINE</code> / <code>TRAPFRAME</code>，不会和普通进程内存冲突。</p>
+<h3 id="33-导出-walk-声明kernelincludevmh">3.3 导出 <code>walk</code> 声明（<code>kernel/include/vm.h</code>）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#33-导出-walk-声明kernelincludevmh" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>fork</code> 复制父进程 mmap 页表时需要手动查页表，所以把 <code>walk()</code> 在 <code>vm.h</code> 里声明为外部可见：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">pte_t</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">walk</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">pagetable_t</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, uint64, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<hr/>
+<h2 id="4-进程生命周期中对-vma-的处理kernelprocc">4. 进程生命周期中对 VMA 的处理（<code>kernel/proc.c</code>）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-进程生命周期中对-vma-的处理kernelprocc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="41-allocproc初始化">4.1 <code>allocproc</code>：初始化<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#41-allocproc初始化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在 <code>allocproc</code> 返回前，清零所有 <code>vma</code>：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> NVMA; i</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">++</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  p</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">-></span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">vma</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">[i].used </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<h3 id="42-freeproc清理">4.2 <code>freeproc</code>：清理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#42-freeproc清理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>进程退出或被回收时，必须把 mmap 区域占用的物理页和页表映射全部释放：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">; i </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> NVMA; i</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">++</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">){</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(p->vma[i].used){</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    vmunmap</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(p->pagetable, p->vma[i].addr, p->vma[i].len </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PGSIZE, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    vmunmap</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(p->kpagetable, p->vma[i].addr, p->vma[i].len </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">/</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PGSIZE, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">    if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(p->vma[i].f)</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">      fileclose</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(p->vma[i].f);</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">    p->vma[i].used </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span></code></pre></figure>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<ul>
+<li>用户页表 <code>pagetable</code> 需要 <code>do_free=1</code>，释放物理页。</li>
+<li>内核页表 <code>kpagetable</code> 只需解除映射，<code>do_free=0</code>，因为物理页已经被上面释放了。</li>
+</ul>
+</div>
+</blockquote>
+<h3 id="43-fork复制-mmap-区域">4.3 <code>fork</code>：复制 mmap 区域<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#43-fork复制-mmap-区域" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>父进程 fork 时，子进程需要深拷贝 mmap 区域：</p>
+<ol>
+<li><strong>逐页复制物理内存</strong>：遍历父进程 <code>vma</code> 对应的每一页，如果页表项有效（<code>PTE_V</code>），<code>kalloc</code> 申请新页，<code>memmove</code> 复制内容。</li>
+<li><strong>重建子进程页表映射</strong>：分别映射到子进程的 <code>pagetable</code> 和 <code>kpagetable</code>。</li>
+<li><strong>复制 <code>vma</code> 元数据并增加文件引用计数</strong>：<code>np->vma[i] = p->vma[i]</code>，如果 <code>f</code> 非空则 <code>filedup(f)</code>。</li>
+</ol>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>错误处理 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>如果中间某一步内存分配失败，必须回滚已经映射到子进程的那部分页表和物理页，再调用 <code>freeproc(np)</code> 返回 <code>-1</code>。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="5-sys_mmap-实现细节kernelsysprocc">5. <code>sys_mmap</code> 实现细节（<code>kernel/sysproc.c</code>）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-sys_mmap-实现细节kernelsysprocc" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="51-参数约定">5.1 参数约定<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#51-参数约定" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>按 Linux RISC-V ABI，<code>mmap</code> 的参数顺序是：</p>
+<pre><code>a0=addr, a1=length, a2=prot, a3=flags, a4=fd, a5=offset
+</code></pre>
+<p>支持的 flag：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> PROT_READ</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">     1</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> PROT_WRITE</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    2</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> PROT_EXEC</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">     4</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> MAP_SHARED</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">    1</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> MAP_PRIVATE</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">   2</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> MAP_FIXED</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">     0x</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">10</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">#define</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> MAP_ANONYMOUS</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> 0x</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">20</span></span>
+<span data-line> </span></code></pre></figure>
+<h3 id="52-主要流程">5.2 主要流程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#52-主要流程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ol>
+<li><strong>参数校验</strong>：长度必须为正；<code>prot</code> 不能包含未定义位；非匿名映射时检查 fd 合法性及文件读写权限。</li>
+<li><strong>地址分配</strong>：</li>
+</ol>
+<p>   - <code>MAP_FIXED</code>：严格使用传入地址，检查是否和已有 <code>vma</code> 重叠。</p>
+<p>   - 非 <code>MAP_FIXED</code>：从 <code>MMAP_START</code> 开始，向后找到第一个足够大的空闲间隙（暴力扫描 <code>vma</code> 数组）。</p>
+<ol start="3">
+<li><strong>页表映射</strong>：</li>
+</ol>
+<p>   - 按页分配物理内存（<code>kalloc</code> + <code>memset(..., 0, PGSIZE)</code>）。</p>
+<p>   - 根据 <code>prot</code> 构造 PTE flags（<code>PTE_R/W/X/U</code>）。</p>
+<p>   - 先映射用户页表，再映射内核页表（权限去掉 <code>PTE_U</code>）。</p>
+<p>   - 任何一步失败都要回滚已分配的页。</p>
+<ol start="4">
+<li><strong>文件回填</strong>（如果是文件映射）：</li>
+</ol>
+<p>   - <code>elock(f->ep)</code> 后循环调用 <code>eread(f->ep, 0, va, off, n)</code> 把文件内容读到刚分配的物理页。</p>
+<p>   - <code>eunlock(f->ep)</code>。</p>
+<ol start="5">
+<li><strong>记录 VMA</strong>：找一个空闲 <code>vma</code> 槽位，填入本次映射的元数据。</li>
+<li><strong>返回虚拟起始地址</strong>。</li>
+</ol>
+<h3 id="53-关键代码片段">5.3 关键代码片段<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#53-关键代码片段" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> perm </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PTE_U;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(prot </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PROT_READ)  perm </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PTE_R;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(prot </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PROT_WRITE) perm </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PTE_W;</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(prot </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PROT_EXEC)  perm </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">|=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PTE_X;</span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">  </span></span>
+<span data-line> </span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">for</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(a </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> addr; a </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&lt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> addr </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> len; a </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> PGSIZE){</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  char</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">mem </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> kalloc</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">();</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(mem </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">==</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> NULL</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> /* 回滚 */</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }</span></span>
+<span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  memset</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(mem, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, PGSIZE);</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">mappages</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(p->pagetable, a, PGSIZE, (uint64)mem, perm) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> /* 回滚 */</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">  if</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">mappages</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(p->kpagetable, a, PGSIZE, (uint64)mem, perm </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&amp;</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> ~</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">PTE_U) </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">!=</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 0</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">) {</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> /* 回滚 */</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> }</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">}</span></span>
+<span data-line> </span></code></pre></figure>
+<hr/>
+<h2 id="6-sys_munmap-实现细节">6. <code>sys_munmap</code> 实现细节<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-sys_munmap-实现细节" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="61-参数与限制">6.1 参数与限制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#61-参数与限制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li><code>addr</code> 必须页对齐。</li>
+<li><code>length</code> 必须为正。</li>
+<li>查找覆盖 <code>addr</code> 的 <code>vma</code>。</li>
+<li>当前实现支持：</li>
+</ul>
+<p>  - <strong>完全释放</strong> <code>len == v->len</code></p>
+<p>  - <strong>从头部截断</strong> <code>addr == v->addr</code></p>
+<p>  - <strong>从尾部截断</strong> <code>addr + len == v->addr + v->len</code></p>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Caution</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>中间部分 munmap（把一段 vma 分成两段）在这个实现里暂不处理。如果测例有此类需求，需要把单个 <code>vma</code> 拆成两个。</p>
+</div>
+</blockquote>
+<h3 id="62-释放流程">6.2 释放流程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#62-释放流程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ol>
+<li>用 <code>vmunmap</code> 分别解除用户页表和内核页表的映射（用户侧释放物理页）。</li>
+<li>如果是整个 VMA 释放，关闭关联文件并标记 <code>used = 0</code>。</li>
+<li>如果是部分释放，仅调整 <code>vma->addr</code> / <code>vma->len</code> / <code>vma->offset</code>。</li>
+</ol>
+<hr/>
+<h2 id="7-修改清单">7. 修改清单<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-修改清单" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>文件</th><th>修改内容</th></tr></thead><tbody><tr><td><code>kernel/include/proc.h</code></td><td>新增 <code>struct vma</code>、<code>NVMA</code>；在 <code>struct proc</code> 中增加 <code>vma[NVMA]</code></td></tr><tr><td><code>kernel/include/memlayout.h</code></td><td>新增 <code>MMAP_START</code></td></tr><tr><td><code>kernel/include/vm.h</code></td><td>导出 <code>walk()</code> 声明</td></tr><tr><td><code>kernel/include/sysnum.h</code></td><td><code>SYS_fstat</code> 改为 <code>80</code></td></tr><tr><td><code>kernel/proc.c</code></td><td><code>allocproc</code> / <code>freeproc</code> / <code>fork</code> 中处理 VMA</td></tr><tr><td><code>kernel/sysproc.c</code></td><td>补全 <code>sys_mmap</code> 和 <code>sys_munmap</code></td></tr></tbody></table></div>
+<hr/></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-151" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#xv6-内存分配机制" data-for="xv6-内存分配机制">xv6 内存分配机制</a></li><li class="depth-1"><a href="#0-核心概念" data-for="0-核心概念">0. 核心概念</a></li><li class="depth-1"><a href="#1-需要区分的几个对象" data-for="1-需要区分的几个对象">1. 需要区分的几个对象</a></li><li class="depth-2"><a href="#11-堆顶-sz" data-for="11-堆顶-sz">1.1 堆顶 sz</a></li><li class="depth-2"><a href="#12-虚拟页" data-for="12-虚拟页">1.2 虚拟页</a></li><li class="depth-2"><a href="#13-页表项-pte" data-for="13-页表项-pte">1.3 页表项 PTE</a></li><li class="depth-2"><a href="#14-物理页" data-for="14-物理页">1.4 物理页</a></li><li class="depth-1"><a href="#2-从-brk-到可访问内存的总体流程" data-for="2-从-brk-到可访问内存的总体流程">2. 从 brk 到可访问内存的总体流程</a></li><li class="depth-1"><a href="#3-为什么接口按字节变化而底层按页分配" data-for="3-为什么接口按字节变化而底层按页分配">3. 为什么接口按字节变化，而底层按页分配</a></li><li class="depth-2"><a href="#示例" data-for="示例">示例</a></li><li class="depth-1"><a href="#4-sys_brk调整堆顶的系统调用入口" data-for="4-sys_brk调整堆顶的系统调用入口">4. sys_brk：调整堆顶的系统调用入口</a></li><li class="depth-1"><a href="#5-growproc决定扩容还是缩容" data-for="5-growproc决定扩容还是缩容">5. growproc：决定扩容还是缩容</a></li><li class="depth-1"><a href="#6-uvmalloc为新增虚拟地址区间建立可访问空间" data-for="6-uvmalloc为新增虚拟地址区间建立可访问空间">6. uvmalloc：为新增虚拟地址区间建立可访问空间</a></li><li class="depth-2"><a href="#物理页清零的原因" data-for="物理页清零的原因">物理页清零的原因</a></li><li class="depth-1"><a href="#7-mappages建立虚拟页到物理页的映射" data-for="7-mappages建立虚拟页到物理页的映射">7. mappages：建立虚拟页到物理页的映射</a></li><li class="depth-1"><a href="#8-walk在三级页表中定位目标页表项" data-for="8-walk在三级页表中定位目标页表项">8. walk：在三级页表中定位目标页表项</a></li><li class="depth-2"><a href="#walk-的两种行为" data-for="walk-的两种行为">walk 的两种行为</a></li><li class="depth-1"><a href="#9-kalloc--kfree物理页分配器" data-for="9-kalloc--kfree物理页分配器">9. kalloc / kfree：物理页分配器</a></li><li class="depth-1"><a href="#10-释放路径uvmdealloc--vmunmap--walk--kfree" data-for="10-释放路径uvmdealloc--vmunmap--walk--kfree">10. 释放路径：uvmdealloc → vmunmap → walk → kfree</a></li><li class="depth-1"><a href="#11-整体机制的分层理解" data-for="11-整体机制的分层理解">11. 整体机制的分层理解</a></li><li class="depth-1"><a href="#12-示例brkcur--64-的执行过程" data-for="12-示例brkcur--64-的执行过程">12. 示例：brk(cur + 64) 的执行过程</a></li><li class="depth-1"><a href="#13-容易混淆的几点" data-for="13-容易混淆的几点">13. 容易混淆的几点</a></li><li class="depth-2"><a href="#131-brk-与-kalloc-不属于同一层" data-for="131-brk-与-kalloc-不属于同一层">13.1 brk 与 kalloc 不属于同一层</a></li><li class="depth-2"><a href="#132-mappages-不是物理页分配器" data-for="132-mappages-不是物理页分配器">13.2 mappages 不是物理页分配器</a></li><li class="depth-2"><a href="#133-walk-不仅用于查询" data-for="133-walk-不仅用于查询">13.3 walk 不仅用于查询</a></li><li class="depth-2"><a href="#134-地址空间按字节变化与底层按页分配并不矛盾" data-for="134-地址空间按字节变化与底层按页分配并不矛盾">13.4 地址空间按字节变化，与底层按页分配并不矛盾</a></li><li class="depth-1"><a href="#14-总结" data-for="14-总结">14. 总结</a></li><li class="depth-0"><a href="#xv6-mmap--munmap-实现笔记" data-for="xv6-mmap--munmap-实现笔记">xv6 mmap / munmap 实现笔记</a></li><li class="depth-1"><a href="#1-任务目标" data-for="1-任务目标">1. 任务目标</a></li><li class="depth-1"><a href="#2-问题分析从-unknown-sys-call-80-说起" data-for="2-问题分析从-unknown-sys-call-80-说起">2. 问题分析：从 “unknown sys call 80” 说起</a></li><li class="depth-1"><a href="#3-基础设施为每个进程引入-vma" data-for="3-基础设施为每个进程引入-vma">3. 基础设施：为每个进程引入 VMA</a></li><li class="depth-2"><a href="#31-新增-struct-vmakernelincludeproch" data-for="31-新增-struct-vmakernelincludeproch">3.1 新增 struct vma（kernel/include/proc.h）</a></li><li class="depth-2"><a href="#32-定义-mmap-区域起始地址kernelincludememlayouth" data-for="32-定义-mmap-区域起始地址kernelincludememlayouth">3.2 定义 mmap 区域起始地址（kernel/include/memlayout.h）</a></li><li class="depth-2"><a href="#33-导出-walk-声明kernelincludevmh" data-for="33-导出-walk-声明kernelincludevmh">3.3 导出 walk 声明（kernel/include/vm.h）</a></li><li class="depth-1"><a href="#4-进程生命周期中对-vma-的处理kernelprocc" data-for="4-进程生命周期中对-vma-的处理kernelprocc">4. 进程生命周期中对 VMA 的处理（kernel/proc.c）</a></li><li class="depth-2"><a href="#41-allocproc初始化" data-for="41-allocproc初始化">4.1 allocproc：初始化</a></li><li class="depth-2"><a href="#42-freeproc清理" data-for="42-freeproc清理">4.2 freeproc：清理</a></li><li class="depth-2"><a href="#43-fork复制-mmap-区域" data-for="43-fork复制-mmap-区域">4.3 fork：复制 mmap 区域</a></li><li class="depth-1"><a href="#5-sys_mmap-实现细节kernelsysprocc" data-for="5-sys_mmap-实现细节kernelsysprocc">5. sys_mmap 实现细节（kernel/sysproc.c）</a></li><li class="depth-2"><a href="#51-参数约定" data-for="51-参数约定">5.1 参数约定</a></li><li class="depth-2"><a href="#52-主要流程" data-for="52-主要流程">5.2 主要流程</a></li><li class="depth-2"><a href="#53-关键代码片段" data-for="53-关键代码片段">5.3 关键代码片段</a></li><li class="depth-1"><a href="#6-sys_munmap-实现细节" data-for="6-sys_munmap-实现细节">6. sys_munmap 实现细节</a></li><li class="depth-2"><a href="#61-参数与限制" data-for="61-参数与限制">6.1 参数与限制</a></li><li class="depth-2"><a href="#62-释放流程" data-for="62-释放流程">6.2 释放流程</a></li><li class="depth-1"><a href="#7-修改清单" data-for="7-修改清单">7. 修改清单</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}container;content;isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>
