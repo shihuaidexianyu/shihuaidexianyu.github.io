@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>lecture5</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="lecture5"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="lecture5"/><meta name="twitter:description" content="内存管理概述 flowchart TB R[寄存器] L1[L1 Cache] L2[L2 Cache] L3[L3 Cache] M[内存] D1[本地磁盘] D2[远程磁盘] R --> L1 --> L2 --> L3 --> M --> D1 --> D2 1."/><meta property="og:description" content="内存管理概述 flowchart TB R[寄存器] L1[L1 Cache] L2[L2 Cache] L3[L3 Cache] M[内存] D1[本地磁盘] D2[远程磁盘] R --> L1 --> L2 --> L3 --> M --> D1 --> D2 1."/><meta property="og:image:alt" content="内存管理概述 flowchart TB R[寄存器] L1[L1 Cache] L2[L2 Cache] L3[L3 Cache] M[内存] D1[本地磁盘] D2[远程磁盘] R --> L1 --> L2 --> L3 --> M --> D1 --> D2 1."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/lecture/lecture5"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/lecture/lecture5"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="内存管理概述 flowchart TB R[寄存器] L1[L1 Cache] L2[L2 Cache] L3[L3 Cache] M[内存] D1[本地磁盘] D2[远程磁盘] R --> L1 --> L2 --> L3 --> M --> D1 --> D2 1."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/lecture/lecture5"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-234"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-234" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/lecture/">lecture</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lecture5</a></div></nav><h1 class="article-title">lecture5</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-14T09:52:43.847Z">Apr 14, 2026</time><span>32 min read</span></p></div></div><article class="popover-hint"><h1 id="内存管理概述">内存管理概述<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#内存管理概述" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    R[寄存器]\n    L1[L1 Cache]\n    L2[L2 Cache]\n    L3[L3 Cache]\n    M[内存]\n    D1[本地磁盘]\n    D2[远程磁盘]\n\n    R --> L1 --> L2 --> L3 --> M --> D1 --> D2&quot;">flowchart TB
+    R[寄存器]
+    L1[L1 Cache]
+    L2[L2 Cache]
+    L3[L3 Cache]
+    M[内存]
+    D1[本地磁盘]
+    D2[远程磁盘]
+
+    R --> L1 --> L2 --> L3 --> M --> D1 --> D2
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="1-内存管理的范围与演化">1. 内存管理的范围与演化<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-内存管理的范围与演化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>内存管理并不等同于虚拟内存管理。虚拟内存只是内存管理发展到较高阶段后的结果之一；更早期的内存管理已经涉及程序装入、地址重定位、存储保护、空闲空间分配与回收等问题。内存管理的演化主线，是从“物理内存直接使用”逐步走向“多道程序共享内存”，再走向“以地址空间为中心的抽象”，最后发展到“以虚拟化方式组织更大、更灵活的存储视图”。</p>
+<p>程序只有装入内存才能运行。程序长期以可执行文件形式存放在磁盘中，装入之后才成为进程。多道程序设计使多个程序同时驻留内存，分时共享又进一步强化了并发执行需求。由此带来的直接后果，是程序地址不能再假定为固定物理地址，进程之间也必须彼此隔离，处理器还必须阻止越权操作。内存管理因此承担三类基础责任：为进程建立可用地址空间，将地址空间映射到物理内存，并通过保护机制维持隔离与权限边界。</p>
+<p>局部性原理与存储体系构成了内存管理进一步复杂化的硬件背景。程序在任意时刻只会频繁访问一小部分代码和数据，因此现代系统把寄存器、高速缓存、主存和磁盘组织成层次化存储体系，以不同的速度、容量和成本取得折中。内存管理并不是孤立的软件机制，而是位于处理器、缓存、主存与外存之间的关键协调层。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[早期物理内存直接使用] --> B[单程序连续装入]\n    B --> C[多道程序设计]\n    C --> D[分时共享]\n    D --> E[地址空间抽象]\n    E --> F[虚拟内存]&quot;">flowchart TD
+    A[早期物理内存直接使用] --> B[单程序连续装入]
+    B --> C[多道程序设计]
+    C --> D[分时共享]
+    D --> E[地址空间抽象]
+    E --> F[虚拟内存]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="2-地址空间对内存的抽象">2. 地址空间：对内存的抽象<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-地址空间对内存的抽象" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>地址空间是进程可见内存的抽象视图，而不是物理内存本身。它把“程序正在使用什么地址”与“这些内容实际放在什么物理位置”分离开来，使程序能够在不知道自身最终物理装入位置的前提下运行。地址空间抽象解决了多道环境中的三个矛盾：</p>
+<ul>
+<li>逻辑连续与物理离散的矛盾</li>
+<li>页面是否常驻与是否可换出的矛盾</li>
+<li>程序内容是否一次性全部装入与能否分次装入的矛盾</li>
+</ul>
+<p>一个典型进程地址空间通常包含代码段、数据段、堆、栈，以及共享库和内存映射文件等区域。</p>
+<ul>
+<li>代码段与只读数据通常来自可执行文件或共享目标文件；</li>
+<li>数据段包含已初始化和未初始化全局数据；</li>
+<li>堆在运行期由动态分配器扩展；</li>
+<li>栈用于过程调用、局部变量与返回现场；</li>
+<li>映射区用于共享库装载和文件映射。</li>
+<li>高地址侧往往还保留内核相关映射或陷入辅助页。</li>
+</ul>
+<p>地址空间因此既是装载视图，也是运行视图。</p>
+<p>活跃页面、常驻集与工作集是描述进程“当前真正需要多少内存”的不同术语。</p>
+<ul>
+<li>活跃页面是近期被访问、对继续执行有直接关系的页面；</li>
+<li>常驻集是某时刻实际留在内存中的页面集合；</li>
+<li>工作集则是一个时间窗口内被访问页面的近似集合，用来刻画局部性范围。</li>
+</ul>
+<p>三者并不等价：常驻集偏向物理驻留状态，工作集偏向行为统计，活跃页面偏向当前有效性。它们共同服务于页面保留、换出决策和性能分析。</p>
+<p>xv6 的地址空间布局较为简洁：低地址开始依次是 text、data 与 bss、stack、heap 等区域；高地址保留 trampoline 与 trapframe，这两页在用户态和内核态之间的控制转移中起到关键作用。</p>
+<ul>
+<li>trampoline 负责陷入与返回时的过渡代码映射。</li>
+<li>trapframe 保存用户上下文，使内核能够在陷入后接管执行并在返回时恢复现场。</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    K[高地址: 内核相关映射]\n    T[trampoline / trapframe 或陷入辅助页]\n    M[共享库与内存映射区]\n    H[堆: 运行期向高地址扩展]\n    D[数据段 / BSS]\n    C[代码段 / 只读数据]\n    S[栈: 通常向低地址扩展]\n    U[低地址起点]\n\n    K --> T --> M --> H --> D --> C --> S --> U&quot;">flowchart TB
+    K[高地址: 内核相关映射]
+    T[trampoline / trapframe 或陷入辅助页]
+    M[共享库与内存映射区]
+    H[堆: 运行期向高地址扩展]
+    D[数据段 / BSS]
+    C[代码段 / 只读数据]
+    S[栈: 通常向低地址扩展]
+    U[低地址起点]
+
+    K --> T --> M --> H --> D --> C --> S --> U
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="3-装载绑定与地址重定位">3. 装载、绑定与地址重定位<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-装载绑定与地址重定位" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>程序执行前通常经历编译、链接、装载和运行四个阶段。</p>
+<ol>
+<li>编译把源程序转化为目标文件；</li>
+<li>链接把多个目标文件与库组合成装载模块；</li>
+<li>装载把装载模块放入内存；</li>
+<li>运行阶段由处理器逐条取指执行。</li>
+</ol>
+<p><span class="text-highlight">所谓“绑定”，就是把程序中的地址同某一内存位置发生关联。</span>绑定可能发生在编译期、链接期、装载期或运行期，不同绑定时机决定了系统对重定位的依赖方式。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[源程序] --> B{编译}\n    B --> C[目标文件]\n    C --> D{链接}\n    D --> E{装载模块}\n    E --> F[装入内存]\n    F --> G{运行}&quot;">flowchart TD
+    A[源程序] --> B{编译}
+    B --> C[目标文件]
+    C --> D{链接}
+    D --> E{装载模块}
+    E --> F[装入内存]
+    F --> G{运行}
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>逻辑地址是程序使用的相对地址或虚拟地址，通常以程序起点为基准编址；物理地址是内存单元的实际地址，可被硬件直接寻址。地址重定位就是把逻辑地址转换成物理地址的过程。只要程序的最终装入位置在运行前不可知，系统就必须提供某种重定位能力。</p>
+<p><span class="text-highlight">静态重定位</span>在装载时一次性完成地址修正，一旦装入完成，程序运行期间不再改变地址映射。这种方式实现较简单，可由软件完成，但程序之后很难移动。</p>
+<p><span class="text-highlight">动态重定位</span>在执行期间逐条指令访问内存时完成地址映射，需要硬件支持。处理器发出逻辑地址后，由 MMU 将其与重定位信息组合生成物理地址。动态重定位使进程能够在物理内存中被移动，也为交换和更复杂的内存组织方式奠定了基础。</p>
+<p>最简单的动态重定位模型使用重定位寄存器。若逻辑地址为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span><span class="mord mathnormal">A</span></span></span></span>，重定位寄存器为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>，则物理地址（physical address，PA）可以写为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span><span class="mord mathnormal">A</span></span></span></span></span>
+<p>这一模型表达了地址空间抽象的核心思想：程序看到的地址从零开始，而系统在底层决定它实际落到哪里。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    CPU[CPU发出逻辑地址 LA] --> MMU[MMU]\n    R[重定位寄存器 R] --> MMU\n    MMU --> PA[物理地址 PA = R + LA]\n    PA --> MEM[物理内存]&quot;">flowchart LR
+    CPU[CPU发出逻辑地址 LA] --> MMU[MMU]
+    R[重定位寄存器 R] --> MMU
+    MMU --> PA[物理地址 PA = R + LA]
+    PA --> MEM[物理内存]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="4-地址保护与内存管理目标">4. 地址保护与内存管理目标<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-地址保护与内存管理目标" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>多道程序环境中，地址保护与地址重定位同样基础。进程之间必须隔离，用户态代码不能任意访问其他进程地址，也不能越过系统给定的范围访问内核或未授权区域。</p>
+<p>最基本的保护方式是<span class="text-highlight">基址寄存器与界限寄存器</span>：基址给出进程可访问区域的起点，界限给出允许的长度。处理器在每次访存时检查地址是否落在合法范围内，越界则陷入操作系统。基址与界限寄存器只能由特权指令装入，因此保护边界最终由内核维护。</p>
+<p>内存管理的目标可以概括为三点。</p>
+<ul>
+<li>其一是透明性，即为进程提供稳定、独立、与物理布局解耦的地址空间；</li>
+<li>其二是效率，即尽量减少访问延迟与管理开销；</li>
+<li>其三是保护，即控制越界访问、非法访问与共享权限。</li>
+</ul>
+<p>对进程分配地址空间、把内容装入并映射到物理内存、管理共享、降低访问时间，这些都属于同一目标体系中的不同侧面。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[访问地址 addr] --> B{addr >= base?}\n    C[基址寄存器 base] --> B\n    B -->|否| F[地址越界]\n    B -->|是| D{addr &lt; base + limit?}\n    C --> D\n    E[界限寄存器 limit] --> D\n    D -->|是| H[允许访问内存]\n    D -->|否| F\n    F --> G[陷入操作系统]&quot;">flowchart TD
+    A[访问地址 addr] --> B{addr >= base?}
+    C[基址寄存器 base] --> B
+    B -->|否| F[地址越界]
+    B -->|是| D{addr &lt; base + limit?}
+    C --> D
+    E[界限寄存器 limit] --> D
+    D -->|是| H[允许访问内存]
+    D -->|否| F
+    F --> G[陷入操作系统]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="5-物理内存空闲空间管理">5. 物理内存空闲空间管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-物理内存空闲空间管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>物理内存管理关注的不是“一个进程看见什么”，而是“底层空闲页框或空闲区域如何组织、分配、回收”。典型数据结构包括位图、空闲区表与空闲块链表。</p>
+<ul>
+<li>位图法将物理内存按固定粒度划分为若干分配单元，每个单元对应位图中的一位。分配单元大小由系统设计决定；在页式内存管理中，通常以页框为单位。</li>
+<li>空闲区表和已分配区表记录起始地址、长度和标志；</li>
+<li>空闲块链表则把空闲块串联起来，按是否显式记录、是否按大小分类，可进一步区分为隐式链表、显式链表和分离空闲链表（<span class="text-highlight">ics重点讲解</span>）。</li>
+</ul>
+<p>衡量物理内存管理效果的核心指标有两个：资源利用率与性能。</p>
+<ul>
+<li>资源利用率要求尽量减少碎片。
+<ul>
+<li>内碎片指已经分配给某个对象或进程、但其内部未被有效利用的空间；</li>
+<li>外碎片指虽然总空闲量足够，但被切分成过多小块，无法满足较大分配请求。</li>
+</ul>
+</li>
+<li>性能则要求分配与回收延迟低、CPU 开销可控。</li>
+</ul>
+<p>不同分配算法本质上是在搜索成本与碎片模式之间做权衡。</p>
+<ul>
+<li>首次适配在空闲区表中寻找第一个足够大的空闲区；</li>
+<li>下次适配从上次命中的位置继续查找；</li>
+<li>最佳适配搜索全部空闲区，选择刚好够用的最小块；</li>
+<li>最差适配则总是从最大的空闲块中切出所需部分。</li>
+</ul>
+<p>首次适配实现简单、平均性能较好；最佳适配倾向生成许多小碎片；最差适配希望保留中等大小块，但也可能迅速破坏大块连续空间。</p>
+<p>回收时的核心问题是相邻空闲区合并。一个已释放区域与前后区域之间有四种关系：只与前相邻、只与后相邻、前后都相邻、前后都不相邻。合并策略决定外碎片是否会持续增长。空闲区管理因此不是单纯“标记为空”，而是必须维护区间关系。</p>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>malloc lab中均有涉及。</p>
+</div>
+</blockquote>
+<h3 id="51-伙伴系统">5.1 伙伴系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#51-伙伴系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>伙伴系统把内存按照 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span> 的幂次划分为若干层级空闲块表。请求大小为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span></span></span></span> 时，系统寻找满足条件的最小块；若当前块过大，就不断二分成两个大小相等的伙伴块，直到得到足够小而又不小于请求的块。若某一级块大小为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6644em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span></span></span></span></span></span></span></span>，则满足</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9032em;vertical-align:-0.0391em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">u</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7144em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7144em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span></span></span></span></span></span></span></span></span>
+<p>时，可直接分配一个大小为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6644em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">u</span></span></span></span></span></span></span></span></span></span></span> 的块。释放时，若该块的伙伴也空闲，则两者合并为更高一级块，如此递归向上。</p>
+<p>伙伴系统的优点是分裂与合并规则简单，合并判定明确；代价是按幂次取整会产生内碎片。Linux 底层页级物理内存管理采用的是基于这一思想的方案。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[收到大小请求 s] --> B[找到最小满足的 2^u 块]\n    B --> C{块是否过大}\n    C -->|是| D[一分为二得到一对伙伴]\n    D --> C\n    C -->|否| E[分配块]\n    E --> F[释放块]\n    F --> G{伙伴是否空闲}\n    G -->|是| H[向上合并]\n    H --> G\n    G -->|否| I[插回对应空闲链表]&quot;">flowchart TD
+    A[收到大小请求 s] --> B[找到最小满足的 2^u 块]
+    B --> C{块是否过大}
+    C -->|是| D[一分为二得到一对伙伴]
+    D --> C
+    C -->|否| E[分配块]
+    E --> F[释放块]
+    F --> G{伙伴是否空闲}
+    G -->|是| H[向上合并]
+    H --> G
+    G -->|否| I[插回对应空闲链表]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="52-slabslub-与-slob">5.2 SLAB、SLUB 与 SLOB<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#52-slabslub-与-slob" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>伙伴系统适合页级或较大块分配，但内核运行时经常需要频繁分配小对象，如 inode、dentry、网络缓冲描述符、协议控制块等。若直接用伙伴系统处理大量小对象，分配粒度过粗，初始化成本和碎片代价都偏高。</p>
+<p><span class="text-highlight">SLAB 分配器</span>因此在大块内存之上进一步管理固定大小对象，</p>
+<ul>
+<li>将可用内存按照大小划分为不同的区域，每个区域有一个空闲对象列表</li>
+<li>需要分配内存时，SLAB在合适的空闲对象列表中寻找一个大小与请求相符的空闲区域进行分配</li>
+<li>释放内存时，将该内存块添加回相应的空闲对象列表中</li>
+<li>使用 slab cache 提高重复分配与释放的效率。</li>
+</ul>
+<p>SLAB 的问题在于结构逐渐复杂，队列多、元数据开销大，在高并发场景下容易出现锁竞争。</p>
+<p>SLUB 是对 SLAB 的简化与重构，通过更简单的数据结构降低锁争用，并改善多核与 NUMA 环境下的可伸缩性。SLOB 则追求极简与低开销，更适合小型嵌入式系统。</p>
+<p><span class="text-highlight">三者的差别并不在于“是否管理小对象”，而在于管理策略对复杂度、缓存局部性与并发性能的不同取舍。</span></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    A[伙伴系统提供页级块] --> B[SLAB / SLUB / SLOB]\n    B --> C[按大小类建立对象缓存]\n    C --> D[小对象分配]\n    D --> E[对象释放回缓存]&quot;">flowchart TB
+    A[伙伴系统提供页级块] --> B[SLAB / SLUB / SLOB]
+    B --> C[按大小类建立对象缓存]
+    C --> D[小对象分配]
+    D --> E[对象释放回缓存]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="6-基本内存管理方案">6. 基本内存管理方案<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-基本内存管理方案" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>这里的加载单位为进程。</p>
+<ul>
+<li>即程序装入与执行环境建立以整个进程为对象进行。</li>
+<li>段页式中，进程地址空间按段组织，物理内存按页分配，但被创建、装入并参与调度的运行实体仍是进程本身。</li>
+</ul>
+<h3 id="61-单一连续区">6.1 单一连续区<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#61-单一连续区" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>单一连续区方案中，一段时间内内存只装入一个用户程序，用户程序独占内存，并通常装入固定位置。</p>
+<p>它几乎不需要复杂的数据结构与地址变换，适用于极早期单道系统。其根本缺陷是并发能力弱、内存利用率低，操作系统与用户程序之间的边界也十分粗糙。</p>
+<h3 id="62-固定分区">6.2 固定分区<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#62-固定分区" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>固定分区把可分配内存预先切成若干连续区域，每个区域称为分区，每个分区只能装一个进程。分区大小可以相同也可以不同，但在运行期间保持不变。</p>
+<p>该方案支持有限并发，实现简单，调度上既可以为各分区维护独立输入队列，也可以维护统一输入队列再按适合分区分派。固定分区的主要问题是内部浪费明显：进程小于分区时，多余部分无法再分配给其他进程，典型表现为内碎片。</p>
+<h3 id="63-可变分区">6.3 可变分区<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#63-可变分区" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>可变分区不再预先固定区域大小，而是根据进程需求从当前空闲空间中切出一个连续区。剩余部分重新形成新的空闲区，因此在短期内往往比固定分区更节省空间。</p>
+<p>它的根本代价是外碎片：随着装入、释放、再装入交替进行，物理内存中会形成许多彼此分离的小洞，使总空闲量虽足够，却无法为大进程提供足够大的连续区。</p>
+<p>紧凑技术就是针对这种问题：通过移动进程，把分散小洞压缩为较大连续空闲区。其可行前提是系统具有重定位能力，否则进程一旦移动，其内部地址引用就会失效。还需要考虑系统开销和移动的时机问题。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[空闲连续区] --> B[按进程需求切分]\n    B --> C[形成已分配区]\n    B --> D[形成剩余空闲区]\n    D --> E[多次分配与释放]\n    E --> F[出现外碎片]\n    F --> G[紧凑: 移动进程并合并空闲区]&quot;">flowchart TD
+    A[空闲连续区] --> B[按进程需求切分]
+    B --> C[形成已分配区]
+    B --> D[形成剩余空闲区]
+    D --> E[多次分配与释放]
+    E --> F[出现外碎片]
+    F --> G[紧凑: 移动进程并合并空闲区]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="64-页式内存管理">6.4 页式内存管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#64-页式内存管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>页式内存管理将进程地址空间划分为大小相等的 <strong>page</strong>，将物理内存划分为大小相等的 <strong>page frame</strong>。系统按 page 进行分配，因此逻辑上相邻的 page 在物理内存中不要求连续落在相邻的 page frame 中。</p>
+<p>分页的核心作用，是消除可变分区方案对大块连续物理内存的依赖。</p>
+<p>系统通过 <strong>page table</strong> 记录 page number 到 page frame number 的映射关系，<strong>page table entry（PTE）</strong> 则是这种映射的基本表项。</p>
+<p>处理器获得逻辑地址后，自动将其分解为 <strong>page number</strong> 和 <strong>page offset</strong>，再依据 page number 查找 page table，得到对应的 page frame number，最后与 page offset 组合形成物理地址。</p>
+<p>一般情况下，每个进程各有一份 page table，page table 本身存放在内存中。在 x86 体系结构下，当前地址空间所使用的 page table 根地址由 <strong>CR3</strong> 寄存器给出。</p>
+<p>分页显著减轻了外碎片问题，但由于 page 大小固定，进程地址空间末尾的最后一个 page 往往不能被完全用满，因此会产生内碎片。page size 的选择体现了典型折中：page 较大时，page table 规模更小，TLB 覆盖范围更大，但内碎片增加；page 较小时，碎片减轻，但 page table 和管理开销上升。典型的 page size 可以是 <strong>4KB</strong> 或 <strong>4MB</strong>。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    LA[逻辑地址] --> SPLIT[拆分为 page number p 与 page offset d]\n    SPLIT --> PT[用 p 查 page table]\n    PT --> PTE[读取 PTE]\n    PTE --> PF[得到 page frame number f]\n    PF --> JOIN[拼接 f 与 d]\n    JOIN --> PA[物理地址]\n    PA --> MEM[物理内存]&quot;">flowchart TD
+    LA[逻辑地址] --> SPLIT[拆分为 page number p 与 page offset d]
+    SPLIT --> PT[用 p 查 page table]
+    PT --> PTE[读取 PTE]
+    PTE --> PF[得到 page frame number f]
+    PF --> JOIN[拼接 f 与 d]
+    JOIN --> PA[物理地址]
+    PA --> MEM[物理内存]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="65-段式内存管理">6.5 段式内存管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#65-段式内存管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段式管理按程序的逻辑结构划分地址空间，例如主程序段、子程序段、数据段、栈段、数组段等。段长不等，段名或段号具有语义。物理内存中仍需为每个段分配连续空间，因此底层分配方式更接近可变分区。段表记录段号、段首地址与段长，地址转换时由处理器用段号查表，再将段内偏移加到段首地址上。</p>
+<p>段式管理的优点，在于它更接近程序员或编译器的逻辑视图，天然适合按模块共享、保护和独立增长。其缺点在于段长可变，仍然面临外碎片和连续分配压力。页式强调系统管理方便，段式强调程序逻辑自然，两者的优势方向不同。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    LA[逻辑地址] --> SPLIT[拆分为 段号 s 与段内偏移 d]\n    SPLIT --> ST[查段表]\n    ST --> BASE[得到段首地址 base]\n    BASE --> ADD[base + d]\n    ADD --> PA[物理地址]&quot;">flowchart TD
+    LA[逻辑地址] --> SPLIT[拆分为 段号 s 与段内偏移 d]
+    SPLIT --> ST[查段表]
+    ST --> BASE[得到段首地址 base]
+    BASE --> ADD[base + d]
+    ADD --> PA[物理地址]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="66-段页式内存管理">6.6 段页式内存管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#66-段页式内存管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段页式管理试图同时保留段式的逻辑结构与页式的离散装入能力。对用户或编译器而言，地址空间仍按段组织；对系统而言，每个段又进一步分页。段表不再直接给出段首物理地址，而是给出该段页表的起始位置与长度；页表再完成页号到页框号的映射。于是一个逻辑地址先解释为“段号 + 段内地址”，再把段内地址解释为“页号 + 页内偏移”，最终经过段表与页表两级转换形成物理地址。</p>
+<p>这种方案适用于既要求模块化保护与共享，又希望降低连续分配压力的系统。它的代价是地址转换链更长、表结构更复杂，但换来更强的表达能力与更好的物理适应性。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[逻辑地址] --> B[段号 s + 段内地址]\n    B --> C[查段表得到该段页表位置]\n    C --> D[段内地址拆成 页号 p + 页内偏移 d]\n    D --> E[查该段页表]\n    E --> F[得到页框号 f]\n    F --> G[拼接 f 与 d]\n    G --> H[物理地址]&quot;">flowchart TD
+    A[逻辑地址] --> B[段号 s + 段内地址]
+    B --> C[查段表得到该段页表位置]
+    C --> D[段内地址拆成 页号 p + 页内偏移 d]
+    D --> E[查该段页表]
+    E --> F[得到页框号 f]
+    F --> G[拼接 f 与 d]
+    G --> H[物理地址]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="7-内存扩充技术">7. 内存“扩充”技术<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-内存扩充技术" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>当物理内存不足时，系统并不只能拒绝装入。历史上存在四类思路：紧凑、覆盖、交换和虚存。紧凑依靠移动进程合并碎片；覆盖依靠程序内部模块互斥装入；交换依靠把进程在内存与外存之间成批移动；虚存则进一步把“不必全部驻留”制度化，形成现代按页调入的主流机制。课件在这一讲中重点展开的是覆盖与交换。</p>
+<h3 id="71-覆盖技术">7.1 覆盖技术<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#71-覆盖技术" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>覆盖技术用于“程序总大小超过物理内存总量”的场景。其思想不是要求整个程序同时驻留，而是依据调用结构，把不会同时执行的模块安排到同一块覆盖区中，由操作系统在需要时自动装入相应模块。若某程序的总逻辑规模为 54K，但常驻区加两个覆盖区只占 30K，则该程序仍可在 30K 内存中执行。覆盖技术本质上是显式利用程序控制流中的互斥关系，以时间换空间。</p>
+<p>覆盖技术的限制也很明显。它要求程序员先划分模块并声明覆盖关系，因此对用户不透明性差，编程复杂度高；模块切换时需要从外存装入新覆盖块，执行时间增加。随着更自动化的虚存机制出现，覆盖技术逐渐退出主流，但其思想仍然揭示了“程序不必整体常驻”的基本方向。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    A[常驻区]\n    B[覆盖区 0]\n    C[覆盖区 1]\n\n    A --> B\n    A --> C&quot;">flowchart TB
+    A[常驻区]
+    B[覆盖区 0]
+    C[覆盖区 1]
+
+    A --> B
+    A --> C
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="72-交换技术">7.2 交换技术<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#72-交换技术" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>交换技术最早用于小型分时系统，其典型动作是 roll out 与 roll in。系统在内存紧张时把某些进程整体换出到外存交换区，再把其他进程换入内存执行。交换区通常是专门划出的磁盘区域，以便高效进行底层块读写。交换的对象主要是进程的映像，尤其包括运行期会变化的栈与堆等内容。</p>
+<p>交换并不是简单搬运，它与调度器紧密耦合。系统需要决定何时交换、交换谁、被换出内容在磁盘何处保存、换入时是否回到原位置，以及进程空间增长如何处理。处于等待 I/O 的进程通常不适合被换出，因为它与设备操作存在外部依赖。被换出的进程重新装入时也不必回到原先位置，只要系统具备动态重定位能力即可。</p>
+<p>进程空间增长给交换带来额外困难。数据段可能向上扩展，栈段可能向下扩展，若内存布局过于紧凑，就会压缩未来增长空间。解决这一问题的思路，要么在分配时预留增长余地，要么在换入时重新选择位置并依赖重定位重新建立映射。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[内存紧张] --> B[选择可换出进程]\n    B --> C[写入交换区]\n    C --> D[释放内存]\n    D --> E[换入待运行进程]\n    E --> F[建立新映射]\n    F --> G[继续调度执行]&quot;">flowchart LR
+    A[内存紧张] --> B[选择可换出进程]
+    B --> C[写入交换区]
+    C --> D[释放内存]
+    D --> E[换入待运行进程]
+    E --> F[建立新映射]
+    F --> G[继续调度执行]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h2 id="8-归纳">8. 归纳<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-归纳" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>内存管理的主线可以概括为四个层次。第一层是地址抽象，核心问题是把逻辑地址与物理地址分离，形成地址空间。第二层是底层组织，核心问题是如何管理空闲物理内存并在分配、回收、碎片与性能之间取得平衡。第三层是映射方案，核心问题是选择连续区、分区、分页、分段或段页式等不同组织方式。第四层是内存扩充，核心问题是在物理内存不足时，如何通过紧凑、覆盖、交换和进一步的虚拟化继续支撑程序执行。</p>
+<p>若需要，我下一条可以继续按同样风格整理“虚拟内存”那一讲，并与这一章严格分开。</p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-156" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#内存管理概述" data-for="内存管理概述">内存管理概述</a></li><li class="depth-1"><a href="#1-内存管理的范围与演化" data-for="1-内存管理的范围与演化">1. 内存管理的范围与演化</a></li><li class="depth-1"><a href="#2-地址空间对内存的抽象" data-for="2-地址空间对内存的抽象">2. 地址空间：对内存的抽象</a></li><li class="depth-1"><a href="#3-装载绑定与地址重定位" data-for="3-装载绑定与地址重定位">3. 装载、绑定与地址重定位</a></li><li class="depth-1"><a href="#4-地址保护与内存管理目标" data-for="4-地址保护与内存管理目标">4. 地址保护与内存管理目标</a></li><li class="depth-1"><a href="#5-物理内存空闲空间管理" data-for="5-物理内存空闲空间管理">5. 物理内存空闲空间管理</a></li><li class="depth-2"><a href="#51-伙伴系统" data-for="51-伙伴系统">5.1 伙伴系统</a></li><li class="depth-2"><a href="#52-slabslub-与-slob" data-for="52-slabslub-与-slob">5.2 SLAB、SLUB 与 SLOB</a></li><li class="depth-1"><a href="#6-基本内存管理方案" data-for="6-基本内存管理方案">6. 基本内存管理方案</a></li><li class="depth-2"><a href="#61-单一连续区" data-for="61-单一连续区">6.1 单一连续区</a></li><li class="depth-2"><a href="#62-固定分区" data-for="62-固定分区">6.2 固定分区</a></li><li class="depth-2"><a href="#63-可变分区" data-for="63-可变分区">6.3 可变分区</a></li><li class="depth-2"><a href="#64-页式内存管理" data-for="64-页式内存管理">6.4 页式内存管理</a></li><li class="depth-2"><a href="#65-段式内存管理" data-for="65-段式内存管理">6.5 段式内存管理</a></li><li class="depth-2"><a href="#66-段页式内存管理" data-for="66-段页式内存管理">6.6 段页式内存管理</a></li><li class="depth-1"><a href="#7-内存扩充技术" data-for="7-内存扩充技术">7. 内存“扩充”技术</a></li><li class="depth-2"><a href="#71-覆盖技术" data-for="71-覆盖技术">7.1 覆盖技术</a></li><li class="depth-2"><a href="#72-交换技术" data-for="72-交换技术">7.2 交换技术</a></li><li class="depth-1"><a href="#8-归纳" data-for="8-归纳">8. 归纳</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}container;content;isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>
