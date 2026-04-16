@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr"><head><title>lecture3</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="lecture3"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="lecture3"/><meta name="twitter:description" content="进程线程模型 进程模型 基本概念：顺序程序、多道程序与并发环境 程序是指令或语句的静态序列，用于刻画某种算法。 顺序环境中，系统同一时刻只有一个程序运行，该程序独占处理器、内存与外设等资源，其执行过程不受外界并发活动干扰，因此具有顺序性、封闭性与结果可再现性。 结果可再现性意味着，在给定输入与初始状态不变时，程序运行结果与执行速度无关。 多道程序设计允许多个程序同时进入内存并运行，其直接目标是提高系统资源利用率，尤其是提高处理器与 I/O 设备的并行重叠程度。 单处理器上的“同时”并不表示真正的硬件并行，而是指在一段时间内，多个程序都处于开始执行但尚未结束的状态，执行先后次序并不预先确定，这种..."/><meta property="og:description" content="进程线程模型 进程模型 基本概念：顺序程序、多道程序与并发环境 程序是指令或语句的静态序列，用于刻画某种算法。 顺序环境中，系统同一时刻只有一个程序运行，该程序独占处理器、内存与外设等资源，其执行过程不受外界并发活动干扰，因此具有顺序性、封闭性与结果可再现性。 结果可再现性意味着，在给定输入与初始状态不变时，程序运行结果与执行速度无关。 多道程序设计允许多个程序同时进入内存并运行，其直接目标是提高系统资源利用率，尤其是提高处理器与 I/O 设备的并行重叠程度。 单处理器上的“同时”并不表示真正的硬件并行，而是指在一段时间内，多个程序都处于开始执行但尚未结束的状态，执行先后次序并不预先确定，这种..."/><meta property="og:image:alt" content="进程线程模型 进程模型 基本概念：顺序程序、多道程序与并发环境 程序是指令或语句的静态序列，用于刻画某种算法。 顺序环境中，系统同一时刻只有一个程序运行，该程序独占处理器、内存与外设等资源，其执行过程不受外界并发活动干扰，因此具有顺序性、封闭性与结果可再现性。 结果可再现性意味着，在给定输入与初始状态不变时，程序运行结果与执行速度无关。 多道程序设计允许多个程序同时进入内存并运行，其直接目标是提高系统资源利用率，尤其是提高处理器与 I/O 设备的并行重叠程度。 单处理器上的“同时”并不表示真正的硬件并行，而是指在一段时间内，多个程序都处于开始执行但尚未结束的状态，执行先后次序并不预先确定，这种..."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/lecture/lecture3"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/lecture/lecture3"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="进程线程模型 进程模型 基本概念：顺序程序、多道程序与并发环境 程序是指令或语句的静态序列，用于刻画某种算法。 顺序环境中，系统同一时刻只有一个程序运行，该程序独占处理器、内存与外设等资源，其执行过程不受外界并发活动干扰，因此具有顺序性、封闭性与结果可再现性。 结果可再现性意味着，在给定输入与初始状态不变时，程序运行结果与执行速度无关。 多道程序设计允许多个程序同时进入内存并运行，其直接目标是提高系统资源利用率，尤其是提高处理器与 I/O 设备的并行重叠程度。 单处理器上的“同时”并不表示真正的硬件并行，而是指在一段时间内，多个程序都处于开始执行但尚未结束的状态，执行先后次序并不预先确定，这种..."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+<html lang="en" dir="ltr"><head><title>lecture3</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="lecture3"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="lecture3"/><meta name="twitter:description" content="进程线程模型 Summary 这一章讲的是操作系统里最基本的运行单位——进程和线程。我们从”程序怎么动起来”开始，聊到进程的生命周期、PCB、状态转换，再到 fork/exec 是怎么工作的，最后把线程和协程也串起来。看完这部分，你应该能讲清楚：进程和程序到底啥区别？fork 之后父子怎么共享内存？用户级线程和内核级线程差在哪？协程又是来凑什么热闹的？ 进程模型 Summary 先搞定进程模型的地基：程序是怎么从静态代码变成动态执行流的？操作系统为什么要搞出”进程”这个东西？进程在内存里长什么样、状态怎么变来变去？这些是理解后面一切的基础。 基本概念：顺序程序、多道程序与并发环境 程序就是一堆..."/><meta property="og:description" content="进程线程模型 Summary 这一章讲的是操作系统里最基本的运行单位——进程和线程。我们从”程序怎么动起来”开始，聊到进程的生命周期、PCB、状态转换，再到 fork/exec 是怎么工作的，最后把线程和协程也串起来。看完这部分，你应该能讲清楚：进程和程序到底啥区别？fork 之后父子怎么共享内存？用户级线程和内核级线程差在哪？协程又是来凑什么热闹的？ 进程模型 Summary 先搞定进程模型的地基：程序是怎么从静态代码变成动态执行流的？操作系统为什么要搞出”进程”这个东西？进程在内存里长什么样、状态怎么变来变去？这些是理解后面一切的基础。 基本概念：顺序程序、多道程序与并发环境 程序就是一堆..."/><meta property="og:image:alt" content="进程线程模型 Summary 这一章讲的是操作系统里最基本的运行单位——进程和线程。我们从”程序怎么动起来”开始，聊到进程的生命周期、PCB、状态转换，再到 fork/exec 是怎么工作的，最后把线程和协程也串起来。看完这部分，你应该能讲清楚：进程和程序到底啥区别？fork 之后父子怎么共享内存？用户级线程和内核级线程差在哪？协程又是来凑什么热闹的？ 进程模型 Summary 先搞定进程模型的地基：程序是怎么从静态代码变成动态执行流的？操作系统为什么要搞出”进程”这个东西？进程在内存里长什么样、状态怎么变来变去？这些是理解后面一切的基础。 基本概念：顺序程序、多道程序与并发环境 程序就是一堆..."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/lecture/lecture3"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/lecture/lecture3"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="进程线程模型 Summary 这一章讲的是操作系统里最基本的运行单位——进程和线程。我们从”程序怎么动起来”开始，聊到进程的生命周期、PCB、状态转换，再到 fork/exec 是怎么工作的，最后把线程和协程也串起来。看完这部分，你应该能讲清楚：进程和程序到底啥区别？fork 之后父子怎么共享内存？用户级线程和内核级线程差在哪？协程又是来凑什么热闹的？ 进程模型 Summary 先搞定进程模型的地基：程序是怎么从静态代码变成动态执行流的？操作系统为什么要搞出”进程”这个东西？进程在内存里长什么样、状态怎么变来变去？这些是理解后面一切的基础。 基本概念：顺序程序、多道程序与并发环境 程序就是一堆..."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
   position: absolute;
   display: flex;
   float: right;
@@ -115,48 +115,80 @@ pre:hover > .expand-button {
   padding: 0 12px;
   font-size: 14px;
 }
-/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/lecture/lecture3"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-213"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-213" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/lecture/">lecture</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lecture3</a></div></nav><h1 class="article-title">lecture3</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-15T08:54:28.020Z">Apr 15, 2026</time><span>49 min read</span></p></div></div><article class="popover-hint"><h1 id="进程线程模型">进程线程模型<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程线程模型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/lecture/lecture3"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-220"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-220" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/lecture/">lecture</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lecture3</a></div></nav><h1 class="article-title">lecture3</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-16T06:18:19.200Z">Apr 16, 2026</time><span>51 min read</span></p></div></div><article class="popover-hint"><h1 id="进程线程模型">进程线程模型<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程线程模型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Summary</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这一章讲的是操作系统里最基本的运行单位——进程和线程。我们从”程序怎么动起来”开始，聊到进程的生命周期、PCB、状态转换，再到 fork/exec 是怎么工作的，最后把线程和协程也串起来。看完这部分，你应该能讲清楚：进程和程序到底啥区别？fork 之后父子怎么共享内存？用户级线程和内核级线程差在哪？协程又是来凑什么热闹的？</p>
+</div>
+</blockquote>
+<hr/>
 <h2 id="进程模型">进程模型<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程模型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Summary</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>先搞定进程模型的地基：程序是怎么从静态代码变成动态执行流的？操作系统为什么要搞出”进程”这个东西？进程在内存里长什么样、状态怎么变来变去？这些是理解后面一切的基础。</p>
+</div>
+</blockquote>
 <h3 id="基本概念顺序程序多道程序与并发环境">基本概念：顺序程序、多道程序与并发环境<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#基本概念顺序程序多道程序与并发环境" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>程序是指令或语句的静态序列，用于刻画某种算法。</p>
-<p>顺序环境中，系统同一时刻只有一个程序运行，该程序独占处理器、内存与外设等资源，其执行过程不受外界并发活动干扰，因此具有顺序性、封闭性与结果可再现性。</p>
-<p>结果可再现性意味着，在给定输入与初始状态不变时，程序运行结果与执行速度无关。</p>
-<p>多道程序设计允许多个程序同时进入内存并运行，其直接目标是提高系统资源利用率，尤其是提高处理器与 I/O 设备的并行重叠程度。</p>
-<p>单处理器上的“同时”并不表示真正的硬件并行，而是指在一段时间内，多个程序都处于开始执行但尚未结束的状态，执行先后次序并不预先确定，这种现象称为并发。</p>
-<p>并发环境中的程序具有间断性、资源共享性、相互独立性与相互制约性，程序执行结果通常不再天然可再现，程序与一次具体计算过程也不再保持一一对应关系。</p>
+<p>程序就是一堆指令和数据的静态集合，躺在硬盘上的时候啥也没干。</p>
+<p>在早期的顺序环境里，计算机一次只能跑一个程序，这个程序独占地用着 CPU、内存、外设。因为没人跟它抢资源，它的执行是<strong>顺序的</strong>、<strong>封闭的</strong>，而且结果可预测——给定同样的输入，跑多少遍结果都一样，跟跑得快慢没关系。这就是程序的<strong>结果可再现性</strong>。</p>
+<p>但后来人们发现，CPU 跑计算的时候 I/O 设备常常闲着，I/O 干活的时候 CPU 又没事做，太浪费了。于是就有了<strong>多道程序设计</strong>：让多个程序同时待在内存里，谁需要 CPU 就给谁，谁去等 I/O 就先把 CPU 让出来给别人。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>你可以把单核 CPU 想象成厨房里的一个灶眼。多道程序不是说你突然有了两个灶眼，而是你学会了一边煮面、一边等水开的间隙去切菜，让灶眼尽量不闲着。</p>
+</div>
+</blockquote>
+<p>所以单处理器上的”同时”并不是真正的硬件并行，而是<strong>在一段时间内多个程序都处于”开始执行但还没结束”的状态</strong>。它们的执行顺序不预先确定，这种现象就叫做<strong>并发</strong>。并发带来了很多新麻烦：程序执行可能断断续续，资源要共享，执行结果跟速度有关了，程序和一次具体的运行过程也不再是一一对应的关系。</p>
 <h3 id="进程的定义作用与进程映像">进程的定义、作用与进程映像<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程的定义作用与进程映像" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>进程是具有独立功能的程序<span class="text-highlight">关于某个数据集合</span>上的<span class="text-highlight">一次运行活动</span>，是<strong>系统进行资源分配和处理器调度的独立单位</strong>。</p>
+<p>操作系统为了解决这些麻烦，抽象出了**进程（Process）**这个概念。</p>
+<p>进程是<strong>具有独立功能的程序在某个数据集合上的一次运行活动</strong>，是系统进行资源分配和处理器调度的独立单位。简单来说：</p>
 <ul>
-<li>进程是程序的一次执行过程，是操作系统对处理器执行流的抽象。</li>
-<li>操作系统通过处理器时间复用与上下文切换，在多个运行实体之间复用 CPU，使每个进程获得独占处理器的运行表象。</li>
-<li>每个进程具有独立的地址空间，并以进程映像的形式存在。
-<ul>
-<li>进程映像由程序代码、数据、堆、栈以及内核中的进程控制块等成分构成，运行期间还关联页表、打开文件、信号处理状态、调度信息和其他内核对象。</li>
-<li>其用户态部分主要位于内存中，在挂起或交换时可部分转移到磁盘；内核态部分则由操作系统数据结构维护。</li>
+<li><strong>程序是静态的代码</strong>，<strong>进程是动态的执行实体</strong>。</li>
+<li>操作系统通过让 CPU 时间复用、在多个进程之间来回切换，让每个进程都有一种”CPU 独属于我”的幻觉。</li>
+<li>每个进程有自己独立的地址空间，运行时以<strong>进程映像</strong>的形式存在。</li>
 </ul>
-</li>
-<li>程序是静态代码，进程是动态执行实体；
-<ul>
-<li>同一程序可以对应多个进程，进程具有生命周期，并可继续创建新的进程。</li>
-</ul>
-</li>
-</ul>
+<p>进程映像包括：程序代码、数据、堆、栈，以及内核里的**进程控制块（PCB）**等。运行期间还关联着页表、打开的文件、信号处理状态、调度信息等等内核对象。用户态的部分主要在内存里（挂起或交换时可能部分移到磁盘），内核态部分由操作系统直接维护。</p>
+<p>同一个程序可以对应多个进程（比如同时打开两个微信窗口），进程有自己的生命周期，还能创建新的子进程。</p>
 <h4 id="进程的分类">进程的分类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程的分类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
 <ul>
-<li>按功能区分为系统进程与用户进程。</li>
-<li>按交互方式区分为前台进程与后台进程。</li>
-<li>按资源使用特征区分为 CPU 密集型进程与 I/O 密集型进程。</li>
-<li>UNIX 常以进程家族树组织派生关系，<code>init</code> 或其后继系统进程处于根部。</li>
-<li>Windows 中进程关系则更趋于平等，父子关系主要服务于创建和管理，而不是唯一的组织骨架。</li>
+<li><strong>系统进程 vs 用户进程</strong>：一个跑操作系统服务，一个跑你的应用程序。</li>
+<li><strong>前台进程 vs 后台进程</strong>：前台跟你交互，后台默默干活（比如守护进程）。</li>
+<li><strong>CPU 密集型 vs I/O 密集型</strong>：前者爱算数（比如视频编码），后者爱读写（比如文件下载器）。</li>
+<li>UNIX 里进程常以<strong>家族树</strong>组织，<code>init</code> 或它的后继进程是树根。</li>
+<li>Windows 里进程关系更平等，父子关系主要用于创建和管理，不像 UNIX 那样是整个系统的骨架。</li>
 </ul>
 <h3 id="进程状态与状态转换">进程状态与状态转换<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程状态与状态转换" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>最基本的进程状态模型由<span class="text-highlight">运行态</span>、<span class="text-highlight">就绪态</span>和<span class="text-highlight">等待态</span>构成。</p>
+<p>一个进程这辈子会在几个状态之间跳来跳去。最经典的是<strong>三态模型</strong>：</p>
 <ul>
-<li>运行态表示进程当前占有处理器并在其上执行；</li>
-<li>就绪态表示进程已经具备执行条件，但因暂时没有空闲处理器而尚未运行；</li>
-<li>等待态又称阻塞态，表示进程因等待某个事件发生而暂时无法运行，例如等待磁盘 I/O 完成、等待键盘输入或等待其他进程发送消息。</li>
+<li><strong>运行态</strong>：进程正在 CPU 上执行。</li>
+<li><strong>就绪态</strong>：进程一切准备就绪，只等 CPU 空出来。</li>
+<li><strong>等待态（阻塞态）</strong>：进程在等某个事件发生，比如磁盘 I/O 完成、键盘输入、或者其他进程发消息，暂时没法运行。</li>
 </ul>
-<p>一个进程在任一时刻处于且仅处于一种状态。</p>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>注意：“阻塞”和”就绪”的区别不是”想不想跑”，而是”能不能立刻跑”。阻塞是因为条件不满足（比如数据没准备好），就绪是因为条件满足但没抢到 CPU。</p>
+</div>
+</blockquote>
+<p>一个进程在任一时刻只能处于且仅处于一种状态。</p>
 <pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    New[创建] --> Ready[就绪]\n    Ready -->|调度| Running[运行]\n    Running -->|时间片到/被抢占| Ready\n    Running -->|等待事件| Blocked[等待/阻塞]\n    Blocked -->|事件发生| Ready\n    Running -->|执行结束| Terminated[终止]&quot;">flowchart TD
     New[创建] --> Ready[就绪]
     Ready -->|调度| Running[运行]
@@ -165,11 +197,11 @@ pre:hover > .expand-button {
     Blocked -->|事件发生| Ready
     Running -->|执行结束| Terminated[终止]
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<p>三状态模型之上，系统通常还会加入创建态、终止态与挂起态。</p>
+<p>在三状态模型之上，实际系统还会加入更多状态：</p>
 <ul>
-<li>创建态表示进程所需的基本创建工作已经完成，例如分配 PID 与 PCB，但尚未被系统接纳为可执行进程（由于资源有限）；</li>
-<li>终止态表示进程执行结束但仍保留部分信息以供统计、回收或父进程收尸；</li>
-<li>挂起态表示进程映像被换出内存、转入磁盘，以释放内存并调节系统负载。挂起可以与就绪或阻塞结合，形成就绪挂起和阻塞挂起等更细粒度状态。</li>
+<li><strong>创建态</strong>：PCB 和 PID 已经分配好了，但系统还没正式接纳它进可执行队伍（可能资源不够）。</li>
+<li><strong>终止态</strong>：进程执行完了，但还留着一些信息没清干净，等着父进程来”收尸”或者系统做统计。</li>
+<li><strong>挂起态</strong>：进程映像被换出内存、放到磁盘上，用来释放内存压力。挂起可以和就绪/阻塞结合，形成<strong>就绪挂起</strong>和<strong>阻塞挂起</strong>。</li>
 </ul>
 <blockquote class="callout note" data-callout="note">
 <div class="callout-title">
@@ -182,23 +214,31 @@ pre:hover > .expand-button {
 <p>iOS 中与挂起态最接近的是应用进入后台后的 suspended 状态。应用在该状态下通常仍保留在内存中，但不再执行代码；当用户重新进入应用时，系统可直接恢复其运行。若系统发生内存压力或其他后台终止条件，应用也可能在 suspended 或 background 状态下被直接终止，之后通过状态恢复机制重新创建。</p>
 </div>
 </blockquote>
-<p>状态转换并不是严格成对发生的。某个进程从运行态转为阻塞态，只说明当前进程暂时放弃处理器；是否立刻有另一个进程从就绪态转为运行态，取决于系统中是否存在其他可运行实体。反之，某个阻塞进程因事件发生而从等待态转为就绪态，也不意味着它会立即进入运行态，因为处理器可能仍被其他进程占用。这种“局部状态变化”与“全局调度决策”的分离，是进程模型的基本特征。</p>
+<p>状态转换并不是严格成对发生的。一个进程从运行态变成阻塞态，只是它自己放弃了 CPU，不意味着立刻就有另一个进程从就绪态变成运行态——这得看调度器的心情。反过来，一个阻塞进程因为事件发生变成就绪态，也不代表它立刻就能上 CPU。这种”局部状态变化”和”全局调度决策”的分离，是进程模型里特别重要的一个特征。</p>
 <h4 id="linux-与-xv6-的状态表示">Linux 与 xv6 的状态表示<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#linux-与-xv6-的状态表示" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
-<p>Linux 的进程状态并不严格对应教科书的三态或五态模型，而是围绕内核调度和睡眠机制组织。历史上常见的 <code>TASK_RUNNING</code> 同时覆盖“正在 CPU 上运行”和“已经准备好运行”两种情况；<code>TASK_INTERRUPTIBLE</code> 表示可中断睡眠，可被信号唤醒；<code>TASK_UNINTERRUPTIBLE</code> 表示不可中断睡眠，只能等待目标事件完成；<code>TASK_STOPPED</code> 表示被暂停；<code>TASK_ZOMBIE</code> 表示进程已经退出，但父进程尚未回收其退出信息。Linux 把“就绪”和“运行”统一归入可运行集合，这体现了实现层面对调度队列操作的优化。</p>
-<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;stateDiagram-v2\n    direction TB\n\n    state \&quot;TASK_RUNNING&lt;br>（运行态 + 就绪态）\&quot; as RUNNING\n    state \&quot;TASK_INTERRUPTIBLE&lt;br>（可中断睡眠）\&quot; as INT_SLEEP\n    state \&quot;TASK_UNINTERRUPTIBLE&lt;br>（不可中断睡眠）\&quot; as UNINT_SLEEP\n    state \&quot;TASK_STOPPED\\n（暂停）\&quot; as STOPPED\n    state \&quot;TASK_ZOMBIE\\n（僵尸）\&quot; as ZOMBIE\n    state \&quot;EXIT_DEAD\\n（已回收）\&quot; as DEAD\n\n    [*] --> RUNNING : fork / exec 后进入可运行队列\n\n    RUNNING --> INT_SLEEP : 等待事件&lt;br>（可被信号打断）\n    RUNNING --> UNINT_SLEEP : 等待关键事件&lt;br>（不可被信号打断）\n    RUNNING --> STOPPED : 收到 SIGSTOP / 被 ptrace 暂停\n    RUNNING --> ZOMBIE : exit()\n\n    INT_SLEEP --> RUNNING : 事件到达 / 被信号唤醒\n    UNINT_SLEEP --> RUNNING : 事件完成\n    STOPPED --> RUNNING : SIGCONT\n\n    ZOMBIE --> DEAD : 父进程 wait() / waitpid() 回收\n    DEAD --> [*]&quot;">stateDiagram-v2
+<p>Linux 的进程状态并不严格对应教科书的三态或五态，而是围绕内核自己的调度和睡眠机制来组织的。历史上常见的状态有：</p>
+<ul>
+<li><code>TASK_RUNNING</code>：既包括”正在 CPU 上跑”，也包括”已经准备好可以跑”。</li>
+<li><code>TASK_INTERRUPTIBLE</code>：可中断睡眠，可以被信号唤醒。</li>
+<li><code>TASK_UNINTERRUPTIBLE</code>：不可中断睡眠，只能等目标事件完成（比如等磁盘 I/O）。</li>
+<li><code>TASK_STOPPED</code>：被暂停了（比如收到 <code>SIGSTOP</code>）。</li>
+<li><code>TASK_ZOMBIE</code>：进程已经退出，但父进程还没回收它的退出信息。</li>
+</ul>
+<p>Linux 把”就绪”和”运行”统一放进可运行集合，这是实现层面对调度队列操作做的优化。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;stateDiagram-v2\n    direction TB\n\n    state \&quot;TASK_RUNNING&lt;br/>（运行态 + 就绪态）\&quot; as RUNNING\n    state \&quot;TASK_INTERRUPTIBLE&lt;br/>（可中断睡眠）\&quot; as INT_SLEEP\n    state \&quot;TASK_UNINTERRUPTIBLE&lt;br/>（不可中断睡眠）\&quot; as UNINT_SLEEP\n    state \&quot;TASK_STOPPED\\n（暂停）\&quot; as STOPPED\n    state \&quot;TASK_ZOMBIE\\n（僵尸）\&quot; as ZOMBIE\n    state \&quot;EXIT_DEAD\\n（已回收）\&quot; as DEAD\n\n    [*] --> RUNNING : fork / exec 后进入可运行队列\n\n    RUNNING --> INT_SLEEP : 等待事件&lt;br/>（可被信号打断）\n    RUNNING --> UNINT_SLEEP : 等待关键事件&lt;br/>（不可被信号打断）\n    RUNNING --> STOPPED : 收到 SIGSTOP / 被 ptrace 暂停\n    RUNNING --> ZOMBIE : exit()\n\n    INT_SLEEP --> RUNNING : 事件到达 / 被信号唤醒\n    UNINT_SLEEP --> RUNNING : 事件完成\n    STOPPED --> RUNNING : SIGCONT\n\n    ZOMBIE --> DEAD : 父进程 wait() / waitpid() 回收\n    DEAD --> [*]&quot;">stateDiagram-v2
     direction TB
 
-    state &quot;TASK_RUNNING&lt;br>（运行态 + 就绪态）&quot; as RUNNING
-    state &quot;TASK_INTERRUPTIBLE&lt;br>（可中断睡眠）&quot; as INT_SLEEP
-    state &quot;TASK_UNINTERRUPTIBLE&lt;br>（不可中断睡眠）&quot; as UNINT_SLEEP
+    state &quot;TASK_RUNNING&lt;br/>（运行态 + 就绪态）&quot; as RUNNING
+    state &quot;TASK_INTERRUPTIBLE&lt;br/>（可中断睡眠）&quot; as INT_SLEEP
+    state &quot;TASK_UNINTERRUPTIBLE&lt;br/>（不可中断睡眠）&quot; as UNINT_SLEEP
     state &quot;TASK_STOPPED\n（暂停）&quot; as STOPPED
     state &quot;TASK_ZOMBIE\n（僵尸）&quot; as ZOMBIE
     state &quot;EXIT_DEAD\n（已回收）&quot; as DEAD
 
     [*] --> RUNNING : fork / exec 后进入可运行队列
 
-    RUNNING --> INT_SLEEP : 等待事件&lt;br>（可被信号打断）
-    RUNNING --> UNINT_SLEEP : 等待关键事件&lt;br>（不可被信号打断）
+    RUNNING --> INT_SLEEP : 等待事件&lt;br/>（可被信号打断）
+    RUNNING --> UNINT_SLEEP : 等待关键事件&lt;br/>（不可被信号打断）
     RUNNING --> STOPPED : 收到 SIGSTOP / 被 ptrace 暂停
     RUNNING --> ZOMBIE : exit()
 
@@ -209,7 +249,16 @@ pre:hover > .expand-button {
     ZOMBIE --> DEAD : 父进程 wait() / waitpid() 回收
     DEAD --> [*]
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<p>xv6 的状态更为简洁：<code>UNUSED</code> 表示进程槽未使用，<code>USED</code> 表示已分配但尚未进入正常运行生命周期，<code>SLEEPING</code> 表示睡眠等待，<code>RUNNABLE</code> 表示可调度，<code>RUNNING</code> 表示正在执行，<code>ZOMBIE</code> 表示退出待回收。xv6 以极少的数据结构展示了进程状态机的核心轮廓，适合观察 <code>allocproc</code>、<code>fork</code>、<code>sleep</code>、<code>wakeup</code>、<code>yield</code>、<code>exit</code> 与 <code>wait</code> 之间的控制关系。</p>
+<p>xv6 的状态更简洁，非常适合教学：</p>
+<ul>
+<li><code>UNUSED</code>：进程槽空着。</li>
+<li><code>USED</code>：已经分配了，但还没正式进入生命周期。</li>
+<li><code>SLEEPING</code>：在睡觉等事件。</li>
+<li><code>RUNNABLE</code>：可以被调度。</li>
+<li><code>RUNNING</code>：正在执行。</li>
+<li><code>ZOMBIE</code>：退出了，等着被回收。</li>
+</ul>
+<p>你可以通过 <code>allocproc</code>、<code>fork</code>、<code>sleep</code>、<code>wakeup</code>、<code>yield</code>、<code>exit</code>、<code>wait</code> 这些函数，清楚地看到 xv6 进程状态机的控制关系。</p>
 <pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    U[UNUSED] -->|allocproc| S1[USED]\n    S1 -->|fork / userinit| R1[RUNNABLE]\n    R1 -->|schedule| R2[RUNNING]\n    R2 -->|yield| R1\n    R2 -->|sleep| B[SLEEPING]\n    B -->|wakeup| R1\n    R2 -->|exit| Z[ZOMBIE]\n    Z -->|freeproc| U&quot;">flowchart TD
     U[UNUSED] -->|allocproc| S1[USED]
     S1 -->|fork / userinit| R1[RUNNABLE]
@@ -221,7 +270,7 @@ pre:hover > .expand-button {
     Z -->|freeproc| U
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
 <h3 id="进程控制块与进程表">进程控制块与进程表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程控制块与进程表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>进程控制块（PCB，Process Control Block）是<span class="text-highlight">操作系统中描述进程的数据结构</span>，又称进程描述符。进程与 PCB 一一对应，PCB 是操作系统感知进程存在、实施管理与完成调度的唯一内核依据。</p>
+<p>**进程控制块（PCB, Process Control Block）**是操作系统里用来描述进程的数据结构，也叫进程描述符。进程和 PCB 是一一对应的，PCB 是操作系统”感知”进程存在、管理进程、调度进程的唯一依据。</p>
 <blockquote class="callout note" data-callout="note">
 <div class="callout-title">
                   <div class="callout-icon"></div>
@@ -232,19 +281,14 @@ pre:hover > .expand-button {
 <p>我还以为是电路板呢。</p>
 </div>
 </blockquote>
-<p><span class="text-highlight">所有 PCB 的集合构成进程表。</span></p>
-<p>Linux 的核心对象是 <code>task_struct</code>，Windows 中则对应 <code>EPROCESS</code>、<code>KPROCESS</code>、<code>PEB</code> 等结构。</p>
-<p>PCB 至少需要覆盖四类信息。</p>
-<ul>
-<li>第一类是标识与关系信息，例如 PID、进程名、用户标识、父子关系、进程组与会话关系。</li>
-<li>第二类是调度与管理信息，例如当前状态、优先级、调度参数、时间统计、上下文切换计数、队列链接以及阻塞原因等。</li>
-<li>第三类是资源与地址空间信息，例如虚拟内存空间描述、页表或内存映射信息、打开文件表、当前工作目录、IPC 状态以及已占有的各类资源。</li>
-<li>第四类是处理器现场信息，例如通用寄存器、程序计数器、程序状态字、栈指针，以及与体系结构相关的执行上下文。
-<ul>
-<li>这些信息在发生进程或线程切换时需要被保存到 PCB 或其关联的上下文结构中。</li>
-</ul>
-</li>
-</ul>
+<p>所有 PCB 的集合就构成了<strong>进程表</strong>。Linux 里的核心对象是 <code>task_struct</code>，Windows 里对应 <code>EPROCESS</code>、<code>KPROCESS</code>、<code>PEB</code> 等结构。</p>
+<p>PCB 里至少要存四类信息：</p>
+<ol>
+<li><strong>标识与关系信息</strong>：PID、进程名、用户标识、父子关系、进程组、会话关系。</li>
+<li><strong>调度与管理信息</strong>：当前状态、优先级、调度参数、运行时间统计、上下文切换次数、队列链接、阻塞原因等。</li>
+<li><strong>资源与地址空间信息</strong>：虚拟内存描述、页表或内存映射、打开文件表、当前工作目录、IPC 状态、已占有的资源等。</li>
+<li><strong>处理器现场信息</strong>：通用寄存器、程序计数器、程序状态字、栈指针等。发生进程或线程切换时，这些信息需要被保存下来。</li>
+</ol>
 <blockquote class="callout note" data-callout="note">
 <div class="callout-title">
                   <div class="callout-icon"></div>
@@ -257,19 +301,28 @@ pre:hover > .expand-button {
 <p>IPC 的实现与阻塞唤醒、调度、文件描述符、信号处理以及资源管理密切相关，是操作系统并发与协作机制的重要组成部分。</p>
 </div>
 </blockquote>
-<p>Solaris 的 <code>proc_t</code> 清楚展示了“进程是资源容器”的实现取向：它直接关联地址空间 <code>p_as</code>、认证信息 <code>p_cred</code>、会话信息、PID/PGID、信号信息、打开文件表 <code>u_finfo</code>、可执行文件 <code>p_exec</code>、线程链表 <code>p_tlist</code>、zone 信息与资源控制结构。</p>
+<p>Solaris 的 <code>proc_t</code> 很清晰地展示了”进程是资源容器”这个设计思想：它直接关联地址空间 <code>p_as</code>、认证信息 <code>p_cred</code>、会话信息、PID/PGID、信号信息、打开文件表 <code>u_finfo</code>、可执行文件 <code>p_exec</code>、线程链表 <code>p_tlist</code> 等等。</p>
 <p><img src="../../../课程笔记/操作系统/lecture/assets/Pasted-image-20260324114343.png" width="auto" height="auto" alt/></p>
 <p>Linux 的 <code>task_struct</code> 则包含状态、优先级、运行队列链表、允许执行的 CPU 集合、<code>mm_struct</code>/<code>active_mm</code>、父子与线程组关系、文件系统状态、信号处理对象、定时器、上下文切换统计和体系结构相关的 <code>thread_struct</code>。</p>
-<p>xv6 的 <code>struct proc</code> 只保留最关键的字段：锁、状态、睡眠通道、终止标志、退出码、PID、父进程、内核栈、用户地址空间大小、页表、陷入帧、上下文、打开文件数组、当前目录和进程名。真实系统显著比教学系统复杂，原因在于权限管理、信号处理、多处理器调度、命名空间、NUMA 与文件系统等机制都会向 PCB 注入额外状态。</p>
+<p>xv6 的 <code>struct proc</code> 只保留最关键字段：锁、状态、睡眠通道、终止标志、退出码、PID、父进程、内核栈、用户地址空间大小、页表、陷入帧、上下文、打开文件数组、当前目录和进程名。真实系统远比教学系统复杂，因为权限管理、信号处理、多处理器调度、命名空间、NUMA、文件系统等等都会往 PCB 里塞额外状态。</p>
 <h3 id="进程地址空间对内存的抽象">进程地址空间：对内存的抽象<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程地址空间对内存的抽象" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>操作系统分配给进程的是虚拟地址空间，而不是一段固定的物理内存区间。虚拟地址空间的核心作用有三项：</p>
-<ul>
-<li>为进程提供与物理布局无关的统一地址视图，使程序可以在“看似连续”的地址空间中运行；</li>
-<li>提供保护与隔离，使不同进程的地址不互相冲突；</li>
-<li>使共享、映射、换页和按需装入等机制成为可能。地址空间因此可以被理解为“对内存的抽象”。</li>
-</ul>
-<p>两个同时运行的相同程序可以看到相同的变量地址，却拥有不同的变量值，原因在于这些地址是各自进程的虚拟地址，分别映射到不同的物理页。（老的PC可能出现）</p>
-<p>现实系统常启用地址空间布局随机化（ASLR），使同一程序在不同次运行中也未必出现在相同的虚拟地址位置；关闭 ASLR 后，同一程序的映像布局更可能保持一致。虚拟地址的一致性与可变性因此分别服务于程序透明运行与安全防护。</p>
+<p>操作系统分配给进程的不是一段固定的物理内存，而是<strong>虚拟地址空间</strong>。虚拟地址空间主要有三个作用：</p>
+<ol>
+<li><strong>统一地址视图</strong>：程序可以在”看似连续”的地址空间里运行，不用关心物理内存到底怎么布局。</li>
+<li><strong>保护与隔离</strong>：不同进程的地址互不冲突，A 进程不能随便访问 B 进程的内存。</li>
+<li><strong>支持高级机制</strong>：共享内存、内存映射文件、按需装入（demand paging）、换页等都需要虚拟地址空间做基础。</li>
+</ol>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>你可以把虚拟地址空间理解为”每个人的微信昵称”——两个人可以都叫”小明”（虚拟地址相同），但系统后台知道他们对应两个完全不同的用户 ID（物理页不同）。所以两个同时运行的相同程序能看到相同的变量地址，却有着不同的变量值。</p>
+</div>
+</blockquote>
+<p>现实系统通常会开启<strong>地址空间布局随机化（ASLR）</strong>，所以同一程序每次运行时的虚拟地址位置可能都不一样；关了 ASLR 后，布局才更可能保持一致。</p>
 <pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    subgraph User[\&quot;用户地址空间\&quot;]\n        Code[\&quot;代码段\&quot;]\n        Data[\&quot;已初始化数据/全局区\&quot;]\n        Heap[\&quot;堆（向高地址增长）\&quot;]\n        MMap[\&quot;共享库 / 内存映射文件\&quot;]\n        Stack[\&quot;栈（向低地址增长）\&quot;]\n    end\n    subgraph Kernel[\&quot;内核地址空间\&quot;]\n        KText[\&quot;内核代码与数据\&quot;]\n        KObj[\&quot;内核对象、页表、缓冲区\&quot;]\n    end\n    Code --> Data --> Heap\n    MMap --> Stack&quot;">flowchart LR
     subgraph User[&quot;用户地址空间&quot;]
         Code[&quot;代码段&quot;]
@@ -285,9 +338,9 @@ pre:hover > .expand-button {
     Code --> Data --> Heap
     MMap --> Stack
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<p>一个典型进程地址空间至少包含代码段、数据段、堆、栈、共享库和内存映射区域。</p>
-<p>在 Linux 中，<code>/proc/PID/maps</code> 可以列出进程各段映射区域的起止地址、访问权限与后备对象，例如可执行文件映射、堆区 <code>[heap]</code>、栈区 <code>[stack]</code>、共享库映射、虚拟动态共享对象 <code>[vdso]</code> 以及某些平台提供的历史兼容接口区 <code>[vsyscall]</code>。内核中，一段连续且属性一致的虚拟地址区域通常由 <code>vm_area_struct</code> 描述，所有区域通过 <code>task->mm->mmap</code> 等结构组织起来；映射文件的区域属于有名映射，纯匿名分配的区域则属于匿名映射。</p>
-<p>Linux 虚拟内存组织体现出“按区域管理”的思想：<code>task_struct</code> 指向 <code>mm_struct</code>，后者持有页全局目录和 <code>vm_area_struct</code> 链表或树；每个 <code>vm_area_struct</code> 描述一个区域的起止地址、访问权限和标志位，并与文件映射或匿名内存关联。这种分层使“地址空间整体属性”和“局部区域属性”可以分别管理。</p>
+<p>一个典型的进程地址空间至少包含：代码段、数据段、堆、栈、共享库区域、内存映射区域。</p>
+<p>在 Linux 里，你可以通过 <code>/proc/PID/maps</code> 看到一个进程所有的内存映射：可执行文件映射、堆区 <code>[heap]</code>、栈区 <code>[stack]</code>、共享库、<code>[vdso]</code>、<code>[vsyscall]</code> 等等。内核里，一段连续且属性一致的虚拟地址区域通常由 <code>vm_area_struct</code> 描述，所有区域通过 <code>task->mm->mmap</code> 等结构组织起来。映射了文件的区域叫<strong>有名映射</strong>，纯内存分配的区域叫<strong>匿名映射</strong>。</p>
+<p>Linux 虚拟内存的组织体现出”按区域管理”的思想：<code>task_struct</code> 指向 <code>mm_struct</code>，后者持有页全局目录和 <code>vm_area_struct</code> 链表/树；每个 <code>vm_area_struct</code> 描述一个区域的起止地址、访问权限、标志位，并与文件映射或匿名内存关联。这样”地址空间整体属性”和”局部区域属性”就可以分开管理。</p>
 <pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    P[\&quot;进程&lt;br/>task_struct\&quot;]\n    M[\&quot;地址空间描述符&lt;br/>mm_struct\&quot;]\n\n    P --> M\n\n    M --> G[\&quot;页表根&lt;br/>pgd\&quot;]\n    M --> O[\&quot;地址空间整体信息&lt;br/>代码段范围、数据段范围、brk 等\&quot;]\n    M --> R[\&quot;虚拟内存区域集合&lt;br/>mmap 链表 / 树\&quot;]\n\n    subgraph V[\&quot;按区域管理：每个区域对应一个 vm_area_struct\&quot;]\n        direction TB\n        R --> V1[\&quot;代码/数据段区域&lt;br/>vm_area_struct\&quot;]\n        R --> V2[\&quot;堆区 [heap]&lt;br/>vm_area_struct\&quot;]\n        R --> V3[\&quot;共享库区域&lt;br/>vm_area_struct\&quot;]\n        R --> V4[\&quot;栈区 [stack]&lt;br/>vm_area_struct\&quot;]\n        R --> V5[\&quot;特殊区域 [vdso] / [vsyscall]&lt;br/>vm_area_struct\&quot;]\n\n        A[\&quot;区域共同属性&lt;br/>起止地址、权限、标志位、偏移\&quot;]\n       \n    end\n\n    V1 --> N1[\&quot;有名映射&lt;br/>关联可执行文件\&quot;]\n    V3 --> N2[\&quot;有名映射&lt;br/>关联共享库文件\&quot;]\n\n    V2 --> AN1[\&quot;匿名映射&lt;br/>无后备文件\&quot;]\n    V4 --> AN2[\&quot;匿名映射&lt;br/>无后备文件\&quot;]\n\n    V5 --> S[\&quot;内核提供的特殊映射\&quot;]&quot;">flowchart LR
     P[&quot;进程&lt;br/>task_struct&quot;]
     M[&quot;地址空间描述符&lt;br/>mm_struct&quot;]
@@ -319,7 +372,7 @@ pre:hover > .expand-button {
     V5 --> S[&quot;内核提供的特殊映射&quot;]
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
 <h3 id="进程队列与调度关系">进程队列与调度关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程队列与调度关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>进程状态在实现上通常通过队列组织。操作系统为每类状态维护一个或多个队列，队列元素是 PCB。就绪态对应就绪队列，等待态通常按等待事件划分为多个等待队列；单处理器系统中，运行态本质上只对应一个当前进程。进程状态变化时，其 PCB 会从一个队列转入另一个队列。</p>
+<p>进程状态在操作系统内部通常是用<strong>队列</strong>来组织的。系统为每类状态维护一个或多个队列，队列里的元素就是 PCB。就绪态对应<strong>就绪队列</strong>，等待态按等待事件划分成多个<strong>等待队列</strong>；单处理器系统里，运行态本质上只对应”当前正在 CPU 上跑的那个进程”。进程状态一变，它的 PCB 就会从一个队列挪到另一个队列。</p>
 <pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    ReadyQ[就绪队列]\n    Wait1[等待队列1]\n    Wait2[等待队列2]\n    CPU[处理器]\n    CPU -->|等待事件1| Wait1\n    CPU -->|等待事件2| Wait2\n    Wait1 -->|事件1发生| ReadyQ\n    Wait2 -->|事件2发生| ReadyQ\n    ReadyQ -->|调度| CPU\n    CPU -->|时间片到/抢占| ReadyQ&quot;">flowchart TD
     ReadyQ[就绪队列]
     Wait1[等待队列1]
@@ -332,46 +385,60 @@ pre:hover > .expand-button {
     ReadyQ -->|调度| CPU
     CPU -->|时间片到/抢占| ReadyQ
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<p>队列模型体现了“机制”和“策略”的分离。PCB、状态字段、上下文保存、入队出队操作、阻塞与唤醒原语属于机制，它们决定进程如何被表示与操纵；就绪队列按 FIFO、优先级或更复杂规则排序，时间片如何分配，何时抢占，属于策略。机制提供可行的控制通路，策略决定这些通路如何被使用。进程线程模型中，这种分离尤其重要，因为不同操作系统、不同应用领域，甚至同一系统中的不同线程库，都可能采用不同调度策略，但底层的状态转换与队列操作机制可以保持稳定。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>队列模型其实体现了操作系统设计里很经典的一个思想：<strong>机制和策略分离</strong>。怎么把 PCB 从一个队列移到另一个队列、怎么保存上下文、怎么阻塞唤醒，这些是”机制”，是底层固定不变的通路；而就绪队列是按 FIFO 还是按优先级排序、时间片给多长、什么时候抢占，这些是”策略”，可以根据不同系统、不同应用灵活调整。</p>
+</div>
+</blockquote>
 <h3 id="进程控制原语">进程控制原语<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程控制原语" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>进程控制操作通过原语实现。</p>
+<p>进程的各种控制操作需要通过<strong>原语</strong>来实现。</p>
 <blockquote class="callout note" data-callout="note">
 <div class="callout-title">
                   <div class="callout-icon"></div>
                   <div class="callout-title-inner"><p>Note</p></div>
                   
                 </div>
+<div class="callout-content">
+<p>原语（primitive）是不可分割、不可中断的操作序列，执行时必须保持原子性。否则在修改 PCB、迁移队列或回收资源的过程中就可能出现竞态条件。（你可以把它理解成操作系统层面的”原子操作”）</p>
+</div>
 </blockquote>
-<p>原语（primitive）是不可分割、不可中断的操作序列，其执行必须保持原子性，否则就会在 PCB 修改、队列迁移或资源回收过程中产生竞态条件。(原子操作)</p>
-<p>常见进程控制原语包括创建、撤销、阻塞、唤醒、挂起、激活（解挂）以及优先级调整。</p>
-<p>进程创建通常完成以下工作：</p>
+<p>常见的进程控制原语包括：创建、撤销、阻塞、唤醒、挂起、激活（解挂）、调整优先级等。</p>
+<p><strong>进程创建</strong>一般要做这些事：</p>
 <ol>
-<li>分配唯一标识 PID 与 PCB；</li>
+<li>分配唯一的 PID 和 PCB；</li>
 <li>建立地址空间；</li>
-<li>初始化 PCB 各字段；</li>
-<li>建立或扩展内核相关数据结构；</li>
-<li>设置队列指针并把新进程插入适当队列。</li>
+<li>初始化 PCB 的各个字段；</li>
+<li>建立或扩展内核相关的数据结构；</li>
+<li>设置队列指针，把新进程插入到适当的队列中。</li>
 </ol>
-<p>进程何时创建，取决于系统场景：系统初始化、用户登录、提交程序执行、请求操作系统服务或由现有进程派生子进程时都可能创建新进程。</p>
-<ul>
-<li>进程撤销需要结束其线程或子任务，回收其占有的资源，并删除 PCB。
-<ul>
-<li>资源回收包括关闭打开文件、断开网络连接、释放内存和解除内核对象引用。</li>
-</ul>
-</li>
-</ul>
-<p><strong>进程终止既可能是自愿的，例如正常退出或检测到程序错误后主动结束</strong>；也可能是非自愿的，例如非法指令、越界访问、保护错误、I/O 失败、时间限制到达或被其他进程杀死。终止并不必然意味着 PCB 立即消失，许多系统都会保留“僵尸”阶段用于记录退出码和统计信息。</p>
-<p><strong>阻塞与唤醒是进程控制中最典型的状态切换操作</strong>。运行中的进程在等待事件时主动执行阻塞原语，把自己从运行态转为等待态；目标事件发生后，由中断处理程序或其他进程执行唤醒原语，将其移回就绪队列。阻塞是对“当前进程暂时无法推进”的确认，唤醒则是对“推进条件已经满足”的确认。二者与具体调度策略无关。</p>
+<p>进程在什么时候会被创建？系统初始化、用户登录、提交程序执行、请求操作系统服务、或者现有进程派生子进程的时候都可能。</p>
+<p><strong>进程撤销</strong>则要结束它的线程或子任务，回收占用的资源，最后删掉 PCB。资源回收包括关闭打开的文件、断开网络连接、释放内存、解除内核对象引用等。</p>
+<p>进程终止可能是<strong>自愿的</strong>（正常退出、检测到错误后主动结束），也可能是<strong>非自愿的</strong>（非法指令、越界访问、保护错误、I/O 失败、超时、被其他进程 kill）。终止不一定意味着 PCB 立刻消失，很多系统会保留一个”僵尸”阶段来记录退出码和统计信息。</p>
+<p><strong>阻塞和唤醒</strong>是进程控制中最典型的状态切换。运行中的进程发现自己要等某个事件（比如读磁盘），就主动执行阻塞原语，把自己从运行态变成等待态；等目标事件发生了（比如磁盘读完了），中断处理程序或其他进程执行唤醒原语，把它移回就绪队列。阻塞是说”我现在推进不了”，唤醒是说”条件满足了，你可以重新排队等 CPU 了”。</p>
 <h3 id="unix-进程-apiforkexecwaitexit">UNIX 进程 API：<code>fork</code>、<code>exec</code>、<code>wait</code>、<code>exit</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#unix-进程-apiforkexecwaitexit" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>UNIX 进程控制的经典接口由 <code>fork()</code>、<code>exec()</code>、<code>wait()</code> 和 <code>exit()</code> 组成。</p>
+<p>UNIX 进程控制有四剑客：<code>fork()</code>、<code>exec()</code>、<code>wait()</code>、<code>exit()</code>。</p>
 <ul>
-<li><code>fork()</code> 通过复制当前进程创建子进程；</li>
-<li><code>exec()</code> 用新程序映像替换当前进程的用户地址空间；</li>
-<li><code>wait()</code> 允许父进程等待子进程结束，实现最基本的进程同步；</li>
-<li><code>exit()</code> 终止进程并向父进程留下可回收的退出信息。</li>
+<li><code>fork()</code>：复制当前进程，创建子进程。</li>
+<li><code>exec()</code>：用新程序映像替换当前进程的用户地址空间。</li>
+<li><code>wait()</code>：父进程等待子进程结束，实现最基本的父子同步。</li>
+<li><code>exit()</code>：终止进程，给父进程留下可回收的退出信息。</li>
 </ul>
-<p>Windows 则以 <code>CreateProcess</code>、<code>ExitProcess</code>、<code>WaitForSingleObject</code> 等接口实现对应功能。</p>
-<p>UNIX 把“创建一个可继续执行的子进程”和“让子进程改为执行另一个程序”拆成 <code>fork</code> 与 <code>exec</code> 两步，这种设计有重要工程意义。父进程可以在 <code>fork</code> 之后、<code>exec</code> 之前对即将执行新程序的子进程进行定制，例如重定向标准输入输出、修改环境变量、建立管道、调整工作目录或设置权限属性；随后再由 <code>exec</code> 把子进程映像替换为目标程序。Shell 正是利用这一点完成命令解释、重定向与管道构造。<code>wait</code> 则把父子进程的控制关系与资源回收连接起来，避免子进程退出后长时间处于僵尸状态。</p>
+<p>Windows 对应的接口是 <code>CreateProcess</code>、<code>ExitProcess</code>、<code>WaitForSingleObject</code> 等。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>UNIX 把”创建子进程”和”让子进程执行新程序”拆成两步，这是个特别聪明的设计。想象一下，如果这两步合二为一，Shell 在创建进程的同时就换了新程序，那它还怎么帮你在 <code>exec</code> 之前重定向标准输入输出、建立管道、修改环境变量？正是 <code>fork + exec</code> 的分拆，让 Shell 有了”夹带私货”的机会。</p>
+</div>
+</blockquote>
 <pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    Shell[Shell 进程] -->|fork| Child[子进程]\n    Child -->|继承文件描述符/工作目录/环境| Prepare[执行前定制]\n    Prepare -->|exec| Program[目标程序映像]\n    Program -->|exit| Zombie[退出待回收]\n    Shell -->|wait| Reap[回收退出信息]\n    Zombie --> Reap&quot;">flowchart TD
     Shell[Shell 进程] -->|fork| Child[子进程]
     Child -->|继承文件描述符/工作目录/环境| Prepare[执行前定制]
@@ -381,18 +448,18 @@ pre:hover > .expand-button {
     Zombie --> Reap
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
 <h3 id="fork-的实现与写时复制"><code>fork</code> 的实现与写时复制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#fork-的实现与写时复制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>传统 <code>fork()</code> 的语义是为子进程构造父进程地址空间的副本，并继承共享资源，例如打开文件和当前工作目录。典型实现步骤包括：为子进程分配进程描述符和唯一 PID；复制父进程地址空间；继承共享内核资源；将子进程设为就绪并插入就绪队列；对子进程返回 <code>0</code>，对父进程返回子进程 PID。</p>
-<p>直接逐页复制整个地址空间代价很高，尤其在 <code>fork()</code> 后紧接 <code>exec()</code> 的常见场景下，这种复制几乎是纯浪费。</p>
+<p>传统 <code>fork()</code> 的语义是为子进程构造父进程地址空间的副本，并继承共享资源（比如打开的文件、当前工作目录）。典型步骤是：给子进程分配进程描述符和 PID；复制父进程地址空间；继承共享内核资源；把子进程设为就绪并插入就绪队列；对子进程返回 <code>0</code>，对父进程返回子进程的 PID。</p>
+<p>但直接逐页复制整个地址空间代价很高，尤其在 <code>fork()</code> 之后紧接 <code>exec()</code> 的常见场景下，复制过来的页面几乎马上就被扔掉了，纯属浪费。</p>
 <blockquote>
 <p>COW技术来源于存储管理模块。Linux使用该技术对<code>fork()</code>进行了优化。</p>
 </blockquote>
-<p>Linux 使用写时复制（Copy-on-Write, COW）优化 <code>fork()</code>：</p>
-<ul>
-<li>首先为子进程创建新的 <code>mm_struct</code>、<code>vm_area_struct</code> 与页表副本，使父子进程拥有相同的虚拟地址布局；</li>
-<li>然后把双方对应页面都标记为只读，并把相应区域标记为私有 COW；</li>
-<li>当父进程或子进程第一次尝试写某个共享页面时，硬件因写只读页触发异常，内核再分配新物理页并复制原内容，让写入发生在私有副本上。</li>
-<li>由此，只有真正被修改的页面才会发生实际复制。</li>
-</ul>
+<p>Linux 用**写时复制（Copy-on-Write, COW）**优化了 <code>fork()</code>：</p>
+<ol>
+<li>为子进程创建新的 <code>mm_struct</code>、<code>vm_area_struct</code> 和页表副本，让父子拥有相同的虚拟地址布局；</li>
+<li>把父子双方对应页面都标记为<strong>只读</strong>，并把相应区域标记为<strong>私有 COW</strong>；</li>
+<li>当父进程或子进程第一次尝试写某个共享页面时，硬件因为写只读页触发异常，内核再分配新的物理页、复制原内容，让写入发生在私有副本上；</li>
+<li>只有真正被修改的页面才会发生实际复制。</li>
+</ol>
 <pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[fork] --> B[复制 mm_struct / VMA / 页表布局]\n    B --> C[父子页表都改为只读]\n    C --> D[区域标记为私有 COW]\n    D --> E[父子继续并发执行]\n    E -->|读页面| F[直接共享物理页]\n    E -->|写页面| G[触发缺页/保护异常]\n    G --> H[分配新页并复制内容]\n    H --> I[写入私有页]&quot;">flowchart TD
     A[fork] --> B[复制 mm_struct / VMA / 页表布局]
     B --> C[父子页表都改为只读]
@@ -403,28 +470,81 @@ pre:hover > .expand-button {
     G --> H[分配新页并复制内容]
     H --> I[写入私有页]
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<p>写时复制表明，进程管理与内存管理并不是彼此孤立的模块。<code>fork()</code> 的高效实现依赖页表权限位、异常处理路径和虚拟内存子系统协同工作。进程抽象对 CPU 的复用，地址空间抽象对内存的复用，最终在 <code>fork()</code> 的实现中交汇。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>COW 就像兄弟俩共用一本教科书，一开始谁都不抄，只是约定”谁也不许在上面乱画”。某天哥哥想记笔记了，才偷偷复印了一本属于自己的。如果弟弟从来不想记笔记，那这本书就永远只存在一份，省纸又省力。</p>
+</div>
+</blockquote>
+<p>写时复制也说明，进程管理和内存管理并不是彼此孤立的模块。<code>fork()</code> 的高效实现依赖页表权限位、异常处理路径和虚拟内存子系统协同工作。进程抽象对 CPU 的复用，地址空间抽象对内存的复用，最终在 <code>fork()</code> 的实现中交汇。</p>
 <h3 id="中断异常陷入与进程线程模型的关系">中断、异常、陷入与进程线程模型的关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#中断异常陷入与进程线程模型的关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>进程与线程的运行并不是纯粹的软件约定，其核心控制转移依赖中断、异常与陷入机制。时钟中断提供时间片边界，使系统得以抢占当前运行实体并执行调度器；设备中断在 I/O 完成时唤醒等待队列中的进程或线程；系统调用通过陷入进入内核，在用户态与内核态之间切换；页故障、保护错误、非法指令等异常则可能触发缺页处理、信号投递、阻塞恢复或进程终止。</p>
-<p>因此，进程状态转换背后的真正驱动源可以分成三类：当前运行实体主动请求，例如系统调用与显式阻塞；外部硬件事件到达，例如时钟与设备中断；执行过程中检测到的异常事件，例如访问无效地址或写只读页。进程线程模型给出的是运行实体、地址空间和状态机抽象，中断/异常/陷入机制则提供了进入内核、修改这些抽象并返回用户态的控制通路。</p>
+<p>进程和线程的运行并不是纯粹的软件约定，真正的控制权转移依赖于<strong>中断、异常和陷入</strong>机制。</p>
+<ul>
+<li><strong>时钟中断</strong>：提供时间片边界，让操作系统可以抢占当前运行实体并执行调度器。</li>
+<li><strong>设备中断</strong>：I/O 完成时唤醒等待队列里的进程或线程。</li>
+<li><strong>系统调用（陷入）</strong>：让用户态程序进入内核态，获取操作系统服务。</li>
+<li><strong>异常</strong>（页故障、保护错误、非法指令等）：可能触发缺页处理、信号投递、阻塞恢复或进程终止。</li>
+</ul>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>如果把进程线程模型比作交通规则，那中断/异常/陷入就是红绿灯和交警。规则再完善，也得靠红绿灯切换和交警指挥才能让车流（执行流）有序运转。</p>
+</div>
+</blockquote>
+<p>所以进程状态转换背后的真正驱动源可以分成三类：</p>
+<ol>
+<li>当前运行实体主动请求（系统调用、显式阻塞）；</li>
+<li>外部硬件事件到达（时钟中断、设备中断）；</li>
+<li>执行过程中检测到的异常事件（访问无效地址、写只读页等）。</li>
+</ol>
 <h3 id="进程特性与可重入程序">进程特性与可重入程序<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程特性与可重入程序" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>进程具有并发性、动态性、独立性、制约性和异步性。并发性意味着多个进程可以共同向前推进；动态性意味着进程作为程序实例会诞生、运行、阻塞、唤醒和消亡；独立性意味着每个进程拥有彼此隔离的地址空间与资源边界；制约性意味着进程会因共享资源或同步需求而相互影响；异步性意味着各进程推进速度相对独立、不可预知。</p>
-<p>可重入程序是能够被多个进程或执行流同时调用的程序。其典型条件是：代码本身不在执行过程中修改自身状态，调用方为其提供独立数据区。可重入性强调“代码可共享、状态不共享”，与进程地址空间隔离和线程共享地址空间中的同步问题都密切相关。</p>
+<p>进程有五个基本特性：</p>
+<ul>
+<li><strong>并发性</strong>：多个进程可以同时向前推进；</li>
+<li><strong>动态性</strong>：进程会诞生、运行、阻塞、唤醒、消亡；</li>
+<li><strong>独立性</strong>：每个进程有隔离的地址空间和资源边界；</li>
+<li><strong>制约性</strong>：进程会因为共享资源或同步需求而相互影响；</li>
+<li><strong>异步性</strong>：各进程推进速度相对独立、不可预知。</li>
+</ul>
+<p><strong>可重入程序</strong>是指能够被多个进程或执行流同时调用的程序。它的关键条件是：代码本身在执行过程中不修改自己，调用方为它提供独立的数据区。可重入性强调”代码可共享、状态不共享”，这跟进程地址空间隔离和线程共享地址空间中的同步问题都密切相关。</p>
 <hr/>
 <h2 id="线程模型">线程模型<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#线程模型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Summary</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>进程虽然是好抽象，但把所有事都绑在一个执行流上效率不高。线程把”资源拥有者”和”调度执行者”这两个角色拆开，让同一个地址空间内可以跑多个执行流。我们会聊清楚：为什么要引入线程？用户级线程和核心级线程各有什么优缺点？混合模型又是怎么折中的？</p>
+</div>
+</blockquote>
 <h3 id="引入线程的原因">引入线程的原因<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#引入线程的原因" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>在线程出现之前，进程同时承担“资源拥有者”和“调度单位”两个角色。随着应用复杂度提升，这种绑定逐渐暴露出局限。线程的引入主要有三方面原因：</p>
-<ul>
-<li>其一，应用需要多个执行流协同推进，例如图形编辑器或字处理软件常需同时处理用户输入、后台排版与磁盘保存，从而提高交互响应速度；</li>
-<li>其二，进程创建、撤销、通信和切换开销较大，限制了细粒度并发；</li>
-<li>其三，多核和多处理器体系结构要求单个地址空间内部也能并行执行多个活动。</li>
-</ul>
-<p>Web 服务器是线程价值的典型例子。服务器需要接收客户端请求、检索网页、利用缓存降低磁盘访问、并把响应返回给对应连接。若完全不用线程，常见替代方法有两类：</p>
-<ul>
-<li>一类是每次只处理一个请求的单线程顺序服务器，实现简单但吞吐量差；</li>
-<li>另一类是基于非阻塞 I/O 和有限状态机的事件驱动服务器，能够并发处理多个连接，但编程模型复杂。多线程服务器通过分派线程接收连接、工作线程处理请求，在保持阻塞式编程风格的同时获得较好的并发性与响应性。</li>
-</ul>
-<p>从并发服务器构造方式看，常见模型可归纳如下：</p>
+<p>在线程出现之前，进程同时承担着两个角色：<strong>资源拥有者</strong>和<strong>调度单位</strong>。随着应用变复杂，这种绑定开始暴露出问题：</p>
+<ol>
+<li><strong>应用需要多个执行流协同推进</strong>：比如图形编辑器或字处理软件，需要一边处理用户输入、一边后台排版、一边自动保存磁盘。放在一个进程里用多个执行流做，响应更快。</li>
+<li><strong>进程创建、撤销、通信和切换开销太大</strong>：限制了细粒度并发。</li>
+<li><strong>多核/多处理器架构要求单个地址空间内部也能并行执行</strong>。</li>
+</ol>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Web 服务器是线程价值的典型例子。服务器需要接收请求、检索网页、利用缓存、返回响应。如果不使用线程，要么每次只处理一个请求（吞吐量极差），要么基于非阻塞 I/O 和有限状态机搞事件驱动（编程模型复杂）。多线程服务器则可以让一个线程收连接、多个工作线程处理请求，既保持了阻塞式编程的简单自然，又获得了不错的并发性。</p>
+</div>
+</blockquote>
+<p>从并发服务器的构造方式来看，常见模型如下：</p>
 
 
 
@@ -460,21 +580,21 @@ pre:hover > .expand-button {
 
 <div class="table-container"><table><thead><tr><th>模型</th><th>并发来源</th><th>地址空间关系</th><th>I/O 风格</th><th>主要特征</th></tr></thead><tbody><tr><td>多进程</td><td>内核在多个进程间切换</td><td>各进程独立</td><td>可阻塞</td><td>隔离性强，创建与通信开销大</td></tr><tr><td>事件驱动/有限状态机</td><td>单线程手工交错多个逻辑流</td><td>共享同一空间</td><td>非阻塞</td><td>高效但控制流复杂</td></tr><tr><td>多线程</td><td>内核或线程库在多个线程间切换</td><td>共享同一进程空间</td><td>可阻塞或混合</td><td>编程自然，适合通用服务器</td></tr></tbody></table></div>
 <h3 id="线程的基本概念与属性">线程的基本概念与属性<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#线程的基本概念与属性" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>线程是进程中的一个运行实体，是处理器调度的基本单位。引入线程后，进程主要作为资源拥有者存在，线程承担执行路径与调度单位角色。</p>
-<p>线程有时也被称为轻量级进程，但其本质并不是“更小的进程”，而是把原先绑定在进程上的两个属性拆分开来：</p>
+<p><strong>线程是进程中的一个运行实体，是处理器调度的基本单位</strong>。引入线程后，进程主要作为资源拥有者存在，线程承担执行路径和调度单位的角色。</p>
+<p>线程有时也被称为”轻量级进程”，但它本质上不是”更小的进程”，而是把原先绑定在进程上的两个属性拆开了：</p>
 <ul>
-<li>地址空间、文件和 I/O 设备等资源属于进程；</li>
-<li>程序计数器、寄存器状态、栈和可运行状态属于线程。</li>
+<li><strong>进程拥有</strong>：地址空间、文件、I/O 设备等资源；</li>
+<li><strong>线程拥有</strong>：程序计数器、寄存器状态、栈和可运行状态。</li>
 </ul>
 <p>线程至少具有以下属性：</p>
 <ul>
-<li>拥有独立的执行状态与状态转换；</li>
-<li>在不运行时需要保存寄存器上下文，尤其是程序计数器、栈指针等；</li>
-<li>拥有自己的栈与栈指针；</li>
+<li>有独立的执行状态和状态转换；</li>
+<li>不运行时要保存寄存器上下文，尤其是程序计数器、栈指针；</li>
+<li>有自己的栈和栈指针；</li>
 <li>共享所属进程的地址空间、打开文件和其他资源；</li>
-<li>能够创建和撤销其他线程。</li>
+<li>能创建和撤销其他线程。</li>
 </ul>
-<p>一个程序最初通常以单线程进程方式启动，随后才在内部派生更多线程。</p>
+<p>一个程序最初通常以单线程进程启动，然后才能在内部派生更多线程。</p>
 <pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TB\n    subgraph Process[\&quot;进程：资源容器\&quot;]\n        AS[\&quot;共享用户地址空间\&quot;]\n        F[\&quot;共享文件/信号/资源\&quot;]\n        subgraph T1[\&quot;线程1\&quot;]\n            U1[\&quot;用户栈\&quot;]\n            K1[\&quot;内核栈\&quot;]\n            C1[\&quot;线程控制块\&quot;]\n        end\n        subgraph T2[\&quot;线程2\&quot;]\n            U2[\&quot;用户栈\&quot;]\n            K2[\&quot;内核栈\&quot;]\n            C2[\&quot;线程控制块\&quot;]\n        end\n        subgraph T3[\&quot;线程3\&quot;]\n            U3[\&quot;用户栈\&quot;]\n            K3[\&quot;内核栈\&quot;]\n            C3[\&quot;线程控制块\&quot;]\n        end\n    end&quot;">flowchart TB
     subgraph Process[&quot;进程：资源容器&quot;]
         AS[&quot;共享用户地址空间&quot;]
@@ -496,21 +616,29 @@ pre:hover > .expand-button {
         end
     end
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<p>线程栈在语义上属于各自线程私有执行上下文，但在共享地址空间的多线程进程中，其他线程在获得相应地址后通常可以访问该用户栈区域。</p>
-<p>这种“可寻址”并不意味着它应被共享使用；从程序正确性角度，线程栈仍然是线程私有状态的一部分。内核栈则由内核为每个线程维护，用户态代码不能直接访问。</p>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>线程栈虽然在语义上属于各自线程私有，但因为多线程进程共享同一个地址空间，其他线程如果拿到了某个线程栈的地址，理论上是可以访问那片内存的。但这不代表它应该被共享——从程序正确性角度，乱访问别的线程栈是非常危险的行为。内核栈则由内核为每个线程维护，用户态代码不能直接碰。</p>
+</div>
+</blockquote>
 <h3 id="用户级线程">用户级线程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#用户级线程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>用户级线程在用户空间实现，线程库和运行时系统负责线程创建、销毁、线程表维护与线程切换。</p>
-<p>内核只知道进程，不知道该进程内部存在线程，因此从内核视角看，一个多线程进程仍是单一的调度对象。用户级线程切换不需要进入内核态，不涉及特权转换，因而速度快、开销小，并且可以在不支持线程的操作系统之上通过库机制实现。POSIX Pthreads 在课件中被作为典型接口示例提出。</p>
-<p>用户级线程的优点在于：</p>
+<p><strong>用户级线程</strong>完全在用户空间实现，线程库和运行时系统负责线程创建、销毁、线程表维护和线程切换。</p>
+<p>内核根本不知道一个进程内部有线程，从内核视角看，一个多线程进程仍然是单一的调度对象。因此用户级线程切换不需要进入内核态，不涉及特权转换，<strong>速度快、开销小</strong>，而且可以在不支持线程的操作系统上通过库机制实现。</p>
+<p>用户级线程的优点：</p>
 <ul>
-<li>线程创建和撤销代价低；线程切换快；</li>
-<li>调度算法可以由应用自行控制，从而更贴近应用语义；</li>
-<li>线程库可移植到多种系统。</li>
+<li>创建和撤销代价低，切换快；</li>
+<li>调度算法可以由应用自己控制，更贴近应用语义；</li>
+<li>线程库可移植性好。</li>
 </ul>
-<p>然而其缺点同样鲜明：</p>
+<p>但缺点也很明显：</p>
 <ul>
-<li>只要某个线程发起阻塞式系统调用，内核就会阻塞整个进程，从而连带阻塞该进程内全部用户线程；</li>
-<li>内核只把处理器分配给进程，因此同一进程中的多个用户级线程无法真正同时运行在多个处理器上。</li>
+<li>只要某个线程发起<strong>阻塞式系统调用</strong>，内核就会阻塞<strong>整个进程</strong>，连带阻塞该进程内的<strong>全部用户线程</strong>；</li>
+<li>内核只把处理器分配给进程，所以同一进程中的多个用户级线程<strong>无法真正同时运行在多个处理器上</strong>。</li>
 </ul>
 <pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    subgraph User[\&quot;用户空间\&quot;]\n        RTS[线程运行时系统]\n        TBL[线程表]\n        T1[线程1]\n        T2[线程2]\n    end\n    subgraph Kernel[\&quot;内核空间\&quot;]\n        PT[进程表]\n    end\n    RTS --> TBL\n    Kernel --> PT&quot;">flowchart LR
     subgraph User[&quot;用户空间&quot;]
@@ -525,39 +653,73 @@ pre:hover > .expand-button {
     RTS --> TBL
     Kernel --> PT
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<p>用户级线程中的“进程状态”和“线程状态”可能出现分离。</p>
-<p>若线程 2 执行阻塞系统调用，内核看到的是整个进程 B 阻塞；当进程 B 再次被调度时，用户态线程库可能选择让线程 1 继续运行。若线程 1 只是调用用户级原语主动让出处理器，而非陷入内核，线程库可以直接在进程内部切换到线程 2，内核甚至不会察觉这一切。也正因为如此，用户级线程中的抢占式调度难以完全依赖内核完成，库实现经常需要自愿让出处理器，或者借助定时信号模拟抢占。</p>
-<p>阻塞系统调用对用户级线程尤为不利，因此常见处理方式包括：</p>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>想象用户级线程就像一家公司（进程）里的一群员工（线程），公司对外只有一个法人身份。如果其中一个员工去银行办贷款（阻塞系统调用），银行（内核）会把整个公司冻结，其他员工即使没事做也全都被卡住了。更惨的是，税务局（内核调度器）只认公司法人，不认具体员工，所以这群员工没法同时出现在不同的办事窗口（多处理器）上。</p>
+</div>
+</blockquote>
+<p>用户级线程里，“进程状态”和”线程状态”可能出现分离。比如线程 2 执行了阻塞系统调用，内核看到的是整个进程 B 阻塞；但当进程 B 再次被调度时，用户态线程库可以选择让线程 1 继续跑。如果线程 1 只是调用用户级原语主动让出处理器，线程库可以直接在进程内部切到线程 2，内核甚至察觉不到。</p>
+<p>也正因为内核不参与，用户级线程的抢占式调度难以完全依赖内核完成，库实现经常需要线程<strong>自愿让出</strong>处理器，或者借助定时信号模拟抢占。</p>
+<p>为了规避阻塞系统调用的问题，常见处理方式是：</p>
 <ul>
-<li>其一，用包装技术把阻塞系统调用改写为非阻塞形式；</li>
-<li>其二，重写相关 I/O 库函数，使调用方在用户态采用轮询、事件通知或其他异步手段规避整进程阻塞。</li>
+<li>用包装技术把阻塞系统调用改写为非阻塞形式；</li>
+<li>重写 I/O 库函数，采用轮询、事件通知等异步手段。</li>
 </ul>
-<p>这些方法本质上都在尝试缩小“内核只识别进程”这一实现前提带来的负面影响。</p>
+<p>这些方法本质上都是在缩小”内核只识别进程”这个前提带来的负面影响。</p>
 <h3 id="posix-线程接口">POSIX 线程接口<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#posix-线程接口" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <p>Pthreads 提供的基本接口包括：</p>
 <ul>
-<li><code>pthread_create</code> 创建新线程</li>
-<li><code>pthread_exit</code> 结束当前线程</li>
-<li><code>pthread_join</code> 等待指定线程结束</li>
-<li><code>pthread_yield</code> 主动让出处理器</li>
-<li><code>pthread_attr_init</code> 和 <code>pthread_attr_destroy</code> 用于初始化和释放线程属性对象。</li>
+<li><code>pthread_create</code>：创建新线程</li>
+<li><code>pthread_exit</code>：结束当前线程</li>
+<li><code>pthread_join</code>：等待指定线程结束</li>
+<li><code>pthread_yield</code>：主动让出处理器</li>
+<li><code>pthread_attr_init</code> / <code>pthread_attr_destroy</code>：初始化和释放线程属性对象</li>
 </ul>
-<p>课件中特别提出“线程为什么是自愿让出 CPU”的问题，其背景正是用户级线程调度的实现约束：当内核只把整个进程视为可调度实体时，线程库只有在线程显式调用让出原语，或者借助额外机制打断当前执行时，才能在用户空间重获调度权。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>课件里会问：“线程为什么要自愿让出 CPU？“答案就在用户级线程的实现约束里——内核只把整个进程当成可调度实体，线程库除非得到线程的”主动配合”（调用 <code>yield</code>），或者靠额外信号打断，否则没法在用户空间重新拿到调度权。</p>
+</div>
+</blockquote>
 <h3 id="核心级线程">核心级线程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#核心级线程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>核心级线程由内核直接管理。内核维护进程与线程两层上下文，并向应用程序提供线程 API。线程切换需要内核支持，调度器也直接以线程为基本对象进行处理，因此同一进程中的不同线程可以在多个处理器上并行执行；若某个线程阻塞，通常只会阻塞该线程而不是整个进程。Windows 是典型的核心级线程系统。</p>
-<p>核心级线程的主要代价在于：</p>
+<p><strong>核心级线程</strong>由内核直接管理。内核维护进程和线程两层上下文，向应用程序提供线程 API。线程切换需要内核支持，调度器也以线程为基本对象进行处理。</p>
+<p>因此核心级线程有两个关键优势：</p>
 <ul>
-<li>线程创建、销毁与切换都需要进入内核，系统调用频繁时开销高于纯用户级线程；</li>
-<li>内核必须维护更多线程级状态，调度器与同步机制实现也更复杂。</li>
+<li>同一进程中的不同线程可以在<strong>多个处理器上并行执行</strong>；</li>
+<li>某个线程阻塞，通常<strong>只会阻塞该线程</strong>，不会连累整个进程。</li>
 </ul>
-<p>核心级线程换来的是更强的多处理器并行能力、更自然的阻塞语义和更完整的内核可见性。</p>
+<p>Windows 是典型的核心级线程系统。</p>
+<p>但代价也是明显的：</p>
+<ul>
+<li>线程创建、销毁、切换都要进入内核，系统调用频繁时开销高于纯用户级线程；</li>
+<li>内核必须维护更多线程级状态，调度器和同步机制也更复杂。</li>
+</ul>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>核心级线程相当于给每个员工都发了独立的法人执照。好处是大家都能各自去不同窗口办事（多核并行），一个人被卡住不影响其他人。坏处是办执照和维护档案的成本变高了（内核开销大）。</p>
+</div>
+</blockquote>
 <h3 id="混合模型">混合模型<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#混合模型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>混合模型试图结合用户级线程和核心级线程的优点。其典型结构是：</p>
+<p><strong>混合模型</strong>试图结合用户级线程和核心级线程的优点：</p>
 <ul>
-<li>线程创建在用户空间完成，由用户级运行时维护大量用户线程；</li>
-<li>真正与处理器绑定的是较少数量的核心级线程，用户线程再被多路复用到这些内核线程之上。</li>
+<li>线程创建在用户空间完成，用户级运行时维护大量用户线程；</li>
+<li>真正和处理器绑定的是较少数量的核心级线程，用户线程被<strong>多路复用</strong>到这些内核线程之上。</li>
 </ul>
-<p>Solaris 曾采用这类思路。混合模型的目标是同时获得低开销线程管理和多处理器并行能力，但它也带来了映射关系维护、阻塞传播与调度协同的复杂度。</p>
+<p>Solaris 曾经采用过这种思路。混合模型的目标是同时获得低开销的线程管理和多处理器并行能力，但它也带来了映射关系维护、阻塞传播和调度协同的复杂度。</p>
 <pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    subgraph User[\&quot;用户空间\&quot;]\n        U1[用户线程1]\n        U2[用户线程2]\n        U3[用户线程3]\n        U4[用户线程4]\n    end\n    subgraph Kernel[\&quot;内核空间\&quot;]\n        K1[内核线程1]\n        K2[内核线程2]\n    end\n    U1 --> K1\n    U2 --> K1\n    U3 --> K2\n    U4 --> K2&quot;">flowchart LR
     subgraph User[&quot;用户空间&quot;]
         U1[用户线程1]
@@ -575,37 +737,66 @@ pre:hover > .expand-button {
     U4 --> K2
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
 <h3 id="线程实现方式的边界">线程实现方式的边界<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#线程实现方式的边界" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>线程实现方式的选择体现了操作系统设计中的边界权衡。</p>
+<p>线程实现方式的选择体现了操作系统设计中的边界权衡：</p>
 <ul>
-<li>用户级线程把灵活性和低开销放在首位，但它依赖应用或运行时避免阻塞式内核接口</li>
-<li>核心级线程把通用性和并行性放在首位，但增加了系统态切换与内核维护负担</li>
-<li>混合模型则把复杂性转移到运行时和内核之间的协作层</li>
+<li><strong>用户级线程</strong>：把灵活性和低开销放首位，但依赖应用或运行时避免阻塞式内核接口；</li>
+<li><strong>核心级线程</strong>：把通用性和并行性放首位，但增加了系统态切换与内核维护负担；</li>
+<li><strong>混合模型</strong>：把复杂性转移到了运行时和内核之间的协作层。</li>
 </ul>
-<p>没有任何一种模型能在所有维度上同时最优。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>没有银弹。用户级线程快但不能真并行，核心级线程能并行但开销大，混合模型想两头占便宜但实现复杂。实际系统选哪种，取决于你最在意什么。</p>
+</div>
+</blockquote>
 <hr/>
 <h2 id="协程">协程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#协程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Summary</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>线程虽然比进程轻，但数量上去了照样扛不住。协程是比线程更轻量的用户态执行流，通过主动挂起和恢复来协作运行。这一节我们会搞清楚：协程是为了解决什么问题？它和线程的边界在哪？以及进程、线程、协程三者怎么分工。</p>
+</div>
+</blockquote>
 <h3 id="协程的引入动机">协程的引入动机<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#协程的引入动机" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>协程的引入主要针对高并发和异步任务处理场景，尤其适用于大量连接、I/O 密集型服务与细粒度异步流程。线程虽然比进程轻量，但当线程数量进一步膨胀时，栈空间占用、切换开销、调度开销和同步复杂度都会迅速上升。“线程越多越好”并不成立。</p>
-<p>面向 C10K （一台服务器如何同时处理10,000并发连接）一类高并发问题，系统往往需要把线程池、非阻塞 I/O、I/O 多路复用和更轻量的执行流组织方式结合起来。</p>
+<p>协程主要针对<strong>高并发和异步任务处理</strong>场景，尤其适用于大量连接、I/O 密集型服务与细粒度异步流程。线程虽然比进程轻量，但当线程数量进一步膨胀时，栈空间占用、切换开销、调度开销和同步复杂度都会迅速上升。<strong>“线程越多越好”并不成立</strong>。</p>
+<p>面向 C10K（一台服务器如何同时处理 10,000 并发连接）一类高并发问题，系统往往需要把线程池、非阻塞 I/O、I/O 多路复用和更轻量的执行流组织方式结合起来。</p>
 <h3 id="协程的概念与边界">协程的概念与边界<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#协程的概念与边界" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>协程是在<strong>一个线程或进程内部</strong>实现多个执行流，并让这些执行流通过显式挂起与恢复进行协作的一种机制。</p>
-<p>协程不是内核调度实体，通常运行在用户态，更接近语言或运行时提供的控制流抽象。它强调“协作式切换”，即执行流在合适的时机主动让出控制权，而不是依赖内核随时抢占。</p>
-<p>协程与线程的边界在于：</p>
+<p>协程是在<strong>一个线程或进程内部</strong>实现多个执行流，并让这些执行流通过<strong>显式挂起与恢复</strong>进行协作的一种机制。</p>
+<p>协程不是内核调度实体，通常运行在用户态，更接近语言或运行时提供的控制流抽象。它强调<strong>协作式切换</strong>——执行流在合适的时机主动让出控制权，而不是依赖内核随时抢占。</p>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>你可以把协程想象成一场接力赛，每个选手（协程）跑到自己那一棒的终点后，主动把接力棒交给下一个人。没有裁判（内核）吹哨强制换人，全靠选手自己交接。所以协程切换非常轻量，不需要陷入内核。</p>
+</div>
+</blockquote>
+<p>协程与线程的边界：</p>
 <ul>
-<li>线程通常是操作系统可见的调度单位，具备内核可识别的上下文和阻塞语义；</li>
-<li>协程通常只由语言运行时管理，本身不能直接在多个处理器上并行，除非底层仍然建立在多个线程之上。</li>
+<li><strong>线程</strong>是操作系统可见的调度单位，有内核可识别的上下文和阻塞语义；</li>
+<li><strong>协程</strong>通常只由语言运行时管理，本身不能直接在多个处理器上并行，除非底层仍然建立在多个线程之上；</li>
 <li>协程与用户级线程相似，都属于用户态执行流组织机制，但协程更强调异步编程模型中的挂起点、恢复点与状态机转化。</li>
 </ul>
 <h3 id="协程的使用与实现">协程的使用与实现<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#协程的使用与实现" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
-<p>协程通常依赖编程语言或库支持，例如 Python <code>asyncio</code>、Rust <code>async_std</code>、C++20 coroutine，以及课件中提及的 Go 的 goroutine/coroutine 风格支持。</p>
-<p>它们常与事件循环、异步 I/O 或运行时调度器配合，把原本需要大量线程维护的等待状态压缩成可恢复的轻量任务对象。其典型收益在于：减少线程数量与切换代价，使等待 I/O 的大量任务能够以极低成本挂起与恢复。</p>
-<p>Windows 中的 fiber（纤程）可以视为与协程相近的用户态执行流机制：一个线程内部可以包含多个纤程，由用户态显式切换。纤程进一步说明，执行流组织并不必然等同于内核线程，语言、库和运行时可以在同一线程之上构造更轻量的并发抽象。</p>
+<p>协程通常依赖编程语言或库支持，例如 Python <code>asyncio</code>、Rust <code>async_std</code>、C++20 coroutine，以及 Go 的 goroutine/coroutine 风格支持。</p>
+<p>它们常与事件循环、异步 I/O 或运行时调度器配合，把原本需要大量线程维护的等待状态，压缩成可恢复的轻量任务对象。典型收益是：减少线程数量和切换代价，使等待 I/O 的大量任务能够以极低成本挂起与恢复。</p>
+<p>Windows 中的 **fiber（纤程）**可以视为与协程相近的用户态执行流机制：一个线程内部可以包含多个纤程，由用户态显式切换。纤程进一步说明，执行流组织并不必然等同于内核线程，语言、库和运行时可以在同一线程之上构造更轻量的并发抽象。</p>
 <h3 id="进程线程与协程的层次关系">进程、线程与协程的层次关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#进程线程与协程的层次关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
 <p>三者可以概括为如下层次：</p>
 <ul>
-<li>进程解决“资源隔离与地址空间边界”问题，是资源分配单位。</li>
-<li>线程解决“同一资源容器内部的并发执行与调度”问题，是经典的 CPU 调度单位。</li>
-<li>协程解决“单线程内部大量异步任务的低成本组织”问题，是语言或运行时层面的协作执行流。</li>
+<li><strong>进程</strong>：解决”资源隔离与地址空间边界”问题，是资源分配单位。</li>
+<li><strong>线程</strong>：解决”同一资源容器内部的并发执行与调度”问题，是经典的 CPU 调度单位。</li>
+<li><strong>协程</strong>：解决”单线程内部大量异步任务的低成本组织”问题，是语言或运行时层面的协作执行流。</li>
 </ul>
 <pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    P[进程&lt;br/>资源边界 / 地址空间 / 文件]\n    T[线程&lt;br/>调度单位 / 执行上下文 / 栈]\n    C[协程&lt;br/>用户态任务 / 挂起恢复 / 低切换开销]\n    P --> T\n    T --> C&quot;">flowchart TD
     P[进程&lt;br/>资源边界 / 地址空间 / 文件]
@@ -614,10 +805,28 @@ pre:hover > .expand-button {
     P --> T
     T --> C
 </code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
-<p>这三类抽象并不是相互替代关系，而是分布在不同层次上。一个服务器可以由多个进程组成，每个进程拥有多个线程，每个线程内部再运行大量协程。真正的工程设计关注点不在于“哪一种抽象更高级”，而在于隔离性、并行性、编程复杂度、阻塞语义与切换成本之间的平衡。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这三者不是谁替代谁的关系，而是分层的。一个服务器可以是这样构成的：多个进程做隔离，每个进程里多个线程利用多核，每个线程里再跑大量协程处理海量连接。 Engineering is all about trade-offs，关键是找到隔离性、并行性、编程复杂度、阻塞语义和切换成本之间的平衡点。</p>
+</div>
+</blockquote>
 <hr/>
 <h2 id="总结">总结<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#总结" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
-<p>进程通过把处理器时间复用与资源边界组织起来，形成了操作系统中最基础的运行抽象；PCB、进程状态机、地址空间和进程控制原语构成了这一抽象的实现骨架。线程把“资源拥有者”和“执行路径”分离，使同一地址空间内的多个执行流成为可能；不同线程实现方式则分别对应不同的内核可见性、阻塞语义和并行能力。协程进一步把并发组织推进到语言与运行时层，使大量异步任务能够以更低成本运行。整个模型从底层控制机制到上层编程抽象逐层展开，构成了现代操作系统和并发软件系统的基本结构。</p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Summary</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>进程把 CPU 时间复用和资源边界组织起来，是操作系统最基础的运行抽象；PCB、进程状态机、地址空间、进程控制原语构成了它的实现骨架。线程把”资源拥有者”和”执行路径”分离，让同一地址空间内的多个执行流成为可能；用户级线程、核心级线程和混合模型分别对应不同的内核可见性、阻塞语义和并行能力。协程则进一步把并发组织推进到语言与运行时层，让大量异步任务能以更低成本运行。从底层控制机制到上层编程抽象，整个模型逐层展开，这就是现代操作系统和并发软件系统的基本结构。</p>
+</div>
+</blockquote></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
                 s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
                 c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
                 C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
@@ -627,6 +836,6 @@ pre:hover > .expand-button {
                 C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
                 S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
                 s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
-                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-137" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#进程线程模型" data-for="进程线程模型">进程线程模型</a></li><li class="depth-1"><a href="#进程模型" data-for="进程模型">进程模型</a></li><li class="depth-2"><a href="#基本概念顺序程序多道程序与并发环境" data-for="基本概念顺序程序多道程序与并发环境">基本概念：顺序程序、多道程序与并发环境</a></li><li class="depth-2"><a href="#进程的定义作用与进程映像" data-for="进程的定义作用与进程映像">进程的定义、作用与进程映像</a></li><li class="depth-2"><a href="#进程状态与状态转换" data-for="进程状态与状态转换">进程状态与状态转换</a></li><li class="depth-2"><a href="#进程控制块与进程表" data-for="进程控制块与进程表">进程控制块与进程表</a></li><li class="depth-2"><a href="#进程地址空间对内存的抽象" data-for="进程地址空间对内存的抽象">进程地址空间：对内存的抽象</a></li><li class="depth-2"><a href="#进程队列与调度关系" data-for="进程队列与调度关系">进程队列与调度关系</a></li><li class="depth-2"><a href="#进程控制原语" data-for="进程控制原语">进程控制原语</a></li><li class="depth-2"><a href="#unix-进程-apiforkexecwaitexit" data-for="unix-进程-apiforkexecwaitexit">UNIX 进程 API：fork、exec、wait、exit</a></li><li class="depth-2"><a href="#fork-的实现与写时复制" data-for="fork-的实现与写时复制">fork 的实现与写时复制</a></li><li class="depth-2"><a href="#中断异常陷入与进程线程模型的关系" data-for="中断异常陷入与进程线程模型的关系">中断、异常、陷入与进程线程模型的关系</a></li><li class="depth-2"><a href="#进程特性与可重入程序" data-for="进程特性与可重入程序">进程特性与可重入程序</a></li><li class="depth-1"><a href="#线程模型" data-for="线程模型">线程模型</a></li><li class="depth-2"><a href="#引入线程的原因" data-for="引入线程的原因">引入线程的原因</a></li><li class="depth-2"><a href="#线程的基本概念与属性" data-for="线程的基本概念与属性">线程的基本概念与属性</a></li><li class="depth-2"><a href="#用户级线程" data-for="用户级线程">用户级线程</a></li><li class="depth-2"><a href="#posix-线程接口" data-for="posix-线程接口">POSIX 线程接口</a></li><li class="depth-2"><a href="#核心级线程" data-for="核心级线程">核心级线程</a></li><li class="depth-2"><a href="#混合模型" data-for="混合模型">混合模型</a></li><li class="depth-2"><a href="#线程实现方式的边界" data-for="线程实现方式的边界">线程实现方式的边界</a></li><li class="depth-1"><a href="#协程" data-for="协程">协程</a></li><li class="depth-2"><a href="#协程的引入动机" data-for="协程的引入动机">协程的引入动机</a></li><li class="depth-2"><a href="#协程的概念与边界" data-for="协程的概念与边界">协程的概念与边界</a></li><li class="depth-2"><a href="#协程的使用与实现" data-for="协程的使用与实现">协程的使用与实现</a></li><li class="depth-2"><a href="#进程线程与协程的层次关系" data-for="进程线程与协程的层次关系">进程、线程与协程的层次关系</a></li><li class="depth-1"><a href="#总结" data-for="总结">总结</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../../课程笔记/操作系统/lecture/" class="internal">index</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-143" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#进程线程模型" data-for="进程线程模型">进程线程模型</a></li><li class="depth-1"><a href="#进程模型" data-for="进程模型">进程模型</a></li><li class="depth-2"><a href="#基本概念顺序程序多道程序与并发环境" data-for="基本概念顺序程序多道程序与并发环境">基本概念：顺序程序、多道程序与并发环境</a></li><li class="depth-2"><a href="#进程的定义作用与进程映像" data-for="进程的定义作用与进程映像">进程的定义、作用与进程映像</a></li><li class="depth-2"><a href="#进程状态与状态转换" data-for="进程状态与状态转换">进程状态与状态转换</a></li><li class="depth-2"><a href="#进程控制块与进程表" data-for="进程控制块与进程表">进程控制块与进程表</a></li><li class="depth-2"><a href="#进程地址空间对内存的抽象" data-for="进程地址空间对内存的抽象">进程地址空间：对内存的抽象</a></li><li class="depth-2"><a href="#进程队列与调度关系" data-for="进程队列与调度关系">进程队列与调度关系</a></li><li class="depth-2"><a href="#进程控制原语" data-for="进程控制原语">进程控制原语</a></li><li class="depth-2"><a href="#unix-进程-apiforkexecwaitexit" data-for="unix-进程-apiforkexecwaitexit">UNIX 进程 API：fork、exec、wait、exit</a></li><li class="depth-2"><a href="#fork-的实现与写时复制" data-for="fork-的实现与写时复制">fork 的实现与写时复制</a></li><li class="depth-2"><a href="#中断异常陷入与进程线程模型的关系" data-for="中断异常陷入与进程线程模型的关系">中断、异常、陷入与进程线程模型的关系</a></li><li class="depth-2"><a href="#进程特性与可重入程序" data-for="进程特性与可重入程序">进程特性与可重入程序</a></li><li class="depth-1"><a href="#线程模型" data-for="线程模型">线程模型</a></li><li class="depth-2"><a href="#引入线程的原因" data-for="引入线程的原因">引入线程的原因</a></li><li class="depth-2"><a href="#线程的基本概念与属性" data-for="线程的基本概念与属性">线程的基本概念与属性</a></li><li class="depth-2"><a href="#用户级线程" data-for="用户级线程">用户级线程</a></li><li class="depth-2"><a href="#posix-线程接口" data-for="posix-线程接口">POSIX 线程接口</a></li><li class="depth-2"><a href="#核心级线程" data-for="核心级线程">核心级线程</a></li><li class="depth-2"><a href="#混合模型" data-for="混合模型">混合模型</a></li><li class="depth-2"><a href="#线程实现方式的边界" data-for="线程实现方式的边界">线程实现方式的边界</a></li><li class="depth-1"><a href="#协程" data-for="协程">协程</a></li><li class="depth-2"><a href="#协程的引入动机" data-for="协程的引入动机">协程的引入动机</a></li><li class="depth-2"><a href="#协程的概念与边界" data-for="协程的概念与边界">协程的概念与边界</a></li><li class="depth-2"><a href="#协程的使用与实现" data-for="协程的使用与实现">协程的使用与实现</a></li><li class="depth-2"><a href="#进程线程与协程的层次关系" data-for="进程线程与协程的层次关系">进程、线程与协程的层次关系</a></li><li class="depth-1"><a href="#总结" data-for="总结">总结</a></li><li class="overflow-end"></li></ul></div><div class="backlinks"><h3>Backlinks</h3><ul id="list-2" class="overflow"><li><a href="../../../课程笔记/操作系统/lecture/" class="internal">index</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
 </script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}container;content;isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
 </script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>
