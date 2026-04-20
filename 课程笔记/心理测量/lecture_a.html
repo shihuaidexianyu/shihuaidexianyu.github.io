@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>lecture_a</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="lecture_a"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="lecture_a"/><meta name="twitter:description" content="人工智能与心理测量 Summary 这一讲的核心就是：AI 正在重新定义心理测量。从传统的”做几道题打个分”，进化到”多模态信号 + 特征提取 + 模型推断”的全新模式。我们要掌握三个大板块： AI 如何影响心理测量（多模态数据、计算精神病学、机器学习基础、情绪识别与脑机接口、AIGC 刺激材料，以及一个超级重要的测量效应） 怎么测试 AI 本身（传统测试的局限、通智测试思想、AGI 评级、社会智能与心智理论） AI 与创造力（创造力测不准的原因、4P 模型、概念融合、产品评价公式、以及过程和产品的区分） 考试重点：AI 评估会改变被试行为（霍桑效应的 AI 版）、AGI 评级的五阶段对照、心..."/><meta property="og:description" content="人工智能与心理测量 Summary 这一讲的核心就是：AI 正在重新定义心理测量。从传统的”做几道题打个分”，进化到”多模态信号 + 特征提取 + 模型推断”的全新模式。我们要掌握三个大板块： AI 如何影响心理测量（多模态数据、计算精神病学、机器学习基础、情绪识别与脑机接口、AIGC 刺激材料，以及一个超级重要的测量效应） 怎么测试 AI 本身（传统测试的局限、通智测试思想、AGI 评级、社会智能与心智理论） AI 与创造力（创造力测不准的原因、4P 模型、概念融合、产品评价公式、以及过程和产品的区分） 考试重点：AI 评估会改变被试行为（霍桑效应的 AI 版）、AGI 评级的五阶段对照、心..."/><meta property="og:image:alt" content="人工智能与心理测量 Summary 这一讲的核心就是：AI 正在重新定义心理测量。从传统的”做几道题打个分”，进化到”多模态信号 + 特征提取 + 模型推断”的全新模式。我们要掌握三个大板块： AI 如何影响心理测量（多模态数据、计算精神病学、机器学习基础、情绪识别与脑机接口、AIGC 刺激材料，以及一个超级重要的测量效应） 怎么测试 AI 本身（传统测试的局限、通智测试思想、AGI 评级、社会智能与心智理论） AI 与创造力（创造力测不准的原因、4P 模型、概念融合、产品评价公式、以及过程和产品的区分） 考试重点：AI 评估会改变被试行为（霍桑效应的 AI 版）、AGI 评级的五阶段对照、心..."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/心理测量/lecture_a"/><meta property="twitter:url" content="https://localhost/课程笔记/心理测量/lecture_a"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="人工智能与心理测量 Summary 这一讲的核心就是：AI 正在重新定义心理测量。从传统的”做几道题打个分”，进化到”多模态信号 + 特征提取 + 模型推断”的全新模式。我们要掌握三个大板块： AI 如何影响心理测量（多模态数据、计算精神病学、机器学习基础、情绪识别与脑机接口、AIGC 刺激材料，以及一个超级重要的测量效应） 怎么测试 AI 本身（传统测试的局限、通智测试思想、AGI 评级、社会智能与心智理论） AI 与创造力（创造力测不准的原因、4P 模型、概念融合、产品评价公式、以及过程和产品的区分） 考试重点：AI 评估会改变被试行为（霍桑效应的 AI 版）、AGI 评级的五阶段对照、心..."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/心理测量/lecture_a"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-199"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-199" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../课程笔记/心理测量/">心理测量</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lecture_a</a></div></nav><h1 class="article-title">lecture_a</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-20T13:54:49.582Z">Apr 20, 2026</time><span>64 min read</span></p></div></div><article class="popover-hint"><h1 id="人工智能与心理测量">人工智能与心理测量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#人工智能与心理测量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Summary</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这一讲的核心就是：<strong>AI 正在重新定义心理测量</strong>。从传统的”做几道题打个分”，进化到”多模态信号 + 特征提取 + 模型推断”的全新模式。我们要掌握三个大板块：</p>
+<ol>
+<li><strong>AI 如何影响心理测量</strong>（多模态数据、计算精神病学、机器学习基础、情绪识别与脑机接口、AIGC 刺激材料，以及一个超级重要的测量效应）</li>
+<li><strong>怎么测试 AI 本身</strong>（传统测试的局限、通智测试思想、AGI 评级、社会智能与心智理论）</li>
+<li><strong>AI 与创造力</strong>（创造力测不准的原因、4P 模型、概念融合、产品评价公式、以及过程和产品的区分）
+考试重点：AI 评估会改变被试行为（霍桑效应的 AI 版）、AGI 评级的五阶段对照、心智理论的短板、以及”有创造性产品 ≠ 有人类式创造过程”。</li>
+</ol>
+</div>
+</blockquote>
+<h2 id="01-人工智能影响心理测量">01 人工智能影响心理测量<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#01-人工智能影响心理测量" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-人工智能进入心理测量的基本方式">1. 人工智能进入心理测量的基本方式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-人工智能进入心理测量的基本方式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>你可以把传统心理测量想象成”用一把尺子量身高”——只有一个数字。但 AI 时代的测量更像是”给你画一幅全身 CT”：疲劳、睡眠、心率、语音、脑电……这些维度拼在一起，才构成一个完整的”心理画像”。不同人可能都”睡得不好”，但 A 是因为抑郁反刍，B 是因为工作压力，AI 能从多模态数据里看出这种<strong>组合差异</strong>。</p>
+</div>
+</blockquote>
+<p>人工智能进入心理测量，并不是简单地把传统问卷数字化，而是把原本分散的症状、行为、生理、语音、脑活动和交互记录整合为可计算的测量对象。在心理健康情境中，不同个体即使共享某些表面症状，也可能具有完全不同的症状组合与风险结构。例如，疲劳和睡眠问题可能同时出现在不同个体身上，但一个人还伴随反刍与兴趣丧失，另一个人则更多表现为压力积累。这说明心理测量对象并非单一分数，而更像由多维指标共同构成的特征空间。</p>
+<p>课上强调的核心变化在于：心理测量从”少量题目—单一量表—静态分数”的模式，转向”多模态信号—特征提取—模型推断—动态解释”的模式。临床症状量表、脑区活动、语音、反应时、心率与心率变异性、皮肤电、呼吸、肌电和眼动等信息，都可以成为同一测量链条中的输入。人工智能的价值并不只是提高处理速度，而是使这些高维数据之间的联合结构能够被识别、压缩和解释。</p>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>记住这个范式转换：<strong>少量题目 → 单一量表 → 静态分数</strong> 变成了 <strong>多模态信号 → 特征提取 → 模型推断 → 动态解释</strong>。考试如果问”AI 对心理测量的核心改变是什么”，答这个范式转换准没错。</p>
+</div>
+</blockquote>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\nA[临床症状&lt;br/>PHQ GAD MASQ MINI] --> Z[高维心理测量数据]\nB[脑活动&lt;br/>如 DLPFC 杏仁核 habenula] --> Z\nC[行为指标&lt;br/>正确率 反应时 按键] --> Z\nD[生理指标&lt;br/>HR HRV RSA SCL SCR 呼吸 肌电] --> Z\nE[语音与眼动] --> Z\nZ --> F[特征提取与降维]\nF --> G[状态识别]\nF --> H[临床亚型划分]\nF --> I[风险预测]\nI --> J[筛查 诊断辅助 干预建议]&quot;">flowchart LR
+A[临床症状&lt;br/>PHQ GAD MASQ MINI] --> Z[高维心理测量数据]
+B[脑活动&lt;br/>如 DLPFC 杏仁核 habenula] --> Z
+C[行为指标&lt;br/>正确率 反应时 按键] --> Z
+D[生理指标&lt;br/>HR HRV RSA SCL SCR 呼吸 肌电] --> Z
+E[语音与眼动] --> Z
+Z --> F[特征提取与降维]
+F --> G[状态识别]
+F --> H[临床亚型划分]
+F --> I[风险预测]
+I --> J[筛查 诊断辅助 干预建议]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="2-计算精神病学的两条路径">2. 计算精神病学的两条路径<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-计算精神病学的两条路径" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>考试最爱考这个辨析：<strong>数据驱动 ≠ 理论驱动，但它们不是对立的！</strong> 很多同学容易觉得”用机器学习就是数据驱动，不用就是理论驱动”，其实二者经常结合。关键要记住：数据驱动强在<strong>发现未知模式</strong>，理论驱动强在<strong>解释机制</strong>。只靠准确率不能说明测到了什么——这是高频扣分点。</p>
+</div>
+</blockquote>
+<p>在高维心理数据的处理上，课上以计算精神病学为框架，区分了数据驱动与理论驱动两条基本路径。数据驱动路径强调机器学习和大数据方法，重点在于从数据中直接发现模式，不预设强理论结构。理论驱动路径则依据既有心理学、神经科学或精神病学知识，先提出可解释的理论参数与机制模型，再用数据检验和估计这些参数。前者更强于发现未知结构，后者更强于提供机制解释。</p>
+<p>二者并不是互相排斥的关系。无监督降维、自动降维结合机器学习、以及理论参数估计，都可以通向预测与分类。真正重要的，不是”是否使用机器学习”，而是模型在多大程度上既能提取稳定模式，又能保留对心理机制的解释力。就心理测量而言，仅凭分类准确率并不能自动等同于测量有效；如果模型缺乏理论对应关系，它可能只能完成预测，却无法说明究竟测到了什么。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\nA[高维数据集] --> B[数据驱动路径]\nA --> C[理论驱动路径]\n\nB --> B1[无监督降维]\nB --> B2[机器学习自动降维]\nB1 --> D[聚类 预测 分类]\nB2 --> D\n\nC --> C1[构建理论模型]\nC1 --> C2[估计有心理意义的参数]\nC2 --> D\n\nD --> E[临床亚型识别]\nD --> F[风险预测]\nD --> G[诊断辅助]&quot;">flowchart TD
+A[高维数据集] --> B[数据驱动路径]
+A --> C[理论驱动路径]
+
+B --> B1[无监督降维]
+B --> B2[机器学习自动降维]
+B1 --> D[聚类 预测 分类]
+B2 --> D
+
+C --> C1[构建理论模型]
+C1 --> C2[估计有心理意义的参数]
+C2 --> D
+
+D --> E[临床亚型识别]
+D --> F[风险预测]
+D --> G[诊断辅助]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="3-机器学习在心理测量中的基本工作方式">3. 机器学习在心理测量中的基本工作方式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-机器学习在心理测量中的基本工作方式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>快速区分监督 vs 无监督，考前必看：</p>
+<ul>
+<li><strong>无监督学习</strong> = 没有标准答案，机器自己找规律（聚类、分亚型）→ 适合探索性研究</li>
+<li><strong>监督学习</strong> = 有标签，机器学映射（分类、预测）→ 适合筛查、自动判别、应用部署
+坑点：监督学习的表现<strong>极度依赖标签质量</strong>。标签本身不稳定、定义含混或有偏差，模型学到的可能就是”标注习惯”，而不是稳定的心理结构。</li>
+</ul>
+</div>
+</blockquote>
+<p>课上用聚类和分类示意图说明了两类常见机器学习任务。无监督学习不依赖预先给定的标签，其作用是在数据中寻找自然形成的簇，用于划分临床亚型、识别异常模式或发现潜在群体。它测量的不是某一既定类别，而是样本之间的相似性结构。因而它更适用于探索性研究，但所得簇的心理学意义仍需要后续解释与验证。</p>
+<p>监督学习则在已有标签的前提下训练分类器，例如预测疾病诊断或对既定心理状态进行识别。它的目标是从输入特征到标签建立映射，因此更适合用于筛查、自动判别与应用部署。但监督学习的表现高度依赖标签质量。若标签本身不稳定、定义含混或存在偏差，则模型学到的可能只是标注习惯，而不是稳定的心理结构。</p>
+<h3 id="4-从生理信号到情绪识别再到脑机接口">4. 从生理信号到情绪识别，再到脑机接口<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-从生理信号到情绪识别再到脑机接口" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>情绪识别不是”读心术”！模型并不是直接看到你的”焦虑感受”，而是看到”EEG 波动 + 心率变快 + 皮肤电上升”这个<strong>联合信号模式</strong>，然后推断你可能焦虑。就像医生不是直接看到病毒，而是通过化验单推断病情一样。所以关键不是某个单独指标，而是<strong>多通道信号在统一任务情境下的联合模式</strong>。</p>
+</div>
+</blockquote>
+<p>在情绪和压力的自动识别中，课上给出的标准流程包括标注、实验设计、数据收集、预处理、特征选择和分类。输入信号可以来自 EEG、ECG、呼吸与皮肤电等通道，经过预处理后提取统计特征，再用分类模型区分低焦虑与高焦虑等状态。这里的关键并不是某个单独指标，而是”多通道信号在统一任务情境下的联合模式”。这也意味着，情绪识别结果本质上是模型对信号模式的推断，而不是对内在情绪的直接读取。</p>
+<p>脑机接口则把这一测量链进一步推进到”测量—识别—控制—反馈”的闭环。其基本结构包括信号采集、特征提取、模式识别、控制信号生成以及反馈回路。心理测量在这一系统中的角色，不再只是给出被试当前水平，而是实时估计心理或神经状态，并把估计结果转化为可操作的控制信息。课上提到的 BrainLink 例子展示了这一方向已从实验室原型走向消费级或交互式设备。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\nA[生理/神经信号采集] --> B[预处理]\nB --> C[特征提取]\nC --> D[模式识别]\nD --> E[状态分类或控制信号]\nE --> F[外部系统响应]\nF --> G[反馈]\nG --> A&quot;">flowchart LR
+A[生理/神经信号采集] --> B[预处理]
+B --> C[特征提取]
+C --> D[模式识别]
+D --> E[状态分类或控制信号]
+E --> F[外部系统响应]
+F --> G[反馈]
+G --> A
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="5-人工智能与心理健康从自动检测到精准干预">5. 人工智能与心理健康：从自动检测到精准干预<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-人工智能与心理健康从自动检测到精准干预" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>几个超酷的研究案例，考试可能出材料分析题：</p>
+<ol>
+<li><strong>孤独/抑郁/焦虑早筛</strong>：看约 5 分钟视频 → 分析面部表情动态 → 输出风险分数（报告准确率、召回率、F1）</li>
+<li><strong>PersonalityScanner</strong>：在 VR 任务中同步采集第一视角、第三视角、文本、音频、惯性信号、深度、姿态、眼动、日志和表情等 10 种模态 → 预测大五人格</li>
+<li><strong>互动叙事游戏</strong>：自陈量表先给线索，大语言模型充当设计者、控制器和评论者 → 生成个性化剧情分支 → 被试的选择反过来成为补充测量数据
+核心逻辑都是：<strong>把静态作答扩展为动态行为表现</strong>，让测量从”回答问题”走向”情境化决策”。</li>
+</ol>
+</div>
+</blockquote>
+<p>课上把人工智能在心理健康中的应用概括为两个连续环节：自动压力检测与个性化干预。前者侧重利用多模态监督学习或大语言模型驱动的检测，对个体的心理风险水平进行预测；后者则把预测结果重新输入干预系统，通过精神科自然语言处理、基于生物标志物的决策网络等方式，形成更个体化的应对策略。这一逻辑对应”精准治疗”的思路，即测量不再止于描述，而是直接服务于干预决策。</p>
+<p>在具体研究示例中，课上展示了面向孤独、抑郁和焦虑早筛的可解释框架。该框架以约 5 分钟视频为输入，经数据处理、复合表情建模和回归任务后，形成可用于筛查的输出，同时报告准确率、召回率和 F1 值等指标。这里的重要性不在于某个网络模块名称，而在于其基本测量思想：把可观察的面部与行为动态转译为可解释的心理风险线索。</p>
+<p>人格测量的例子则进一步说明，AI 可以把虚拟现实中的行为表现转化为人格推断。课上的 PersonalityScanner 在虚拟现实任务中同步采集第一视角、第三视角、文本、音频、惯性信号、深度、姿态、眼动、日志和表情等多模态数据，经特征提取和模态融合后，对开放性、尽责性、外向性、宜人性和神经质等人格维度进行分数预测。其测量逻辑是：人格并不只体现在自我报告中，也体现在任务中的稳定行为风格。</p>
+<p>课上还展示了把量表嵌入互动叙事游戏的做法。自陈量表先给出人格或心理倾向线索，随后大语言模型充当设计者、控制器和评论者，把量表信息转化为分支情节与情境选择，被试在游戏中的选择再反过来提供补充测量信息。这种方式的意义在于把”作答”扩展为”行为表现”，使心理测量从静态回答走向情境化决策。</p>
+<p>另一个重要方向是人机协同而非单独由 AI 替代人。课上的同伴支持研究表明，AI 可以在共情性交流中提供反馈提示、替换表达和插入建议，从而帮助人类给出更具支持性的回应。这说明 AI 在心理测量与心理服务中的合理角色，往往是作为增强器、支架或辅助者，而不是完全取代人类专业判断。</p>
+<h3 id="6-aigc-图片库的构建及其测量意义">6. AIGC 图片库的构建及其测量意义<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-aigc-图片库的构建及其测量意义" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>SAIPS（社交焦虑图片库）是 AI 生成刺激材料的典型代表，体现了”刺激标准化”的思路：</p>
+<ul>
+<li>数据库包含 279 张社会情境图片，重点操控<strong>社会支配、目光接触、情绪表情</strong></li>
+<li>后续预测任务中，每位被试对 118 张图片进行多维评分</li>
+<li>最终 590 个评分变量 + 4 个人口学变量（性别、年龄、就业、教育）→ 预测社交焦虑特质
+这告诉我们：AI 生成的标准化刺激并不直接替代量表，而是<strong>与传统自陈量表配合</strong>，作为更客观、更可重复的行为化测量入口。</li>
+</ul>
+</div>
+</blockquote>
+<p>生成式模型为心理测量材料的构建提供了新的标准化路径。课上以 DALL·E 2 和 Stable Diffusion XL 为例，指出 AI 作图的优势在于高度具体、灵活、逼真且成本较低，能够精细控制人物数量、种族或外观、服饰以及背景，并可通过提示词迭代生成，再对不理想部位继续修改。对于心理测量而言，这意味着研究者能够按实验需求定制刺激，而不再完全依赖既有图片库。</p>
+<p>社交焦虑图片库 SAIPS 就是在这一思路下构建的。课上指出，该数据库包含 279 张社会情境图片，重点操控社会支配、目光接触和情绪表情等社会线索。设计中展示了积极图片与消极图片的效价范围，同时在后续预测任务中，每位被试需要对 118 张图片进行多维评分。SAIPS 的目标不是单纯”存图”，而是把图片刺激系统化、量化，使其能够作为社交焦虑研究和测评的标准化材料。</p>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>五个评分维度速查，理解比死记重要：</p>
+<ol>
+<li><strong>社交焦虑度</strong>：代入情境后的不安、紧张或担忧程度</li>
+<li><strong>效价</strong>：图片引发的正负情绪倾向</li>
+<li><strong>唤起度</strong>：情绪激活水平</li>
+<li><strong>场景卷入度</strong>：能否引发清晰、生动的主观沉浸</li>
+<li><strong>图片与文字描述匹配度</strong>：刺激呈现与语义说明之间的一致性
+说白了，就是把”图片好不好看”转化为可测量的心理反应维度。</li>
+</ol>
+</div>
+</blockquote>
+<p>这些评分维度包括社交焦虑度、效价、唤起度、图片场景卷入度和图片与文字描述匹配度。社交焦虑度指个体在想象自己置身该社会情境时的不安、紧张或担忧程度；效价表示图片引发的正负情绪倾向；唤起度表示情绪激活水平；场景卷入度表示图片能否引发清晰、生动的主观沉浸；图片与文字描述匹配度则衡量刺激呈现与语义说明之间的一致性。这样的设计把”图片好不好看”转化为可测量的心理反应维度。</p>
+<p>在社交焦虑预测中，课上给出的建模结构是 594 个预测变量，其中 590 个来自 118 张图片在 5 个评分维度上的结果，另有 4 个为性别、年龄、就业和教育等人口学变量，目标变量是成人中文版社交焦虑问卷所测得的社交焦虑特质。这里的逻辑十分清楚：AI 生成的标准化刺激并不直接替代量表，而是与传统自陈量表配合，作为更客观、更可重复的行为化测量入口。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\nA[提示词设计] --> B[AIGC 社会情境图片生成]\nB --> C[图片筛选与修订]\nC --> D[标准化图片库 SAIPS]\nD --> E[被试多维评分]\nE --> F[社交焦虑度]\nE --> G[效价]\nE --> H[唤起度]\nE --> I[场景卷入度]\nE --> J[图文匹配度]\nF --> K[预测模型]\nG --> K\nH --> K\nI --> K\nJ --> K\nL[人口学变量] --> K\nK --> M[社交焦虑特质预测]\nM --> N[筛查 诊断辅助 干预参考]&quot;">flowchart TD
+A[提示词设计] --> B[AIGC 社会情境图片生成]
+B --> C[图片筛选与修订]
+C --> D[标准化图片库 SAIPS]
+D --> E[被试多维评分]
+E --> F[社交焦虑度]
+E --> G[效价]
+E --> H[唤起度]
+E --> I[场景卷入度]
+E --> J[图文匹配度]
+F --> K[预测模型]
+G --> K
+H --> K
+I --> K
+J --> K
+L[人口学变量] --> K
+K --> M[社交焦虑特质预测]
+M --> N[筛查 诊断辅助 干预参考]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="7-重点ai-评估不仅测量行为也会改变行为">7. <strong>【重点】AI 评估不仅测量行为，也会改变行为</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-重点ai-评估不仅测量行为也会改变行为" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这是本章<strong>必考重点</strong>，说白了这就是 AI 版的<strong>霍桑效应</strong>！当被试知道自己正被 AI 评估时，会主动调整表现方式。
+后果有三，简答题直接背：</p>
+<ol>
+<li><strong>构念纯度受损</strong>：结果里混入了”迎合算法”的反应成分</li>
+<li><strong>公平性受影响</strong>：AI 评估的公开标签可能改变不同群体的应对策略</li>
+<li><strong>解释要谨慎</strong>：分数解释不能只看输出值，必须考虑被试是否因评估媒介改变了作答或表现方式
+记住：<strong>AI 评估工具不是中性的透明容器，它本身会影响被测行为</strong>。</li>
+</ol>
+</div>
+</blockquote>
+<p>课上特别强调了一个容易被忽视的测量效应：当被试知道自己正被 AI 评估时，他们可能会主动调整表现方式。相关研究指出，人们会因为相信 AI 更看重分析性特质，而在被评估过程中减少直觉性和情绪性表现，更倾向于展现分析性。这意味着 AI 评估工具并不是中性的透明容器，它本身会影响被测行为。</p>
+<p>这一现象对心理测量有直接后果。第一，测量结果可能混入”迎合算法”的反应成分，从而损害构念纯度。第二，AI 评估的公开标签可能改变不同群体的应对策略，进而影响公平性。第三，分数解释不能只看输出值，还必须考虑被试是否因评估媒介改变了作答或表现方式。也就是说，AI 进入心理测量后，测量工具本身成为情境的一部分。</p>
+<hr/>
+<h2 id="02-人工智能测试">02 人工智能测试<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#02-人工智能测试" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-人工智能幻觉及其测量含义">1. 人工智能幻觉及其测量含义<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-人工智能幻觉及其测量含义" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>“幻觉”这个词其实挺形象的——就像人发烧时产生的错觉，AI 也会”一本正经地胡说八道”。比如视频生成模型把单轨高架桥画成双轨，不是因为”恶意欺骗”，而是它在训练数据里没找到足够可靠的依据，却还是要”编”一个看起来连贯的答案。对心理测量来说，这意味着：<strong>模型可能自信满满地给你一个错误诊断</strong>。所以测量系统不仅要能给出答案，还要保证答案的<strong>可追溯性与可解释性</strong>。</p>
+</div>
+</blockquote>
+<p>人工智能幻觉是指 AI 生成的内容包含虚假或误导性信息，却以事实的形式呈现。课上的例子包括视频生成模型把真实只有单轨的高架桥错误地生成成双轨，也包括列车烟囱和车厢长度等细节失真。这类错误并不只是”画错了”，而是模型在缺乏可靠依据时仍生成看似连贯的答案。</p>
+<p>课上还用数字序列推理和文本到图像关系反转的例子说明，幻觉可以表现为推理路径不稳定、解释随提示改变、以及关系结构识别失败。对心理测量而言，这一点尤其关键，因为测量系统不仅要给出答案，还要保证答案的可追溯性与可解释性。如果模型会自信地输出错误结论，那么它在评估、诊断和解释中的可靠性就会受到根本挑战。</p>
+<h3 id="2-为什么传统-ai-测试不足以评测通用人工智能">2. 为什么传统 AI 测试不足以评测通用人工智能<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-为什么传统-ai-测试不足以评测通用人工智能" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>三类传统测试速查，辨析题备用：</p>
+<ul>
+<li><strong>图灵测试</strong>：靠人类观察者判断像不像人 → 主观、难快速重复、难规模化、难多维评估</li>
+<li><strong>数据集测试</strong>：依赖固定题库与 benchmark → 泛化范围有限</li>
+<li><strong>虚拟环境测试</strong>：MuJoCo、AI2THOR、VirtualHome、ThreeDWorld 等 → 偏任务执行，难覆盖价值测试与复杂社会互动
+它们能回答”像不像人&quot;&quot;会不会做题”，却回答不了”它具有怎样的能力结构、价值结构和发展水平”——这正是通智测试要解决的问题。</li>
+</ul>
+</div>
+</blockquote>
+<p>课上把既有 AI 评测方法概括为三类：图灵测试、数据集测试和虚拟环境测试。图灵测试依赖人类观察者判断机器是否像人，属于人类鉴别式测试；数据集测试依赖固定题库与基准；虚拟环境测试则把模型置于 MuJoCo、AI2THOR、VirtualHome、ThreeDWorld 等环境中执行任务。它们分别覆盖了语言伪装、标准化比较和交互能力，但都不足以完整支撑通用人工智能的评估。</p>
+<p>课上给出的批评有两个方向。其一，人类鉴别式测试难以做到快速、可重复、大范围和客观的多维度评估。其二，任务导向测试不易支持无限任务泛化，也较难充分覆盖人机互动测试与价值测试。换言之，传统方法往往只能回答”像不像人”或”能不能做题”，却不能系统回答”它具有怎样的能力结构、价值结构和发展水平”。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\nA[传统 AI 测试] --> B[图灵测试]\nA --> C[数据集测试]\nA --> D[虚拟环境测试]\n\nB --> B1[依赖人类主观鉴别]\nB1 --> E[难以快速 重复 大规模 多维]\nC --> C1[依赖固定基准]\nC1 --> F[泛化范围有限]\nD --> D1[偏任务执行]\nD1 --> G[难覆盖价值与复杂社会互动]\n\nE --> H[不足以支撑 AGI 评估]\nF --> H\nG --> H&quot;">flowchart TD
+A[传统 AI 测试] --> B[图灵测试]
+A --> C[数据集测试]
+A --> D[虚拟环境测试]
+
+B --> B1[依赖人类主观鉴别]
+B1 --> E[难以快速 重复 大规模 多维]
+C --> C1[依赖固定基准]
+C1 --> F[泛化范围有限]
+D --> D1[偏任务执行]
+D1 --> G[难覆盖价值与复杂社会互动]
+
+E --> H[不足以支撑 AGI 评估]
+F --> H
+G --> H
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="3-通智测试的基本思想">3. 通智测试的基本思想<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-通智测试的基本思想" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>通智测试的”具身”是什么意思？不是让 AI 真的有身体，而是让它在<strong>模拟环境</strong>里感知、理解、行动、互动——就像给 AI 一个”虚拟身体”去闯开放世界 RPG。传统测试是”做试卷”，通智测试是”进动态、可变化的物理—社会场景里活着”。</p>
+</div>
+</blockquote>
+<p>为回应上述问题，课上提出了”通智测试”作为通用人工智能评级标准。其核心思想不是单点比较，而是在动态、具身、物理与社会交互环境中，对模型进行持续、分层和多维的能力评估。这里的”具身”意味着测试不是纯文本问答，而是要求智能体在环境中知觉、理解、行动并与他者互动；“动态”意味着任务可生成、可变化，而非只依赖固定题库。</p>
+<p>通智测试的结构由四部分组成。第一，测试接口允许人类通过虚拟现实接口进入，也允许 AGI 模型通过算法接口接入。第二，交互环境提供动态的物理—社会场景。第三，任务生成系统由物理引擎、渲染引擎、场景管理器和任务生成器构成，并由数字资产库和算法模型库支持。第四，价值—能力导向评估系统把任务拆分为价值、视觉、学习、运动、语言和认知等维度，再计算综合表现。这样得到的不是单一正确率，而是能力画像。</p>
+<p>课上还给出了性能评估函数的形式：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord text"><span class="mord">Performance</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal">s</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">a</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal">s</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">b</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal">s</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这个公式看似简单，但考点在于：<strong>AGI 评估必须建立在多任务之上，而不是单一 benchmark</strong>。Performance 是多个 task 的综合函数，不是”一考定终身”。它能够刻画不同维度的综合表现，但<strong>不能仅凭一个汇总结果就证明模型已经具有人类式通用智能</strong>。</p>
+</div>
+</blockquote>
+<p>其中，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal">s</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">a</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal">s</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">b</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal">s</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 表示由系统生成并拆解的一组任务，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span></span></span></span> 表示对多任务表现进行整合的评估函数。该表达式用于说明 AGI 评估应建立在一系列任务之上，而不是建立在单题或单基准之上。它能够刻画不同维度的综合表现，但不能仅凭一个汇总结果就证明模型已经具有人类式通用智能。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\nA[测试接口] --> A1[人类 - VR 接口]\nA --> A2[AGI 模型 - 算法接口]\n\nA1 --> B[DEPSI 交互环境]\nA2 --> B\n\nB --> C[任务生成系统]\nC --> C1[物理引擎]\nC --> C2[渲染引擎]\nC --> C3[场景管理器]\nC --> C4[任务生成器]\nC --> C5[数字资产库]\nC --> C6[算法模型库]\n\nB --> D[价值-能力导向评估]\nD --> D1[价值]\nD --> D2[视觉]\nD --> D3[语言]\nD --> D4[认知]\nD --> D5[运动]\nD --> D6[学习]\n\nD --> E[能力画像与评级结果]&quot;">flowchart LR
+A[测试接口] --> A1[人类 - VR 接口]
+A --> A2[AGI 模型 - 算法接口]
+
+A1 --> B[DEPSI 交互环境]
+A2 --> B
+
+B --> C[任务生成系统]
+C --> C1[物理引擎]
+C --> C2[渲染引擎]
+C --> C3[场景管理器]
+C --> C4[任务生成器]
+C --> C5[数字资产库]
+C --> C6[算法模型库]
+
+B --> D[价值-能力导向评估]
+D --> D1[价值]
+D --> D2[视觉]
+D --> D3[语言]
+D --> D4[认知]
+D --> D5[运动]
+D --> D6[学习]
+
+D --> E[能力画像与评级结果]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="4-以人类发展规律启发-agi-评级">4. 以人类发展规律启发 AGI 评级<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-以人类发展规律启发-agi-评级" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>发展阶段对照速记（考试爱考对应关系）：</p>
+<ul>
+<li><strong>Level 1</strong>（对照 6 个月）：基础语义理解、初级认知推理、本体运动</li>
+<li><strong>Level 2</strong>（对照 12 个月）：关系推理、基础认知推理、与物体互动</li>
+<li><strong>Level 3</strong>（对照 24 个月）：常识与推理、基础意图理解、移动与操作</li>
+<li><strong>Level 4</strong>（对照 48 个月）：主动感知、认知交互、精细动作</li>
+<li><strong>Level 5</strong>（对照 72 个月+）：价值驱动的自主任务完成、多智能体交互与协同动作
+注意：这只是<strong>启发式参照</strong>，不是说 AGI 真的经历了人类儿童式的发展过程！</li>
+</ul>
+</div>
+</blockquote>
+<p>课上进一步提出，可借鉴婴幼儿发展的阶段性规律来启发 AGI 测试设计。其基本逻辑不是把机器等同于儿童，而是把人类发展的能力顺序看作一种”从低到高、由简单到复杂”的参考框架。相应地，课上把 AGI 发展划分为 Level 1 至 Level 5，并与 6 个月、12 个月、24 个月、48 个月和 72 个月以上的婴幼儿能力阶段形成对照。</p>
+<p>在这一框架中，6 个月阶段对应识别熟悉面孔、发出简单声音和上肢动作；与之相应的 Level 1 是基础语义理解、初级认知推理和本体运动。12 个月阶段对应基础物体属性认识、说出单词和直立行走；对应的 Level 2 是关系推理、基础认知推理和与物体互动。24 个月阶段强调情绪感知、简单词句和指令理解以及简单游戏；对应的 Level 3 是常识与推理、基础意图理解以及移动与操作。48 个月阶段强调简单对话、故事理解与上下文预测和简单家务；对应的 Level 4 是主动感知、认知交互和精细动作。72 个月以上则强调遵守社会规则、交流对话以及完成精细动作与任务；对应的 Level 5 是价值驱动的自主任务完成、多智能体交互与协同动作。</p>
+<p>这一发展参照的意义在于，它把 AGI 测试从”会不会做某题”转变为”发展到了哪一层能力组织水平”。但它仍然只是启发式参照，而非发展心理学的严格映射。AGI 达到某一等级，并不意味着它真正经历了人类儿童式的发展过程。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\nA[Level 1&lt;br/>基础语义理解 初级认知推理 本体运动] --> B[Level 2&lt;br/>关系推理 基础认知推理 与物体互动]\nB --> C[Level 3&lt;br/>常识与推理 基础意图理解 移动与操作]\nC --> D[Level 4&lt;br/>主动感知 认知交互 精细动作]\nD --> E[Level 5&lt;br/>价值驱动自主完成任务 多智能体交互 协同动作]&quot;">flowchart TD
+A[Level 1&lt;br/>基础语义理解 初级认知推理 本体运动] --> B[Level 2&lt;br/>关系推理 基础认知推理 与物体互动]
+B --> C[Level 3&lt;br/>常识与推理 基础意图理解 移动与操作]
+C --> D[Level 4&lt;br/>主动感知 认知交互 精细动作]
+D --> E[Level 5&lt;br/>价值驱动自主完成任务 多智能体交互 协同动作]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="5-通考平台中的通用任务与专项能力测试">5. 通考平台中的通用任务与专项能力测试<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-通考平台中的通用任务与专项能力测试" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>通考平台里的任务特别接地气，就像让 AI 去幼儿园大班闯关：物品分类计数、搭积木、整理桌面、打扫房间、整理行李箱、理解按钮功能、拼图、挑选礼物……每个任务都被拆成可评估的能力成分。
+比如”整理桌面”主要涉及视觉、认知推理、运动与价值；“主动服务：倒水”则在此基础上增加语言和社会互动要求。考试如果问”某任务主要测什么能力”，记住要从<strong>视觉、认知推理、运动、价值、语言、社会互动</strong>这几个维度去拆。</p>
+</div>
+</blockquote>
+<p>通考平台在通用能力层面设置了接近 5 至 6 岁儿童情境的典型任务，如物品分类计数、搭建积木、整理桌面、打扫房间、整理行李箱、理解按钮功能、拼图和挑选礼物。这些任务的目的不是复刻儿童教育内容，而是用自然、具身、目标明确的任务去测试视觉理解、认知推理、动作控制与任务完成能力。</p>
+<p>课上的任务分解图进一步说明，通智测试强调的是”同一任务所需能力的结构”。例如”整理桌面”主要涉及视觉、认知推理、运动与价值等维度；“主动服务：倒水”则在此基础上增加语言和社会互动要求。视觉维度可细分为对单一客体几何、时空关系和潜在客体的理解，运动维度可细分为自身关节姿态、周围物体位姿流态与场景中物体位置形态，价值维度则涉及初级社交价值、初级与高级自我价值。由此可见，任务并不是一个整体黑箱，而是被分解为可评估的能力成分。</p>
+<p>专项能力测试方面，课上展示了智商测验式的概念归纳题以及社会智能测验。前者说明传统认知测试形式可以被迁移为 AI 能力比较任务；后者则表明，真正困难的部分并不只是逻辑规则，而是社会语境中的意图、信念与互动结构。</p>
+<h3 id="6-社会智能心智理论与-ai-的边界">6. 社会智能、心智理论与 AI 的边界<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-社会智能心智理论与-ai-的边界" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>心智理论是本章<strong>超级易错点</strong>！注意这个结论，很多同学会搞反：</p>
+<ul>
+<li>GPT-4 在<strong>间接请求、错误信念、误导</strong>识别上 → 可以达到甚至超过人类水平</li>
+<li>但在<strong>失言识别</strong>（涉及社会规范、语境敏感性与他人感受损害）上 → 明显弱于人类
+考试往往考”哪里不如人类”——<strong>失言识别</strong>就是标准答案。社会理解的难点不是”看见了什么”，而是”为什么会这样”和”这样说是否得体”。</li>
+</ul>
+</div>
+</blockquote>
+<p>在社会智能部分，课上引用了人类与 AI 能力比较研究，并以 Baker 等人的 “Food Truck” 任务说明社会推理的层级。其基本链条是：先做前向规划，再做逆向推理，最后做”逆向中的逆向规划”。观察者需要根据 Bob 最终选择哪辆餐车，反推出他的偏好；而行动者 Carol 则需要进一步设计自己的路线或行为，使 David 能尽快推断出她的偏好。这种任务测量的不只是事实判断，而是对他人心理状态的建模，以及基于他人建模再去规划自己行动的能力。</p>
+<p>在”察言观色”的专项能力测试中，课上明确给出了当前最强视觉语言模型的上限：在完整因果链理解任务上只有约 30% 正确率，在子因果链理解任务上也只有约 50% 准确率。这说明模型即使能识别场景元素，也未必能正确恢复社会事件中的原因、信念、意图和结果之间的关系链。社会理解的难点不只是”看见了什么”，而是”为什么会这样”。</p>
+<p><strong>【重点】</strong> 在心智理论测试中，GPT-4 系列模型在识别间接请求、错误信念和误导方面可达到或有时超过人类水平，但在识别”失言”这类涉及社会规范、语境敏感性与他人感受损害的任务上表现较弱。这表明大模型在某些结构化心理状态推断上可能很强，但在更细腻的社会规范理解与情境失当识别上仍存在明显短板。</p>
+<p>课上最后以 AI 元认知研究指出，可靠推理不仅需要作答能力，还需要认识自身知识边界的能力。MetaMedQA 将信心评分与元认知任务纳入医疗选择题后发现，模型在缺失正确选项时仍会高信心作答，不能稳定识别自身不知道什么。换言之，模型缺乏关键的”认知知识”和”认知调节”能力。对 AI 测试而言，这意味着高正确率与高可靠性并不是一回事。</p>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>MetaMedQA 的核心发现，考试可能出判断题：</p>
+<ul>
+<li>模型在<strong>缺失正确选项时仍会高信心作答</strong> → 不会说”我不知道”</li>
+<li>这说明：<strong>高正确率 ≠ 高可靠性</strong></li>
+<li>模型缺乏”知道自己不知道”的能力（元认知）</li>
+<li>对 AI 测试而言，不仅要看答对多少，还要看”会不会乱蒙还充满自信”</li>
+</ul>
+</div>
+</blockquote>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\nA[社会场景] --> B[他人行为观察]\nB --> C[逆向推理&lt;br/>从行为推断偏好/信念]\nC --> D[再规划自身行为&lt;br/>使他人理解自己]\nD --> E[社会智能表现]\n\nE --> F[间接请求]\nE --> G[错误信念]\nE --> H[误导]\nE --> I[失言识别]\nE --> J[因果链理解]\nE --> K[元认知监控]&quot;">flowchart TD
+A[社会场景] --> B[他人行为观察]
+B --> C[逆向推理&lt;br/>从行为推断偏好/信念]
+C --> D[再规划自身行为&lt;br/>使他人理解自己]
+D --> E[社会智能表现]
+
+E --> F[间接请求]
+E --> G[错误信念]
+E --> H[误导]
+E --> I[失言识别]
+E --> J[因果链理解]
+E --> K[元认知监控]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="7-本章辨析">7. 本章辨析<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-本章辨析" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>辨析题高频考点，直接划重点，背下来就是分：</p>
+<ol>
+<li>AI 对情绪的推断是<strong>概率性测量</strong>，不是对内在心理状态的直接读取</li>
+<li>图灵测试<strong>不具备高客观性</strong>（正因为依赖人类主观鉴别）</li>
+<li>AI 可能因训练样本、标签方式和建模假设而产生<strong>算法偏见</strong></li>
+<li>AI <strong>不能完全替代</strong>心理学家进行心理评估；解释、干预、伦理责任和情境理解仍需要人的专业判断</li>
+<li><strong>伦理与隐私是前提条件</strong>，不是附属条件</li>
+</ol>
+</div>
+</blockquote>
+<p>现有 AI 系统已经能够利用面部表情、语音、生理信号和行为数据对情绪、压力或风险状态作出推断，但这种推断依赖训练数据、标签质量和建模方式，因而属于概率性测量，而不是对内在心理状态的直接读取。</p>
+<p>图灵测试是经典 AI 测试方法，但它并不具备高客观性这一优点。相反，正因为它依赖人类主观鉴别，所以难以快速、可重复、规模化和多维化地实施。对 AGI 来说，单靠图灵测试不足以完成系统评级。</p>
+<p>AI 心理测量工具确实可能因训练样本、标签方式和建模假设而产生算法偏见，从而影响结果公平性。也正因如此，AI 不能完全替代心理学家进行心理评估；解释、干预、伦理责任和情境理解仍需要人的专业判断。伦理与隐私问题不是附属条件，而是 AI 心理测量得以成立的前提条件。</p>
+<hr/>
+<h2 id="03-创造力与-ai">03 创造力与 AI<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#03-创造力与-ai" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-创造力测验的代表形式与根本困难">1. 创造力测验的代表形式与根本困难<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-创造力测验的代表形式与根本困难" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>创造力测不准的两大根本原因，简答题高频：</p>
+<ol>
+<li><strong>效度与操作性定义问题</strong>：现有测验并不能很好地把”创造力”这一构念完整操作化</li>
+<li><strong>多因素 + 领域特异性</strong>：不存在简单的一般因素；艺术、科学、工程或叙事等不同领域中的表现形式并不相同
+结论：任何单一创造力测验都更接近于”创造力某一侧面的测量”，而不是对创造力本体的穷尽。</li>
+</ol>
+</div>
+</blockquote>
+<p>课上列举了几类代表性的创造力测验，包括托兰斯创造力思维测验、南加利福尼亚测验和芝加哥大学创造力测验。这些工具代表了传统心理测量试图把创造力操作化为可评分表现的努力。</p>
+<p>但课上同时明确指出，创造力测验面临两个根本困难。第一是效度与操作性定义问题，即现有测验并不能很好地把”创造力”这一构念完整操作化。第二是创造力具有多因素性质，并不存在简单的一般因素；同时，创造力往往具有领域特异性，在艺术、科学、工程或叙事等不同领域中的表现形式并不相同。因此，任何单一创造力测验都更接近于”创造力某一侧面的测量”，而不是对创造力本体的穷尽。</p>
+<h3 id="2-4p-模型创造力研究的基本框架">2. 4P 模型：创造力研究的基本框架<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-4p-模型创造力研究的基本框架" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>4P 模型就像问”一道好菜是怎么做出来的”：</p>
+<ul>
+<li><strong>Person（人）</strong>：厨师的手艺、经验和动力</li>
+<li><strong>Process（过程）</strong>：怎么切、怎么炒、怎么调味</li>
+<li><strong>Product（产品）</strong>：最后端上桌的菜</li>
+<li><strong>Press（环境/情境）</strong>：厨房设备、时间压力、食材供应
+只看菜好不好吃（Product），不知道厨师是不是真的用了创新做法（Process）；只看厨师特质（Person），可能忽略了环境（Press）的限制。AI 创造力也一样，不能只看最终作品惊不惊艳，必须同时追问过程机制与生成条件。</li>
+</ul>
+</div>
+</blockquote>
+<p>为避免把创造力仅理解为单一分数，课上引入了 4P 模型，即 Person、Process、Product 和 Press。Person 指创造者自身的特质、能力和动机；Process 指创造活动展开的认知过程；Product 指最后生成的作品或结果；Press 指围绕创造活动的情境、环境与压力条件。这个框架的重要意义在于，它把”创造力是什么”拆分为四个彼此相关但不能互相替代的分析层次。</p>
+<p>如果只看产品是否新颖，可能忽略创造者是否真正进行了创造性加工；如果只看个体特质，又可能忽略环境对创造表现的促进与限制。因此，AI 创造力的讨论也不能只盯着最终图像、文本或音乐是否惊艳，而必须同时追问过程机制与生成条件。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\nA[创造力] --> B[Person&lt;br/>创造者特质 能力 动机]\nA --> C[Process&lt;br/>生成与加工过程]\nA --> D[Product&lt;br/>作品与结果]\nA --> E[Press&lt;br/>情境 环境 约束]&quot;">flowchart TD
+A[创造力] --> B[Person&lt;br/>创造者特质 能力 动机]
+A --> C[Process&lt;br/>生成与加工过程]
+A --> D[Product&lt;br/>作品与结果]
+A --> E[Press&lt;br/>情境 环境 约束]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="3-过程视角概念融合理论">3. 过程视角：概念融合理论<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-过程视角概念融合理论" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>概念融合的经典例子，理解记忆：</p>
+<ul>
+<li>“计算机程序” + “病毒” = “计算机病毒”</li>
+<li>“心脏” + “垃圾袋” = 污染有害健康</li>
+<li>“手枪” + “扩音器” = 言语的力量</li>
+<li>“纸币” + “面具” = 财富与沉默的关系
+关键不是把两个东西简单粗暴地拼在一起，而是<strong>解释哪些属性被保留、哪些意义被激活、最终隐喻为何成立</strong>。</li>
+</ul>
+</div>
+</blockquote>
+<p>在 Process 维度上，课上以概念融合理论说明组合式创造力。其基本结构包括两个输入空间、一个一般空间和一个融合空间。输入空间分别提供不同概念来源，一般空间保留二者共享的抽象结构，而融合空间则在跨空间映射基础上形成新的组合结果。课上举出的”计算机程序”与”病毒”组合成”计算机病毒”的例子，正体现了这种跨域组合。</p>
+<p>这一理论的意义在于，它把创造过程理解为要素识别、属性选择、结构映射和新意义生成的连续过程，而不是凭空出现的灵感闪现。对 AI 创造力研究来说，若模型只能把训练集中常见元素拼接在一起，却不能解释为何这些元素能够形成有意义的新结构，那么它的”创造性”就更接近复杂模式匹配，而不是真正的概念融合。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\nA[输入空间 1] --> D[跨空间映射]\nB[输入空间 2] --> D\nC[一般空间&lt;br/>共享抽象结构] --> D\nD --> E[融合空间&lt;br/>生成新组合与新意义]&quot;">flowchart TD
+A[输入空间 1] --> D[跨空间映射]
+B[输入空间 2] --> D
+C[一般空间&lt;br/>共享抽象结构] --> D
+D --> E[融合空间&lt;br/>生成新组合与新意义]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="4-产品视角创造性作品如何评价">4. 产品视角：创造性作品如何评价<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-产品视角创造性作品如何评价" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>创造力评价公式速记：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Creativity</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Novelty</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord text"><span class="mord">Value</span></span></span></span></span></span>
+<p>注意是<strong>乘法</strong>不是加法！只有同时满足”新奇”和”有价值”才算高创造。光新奇没意义 = 猎奇；光有用没新意 = 常规工作。这个公式表达的是<strong>双重评价准则</strong>，不是严格的单一计算程序——它不能单独说明创作过程是否真正具有创造性，也不能仅凭产品结果证明作者一定具有高创造力。</p>
+</div>
+</blockquote>
+<p>在 Product 维度上，课上给出了一个高度概括的评价原则：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Creativity</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Novelty</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord text"><span class="mord">Value</span></span></span></span></span></span>
+<p>其中，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">Novelty</span></span></span></span></span> 表示作品的新颖性，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord text"><span class="mord">Value</span></span></span></span></span> 表示作品的价值。该表达式用于解决”什么样的作品可以被称为有创造性”这一问题。它强调，只有同时具有新颖性与价值的作品，才更接近高创造性作品。若作品只是新奇却无意义，或者只是有用却缺乏新意，都不能被视为高度创造。</p>
+<p>课上进一步指出，新颖性可以从多个角度理解，例如相对启发集合的差异程度、概念空间的转换水平、复杂性、与原型的模糊集合距离、贝叶斯意义上的不可能性以及人类主观感到”新”的程度。价值则可以体现为人类的情感反应，或作品在多大程度上实现了创作者的目标。因此，这个公式表达的是双重评价准则，而不是严格的单一计算程序。它能够说明作品评价的基本方向，但不能单独说明创作过程是否真正具有创造性，也不能仅凭产品结果证明作者一定具有高创造力。</p>
+<h3 id="5-ai-创造力的争论焦点">5. AI 创造力的争论焦点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-ai-创造力的争论焦点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>AI 创造力争论的本质，其实就是在问”算出来的创造力算不算数”。两种立场：</p>
+<ol>
+<li><strong>不必按人类标准</strong>：机器的生成机制本来就和人不一样，何必强求一致？</li>
+<li><strong>创造力可以是计算过程</strong>：知识收集、观念生成、评价修订——这些步骤原则上可以被计算实现，机器创造力并非逻辑上不可能
+老师给的务实建议是：<strong>别急着站队，回到可操作的评价框架，并向人类专家的创造活动学习</strong>。考试如果问态度，答”需要合理评价方式 + 向人类学习”最保险。</li>
+</ol>
+</div>
+</blockquote>
+<p>课上把 AI 创造力讨论概括为两个核心问题。第一，机器创造力是否应当按照人类创造力标准来衡量。相关观点认为，计算创造力不必完全按人类标准评价，因为机器的生成机制可能与人类不同。第二，创造力是否天然只属于人类。对此，课上引用的观点认为，创造力可以看作若干普通认知过程的组合，如知识收集、观念生成、评价和修订；既然这些过程原则上可以被计算实现，机器创造力就并非逻辑上不可能。</p>
+<p>这场争论真正触及的不是”AI 能不能画画”这样表面的现象，而是”创造性的判准究竟应该放在产品、过程，还是主体之中”。因此，课上提出的务实立场是：为计算创造力选择合理的评价方式，并向人类专家的创造活动学习。也就是说，讨论不应停留在拟人化赞叹或简单否定，而应回到可操作的评价框架。</p>
+<h3 id="6-重点ai-的创造性产品不等于人类式创造过程">6. <strong>【重点】AI 的创造性产品，不等于人类式创造过程</strong><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-重点ai-的创造性产品不等于人类式创造过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>又一个<strong>必考重点</strong>！核心结论：<strong>产品看起来有创造性，不代表生成过程是创造性的</strong>。
+区分标准：</p>
+<ul>
+<li>如果只是<strong>对象拼接</strong>（知道”心脏”和”垃圾袋”就拼起来）→ 复杂模式匹配</li>
+<li>如果还有<strong>解释环节</strong>（说明哪些属性使组合成立、想表达什么含义）→ 更接近概念融合式创造过程
+课上设计的理解任务 vs 生成任务就是干这个的。考试如果给出一个案例问你”这属于哪种”，关键看有没有<strong>可追踪的概念加工和意义推导</strong>。</li>
+</ul>
+</div>
+</blockquote>
+<p>课上明确提出了一个关键追问：AI 生成的创造性产品，究竟来自类似人类的创造过程，还是仅仅来自高度复杂的模式匹配。这个问题之所以重要，是因为只看最终作品往往无法区分二者。一个结果可以看起来非常新颖，但其生成机制可能仍然缺乏概念选择、属性解释和意义推导。</p>
+<p>围绕这一问题，课上设计了理解任务与生成任务。理解任务要求模型对组合图像完成三个层面的处理：识别对象、说明哪些属性使这种组合成立、以及解释这种组合所要传达的含义。生成任务则比较不同提示层级对输出的影响，包括”识别 + 含义”和”识别 + 解释 + 含义”两种条件。这里的核心思想是：如果模型显式纳入”解释”环节，它就更接近概念融合式创造过程，而不只是根据对象名称直接合成图像。</p>
+<p>课上用多个例子展示了这一点，例如”心脏 + 垃圾袋”可导向污染有害健康，“手枪 + 扩音器”可导向言语的力量，“纸币 + 面具”可导向财富与沉默的关系。对这些组合来说，单纯知道对象名称是不够的；必须进一步说明哪些属性被保留、哪些意义被激活、以及最终隐喻为何成立。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\nA[理解任务] --> A1[识别&lt;br/>对象是什么]\nA --> A2[解释&lt;br/>哪些属性使组合成立]\nA --> A3[含义&lt;br/>组合意在传达什么]\n\nA1 --> B[生成任务条件 I&lt;br/>识别 + 含义]\nA2 --> C[生成任务条件 II&lt;br/>识别 + 解释 + 含义]\nA3 --> B\nA3 --> C\n\nB --> D[更接近直接对象拼接]\nC --> E[更接近组合式创造过程]&quot;">flowchart LR
+A[理解任务] --> A1[识别&lt;br/>对象是什么]
+A --> A2[解释&lt;br/>哪些属性使组合成立]
+A --> A3[含义&lt;br/>组合意在传达什么]
+
+A1 --> B[生成任务条件 I&lt;br/>识别 + 含义]
+A2 --> C[生成任务条件 II&lt;br/>识别 + 解释 + 含义]
+A3 --> B
+A3 --> C
+
+B --> D[更接近直接对象拼接]
+C --> E[更接近组合式创造过程]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="7-过程导向评价比单看成品更重要">7. 过程导向评价比单看成品更重要<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-过程导向评价比单看成品更重要" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>最后总结一个记忆口诀：评价 AI 创造力要”三看”</p>
+<ol>
+<li><strong>看产品</strong>：新颖性和价值（Novelty × Value）</li>
+<li><strong>看过程</strong>：生成中是否存在可追踪的概念加工</li>
+<li><strong>看解释</strong>：模型能否对其组合逻辑作出说明
+只盯着”好不好看”或”惊不惊讶”会掉坑，三管齐下才稳。只有当产品评价与过程分析相结合时，AI 创造力研究才不会退化为单纯的审美印象比较。</li>
+</ol>
+</div>
+</blockquote>
+<p>课上最后通过不同模型在 IEI 条件与 II 条件下的生成展示，说明是否显式引入”识别—解释—含义”链条，会影响生成结果的结构组织方式。IEI 条件中，模型不仅知道要组合什么，还被要求说明为何能组合、想表达什么，因此更容易产生带有概念关联和隐喻指向的作品；II 条件则更容易停留在对象拼接层面。</p>
+<p>因此，AI 创造力评估不能只以”作品是否好看”或”是否让人惊讶”为终点。更稳妥的做法，是同时考察作品的新颖性与价值、生成中是否存在可追踪的概念加工、以及模型能否对其组合逻辑作出说明。只有当产品评价与过程分析相结合时，AI 创造力研究才不会退化为单纯的审美印象比较。</p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-126" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#人工智能与心理测量" data-for="人工智能与心理测量">人工智能与心理测量</a></li><li class="depth-1"><a href="#01-人工智能影响心理测量" data-for="01-人工智能影响心理测量">01 人工智能影响心理测量</a></li><li class="depth-2"><a href="#1-人工智能进入心理测量的基本方式" data-for="1-人工智能进入心理测量的基本方式">1. 人工智能进入心理测量的基本方式</a></li><li class="depth-2"><a href="#2-计算精神病学的两条路径" data-for="2-计算精神病学的两条路径">2. 计算精神病学的两条路径</a></li><li class="depth-2"><a href="#3-机器学习在心理测量中的基本工作方式" data-for="3-机器学习在心理测量中的基本工作方式">3. 机器学习在心理测量中的基本工作方式</a></li><li class="depth-2"><a href="#4-从生理信号到情绪识别再到脑机接口" data-for="4-从生理信号到情绪识别再到脑机接口">4. 从生理信号到情绪识别，再到脑机接口</a></li><li class="depth-2"><a href="#5-人工智能与心理健康从自动检测到精准干预" data-for="5-人工智能与心理健康从自动检测到精准干预">5. 人工智能与心理健康：从自动检测到精准干预</a></li><li class="depth-2"><a href="#6-aigc-图片库的构建及其测量意义" data-for="6-aigc-图片库的构建及其测量意义">6. AIGC 图片库的构建及其测量意义</a></li><li class="depth-2"><a href="#7-重点ai-评估不仅测量行为也会改变行为" data-for="7-重点ai-评估不仅测量行为也会改变行为">7. 【重点】AI 评估不仅测量行为，也会改变行为</a></li><li class="depth-1"><a href="#02-人工智能测试" data-for="02-人工智能测试">02 人工智能测试</a></li><li class="depth-2"><a href="#1-人工智能幻觉及其测量含义" data-for="1-人工智能幻觉及其测量含义">1. 人工智能幻觉及其测量含义</a></li><li class="depth-2"><a href="#2-为什么传统-ai-测试不足以评测通用人工智能" data-for="2-为什么传统-ai-测试不足以评测通用人工智能">2. 为什么传统 AI 测试不足以评测通用人工智能</a></li><li class="depth-2"><a href="#3-通智测试的基本思想" data-for="3-通智测试的基本思想">3. 通智测试的基本思想</a></li><li class="depth-2"><a href="#4-以人类发展规律启发-agi-评级" data-for="4-以人类发展规律启发-agi-评级">4. 以人类发展规律启发 AGI 评级</a></li><li class="depth-2"><a href="#5-通考平台中的通用任务与专项能力测试" data-for="5-通考平台中的通用任务与专项能力测试">5. 通考平台中的通用任务与专项能力测试</a></li><li class="depth-2"><a href="#6-社会智能心智理论与-ai-的边界" data-for="6-社会智能心智理论与-ai-的边界">6. 社会智能、心智理论与 AI 的边界</a></li><li class="depth-2"><a href="#7-本章辨析" data-for="7-本章辨析">7. 本章辨析</a></li><li class="depth-1"><a href="#03-创造力与-ai" data-for="03-创造力与-ai">03 创造力与 AI</a></li><li class="depth-2"><a href="#1-创造力测验的代表形式与根本困难" data-for="1-创造力测验的代表形式与根本困难">1. 创造力测验的代表形式与根本困难</a></li><li class="depth-2"><a href="#2-4p-模型创造力研究的基本框架" data-for="2-4p-模型创造力研究的基本框架">2. 4P 模型：创造力研究的基本框架</a></li><li class="depth-2"><a href="#3-过程视角概念融合理论" data-for="3-过程视角概念融合理论">3. 过程视角：概念融合理论</a></li><li class="depth-2"><a href="#4-产品视角创造性作品如何评价" data-for="4-产品视角创造性作品如何评价">4. 产品视角：创造性作品如何评价</a></li><li class="depth-2"><a href="#5-ai-创造力的争论焦点" data-for="5-ai-创造力的争论焦点">5. AI 创造力的争论焦点</a></li><li class="depth-2"><a href="#6-重点ai-的创造性产品不等于人类式创造过程" data-for="6-重点ai-的创造性产品不等于人类式创造过程">6. 【重点】AI 的创造性产品，不等于人类式创造过程</a></li><li class="depth-2"><a href="#7-过程导向评价比单看成品更重要" data-for="7-过程导向评价比单看成品更重要">7. 过程导向评价比单看成品更重要</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}container;content;isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

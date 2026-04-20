@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>lecture6</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="lecture6"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="lecture6"/><meta name="twitter:description" content="虚拟内存管理 一、虚拟页式存储管理 1."/><meta property="og:description" content="虚拟内存管理 一、虚拟页式存储管理 1."/><meta property="og:image:alt" content="虚拟内存管理 一、虚拟页式存储管理 1."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/lecture/lecture6"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/lecture/lecture6"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="虚拟内存管理 一、虚拟页式存储管理 1."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/lecture/lecture6"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-211"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-211" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/lecture/">lecture</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>lecture6</a></div></nav><h1 class="article-title">lecture6</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-20T13:54:49.534Z">Apr 20, 2026</time><span>41 min read</span></p></div></div><article class="popover-hint"><h1 id="虚拟内存管理">虚拟内存管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#虚拟内存管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<h2 id="一虚拟页式存储管理">一、虚拟页式存储管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#一虚拟页式存储管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-先把这件事想明白虚拟内存到底在解决什么">1. 先把这件事想明白：虚拟内存到底在解决什么<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-先把这件事想明白虚拟内存到底在解决什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>你可以先把这一章的目标记成一句话：<strong>让程序觉得自己拥有一个又大又连续、而且很好用的内存空间</strong>。</p>
+<p>真实机器上的存储体系其实是分层的：寄存器最快、Cache 很快、主存不算小但也不够大、磁盘容量大但很慢。操作系统要做的，就是尽量把“速度”和“容量”两件事同时做好：让 CPU 感觉内存够快，也让程序感觉内存够大。虚拟内存正是把主存和磁盘协同起来后的那个“看起来很大”的地址空间。程序看到的是虚拟地址，真正访问的是物理地址，中间由硬件和操作系统一起完成转换。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    CPU[CPU 执行指令] --> VA[虚拟地址]\n    VA --> MMU[MMU / 地址转换]\n    MMU -->|命中| MEM[物理内存]\n    MMU -->|页不在内存| PF[缺页异常]\n    PF --> OS[操作系统处理]\n    OS --> DISK[磁盘 / 后备存储]\n    DISK --> MEM&quot;">flowchart TD
+    CPU[CPU 执行指令] --> VA[虚拟地址]
+    VA --> MMU[MMU / 地址转换]
+    MMU -->|命中| MEM[物理内存]
+    MMU -->|页不在内存| PF[缺页异常]
+    PF --> OS[操作系统处理]
+    OS --> DISK[磁盘 / 后备存储]
+    DISK --> MEM
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>你可以把虚拟内存想成“酒店前台给每位客人发的房号体系”。<br/>
+每个客人都觉得自己住得很规整、房间号很连续，但后台其实可能把人安置在不同楼层、不同区域，甚至暂时安排到“等候区”。<br/>
+对客人来说，重要的是“我有这个房号，而且能访问”；对系统来说，重要的是“这个房号现在映射到哪里”。</p>
+</div>
+</blockquote>
+<h3 id="2-四个最容易混的词">2. 四个最容易混的词<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-四个最容易混的词" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这几个词考试时很喜欢混着出：</p>
+<ul>
+<li><strong>虚拟内存</strong>：把主存和磁盘联合起来后，程序所“感觉到”的大内存。</li>
+<li><strong>虚拟地址空间</strong>：分配给某个进程的整块虚拟地址范围。</li>
+<li><strong>虚拟地址</strong>：虚拟地址空间里的某一个地址。</li>
+<li><strong>虚拟存储技术</strong>：程序运行时只把一部分页放进内存，不在内存的部分等需要时再调入。</li>
+</ul>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>“虚拟内存”不是“磁盘空间”本身。<br/>
+它是<strong>主存 + 磁盘 + 地址转换机制 + 缺页处理机制</strong>共同形成的一种效果。</p>
+</div>
+</blockquote>
+<h3 id="3-请求分页为什么程序可以一开始几乎不装东西就跑起来">3. 请求分页：为什么程序可以一开始几乎不装东西就跑起来<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-请求分页为什么程序可以一开始几乎不装东西就跑起来" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>虚拟页式存储管理的核心思想很朴素：</p>
+<ol>
+<li>程序装入时，不必把全部页面都装进内存。</li>
+<li>真正访问到某页时，如果它还不在内存，再动态调入。</li>
+<li>内存不够时，就把暂时不用的页换出去。</li>
+</ol>
+<p>这里有两种取页思路：</p>
+<ul>
+<li><strong>请求调页</strong>：用到再调。</li>
+<li><strong>预先调页</strong>：提前猜一些将来要用的页先装进去。</li>
+</ul>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这本质上是一种资源兑换：<br/>
+<strong>用 CPU 时间和磁盘 I/O，去换看起来更大的内存容量。</strong></p>
+</div>
+</blockquote>
+<h3 id="4-调页系统最关心的三件事">4. 调页系统最关心的三件事<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-调页系统最关心的三件事" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这一块你记成三个英文词就很好背：</p>
+<ul>
+<li><strong>fetch policy</strong>：什么时候把页装进来</li>
+<li><strong>placement policy</strong>：装进来后放到哪个页框</li>
+<li><strong>replacement policy</strong>：没位置时，赶谁出去</li>
+</ul>
+<p>这三件事里，真正最折磨人的通常是第三件，也就是页面置换。</p>
+<hr/>
+<h3 id="5-页表项-pte它不是只存页框号这么简单">5. 页表项 PTE：它不是只存“页框号”这么简单<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-页表项-pte它不是只存页框号这么简单" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>页表项的任务，是把“虚页”翻译成“物理页框”，但它远不止保存一个页框号。课上反复强调的几个字段你一定要记住：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">h</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mord mathnormal">s</span><span class="mord mathnormal">i</span><span class="mord mathnormal">c</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord"> </span><span class="mord mathnormal">A</span><span class="mord mathnormal">dd</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">ess</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord mathnormal">i</span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord mathnormal">se</span><span class="mord mathnormal">t</span></span></span></span></span>
+<ul>
+<li><strong>PFN / 页框号</strong>：这个虚页现在映射到哪个<span class="text-highlight">物理页框</span>（相似的概念是VPN）
+<ul>
+<li>VPN 是虚拟内存里的页号，PFN 是物理内存里的页号，页表负责把前者翻译成后者。</li>
+</ul>
+</li>
+<li><strong>Present / Valid</strong>：这页是不是当前在物理内存里</li>
+<li><strong>Accessed / Referenced</strong>：最近有没有被访问过</li>
+<li><strong>Dirty / Modified</strong>：装入后有没有被写过</li>
+<li><strong>Protection</strong>：读 / 写 / 执行权限</li>
+<li>在 x86 里还会看到 <strong>R/W、U/S、PWT、PCD、PS、G</strong> 这些控制位，分别对应可写性、用户/内核权限、缓存策略、大页、TLB 全局页等。</li>
+</ul>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>PTE 不是单纯的“映射表项”，它同时还是权限检查、替换决策、缓存策略、缺页判定的依据。</p>
+</div>
+</blockquote>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>哪些情况会触发 Page Fault，不只是“页不在内存”。<br/>
+还可能是：页面非法、权限不对、写时复制页被写、请求栈扩展、请求零页等。<br/>
+也就是说，<strong>Page Fault 是地址转换阶段发现“当前 PTE 不允许你这么干”时，由硬件触发给操作系统的异常</strong>。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="6-为什么必须用多级页表">6. 为什么必须用多级页表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-为什么必须用多级页表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>如果给每个进程都整一张“平铺到底”的大页表，代价会非常夸张。</p>
+<p>在 32 位地址空间、页面 4KB、页表项 4B、用户空间 2GB（<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">31</span></span></span></span></span></span></span></span></span></span></span></span>） 的情况下，一个进程就有 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">19</span></span></span></span></span></span></span></span></span></span></span></span> 个页，需要的页表本身就要占 512 页。到 64 位时，平铺页表基本不可接受。</p>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<h3 id="平铺页表大小的一个例子">平铺页表大小的一个例子<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#平铺页表大小的一个例子" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>设：</p>
+<ul>
+<li>用户虚拟地址空间大小为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">2</span><span class="mord text"><span class="mord">GB</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">31</span></span></span></span></span></span></span></span></span><span class="mord text"><span class="mord">B</span></span></span></span></span></li>
+<li>页面大小为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">4</span><span class="mord text"><span class="mord">KB</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">12</span></span></span></span></span></span></span></span></span><span class="mord text"><span class="mord">B</span></span></span></span></span></li>
+<li>每个页表项（PTE）大小为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">4</span><span class="mord text"><span class="mord">B</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mord text"><span class="mord">B</span></span></span></span></span></li>
+</ul>
+<p>则：</p>
+<h4 id="1-用户空间一共有多少个虚拟页">1. 用户空间一共有多少个虚拟页<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-用户空间一共有多少个虚拟页" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.1771em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4911em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7401em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">12</span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">31</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">19</span></span></span></span></span></span></span></span></span></span></span></span></span>
+<p>所以，用户空间一共被划分为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">19</span></span></span></span></span></span></span></span></span></span></span></span>个虚拟页。</p>
+<h4 id="2-需要多少个页表项">2. 需要多少个页表项<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-需要多少个页表项" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>平铺页表中，每个虚拟页对应一个页表项，因此需要：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">19</span></span></span></span></span></span></span></span></span><span class="mord text"><span class="mord"> </span><span class="mord cjk_fallback">个</span><span class="mord"> PTE</span></span></span></span></span></span>
+<h4 id="3-页表总共占多少字节">3. 页表总共占多少字节<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-页表总共占多少字节" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9474em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">19</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">21</span></span></span></span></span></span></span></span></span><span class="mord text"><span class="mord">B</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">2</span><span class="mord text"><span class="mord">MB</span></span></span></span></span></span>
+<p>所以，这张页表本身大小为 <strong>2MB</strong>。</p>
+<h4 id="4-页表本身要占多少页">4. 页表本身要占多少页<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-页表本身要占多少页" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>由于每页大小仍为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">4</span><span class="mord text"><span class="mord">KB</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">12</span></span></span></span></span></span></span></span></span><span class="mord text"><span class="mord">B</span></span></span></span></span>，所以页表需要的页数为：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.1771em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4911em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7401em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">12</span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">21</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">512</span></span></span></span></span>
+<p>所以，平铺页表本身需要占用 <strong>512 个物理页</strong>。</p>
+<hr/>
+<h3 id="直觉理解">直觉理解<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#直觉理解" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这里有两个不同的“页数”：</p>
+<ul>
+<li><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">19</span></span></span></span></span></span></span></span></span></span></span></span>：是 <strong>被映射的虚拟页数</strong></li>
+<li><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span>：是 <strong>存放这些页表项所需的页表页数</strong></li>
+</ul>
+<p>原因是：一个页表页大小为 4KB，而一个 PTE 只有 4B，所以一个页表页可以容纳：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.1771em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4911em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7401em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">12</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">10</span></span></span></span></span></span></span></span></span></span></span></span></span>
+<p>即 <strong>1024 个页表项</strong>。</p>
+<p>因此，<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">19</span></span></span></span></span></span></span></span></span></span></span></span> 个页表项只需要：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.1771em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4911em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7401em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">10</span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">19</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">9</span></span></span></span></span></span></span></span></span></span></span></span>
+<p>个页表页即可。</p>
+<hr/>
+<h3 id="一句话总结">一句话总结<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#一句话总结" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>对于 2GB 用户空间、4KB 页面、4B 页表项的平铺页表：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">19</span></span></span></span></span></span></span></span></span><span class="mord text"><span class="mord"> </span><span class="mord cjk_fallback">个虚拟页</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇒</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8641em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">19</span></span></span></span></span></span></span></span></span><span class="mord text"><span class="mord"> </span><span class="mord cjk_fallback">个</span><span class="mord"> PTE</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇒</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">2</span><span class="mord text"><span class="mord">MB </span><span class="mord cjk_fallback">页表</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⇒</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">512</span><span class="mord text"><span class="mord"> </span><span class="mord cjk_fallback">个页表页</span></span></span></span></span></span>
+<p>这也说明了：<strong>即使在 32 位下，平铺页表的开销也已经不小；到了 64 位，若仍然平铺，页表大小会迅速变得不可接受。</strong></p>
+</div>
+</blockquote>
+<p>所以多级页表的直觉是：<strong>把大数组改造成树</strong>。只有真的用到了某一片虚拟地址范围，才为那一层页表分配实际页面。x86-64 常见设计里，48 位虚拟地址会拆成多段索引，逐级下钻，根的位置由 CR3 指向。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    VA[虚拟地址] --> L4[L4 索引]\n    L4 --> L3[L3 索引]\n    L3 --> L2[L2 索引]\n    L2 --> L1[L1 / PTE]\n    L1 --> OFF[页内偏移]\n    L1 --> PFN[页框号]\n    PFN --> PA[物理地址]\n    OFF --> PA&quot;">flowchart TD
+    VA[虚拟地址] --> L4[L4 索引]
+    L4 --> L3[L3 索引]
+    L3 --> L2[L2 索引]
+    L2 --> L1[L1 / PTE]
+    L1 --> OFF[页内偏移]
+    L1 --> PFN[页框号]
+    PFN --> PA[物理地址]
+    OFF --> PA
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>多级页表很像图书馆的“楼层 → 书架区 → 书架 → 某本书”。<br/>
+你不需要一开始就把全馆所有目录都铺开，只给真正用到的区域建目录就行。</p>
+</div>
+</blockquote>
+<h3 id="7-反转页表换个方向思考">7. 反转页表：换个方向思考<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-反转页表换个方向思考" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>普通页表是“从虚拟地址出发”查到物理页框，而且通常<strong>每个进程一张</strong>。<br/>
+反转页表则反过来：<strong>从物理内存出发，系统维护一张总表</strong>，表项记录“哪个进程的哪个虚页”占了这个页框。这样表的规模跟物理内存大小成比例，而不是跟所有进程的虚拟地址空间总量成比例。某些体系结构还会把 <code>(pid, vpn)</code> 作为key哈希后去找对应表项。</p>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>普通页表像“每个学生一本选课记录”。<br/>
+反转页表像“每门课点名册”，你从课程席位反查现在坐的是谁。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="8-地址转换虚拟地址到底怎么走到物理地址">8. 地址转换：虚拟地址到底怎么走到物理地址<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-地址转换虚拟地址到底怎么走到物理地址" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这一部分建议你记住一句伪代码：</p>
+<ul>
+<li>
+<p>如果该虚页不在内存、非法，或者权限不允许<br/>
+<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 硬件触发异常，陷入操作系统</p>
+</li>
+<li>
+<p>否则<br/>
+<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 从页表拿页框号，与页内偏移拼接成物理地址</p>
+</li>
+</ul>
+<p>MMU 就是干这件事的。操作系统从更高层看待它时，会把存储抽象成<strong>进程地址空间</strong>。所以你平时看到的代码段、数据段、堆、栈、共享库映射区，本质上都是这个地址空间里的不同区域。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    VA[虚拟地址 = 虚页号 + 页内偏移] --> PT[查页表]\n    PT -->|有效| PFN[页框号]\n    PFN --> PA[物理地址 = 页框号 + 页内偏移]\n    PT -->|无效 / 非法 / 保护失败| EX[Page Fault]\n    EX --> K[进入内核处理]&quot;">flowchart TD
+    VA[虚拟地址 = 虚页号 + 页内偏移] --> PT[查页表]
+    PT -->|有效| PFN[页框号]
+    PFN --> PA[物理地址 = 页框号 + 页内偏移]
+    PT -->|无效 / 非法 / 保护失败| EX[Page Fault]
+    EX --> K[进入内核处理]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h3 id="9-tlb为什么页表查找不会慢到离谱">9. TLB：为什么页表查找不会慢到离谱<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-tlb为什么页表查找不会慢到离谱" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>如果每次访存都要先访问页表，再去访问目标内存，那内存访问至少翻倍，CPU 会非常痛苦。<br/>
+所以硬件里会放一个<strong>TLB（快表）</strong>，本质是相联存储器，缓存当前运行进程页表中的一小部分热点表项。命中时，虚拟页号可以直接拿到页框号；未命中时，才走页表查找。</p>
+<p>进程切换时，TLB 还会遇到刷新问题。刷新得太狠，性能掉得明显；因此会有 <strong>ASID / PCID</strong> 这类机制，把不同地址空间的 TLB 项区分开，减少不必要清空。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>页表像一本大字典，TLB 像你桌上贴的便利签。<br/>
+常查的几个词先记在便利签上，真的快很多。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="10-缺页异常这是虚拟内存真正活起来的地方">10. 缺页异常：这是虚拟内存真正“活起来”的地方<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-缺页异常这是虚拟内存真正活起来的地方" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>最常见的 Page Fault 就是<strong>缺页异常</strong>：硬件查页表时发现该页当前不在内存，于是触发异常；操作系统接手后找到磁盘上的后备位置，把页调进来；如果没有空闲页框，还要先选一个牺牲者换出去。若牺牲页是脏页，还得先写回。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    REF[CPU 访问某虚拟页] --> CHK{页在内存?}\n    CHK -->|是| OK[继续执行]\n    CHK -->|否| PF[硬件触发缺页异常]\n    PF --> OS[内核缺页处理程序]\n    OS --> FREE{有空闲页框?}\n    FREE -->|有| LOAD[从磁盘调入]\n    FREE -->|无| VICTIM[选择牺牲页]\n    VICTIM --> DIRTY{牺牲页脏吗?}\n    DIRTY -->|是| WB[先写回磁盘]\n    DIRTY -->|否| LOAD\n    WB --> LOAD\n    LOAD --> UPD[更新页表 / TLB]\n    UPD --> RET[返回并重启指令]&quot;">flowchart TD
+    REF[CPU 访问某虚拟页] --> CHK{页在内存?}
+    CHK -->|是| OK[继续执行]
+    CHK -->|否| PF[硬件触发缺页异常]
+    PF --> OS[内核缺页处理程序]
+    OS --> FREE{有空闲页框?}
+    FREE -->|有| LOAD[从磁盘调入]
+    FREE -->|无| VICTIM[选择牺牲页]
+    VICTIM --> DIRTY{牺牲页脏吗?}
+    DIRTY -->|是| WB[先写回磁盘]
+    DIRTY -->|否| LOAD
+    WB --> LOAD
+    LOAD --> UPD[更新页表 / TLB]
+    UPD --> RET[返回并重启指令]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>缺页异常不是“程序错了”，它很多时候是虚拟内存正常工作的组成部分。<br/>
+真正该警惕的是<strong>频繁缺页</strong>，那通常意味着驻留集太小、局部性太差，或者系统开始抖动了。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="11-驻留集每个进程到底能占多少页框">11. 驻留集：每个进程到底能占多少页框<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-驻留集每个进程到底能占多少页框" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><strong>驻留集</strong>就是某时刻某进程实际驻留在物理内存中的页框集合。<br/>
+分配策略有两种：</p>
+<ul>
+<li><strong>固定分配</strong>：进程创建时就定好</li>
+<li><strong>可变分配</strong>：根据缺页率动态增减页框数</li>
+</ul>
+<p>驻留集太小，会疯狂缺页；太大，又会挤压别的进程。这里没有绝对最优值，只有跟程序局部性相匹配的“比较合适”的范围。</p>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>课上那张“页框数—缺页率”曲线你只要记住一个感觉：<br/>
+一开始多给几个页框，收益特别大；再往后继续加，边际收益迅速下降。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="二页面置换算法">二、页面置换算法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#二页面置换算法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-先分清局部置换-vs-全局置换">1. 先分清：局部置换 vs 全局置换<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-先分清局部置换-vs-全局置换" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>发生缺页、需要腾位置时，候选页到底从哪里挑？</p>
+<ul>
+<li><strong>局部置换</strong>：只在当前缺页进程自己的驻留集中挑</li>
+<li><strong>全局置换</strong>：在系统全部未锁定页框里挑</li>
+</ul>
+<p>固定分配通常配局部置换；可变分配既可能局部，也可能全局。<br/>
+这背后的区别其实很重要：局部置换比较“各扫门前雪”，全局置换更激进，更追求系统整体吞吐，但进程之间的干扰也更明显。</p>
+<h3 id="2-页框锁定为什么有些页不能换">2. 页框锁定：为什么有些页不能换<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-页框锁定为什么有些页不能换" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>不是所有页都能被置换。<br/>
+<strong>正在 I/O 的页、内核关键代码、关键数据结构、I/O 缓冲区</strong>这类东西常常会被锁定，避免虚存机制把它们换出导致不可预测延迟。Windows 里还给了 <code>VirtualLock</code> / <code>VirtualUnlock</code> 这样的接口。</p>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>置换算法再聪明，也不能越过“锁定页不能换”这个硬约束。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="3-一组你必须会比较的置换算法">3. 一组你必须会比较的置换算法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-一组你必须会比较的置换算法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="opt">OPT<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#opt" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>理想最优算法，换掉“未来最久才会再用”甚至“未来再也不用”的页。它几乎只用于做<strong>理论基准</strong>，因为现实中你不可能知道未来。</p>
+<h4 id="fifo">FIFO<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#fifo" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>最早进来的最先走。实现简单，但可能把特别重要、马上还要用的页也赶走。</p>
+<h4 id="second-chance--clock">Second Chance / Clock<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#second-chance--clock" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>它们是对 FIFO 的修补：<br/>
+先看访问位 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span>。如果某页最近用过，就给它一次机会，把它跳过去，甚至顺手把 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> 清零。Clock 就是把这个思路做成一个环形缓冲区 + 指针扫描，工程上比精确 LRU 实用得多。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    P[时钟指针指向某页] --> R{R 位 = 0 ?}\n    R -->|是| OUT[选它换出]\n    R -->|否| CLR[将 R 清零]\n    CLR --> NEXT[指针继续前移]\n    NEXT --> P&quot;">flowchart LR
+    P[时钟指针指向某页] --> R{R 位 = 0 ?}
+    R -->|是| OUT[选它换出]
+    R -->|否| CLR[将 R 清零]
+    CLR --> NEXT[指针继续前移]
+    NEXT --> P
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h4 id="nru">NRU<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#nru" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>利用访问位 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> 和修改位 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span> 把页分四类：</p>
+<ul>
+<li>第 0 类：未访问，未修改</li>
+<li>第 1 类：未访问，已修改</li>
+<li>第 2 类：已访问，未修改</li>
+<li>第 3 类：已访问，已修改</li>
+</ul>
+<p>优先从编号更小的非空类里挑。它很粗糙，但成本低。</p>
+<h4 id="lru">LRU<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#lru" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>最近最久未使用。思想特别自然，也很接近 OPT，但精确实现通常代价大：要么打时间戳，要么维护栈。</p>
+<h4 id="nfu--aging">NFU / Aging<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#nfu--aging" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这两个都是“便宜点模拟 LRU”的思路：</p>
+<ul>
+<li><strong>NFU</strong>：周期性把 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> 累加到计数器</li>
+<li><strong>Aging</strong>：计数器先右移，再把当前 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> 放到最高位，更能体现“新近访问”比“很久以前访问”更重要</li>
+</ul>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>如果说 LRU 是问“谁最久没被翻出来看过”，<br/>
+那 Aging 就是在做“最近一段时间的记忆加权”。</p>
+</div>
+</blockquote>
+<h3 id="4-算法优劣怎么背">4. 算法优劣怎么背<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-算法优劣怎么背" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>课上最后给的味道大概是这样：</p>
+<ul>
+<li>OPT：不可实现，但可作上界</li>
+<li>FIFO：简单，但会犯傻</li>
+<li>Second Chance / Clock：现实可用</li>
+<li>LRU：很强，但实现贵</li>
+<li>Aging：是很有效的 LRU 近似</li>
+<li>Working Set / WSClock：思想好，但要平衡实现成本</li>
+</ul>
+<hr/>
+<h3 id="5-belady-现象页框变多缺页反而变多">5. Belady 现象：页框变多，缺页反而变多<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-belady-现象页框变多缺页反而变多" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这件事第一次看到很反直觉，但真的会发生在 <strong>FIFO</strong> 里。<br/>
+也就是说，分给进程更多页框，不保证缺页数一定下降。这个异常现象就叫 <strong>Belady 现象</strong>。</p>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>“页框更多 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">⇒</span></span></span></span> 缺页更少”不是普遍真理。<br/>
+对某些算法成立，对某些算法不成立。面试和考试都很爱拿这个下套。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="6-抖动-thrashing系统开始忙着换页忘了干活">6. 抖动 Thrashing：系统开始“忙着换页，忘了干活”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-抖动-thrashing系统开始忙着换页忘了干活" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>如果页面在内存和磁盘之间高频来回，系统花在调页上的时间比真正执行程序的时间还多，这就叫 <strong>抖动</strong>。<br/>
+抖动常见原因有：驻留集太小、并发进程太多、工作集装不下、程序局部性太差。</p>
+<h3 id="7-页大小程序写法也会影响缺页">7. 页大小、程序写法，也会影响缺页<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-页大小程序写法也会影响缺页" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>页面大小不是越大越好，也不是越小越好：</p>
+<ul>
+<li>小页：内部碎片小，但页表更长</li>
+<li>大页：页表更短、TLB 覆盖更大，但内部碎片更明显，还会增加管理复杂性</li>
+</ul>
+<p>程序写法同样很关键。课上的矩阵例子特别经典：二维数组按行存放时，<strong>按行遍历</strong>局部性很好；<strong>按列遍历</strong>会把局部性打烂。通常默认每个元素 4B、页面 4KB 时，一行正好约一个页面，所以按行访问缺页远少于按列访问。</p>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这就是为什么写高性能代码时，数据布局和访问顺序经常比“多写几行算法优化”还重要。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="8-工作集真正该给一个进程多少页框">8. 工作集：真正该给一个进程多少页框<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-工作集真正该给一个进程多少页框" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>工作集模型的想法非常漂亮：<br/>
+在某一段时间里，程序其实只会集中访问一小撮“活跃页面”。如果你给它的页框数大致能装下这些活跃页，它就跑得顺；装不下，就会频繁缺页。</p>
+<p>定义是：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mopen">(</span><span class="mord mathnormal">t</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">Δ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">进程在过去</span><span class="mord"> </span></span><span class="mord">Δ</span><span class="mord text"><span class="mord"> </span><span class="mord cjk_fallback">个虚拟时间单位中访问过的页面集合</span></span></span></span></span></span>
+<p>这里要注意三件事：</p>
+<ul>
+<li>它跟访问序列有关</li>
+<li>跟当前时刻 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> 有关</li>
+<li>跟窗口长度 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span></span></span></span> 有关；<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span></span></span></span> 越大，工作集一般越大</li>
+</ul>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p><strong>工作集</strong>和<strong>驻留集</strong>不是一回事。<br/>
+工作集是程序运行时自然表现出来的“活跃页集合”；<br/>
+驻留集是系统当前实际分给它的物理页框集合。</p>
+</div>
+</blockquote>
+<p>工作集算法的大致做法是：给每页记录最后访问时间，周期性看它是不是落在“当前时间减阈值 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span>”之前；太久没用的页，就认为已经掉出工作集，可以考虑换出。实际系统里，很多时候会用<strong>缺页率上下界</strong>来近似这个思想。</p>
+<hr/>
+<h3 id="9-清除策略页缓冲加载控制">9. 清除策略、页缓冲、加载控制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-清除策略页缓冲加载控制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这三块很像“系统级后勤保障”。</p>
+<h4 id="清除策略">清除策略<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#清除策略" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>理想状态是：发生缺页时，系统手里已经有一批干净空闲页框，而不是临时现找。<br/>
+所以会有一个 <strong>paging daemon</strong>，平时睡着，空闲页少了就醒来，提前回收并清洗页面。还有双指针时钟这样的实现，让前指针负责把脏页写回，后指针负责真正替换。</p>
+<h4 id="页缓冲">页缓冲<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#页缓冲" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>被换出的页先别急着彻底忘掉：</p>
+<ul>
+<li>干净页进空闲链表</li>
+<li>脏页进修改链表，成批写回</li>
+<li>如果进程很快又要它，可以低成本重新拿回来</li>
+</ul>
+<h4 id="加载控制">加载控制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#加载控制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>内存里同时驻留多少进程，会显著影响整体效率。并发度过高时，系统可能选择<strong>挂起一部分进程</strong>，把它们占的页换到磁盘上，降低负载。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>你可以把这三者想成“保洁 + 仓储 + 限流”。<br/>
+没有它们，虚拟内存机制会一直处在手忙脚乱的救火状态。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="三内存映射文件">三、内存映射文件<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#三内存映射文件" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-mmap-的本质把文件-io变成内存访问">1. mmap 的本质：把“文件 I/O”变成“内存访问”<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-mmap-的本质把文件-io变成内存访问" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><code>mmap</code> 的思想非常优雅：<br/>
+不是 <code>read/write</code> 文件，而是把文件的一段直接映射到进程虚拟地址空间的一块区域里。之后程序访问这块区域，就像访问一个大数组。首次访问某页时，系统再按页把内容调进来；解除映射或进程退出时，修改过的页再写回文件。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    FILE[文件中的一段内容] --> MAP[mmap 建立映射]\n    MAP --> VMA[虚拟地址空间中的一段区域]\n    VMA --> ACCESS[像访问数组一样访问]\n    ACCESS -->|首次触达某页| PF[缺页异常]\n    PF --> LOAD[按页读入内存]&quot;">flowchart LR
+    FILE[文件中的一段内容] --> MAP[mmap 建立映射]
+    MAP --> VMA[虚拟地址空间中的一段区域]
+    VMA --> ACCESS[像访问数组一样访问]
+    ACCESS -->|首次触达某页| PF[缺页异常]
+    PF --> LOAD[按页读入内存]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>普通文件 I/O 像“你去仓库搬货”；<br/>
+内存映射像“仓库直接给你开一扇门，让你伸手就能拿”。</p>
+</div>
+</blockquote>
+<h3 id="2-mmap-里最该记的参数">2. <code>mmap</code> 里最该记的参数<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-mmap-里最该记的参数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>函数原型是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">void</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">mmap</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">void</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> *</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;">start</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">size_t</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> length</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> prot</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> flags</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> fd</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">off_t</span><span style="--shiki-light:#E36209;--shiki-dark:#FFAB70;"> offset</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<p>你复习时重点盯住两个东西：</p>
+<ul>
+<li><code>prot</code>：这段区域的访问权限，对应 <code>vm_area_struct</code> 里的 <code>vm_prot</code></li>
+<li><code>flags</code>：映射对象的类型，对应 <code>vm_area_struct</code> 里的 <code>vm_flags</code></li>
+</ul>
+<p>其中常见类型：</p>
+<ul>
+<li><code>MAP_PRIVATE</code>：私有写时复制对象</li>
+<li><code>MAP_SHARED</code>：共享对象</li>
+<li><code>MAP_ANON</code>：匿名映射，对应请求零页</li>
+<li><code>MAP_PRIVATE | MAP_ANON</code>：常见于 <code>.bss</code>、堆、用户栈等区域</li>
+</ul>
+<h3 id="3-linux-怎么描述一个进程的虚拟空间">3. Linux 怎么描述一个进程的虚拟空间<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-linux-怎么描述一个进程的虚拟空间" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这一块建议你直接把图景记住：<br/>
+<code>task_struct</code> 代表进程；进程虚拟地址空间里会有一串 <code>vm_area_struct</code>，每个 VMA 描述一个连续区域，里面记着 <code>vm_start</code>、<code>vm_end</code>、<code>vm_prot</code>、<code>vm_flags</code>、<code>vm_next</code> 这些信息；再往下是页表，把虚页映射到物理页框；而映射来源可能是 ELF 文件里的 <code>.text</code>、<code>.data</code>、<code>.bss</code>、<code>.rodata</code> 等节。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    TASK[task_struct / 进程] --> VMA1[vm_area_struct: text]\n    TASK --> VMA2[vm_area_struct: data]\n    TASK --> VMA3[vm_area_struct: heap/stack/mmap]\n    VMA1 --> PT[页表]\n    VMA2 --> PT\n    VMA3 --> PT\n    ELF[ELF 文件各节] --> VMA1\n    ELF --> VMA2\n    PT --> MEM[物理页框]&quot;">flowchart LR
+    TASK[task_struct / 进程] --> VMA1[vm_area_struct: text]
+    TASK --> VMA2[vm_area_struct: data]
+    TASK --> VMA3[vm_area_struct: heap/stack/mmap]
+    VMA1 --> PT[页表]
+    VMA2 --> PT
+    VMA3 --> PT
+    ELF[ELF 文件各节] --> VMA1
+    ELF --> VMA2
+    PT --> MEM[物理页框]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这里一定要有“<strong>VMA 负责描述区域，页表负责逐页映射</strong>”这个层次感。<br/>
+这两个不是一个东西。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="4-共享映射与私有写时复制">4. 共享映射与私有写时复制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-共享映射与私有写时复制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<h4 id="共享对象">共享对象<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#共享对象" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>比如共享库。多个进程用的是同一份代码，磁盘里一份，内存里也尽量只放一份；各进程页表都指向同一个物理页框。对共享区域的写，会对共享者可见，并反映回对应对象。</p>
+<h4 id="私有写时复制对象">私有写时复制对象<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#私有写时复制对象" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>比如可执行文件和某些私有映射。开始时多个进程也可以共享同一物理页，但都先标成只读；谁先写，谁触发异常，系统这时才真正复制出一个新页框给它。</p>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>写时复制不等于“一开始就复制”。<br/>
+<strong>如果父子进程都只读，那物理页根本不需要真的复制。</strong></p>
+</div>
+</blockquote>
+<h3 id="5-为什么-fork-会很快因为有-cow">5. 为什么 fork 会很快：因为有 COW<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-为什么-fork-会很快因为有-cow" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>早年 <code>fork()</code> 的笨办法，是把父进程地址空间逐页复制给子进程。<br/>
+后来 Linux 用 <strong>COW（Copy-On-Write）</strong> 优化：先复制 <code>mm_struct</code>、<code>vm_area_struct</code> 和页表结构，把相关页都标只读并标记为私有 COW；这样 <code>fork()</code> 返回时，父子进程已经各自拥有“看起来完整独立”的地址空间，但大部分物理页还没复制。后面谁写谁复制。尤其在 <code>fork()</code> 后马上 <code>exec()</code> 的常见模式下，这个优化特别赚。</p>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>父子进程像两个人先共用一份复印稿。<br/>
+只要都只是看，就一直共用；<br/>
+谁想在纸上写字，系统才临时给他单独复印一份。</p>
+</div>
+</blockquote>
+<h3 id="6-mmap-和-cow-的关系">6. mmap 和 COW 的关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-mmap-和-cow-的关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这两个机制关系很近：</p>
+<ul>
+<li><code>mmap</code> 负责“把文件或匿名对象接到地址空间里”</li>
+<li>COW 负责“当这个映射被声明为私有、但出现写入时，怎样延迟复制”</li>
+</ul>
+<p>所以你会发现，<code>fork()</code> 优化和 <code>MAP_PRIVATE</code> 的核心精神其实是一致的：<br/>
+<strong>先共享，写时再分家。</strong></p>
+<h3 id="7-一个很实用的例子lmdb">7. 一个很实用的例子：LMDB<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-一个很实用的例子lmdb" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>LMDB 就是典型的内存映射型数据库。它把数据集放在映射文件里，很多时候能把文件访问做得非常接近内存访问，适合大规模数据集场景。</p>
+<hr/>
+<h2 id="四windows-虚存管理">四、Windows 虚存管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#四windows-虚存管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h2 id="41-intel-x86-虚拟内存机制">4.1 Intel x86 虚拟内存机制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#41-intel-x86-虚拟内存机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-先抓主线逻辑地址不是直接变物理地址">1. 先抓主线：逻辑地址不是直接变物理地址<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-先抓主线逻辑地址不是直接变物理地址" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在 x86 的保护模式语境里，地址转换通常分两步：</p>
+<ol>
+<li><strong>段式转换</strong>：逻辑地址 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 线性地址</li>
+<li><strong>页式转换</strong>：线性地址 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 物理地址</li>
+</ol>
+<p>这里会出现三个寄存器：</p>
+<ul>
+<li><strong>CR0</strong>：控制分页机制是否开启</li>
+<li><strong>CR2</strong>：发生页故障时，硬件把出错的线性地址放这里</li>
+<li><strong>CR3</strong>：保存页目录的物理基地址</li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    LA[逻辑地址 = 段选择符 + 段内偏移] --> SEG[段式转换]\n    SEG --> LIN[线性地址]\n    LIN --> PAGE[页式转换]\n    PAGE --> PA[物理地址]&quot;">flowchart LR
+    LA[逻辑地址 = 段选择符 + 段内偏移] --> SEG[段式转换]
+    SEG --> LIN[线性地址]
+    LIN --> PAGE[页式转换]
+    PAGE --> PA[物理地址]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="2-段选择符和段描述符在干嘛">2. 段选择符和段描述符在干嘛<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-段选择符和段描述符在干嘛" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>保护模式下，段选择符会去 GDT/LDT 中找到对应的段描述符。描述符里有段基址、界限、类型、特权级等信息。<br/>
+所以分段机制除了“形成线性地址”，还顺手承担了<strong>边界检查和权限保护</strong>。而现代系统常用的“平坦内存模型”，本质上就是把段基址设成 0、范围拉很大，让分段在使用上几乎“透明”，重点把内存管理交给分页。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>分段像先按“街区”找位置，分页像再按“门牌号”找具体房间。<br/>
+现代系统里，前一道街区划分被故意做得很平，真正细致的管理都压到分页去了。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="42-windows-虚拟内存管理">4.2 Windows 虚拟内存管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#42-windows-虚拟内存管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="1-windows-内存管理器在系统里的位置">1. Windows 内存管理器在系统里的位置<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-windows-内存管理器在系统里的位置" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 的内存管理器位于 <code>Ntoskrnl.exe</code> 中。它不是一个单点函数，而是一组服务程序加上页面错误陷阱处理程序。前者负责虚拟内存的分配、回收和管理，后者负责在硬件发现内存异常时收拾残局。</p>
+<p>关键组件你可以记这几个：</p>
+<ul>
+<li><code>MmWorkingSetManager</code>：负责工作集修整、老化、触发写回等</li>
+<li><code>KeSwapProcessOrStack</code>：负责进程/内核线程栈的换入换出</li>
+<li><code>MiModifiedPageWriter</code>：把脏页写回页文件</li>
+<li><code>MiMappedPageWriter</code>：把映射文件的脏页写回磁盘</li>
+<li><code>MmZeroPageThread</code>：把空闲页清零</li>
+</ul>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这一串名字不一定要求你逐个背 API 风格的细节，但你要知道：<br/>
+Windows 把“工作集管理、脏页写回、零页准备、进程/栈交换”都明确做成了独立职责。</p>
+</div>
+</blockquote>
+<h3 id="2-windows-虚拟内存的大图景">2. Windows 虚拟内存的大图景<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-windows-虚拟内存的大图景" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 进程的虚拟空间里，既有 EXE / DLL 的代码和静态数据，也有动态堆、线程栈、环境块、共享页；磁盘上则有页面文件作为后备存储。</p>
+<p>在课里的 32 位布局里，可以看到经典的 <strong>3GB 用户空间 + 1GB 系统空间</strong>（也提到了 <code>/3GB</code> 选项）。用户空间里常见的是应用代码、全局变量、线程栈、DLL、堆、PEB/TEB、共享用户数据页；系统空间里则放内核和执行体、HAL、引导驱动、进程页表、超空间、系统缓存、分页池和未分页池等。</p>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>你要有“<strong>用户空间和系统空间不是两种物理内存，而是同一套虚拟地址空间里的不同区域</strong>”这个意识。</p>
+</div>
+</blockquote>
+<h3 id="3-windows-的地址转换什么时候硬件自己干什么时候必须内核上场">3. Windows 的地址转换：什么时候硬件自己干，什么时候必须内核上场<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-windows-的地址转换什么时候硬件自己干什么时候必须内核上场" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>当 PDE、PTE 都是有效时，CPU 直接根据它们把虚拟地址转成物理地址，这时操作系统不需要介入。<br/>
+当 PTE 无效时，格式解释权就交给操作系统了：它需要判断这到底是普通未提交页面、权限错误、COW 写、栈增长、已提交但未映射，还是需求零页。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>有效 PTE 像“绿灯，硬件自己通行”；<br/>
+无效 PTE 像“红灯，但红灯背后可能有很多原因”，于是必须请内核交警出来判断。</p>
+</div>
+</blockquote>
+<h3 id="4-windows-缺页异常控制流怎么走">4. Windows 缺页异常：控制流怎么走<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-windows-缺页异常控制流怎么走" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 下，页故障异常号是 <code>0xE</code>。当 CPU 在地址转换时发现页表项无效，会把出错地址写到 <strong>CR2</strong>，然后根据中断描述符表找到相应处理入口，转到 <code>ntoskrnl!KiTrap0E</code> 一类的缺页处理路径。</p>
+<p>这一点很值得你记住：<br/>
+<strong>Page Fault 的“发现”是硬件做的，Page Fault 的“解释与修复”是操作系统做的。</strong></p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    ACC[指令访问虚拟地址] --> MMU[硬件查 PDE / PTE]\n    MMU -->|有效| OK[完成访问]\n    MMU -->|无效| PF[触发 0xE Page Fault]\n    PF --> CR2[出错地址写入 CR2]\n    CR2 --> IDT[根据 IDT 找处理入口]\n    IDT --> HANDLER[KiTrap0E / 缺页处理]\n    HANDLER --> FIX[补页 / 扩栈 / COW / 权限检查]&quot;">flowchart TD
+    ACC[指令访问虚拟地址] --> MMU[硬件查 PDE / PTE]
+    MMU -->|有效| OK[完成访问]
+    MMU -->|无效| PF[触发 0xE Page Fault]
+    PF --> CR2[出错地址写入 CR2]
+    CR2 --> IDT[根据 IDT 找处理入口]
+    IDT --> HANDLER[KiTrap0E / 缺页处理]
+    HANDLER --> FIX[补页 / 扩栈 / COW / 权限检查]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="5-windows-的内存分配保留和提交不是一回事">5. Windows 的内存分配：保留和提交不是一回事<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-windows-的内存分配保留和提交不是一回事" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 用户空间里，以页为单位的虚拟内存分配主要靠 <code>VirtualAlloc</code> / <code>VirtualFree</code>。这里最容易混的是两个阶段：</p>
+<ul>
+<li><strong>保留（reserve）</strong>：先占下一段虚拟地址范围</li>
+<li><strong>提交（commit）</strong>：再把物理存储承诺给这段地址中的某些页</li>
+</ul>
+<p>光看页表，其实能看出某页是否已映射，但很难优雅地知道一整段地址空间是否已经被“保留”。于是 Windows 引入了 <strong>VAD（Virtual Address Descriptor）</strong>：为每个进程维护一组虚拟地址描述符，描述各段已分配虚拟区间的状态，并把它们组织成一棵自平衡二叉树，根挂在 <code>EPROCESS</code> 里。</p>
+<blockquote class="callout trap" data-callout="trap">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Trap</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>“保留了地址空间”不等于“已经有了物理页”。<br/>
+reserve 更像画地盘，commit 才是正式拨资源。</p>
+</div>
+</blockquote>
+<h3 id="6-页目录自映射windows-里很有味道的实现细节">6. 页目录自映射：Windows 里很有味道的实现细节<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-页目录自映射windows-里很有味道的实现细节" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 这部分挺有实现感。课上强调了：</p>
+<ul>
+<li>页目录的物理地址保存在 <code>KPROCESS</code> 中</li>
+<li>x86 里 CR3 保存页目录物理基址</li>
+<li>页目录还会被映射到固定虚拟地址上，这样内核就能<strong>通过虚拟地址直接访问页目录和页表本身</strong></li>
+<li>相应还有 <code>MiGetPdeAddress()</code>、<code>MiGetPteAddress()</code> 这样的宏，根据某个虚拟地址快速算出它自己的 PDE / PTE 地址</li>
+</ul>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这一招的意义很工程化：<br/>
+页表是管理虚拟内存的元数据，而内核最好也能像访问普通内存一样方便地访问这些元数据。</p>
+</div>
+</blockquote>
+<h3 id="7-windows-的工作集">7. Windows 的工作集<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-windows-的工作集" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 里，<strong>工作集</strong>是“当前驻留在物理内存中的虚拟页面子集”。既有：</p>
+<ul>
+<li><strong>进程工作集</strong></li>
+<li><strong>系统工作集</strong></li>
+</ul>
+<p>它的变化过程可以这样理解：</p>
+<ul>
+<li>进程刚启动时，访问新页面多，工作集会逐步扩张</li>
+<li>当局部性区域稳定下来，工作集大小也相对稳定</li>
+<li>当程序切换到新的局部性区域，工作集会快速扩张/收缩，进入新的稳定阶段</li>
+</ul>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>工作集像你考试前桌上摊开的那几本书。<br/>
+你在学操作系统时，桌上主要是 OS、体系结构、一点点代码；<br/>
+切到概率论时，桌上那批书会迅速换一套。<br/>
+桌上的那一小撮“当前真正活跃的资料”，就是工作集。</p>
+</div>
+</blockquote>
+<h3 id="8-windows-的物理内存管理pfn-数据库和页面状态链表">8. Windows 的物理内存管理：PFN 数据库和页面状态链表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-windows-的物理内存管理pfn-数据库和页面状态链表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这一块特别值得从“状态机”角度看。</p>
+<p>Windows 会维护 <strong>页框号数据库（PFN database）</strong>，并把物理页框按状态组织到多条链表里。课上重点画出来的有：</p>
+<ul>
+<li><code>active(valid)</code>：当前在工作集中、有效使用中</li>
+<li><code>standby</code>：页已不在工作集，但内容还留在内存里；对应 PTE 往往是 <code>invalid + transition</code>，如果再次访问，往往能形成<strong>软缺页</strong></li>
+<li><code>modified</code>：页被改过，后续要由写出线程写回</li>
+<li><code>free</code></li>
+<li><code>zeroed</code></li>
+<li><code>bad</code></li>
+</ul>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    ACTIVE[active / valid] --> TRIM[工作集修整]\n    TRIM --> STANDBY[standby]\n    ACTIVE --> WRITE[被修改]\n    WRITE --> MOD[modified]\n    MOD --> WRITER[写出线程]\n    WRITER --> STANDBY\n    FREE[free] --> ZERO[zeroed]\n    ZERO --> DEMAND[需求零缺页]\n    STANDBY --> SOFT[软缺页后恢复 active]&quot;">flowchart LR
+    ACTIVE[active / valid] --> TRIM[工作集修整]
+    TRIM --> STANDBY[standby]
+    ACTIVE --> WRITE[被修改]
+    WRITE --> MOD[modified]
+    MOD --> WRITER[写出线程]
+    WRITER --> STANDBY
+    FREE[free] --> ZERO[zeroed]
+    ZERO --> DEMAND[需求零缺页]
+    STANDBY --> SOFT[软缺页后恢复 active]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout example" data-callout="example">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Example</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p><code>standby</code> 页很像“刚从你桌上收进抽屉，但还没扔”的资料。<br/>
+你要是马上又想看，伸手拿回来就行；<br/>
+真要等它被别的东西覆盖了，那就只能重新去仓库里找了。</p>
+</div>
+</blockquote>
+<h3 id="9-windows-里的-cow-也完全成立">9. Windows 里的 COW 也完全成立<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-windows-里的-cow-也完全成立" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>课上最后那张图本质上就是在说：<br/>
+两个进程可以先共享多页内容，并把它们都标成写时复制；一旦某个进程尝试写其中一页，系统才为它复制一个新的物理页，新页对它私有，对其他共享者不可见。</p>
+<hr/>
+<h2 id="五最后收个总线这一章真正该抓住什么">五、最后收个总线：这一章真正该抓住什么<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#五最后收个总线这一章真正该抓住什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>如果你现在准备睡前过一遍，我建议你把这一章压成下面这条主线：</p>
+<ol>
+<li><strong>虚拟内存 = 地址空间抽象 + 页式映射 + 缺页处理</strong></li>
+<li><strong>PTE 不只是映射，还承载权限、访问历史、脏位、缓存策略</strong></li>
+<li><strong>多级页表解决页表太大，TLB 解决地址转换太慢</strong></li>
+<li><strong>Page Fault 是硬件发现、操作系统处理</strong></li>
+<li><strong>驻留集、置换算法、工作集，决定系统会不会抖</strong></li>
+<li><strong>mmap 和 COW 把“文件”“进程地址空间”“物理页共享”串了起来</strong></li>
+<li><strong>Windows 那部分要有实现感：CR2/CR3、KiTrap0E、VAD、PFN 数据库、自映射、工作集</strong>。</li>
+</ol>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Intuition</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这一章表面上在讲“内存”，其实讲的是一个更大的主题：<br/>
+<strong>操作系统如何把底层资源伪装成一个对程序友好的抽象世界。</strong><br/>
+CPU 只想要快，程序只想要大，磁盘只会慢吞吞地转。<br/>
+而虚拟内存，就是这三方矛盾被系统设计巧妙调和后的结果。</p>
+</div>
+</blockquote></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-135" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#虚拟内存管理" data-for="虚拟内存管理">虚拟内存管理</a></li><li class="depth-1"><a href="#一虚拟页式存储管理" data-for="一虚拟页式存储管理">一、虚拟页式存储管理</a></li><li class="depth-2"><a href="#1-先把这件事想明白虚拟内存到底在解决什么" data-for="1-先把这件事想明白虚拟内存到底在解决什么">1. 先把这件事想明白：虚拟内存到底在解决什么</a></li><li class="depth-2"><a href="#2-四个最容易混的词" data-for="2-四个最容易混的词">2. 四个最容易混的词</a></li><li class="depth-2"><a href="#3-请求分页为什么程序可以一开始几乎不装东西就跑起来" data-for="3-请求分页为什么程序可以一开始几乎不装东西就跑起来">3. 请求分页：为什么程序可以一开始几乎不装东西就跑起来</a></li><li class="depth-2"><a href="#4-调页系统最关心的三件事" data-for="4-调页系统最关心的三件事">4. 调页系统最关心的三件事</a></li><li class="depth-2"><a href="#5-页表项-pte它不是只存页框号这么简单" data-for="5-页表项-pte它不是只存页框号这么简单">5. 页表项 PTE：它不是只存“页框号”这么简单</a></li><li class="depth-2"><a href="#6-为什么必须用多级页表" data-for="6-为什么必须用多级页表">6. 为什么必须用多级页表</a></li><li class="depth-2"><a href="#平铺页表大小的一个例子" data-for="平铺页表大小的一个例子">平铺页表大小的一个例子</a></li><li class="depth-2"><a href="#直觉理解" data-for="直觉理解">直觉理解</a></li><li class="depth-2"><a href="#一句话总结" data-for="一句话总结">一句话总结</a></li><li class="depth-2"><a href="#7-反转页表换个方向思考" data-for="7-反转页表换个方向思考">7. 反转页表：换个方向思考</a></li><li class="depth-2"><a href="#8-地址转换虚拟地址到底怎么走到物理地址" data-for="8-地址转换虚拟地址到底怎么走到物理地址">8. 地址转换：虚拟地址到底怎么走到物理地址</a></li><li class="depth-2"><a href="#9-tlb为什么页表查找不会慢到离谱" data-for="9-tlb为什么页表查找不会慢到离谱">9. TLB：为什么页表查找不会慢到离谱</a></li><li class="depth-2"><a href="#10-缺页异常这是虚拟内存真正活起来的地方" data-for="10-缺页异常这是虚拟内存真正活起来的地方">10. 缺页异常：这是虚拟内存真正“活起来”的地方</a></li><li class="depth-2"><a href="#11-驻留集每个进程到底能占多少页框" data-for="11-驻留集每个进程到底能占多少页框">11. 驻留集：每个进程到底能占多少页框</a></li><li class="depth-1"><a href="#二页面置换算法" data-for="二页面置换算法">二、页面置换算法</a></li><li class="depth-2"><a href="#1-先分清局部置换-vs-全局置换" data-for="1-先分清局部置换-vs-全局置换">1. 先分清：局部置换 vs 全局置换</a></li><li class="depth-2"><a href="#2-页框锁定为什么有些页不能换" data-for="2-页框锁定为什么有些页不能换">2. 页框锁定：为什么有些页不能换</a></li><li class="depth-2"><a href="#3-一组你必须会比较的置换算法" data-for="3-一组你必须会比较的置换算法">3. 一组你必须会比较的置换算法</a></li><li class="depth-2"><a href="#4-算法优劣怎么背" data-for="4-算法优劣怎么背">4. 算法优劣怎么背</a></li><li class="depth-2"><a href="#5-belady-现象页框变多缺页反而变多" data-for="5-belady-现象页框变多缺页反而变多">5. Belady 现象：页框变多，缺页反而变多</a></li><li class="depth-2"><a href="#6-抖动-thrashing系统开始忙着换页忘了干活" data-for="6-抖动-thrashing系统开始忙着换页忘了干活">6. 抖动 Thrashing：系统开始“忙着换页，忘了干活”</a></li><li class="depth-2"><a href="#7-页大小程序写法也会影响缺页" data-for="7-页大小程序写法也会影响缺页">7. 页大小、程序写法，也会影响缺页</a></li><li class="depth-2"><a href="#8-工作集真正该给一个进程多少页框" data-for="8-工作集真正该给一个进程多少页框">8. 工作集：真正该给一个进程多少页框</a></li><li class="depth-2"><a href="#9-清除策略页缓冲加载控制" data-for="9-清除策略页缓冲加载控制">9. 清除策略、页缓冲、加载控制</a></li><li class="depth-1"><a href="#三内存映射文件" data-for="三内存映射文件">三、内存映射文件</a></li><li class="depth-2"><a href="#1-mmap-的本质把文件-io变成内存访问" data-for="1-mmap-的本质把文件-io变成内存访问">1. mmap 的本质：把“文件 I/O”变成“内存访问”</a></li><li class="depth-2"><a href="#2-mmap-里最该记的参数" data-for="2-mmap-里最该记的参数">2. mmap 里最该记的参数</a></li><li class="depth-2"><a href="#3-linux-怎么描述一个进程的虚拟空间" data-for="3-linux-怎么描述一个进程的虚拟空间">3. Linux 怎么描述一个进程的虚拟空间</a></li><li class="depth-2"><a href="#4-共享映射与私有写时复制" data-for="4-共享映射与私有写时复制">4. 共享映射与私有写时复制</a></li><li class="depth-2"><a href="#5-为什么-fork-会很快因为有-cow" data-for="5-为什么-fork-会很快因为有-cow">5. 为什么 fork 会很快：因为有 COW</a></li><li class="depth-2"><a href="#6-mmap-和-cow-的关系" data-for="6-mmap-和-cow-的关系">6. mmap 和 COW 的关系</a></li><li class="depth-2"><a href="#7-一个很实用的例子lmdb" data-for="7-一个很实用的例子lmdb">7. 一个很实用的例子：LMDB</a></li><li class="depth-1"><a href="#四windows-虚存管理" data-for="四windows-虚存管理">四、Windows 虚存管理</a></li><li class="depth-1"><a href="#41-intel-x86-虚拟内存机制" data-for="41-intel-x86-虚拟内存机制">4.1 Intel x86 虚拟内存机制</a></li><li class="depth-2"><a href="#1-先抓主线逻辑地址不是直接变物理地址" data-for="1-先抓主线逻辑地址不是直接变物理地址">1. 先抓主线：逻辑地址不是直接变物理地址</a></li><li class="depth-2"><a href="#2-段选择符和段描述符在干嘛" data-for="2-段选择符和段描述符在干嘛">2. 段选择符和段描述符在干嘛</a></li><li class="depth-1"><a href="#42-windows-虚拟内存管理" data-for="42-windows-虚拟内存管理">4.2 Windows 虚拟内存管理</a></li><li class="depth-2"><a href="#1-windows-内存管理器在系统里的位置" data-for="1-windows-内存管理器在系统里的位置">1. Windows 内存管理器在系统里的位置</a></li><li class="depth-2"><a href="#2-windows-虚拟内存的大图景" data-for="2-windows-虚拟内存的大图景">2. Windows 虚拟内存的大图景</a></li><li class="depth-2"><a href="#3-windows-的地址转换什么时候硬件自己干什么时候必须内核上场" data-for="3-windows-的地址转换什么时候硬件自己干什么时候必须内核上场">3. Windows 的地址转换：什么时候硬件自己干，什么时候必须内核上场</a></li><li class="depth-2"><a href="#4-windows-缺页异常控制流怎么走" data-for="4-windows-缺页异常控制流怎么走">4. Windows 缺页异常：控制流怎么走</a></li><li class="depth-2"><a href="#5-windows-的内存分配保留和提交不是一回事" data-for="5-windows-的内存分配保留和提交不是一回事">5. Windows 的内存分配：保留和提交不是一回事</a></li><li class="depth-2"><a href="#6-页目录自映射windows-里很有味道的实现细节" data-for="6-页目录自映射windows-里很有味道的实现细节">6. 页目录自映射：Windows 里很有味道的实现细节</a></li><li class="depth-2"><a href="#7-windows-的工作集" data-for="7-windows-的工作集">7. Windows 的工作集</a></li><li class="depth-2"><a href="#8-windows-的物理内存管理pfn-数据库和页面状态链表" data-for="8-windows-的物理内存管理pfn-数据库和页面状态链表">8. Windows 的物理内存管理：PFN 数据库和页面状态链表</a></li><li class="depth-2"><a href="#9-windows-里的-cow-也完全成立" data-for="9-windows-里的-cow-也完全成立">9. Windows 里的 COW 也完全成立</a></li><li class="depth-1"><a href="#五最后收个总线这一章真正该抓住什么" data-for="五最后收个总线这一章真正该抓住什么">五、最后收个总线：这一章真正该抓住什么</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}container;content;isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>
