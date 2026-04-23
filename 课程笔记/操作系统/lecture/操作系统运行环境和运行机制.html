@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>操作系统运行环境和运行机制</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="操作系统运行环境和运行机制"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="操作系统运行环境和运行机制"/><meta name="twitter:description" content="核心速览 这部分的重点在于理解应用程序是如何与操作系统交互的。 整个操作系统的底层逻辑可以被概括为一句话：“操作系统是由中断、异常、事件驱动的” 。 应用程序不能随心所欲地操作硬件，它们必须通过系统调用 (System Call) 这扇“唯一合法的大门”进入内核态 。而这扇门的开合，底层依赖的正是硬件提供的异常控制流 (ECF, Exceptional Control Flow) 和中断机制 。 第一章：操作系统的运行环境（硬件基础） 在探讨操作系统如何管理程序之前，我们必须先理解硬件为操作系统提供了哪些“基础设施”。操作系统设计者在写代码时，首先要考虑的就是硬件环境 。 1."/><meta property="og:description" content="核心速览 这部分的重点在于理解应用程序是如何与操作系统交互的。 整个操作系统的底层逻辑可以被概括为一句话：“操作系统是由中断、异常、事件驱动的” 。 应用程序不能随心所欲地操作硬件，它们必须通过系统调用 (System Call) 这扇“唯一合法的大门”进入内核态 。而这扇门的开合，底层依赖的正是硬件提供的异常控制流 (ECF, Exceptional Control Flow) 和中断机制 。 第一章：操作系统的运行环境（硬件基础） 在探讨操作系统如何管理程序之前，我们必须先理解硬件为操作系统提供了哪些“基础设施”。操作系统设计者在写代码时，首先要考虑的就是硬件环境 。 1."/><meta property="og:image:alt" content="核心速览 这部分的重点在于理解应用程序是如何与操作系统交互的。 整个操作系统的底层逻辑可以被概括为一句话：“操作系统是由中断、异常、事件驱动的” 。 应用程序不能随心所欲地操作硬件，它们必须通过系统调用 (System Call) 这扇“唯一合法的大门”进入内核态 。而这扇门的开合，底层依赖的正是硬件提供的异常控制流 (ECF, Exceptional Control Flow) 和中断机制 。 第一章：操作系统的运行环境（硬件基础） 在探讨操作系统如何管理程序之前，我们必须先理解硬件为操作系统提供了哪些“基础设施”。操作系统设计者在写代码时，首先要考虑的就是硬件环境 。 1."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/lecture/操作系统运行环境和运行机制"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/lecture/操作系统运行环境和运行机制"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="核心速览 这部分的重点在于理解应用程序是如何与操作系统交互的。 整个操作系统的底层逻辑可以被概括为一句话：“操作系统是由中断、异常、事件驱动的” 。 应用程序不能随心所欲地操作硬件，它们必须通过系统调用 (System Call) 这扇“唯一合法的大门”进入内核态 。而这扇门的开合，底层依赖的正是硬件提供的异常控制流 (ECF, Exceptional Control Flow) 和中断机制 。 第一章：操作系统的运行环境（硬件基础） 在探讨操作系统如何管理程序之前，我们必须先理解硬件为操作系统提供了哪些“基础设施”。操作系统设计者在写代码时，首先要考虑的就是硬件环境 。 1."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/lecture/操作系统运行环境和运行机制"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-201"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-201" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/lecture/">lecture</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>操作系统运行环境和运行机制</a></div></nav><h1 class="article-title">操作系统运行环境和运行机制</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-23T13:12:57.950Z">Apr 23, 2026</time><span>16 min read</span></p></div></div><article class="popover-hint"><blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>核心速览 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这部分的重点在于理解<strong>应用程序是如何与操作系统交互的</strong>。
+整个操作系统的底层逻辑可以被概括为一句话：“<strong>操作系统是由中断、异常、事件驱动的</strong>” 。
+应用程序不能随心所欲地操作硬件，它们必须通过<strong>系统调用 (System Call)</strong> 这扇“唯一合法的大门”进入内核态 。而这扇门的开合，底层依赖的正是硬件提供的<strong>异常控制流 (ECF, Exceptional Control Flow)</strong> 和<strong>中断机制</strong> 。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="第一章操作系统的运行环境硬件基础">第一章：操作系统的运行环境（硬件基础）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第一章操作系统的运行环境硬件基础" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在探讨操作系统如何管理程序之前，我们必须先理解硬件为操作系统提供了哪些“基础设施”。操作系统设计者在写代码时，首先要考虑的就是硬件环境 。</p>
+<h3 id="1-处理器与寄存器">1. 处理器与寄存器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-处理器与寄存器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>CPU 不仅仅执行运算，它内部的<strong>寄存器 (Registers)</strong> 是维持系统状态的核心 。
+对于操作系统而言，最重要的不是通用数据寄存器，而是<strong>控制和状态寄存器</strong> 。它们控制着处理器的操作，且通常只能在特权级别下被修改 ：</p>
+<ul>
+<li><strong>PC (Program Counter)</strong>：程序计数器，永远指向下一条要执行的指令 。</li>
+<li><strong>IR (Instruction Register)</strong>：指令寄存器，存放当前正在执行的指令 。</li>
+<li><strong>PSW (Program Status Word) / EFLAGS</strong>：程序状态字。这是操作系统的“晴雨表”，里面保存了 CPU 操作的结果标记（如进位、溢出）以及当前 CPU 的<strong>运行权限状态</strong> 。</li>
+</ul>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：EFLAGS 寄存器 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>在 x86 架构中，这个状态寄存器叫 <code>EFLAGS</code> 。你可以把它想象成 CPU 的“身份证”。里面特定的比特位（比如 IOPL 位、IF 中断允许标志位）决定了当前正在运行的程序到底是“普通用户”还是“超级管理员” 。</p>
+</div>
+</blockquote>
+<h3 id="2-特权级别与运行模式">2. 特权级别与运行模式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-特权级别与运行模式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>为了实现并发和共享，操作系统必须将自己与普通用户程序<strong>隔离</strong>起来，这就催生了<strong>保护 (Protection)</strong> 需求 。
+硬件通过提供不同的<strong>运行模式 (Mode)</strong> 来实现这种保护：</p>
+<ul>
+<li><strong>内核态 (Kernel Mode / Supervisor Mode)</strong>：拥有最高权限，可以执行所有指令（包括特权指令），访问所有硬件资源 。</li>
+<li><strong>用户态 (User Mode)</strong>：权限受限，只能执行非特权指令，不能直接操作硬件 。</li>
+</ul>
+<p><strong>不同架构的特权环划分：</strong></p>
+<ul>
+<li><strong>x86 架构</strong>：支持 4 个特权环（R0 ~ R3）。能力从 R0 到 R3 逐级递减。目前主流的 Linux 等操作系统只用了 <strong>R0（相当于内核态）</strong> 和 <strong>R3（相当于用户态）</strong> 。</li>
+<li><strong>RISC-V 架构</strong>：划分为机器模式 (M 模式，最高权限)、监管模式 (S 模式，OS运行在此) 和 用户模式 (U 模式) 。</li>
+</ul>
+<h3 id="3-状态转换的唯一途径">3. 状态转换的唯一途径<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-状态转换的唯一途径" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>程序不能在用户态和内核态之间随意横跳。</p>
+<ul>
+<li><strong>从用户态到内核态</strong>的<strong>唯一途径</strong>是：<strong>中断 / 异常 / 陷入 (Trap) 机制</strong> 。</li>
+<li><strong>从内核态返回用户态</strong>：操作系统只需修改 PSW（程序状态字）并跳转回用户程序的断点即可 。</li>
+</ul>
+<hr/>
+<h2 id="第二章中断与异常机制操作系统的引擎">第二章：中断与异常机制（操作系统的引擎）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第二章中断与异常机制操作系统的引擎" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>核心速览 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>如果把计算机系统比作汽车，<strong>中断机制就是发动机</strong> 。
+CPU 在执行指令时，控制流（Control Flow）通常是平滑向前的。但系统总是会遇到突发事件（如键盘敲击、网卡数据到达、程序除以零出错），这时硬件会强制改变控制流，打断当前程序，转去执行操作系统预设的处理程序 。</p>
+</div>
+</blockquote>
+<h3 id="1-事件的分类中断-vs-异常">1. 事件的分类：中断 vs 异常<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-事件的分类中断-vs-异常" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>所有打破正常执行流的事件统称为“中断/异常”，但我们可以根据<strong>事件来源</strong>将其细分为两大类 ：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th style="text-align:left;">类别</th><th style="text-align:left;">概念</th><th style="text-align:left;">来源</th><th style="text-align:left;">同步/异步</th><th style="text-align:left;">行为与返回机制</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>中断 (Interrupt)</strong></td><td style="text-align:left;">外中断，由 CPU 外部的硬件信号引发。</td><td style="text-align:left;">I/O 设备（如网卡、键盘）、时钟、硬件故障 。</td><td style="text-align:left;"><strong>异步 (Async)</strong>：与当前正在执行的指令无关 。</td><td style="text-align:left;">处理完后，总是返回到被中断程序的<strong>下一条指令</strong>继续执行 。</td></tr><tr><td style="text-align:left;"><strong>异常 (Exception)</strong></td><td style="text-align:left;">内中断，由 CPU 执行当前指令时本身引发的问题 。</td><td style="text-align:left;">软件错误、保护越界、系统调用等 。</td><td style="text-align:left;"><strong>同步 (Sync)</strong>：必然是由刚刚执行的那条指令引发的 。</td><td style="text-align:left;">根据类型不同（故障/陷入/终止），可能返回当前指令重新执行，也可能直接终止 。</td></tr></tbody></table></div>
+<p><strong>异常的三个子分类：</strong></p>
+<ol>
+<li><strong>故障 (Fault)</strong>：可恢复的错误，比如“缺页异常”(Page Fault)。处理完后，返回到<strong>当前引发故障的指令</strong>重新尝试执行 。</li>
+<li><strong>陷入 (Trap)</strong>：有意识安排的异常，比如断点调试、<strong>系统调用 (syscall)</strong>。处理完后，返回到<strong>下一条指令</strong> 。</li>
+<li><strong>终止 (Abort)</strong>：不可恢复的致命硬件错误，直接终止程序，不会返回 。</li>
+</ol>
+<h3 id="2-软硬协同中断处理的生命周期">2. 软硬协同：中断处理的生命周期<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-软硬协同中断处理的生命周期" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>中断机制之所以精妙，在于它是<strong>硬件和软件配合完成</strong>的 。</p>
+<ul>
+<li><strong>硬件的任务（中断响应）</strong>：负责“发现”和“移交”。硬件在每个指令周期的最后扫描中断寄存器。如果发现中断，硬件会自动保存当前断点（PSW 和 PC），并根据中断号查询<strong>中断向量表</strong>，把 CPU 控制权交给软件 。</li>
+<li><strong>软件的任务（中断处理程序）</strong>：负责“具体事务”。进入内核态后，操作系统编写的中断处理程序开始运行，保存现场上下文，分析原因，处理具体逻辑，最后执行中断返回指令（如 <code>iret</code>） 。</li>
+</ul>
+<h3 id="3-x86-架构下的中断寻址逻辑-idt-与-gdt">3. x86 架构下的中断寻址逻辑 (IDT 与 GDT)<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-x86-架构下的中断寻址逻辑-idt-与-gdt" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在 x86 的保护模式下，中断向量表升级为了 <strong>IDT (Interrupt Descriptor Table，中断描述符表)</strong> 。查找中断服务程序的流程是一个经典的“两次查表”过程：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TD\n A[产生中断向量号 i] --> B{查 IDT 表}\n B -->|使用 IDTR 寄存器定位| C[找到第 i 个门描述符]\n C --> D[提取: 段选择符 + 段内偏移量]\n D --> E{查 GDT 表}\n E -->|使用 GDTR 和段选择符| F[找到对应的段描述符]\n F --> G[提取: 段基址]\n G --> H[段基址 + 段内偏移量 = 中断处理程序绝对入口地址]&quot;">graph TD
+ A[产生中断向量号 i] --> B{查 IDT 表}
+ B -->|使用 IDTR 寄存器定位| C[找到第 i 个门描述符]
+ C --> D[提取: 段选择符 + 段内偏移量]
+ D --> E{查 GDT 表}
+ E -->|使用 GDTR 和段选择符| F[找到对应的段描述符]
+ F --> G[提取: 段基址]
+ G --> H[段基址 + 段内偏移量 = 中断处理程序绝对入口地址]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p><strong>门描述符 (Gate Descriptor) 的种类：</strong>
+IDT 表中的表项被称为“门”，x86 提供了几种常见的门 ：</p>
+<ol>
+<li><strong>中断门 (Interrupt Gate)</strong>：穿过此门后，硬件会<strong>自动关闭/禁止后续的中断</strong>（清空 IF 位），常用于处理硬件中断 。</li>
+<li><strong>陷阱门 (Trap Gate)</strong>：与中断门类似，但穿过此门后，硬件<strong>不会</strong>自动关中断，常用于系统调用或异常 。</li>
+<li><strong>任务门 (Task Gate) &amp; 调用门 (Call Gate)</strong> 。</li>
+</ol>
+<hr/>
+<h2 id="第三章系统调用-system-call-的底层运行机制">第三章：系统调用 (System Call) 的底层运行机制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#第三章系统调用-system-call-的底层运行机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>核心速览 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>用户程序打印一句 “Hello World”，并不是直接写到显示器上的。
+它调用了 C 标准库的 <code>printf()</code>，<code>printf()</code> 内部最终触发了操作系统的 <code>write()</code> 系统调用。
+<strong>系统调用是操作系统提供给编程人员的唯一合法接口</strong> 。</p>
+</div>
+</blockquote>
+<h3 id="1-系统调用-vs-c-函数调用">1. 系统调用 vs C 函数调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-系统调用-vs-c-函数调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这通常是一个经典的易混淆点 ：</p>
+<ul>
+<li><strong>C 函数调用 / API</strong>：运行在<strong>用户态</strong> 。API 只是对底层复杂操作的封装（比如 C 库封装了参数校验和格式化）。</li>
+<li><strong>系统调用</strong>：运行在<strong>内核态</strong> 。它真正触发了硬件层面的异常机制（陷入 Trap），跨越了特权级边界，执行了操作系统的内核代码 。</li>
+</ul>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>应用程序是“客户”，C 函数库/API 是“大堂经理”，而操作系统内核是“仓库管理员”。
+客户不能自己去仓库拿东西（用户态无权限操作硬件）。客户只能告诉大堂经理（API），大堂经理整理好需求单后，通过一扇特殊的递交窗口（系统调用），把需求单递给仓库管理员（进入内核态），等管理员处理完再把结果送出来 。</p>
+</div>
+</blockquote>
+<h3 id="2-机制与策略的分离">2. 机制与策略的分离<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-机制与策略的分离" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>操作系统在设计系统调用时，遵循了<strong>机制与策略分离</strong>的重要思想 ：</p>
+<ul>
+<li><strong>机制 (硬件支持)</strong>：选择一条特殊的指令（如 <code>int $0x80</code>、<code>syscall</code>、<code>sysenter</code>）人为引发异常，完成状态切换 。</li>
+<li><strong>策略 (软件实现)</strong>：为每一个系统调用分配一个<strong>功能号</strong>，并在内存中维护一张<strong>系统调用表 (sys_call_table)</strong>，根据传递进来的号码去表中寻找对应的服务例程入口 。</li>
+</ul>
+<h3 id="3-如何跨越边界传递参数">3. 如何跨越边界传递参数？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-如何跨越边界传递参数" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>当程序从用户态陷入内核态时，原来的运行栈（用户栈）被切断了，我们该如何把 <code>write(1, string, 7)</code> 里的参数传给内核 ？
+通常有三种方法 ：</p>
+<ol>
+<li><strong>陷入指令自带参数</strong>（受限长度） 。</li>
+<li><strong>通过通用寄存器传递</strong>（最常用，但数量受限） 。</li>
+<li><strong>在内存中开辟专用堆栈区传递</strong> 。</li>
+</ol>
+<p>在 x86 Linux 下，采用了<strong>寄存器传参</strong>的机制 ：</p>
+<ul>
+<li><code>eax</code> 寄存器：永远用来保存<strong>系统调用号</strong>（进内核前）和<strong>返回值</strong>（回用户后） 。</li>
+<li><code>ebx</code>, <code>ecx</code>, <code>edx</code>, <code>esi</code>, <code>edi</code>：按顺序保存系统调用的具体参数（最多不超过 6 个） 。</li>
+</ul>
+<h3 id="4-庖丁解牛linux-响应-int-0x80-的全流程">4. 庖丁解牛：Linux 响应 int 0x80 的全流程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-庖丁解牛linux-响应-int-0x80-的全流程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>当我们用汇编执行 <code>int $0x80</code> 时，系统到底发生了什么 ？以下是基于 x86 架构的完整梳理：</p>
+<p><strong>第一步：硬件特权级切换与状态保存</strong>
+由于引发了 Trap，特权级从 R3 变到 R0。硬件会自动强制切换栈，从<strong>用户栈</strong>切换到<strong>内核栈</strong> 。
+此时，硬件自动将用户程序的断点上下文压入内核栈中：包含原栈指针 <code>SS:ESP</code>、<code>EFLAGS</code>、<code>CS</code>、<code>EIP</code> 。
+接着，利用 128 号 (<code>0x80</code>) 在 IDT 中找到陷阱门，定位到操作系统的系统调用总入口程序：<code>system_call()</code> 。</p>
+<p><strong>第二步：软件层面的 SAVE_ALL</strong>
+进入 <code>system_call()</code> 第一件事，就是继续压栈。因为刚才只有硬件压入了少量寄存器，那些存放了参数的通用寄存器还在外面。
+内核代码通过 <code>SAVE_ALL</code> 宏定义，将 <code>es, ds, eax, ebp, edi, esi, edx, ecx, ebx</code> 全部依次压入内核栈。这确保了用户程序的上下文被完整冻结 。</p>
+<p><strong>第三步：查表分派 (sys_call_table)</strong>
+检查 <code>eax</code> 中的系统调用号是否合法 。如果合法，使用 <code>eax</code> 作为索引，去 <code>sys_call_table</code>（系统调用表）中调用真正的内核态处理函数，比如 <code>sys_write</code> 。
+执行完毕后，将结果写入内核栈中当初保存 <code>eax</code> 的位置，作为返回值 。</p>
+<p><strong>第四步：清理与返回 (ret_from_sys_call)</strong>
+执行返回例程 <code>ret_from_sys_call</code>。在这里，系统会检查是否需要重新调度进程 (<code>need_resched</code>) 或者处理信号 (<code>sigpending</code>) 。
+如果一切就绪，执行 <code>RESTORE_ALL</code> 将刚才保存在栈里的通用寄存器弹栈恢复 。
+最后执行特殊的硬件返回指令（如 <code>iret</code>），硬件会恢复 <code>EIP</code>、<code>CS</code> 和状态字，CPU 降级回用户态，回到 <code>printf</code> 下面的那行代码继续执行 。</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;graph TD\n UserApp[1. 应用程序调用 API] --> Lib[2. C库封装参数放入寄存器]\n Lib --> Trap[3. 执行 int 0x80 引发异常]\n\n subgraph 操作系统内核态\n Hardware[4. 硬件压栈PC/PSW, 切换内核栈] --> Entry[5. system_call 总入口]\n Entry --> Save[6. SAVE_ALL: 压栈保存通用寄存器]\n Save --> Table[7. 根据 eax 查 sys_call_table]\n Table --> Exec[8. 执行具体内核函数 sys_write]\n Exec --> RetEntry[9. ret_from_sys_call]\n RetEntry --> Check[10. 检查调度与信号]\n Check --> Restore[11. RESTORE_ALL: 弹栈恢复寄存器]\n end\n\n Restore --> Iret[12. iret 指令返回用户态]&quot;">graph TD
+ UserApp[1. 应用程序调用 API] --> Lib[2. C库封装参数放入寄存器]
+ Lib --> Trap[3. 执行 int 0x80 引发异常]
+
+ subgraph 操作系统内核态
+ Hardware[4. 硬件压栈PC/PSW, 切换内核栈] --> Entry[5. system_call 总入口]
+ Entry --> Save[6. SAVE_ALL: 压栈保存通用寄存器]
+ Save --> Table[7. 根据 eax 查 sys_call_table]
+ Table --> Exec[8. 执行具体内核函数 sys_write]
+ Exec --> RetEntry[9. ret_from_sys_call]
+ RetEntry --> Check[10. 检查调度与信号]
+ Check --> Restore[11. RESTORE_ALL: 弹栈恢复寄存器]
+ end
+
+ Restore --> Iret[12. iret 指令返回用户态]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<h3 id="5-补充视角xv6-与-risc-v-下的上下文保存">5. 补充视角：XV6 与 RISC-V 下的上下文保存<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-补充视角xv6-与-risc-v-下的上下文保存" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在教学系统 XV6 (基于 RISC-V 架构) 中，中断处理的核心逻辑与上述 Linux/x86 如出一辙，只不过汇编细节不同 。
+当产生陷阱（Trap）时，硬件跳转到 <code>kernelvec.S</code> 和 <code>trampoline.S</code>，在汇编代码中为陷入分配空间，并将整整 32 个寄存器（如 <code>ra</code> 返回地址, <code>sp</code> 栈指针, 以及 <code>a0</code> 到 <code>a7</code> 的传参寄存器, <code>s0</code> 到 <code>s11</code> 的保存寄存器等）存入内存结构 <code>TRAPFRAME</code> 中，然后才调用 C 语言编写的 <code>kerneltrap</code> 进行处理 。这也进一步印证了无论是 x86 还是 RISC-V，<strong>保存现场 <span>→</span> 查表处理 <span>→</span> 恢复现场</strong> 构成了 ECF 异常控制流不变的核心。</p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-129" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#第一章操作系统的运行环境硬件基础" data-for="第一章操作系统的运行环境硬件基础">第一章：操作系统的运行环境（硬件基础）</a></li><li class="depth-1"><a href="#1-处理器与寄存器" data-for="1-处理器与寄存器">1. 处理器与寄存器</a></li><li class="depth-1"><a href="#2-特权级别与运行模式" data-for="2-特权级别与运行模式">2. 特权级别与运行模式</a></li><li class="depth-1"><a href="#3-状态转换的唯一途径" data-for="3-状态转换的唯一途径">3. 状态转换的唯一途径</a></li><li class="depth-0"><a href="#第二章中断与异常机制操作系统的引擎" data-for="第二章中断与异常机制操作系统的引擎">第二章：中断与异常机制（操作系统的引擎）</a></li><li class="depth-1"><a href="#1-事件的分类中断-vs-异常" data-for="1-事件的分类中断-vs-异常">1. 事件的分类：中断 vs 异常</a></li><li class="depth-1"><a href="#2-软硬协同中断处理的生命周期" data-for="2-软硬协同中断处理的生命周期">2. 软硬协同：中断处理的生命周期</a></li><li class="depth-1"><a href="#3-x86-架构下的中断寻址逻辑-idt-与-gdt" data-for="3-x86-架构下的中断寻址逻辑-idt-与-gdt">3. x86 架构下的中断寻址逻辑 (IDT 与 GDT)</a></li><li class="depth-0"><a href="#第三章系统调用-system-call-的底层运行机制" data-for="第三章系统调用-system-call-的底层运行机制">第三章：系统调用 (System Call) 的底层运行机制</a></li><li class="depth-1"><a href="#1-系统调用-vs-c-函数调用" data-for="1-系统调用-vs-c-函数调用">1. 系统调用 vs C 函数调用</a></li><li class="depth-1"><a href="#2-机制与策略的分离" data-for="2-机制与策略的分离">2. 机制与策略的分离</a></li><li class="depth-1"><a href="#3-如何跨越边界传递参数" data-for="3-如何跨越边界传递参数">3. 如何跨越边界传递参数？</a></li><li class="depth-1"><a href="#4-庖丁解牛linux-响应-int-0x80-的全流程" data-for="4-庖丁解牛linux-响应-int-0x80-的全流程">4. 庖丁解牛：Linux 响应 int 0x80 的全流程</a></li><li class="depth-1"><a href="#5-补充视角xv6-与-risc-v-下的上下文保存" data-for="5-补充视角xv6-与-risc-v-下的上下文保存">5. 补充视角：XV6 与 RISC-V 下的上下文保存</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}container;content;isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>

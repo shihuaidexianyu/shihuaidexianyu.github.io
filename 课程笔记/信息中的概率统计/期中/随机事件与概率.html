@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>随机事件与概率</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="随机事件与概率"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="随机事件与概率"/><meta name="twitter:description" content="1."/><meta property="og:description" content="1."/><meta property="og:image:alt" content="1."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/信息中的概率统计/期中/随机事件与概率"/><meta property="twitter:url" content="https://localhost/课程笔记/信息中的概率统计/期中/随机事件与概率"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="1."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/信息中的概率统计/期中/随机事件与概率"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-177"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-177" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/信息中的概率统计/">信息中的概率统计</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/信息中的概率统计/期中/">期中</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>随机事件与概率</a></div></nav><h1 class="article-title">随机事件与概率</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-23T13:12:58.031Z">Apr 23, 2026</time><span>35 min read</span></p></div></div><article class="popover-hint"><h2 id="1-概率问题中的计数基础">1. 概率问题中的计数基础<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-概率问题中的计数基础" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>概率计算常以计数为起点。对有限且等可能的样本空间，概率可化为“有利结果数与全部结果数之比”。因此，排列、组合、多组分配与不尽相异排列构成古典概型计算的基础工具。</p>
+<p>设有 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 个互不相同的元素。它们的全排列数为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">n</span><span class="mclose">!</span></span></span></span>。</p>
+<p>若这 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 个元素中分成 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> 类，第 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 类有 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 个相同元素，且</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="minner">⋯</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></span>
+<p>则不同排列数为</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.2074em;vertical-align:-0.836em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">!</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">!</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">⋯</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">!</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="mclose">!</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+<p>这一公式的本质在于：==若先把所有元素视为互异，则共有 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">n</span><span class="mclose">!</span></span></span></span> 种排列；但同类元素交换位置并不产生新排列，于是必须除去各类内部重复计数。==</p>
+<p>若将 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> 个互不相同的元素分成 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> 个有编号的组，各组大小分别为 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，其中</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="minner">⋯</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span></span>
+<p>则不同分法为</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="mord"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1076em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mord"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">⋯</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2074em;vertical-align:-0.836em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">!</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">!</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">⋯</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0315em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">!</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">n</span><span class="mclose">!</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+<p>这说明“多组组合”与“不尽相异元素全排列”在计数结构上本质一致：前者描述按组分配，后者描述类内不可区分。</p>
+<h3 id="分组问题中的计数逻辑">分组问题中的计数逻辑<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#分组问题中的计数逻辑" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>设有 15 名学生，其中 3 名女生，分成 3 个有编号的小组，每组 5 人。记事件 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span> 为“每组恰有 1 名女生”，事件 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span></span> 为“3 名女生在同一组”。</p>
+<p>全部分组方式数为</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣Ω∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="mord"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">5</span></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">15</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mord"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">5</span></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">10</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mord"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">5</span></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">5</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.3074em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3714em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mopen">(</span><span class="mord">5</span><span class="mclose">!</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7401em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">15</span><span class="mclose">!</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+<p>这里采用逐步选组的方式计数：先选第 1 组 5 人，再从剩余 10 人中选第 2 组 5 人，最后剩余 5 人自动构成第 3 组。由于组有编号，而组内顺序不计，因此该计数方式恰好对应样本空间大小。</p>
+<p>对事件 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span>，先将 3 名女生分配到 3 个组中，每组 1 人，共有</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 9: A_3^3=3
+$̲$!
+
+种方式。随后分别从 1…" style="color:#cc0000;">A_3^3=3
+$$!
+
+种方式。随后分别从 12 名男生中给三个组补入 4 人、4 人、4 人，于是</span>
+<p>|A|=A_3^3\binom{12}{4}\binom{8}{4}\binom{4}{4}<br/>
+=3!\cdot \frac{12!}{(4!)^3}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">因此</span></span></span></span></span>
+<p>P(A)=\frac{|A|}{|\Omega|}=\frac{25}{91}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 5: 对事件 $̲B$，先确定哪一个组装入全部 …" style="color:#cc0000;"><span class="cjk_fallback">对事件 $B$，先确定哪一个组装入全部 3 名女生，有</span></span>
+<p>\binom{3}{1}=3</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">种选法；再从</span><span class="mord">12</span><span class="mord cjk_fallback">名男生中选</span><span class="mord">2</span><span class="mord cjk_fallback">人补足该组；之后从剩余</span><span class="mord">10</span><span class="mord cjk_fallback">名男生中选</span><span class="mord">5</span><span class="mord cjk_fallback">人进入第二组，最后</span><span class="mord">5</span><span class="mord cjk_fallback">人进入第三组，因此</span></span></span></span></span>
+<p>|B|=\binom{3}{1}\binom{12}{2}\binom{10}{5}\binom{5}{5}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">从而</span></span></span></span></span>
+<p>P(B)=\frac{|B|}{|\Omega|}=\frac{6}{91}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 76: …出现漏计或重计。
+
+---
+
+#̲# 2. 古典概型与几何概型
+…" style="color:#cc0000;"><span class="cjk_fallback">这一例子体现出计数时必须同时把握三个条件：组是否有编号、组内是否计顺序、分步过程是否彼此独立。只要其中一项处理不当，便会出现漏计或重计。
+
+---
+
+## 2. 古典概型与几何概型
+
+### 古典概型
+
+古典概型处理的是有限个基本结果且各基本结果等可能出现的情形。若样本空间为</span></span>
+<p>\Omega={\omega_1,\omega_2,\dots,\omega_n}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 20: …本点出现机会相同，则任意事件 $̲A\subseteq \Ome…" style="color:#cc0000;"><span class="cjk_fallback">并且各样本点出现机会相同，则任意事件 $A\subseteq \Omega$ 的概率定义为</span></span>
+<p>P(A)=\frac{|A|}{|\Omega|}=\frac{|A|}{n}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 59: …部结果数”的方式定义概率。
+
+#̲## 几何概型
+
+几何概型是古…" style="color:#cc0000;"><span class="cjk_fallback">古典概型的两个核心前提是有限性与等可能性。缺少有限性时，不能再直接用“有利结果数除以全部结果数”的方式定义概率。
+
+### 几何概型
+
+几何概型是古典概型向连续情形的推广。设样本空间 $\Omega$ 是某个有限测度区域，试验结果可视为落在其中的任一点。若点落入区域内任一子区域的机会与该子区域的测度成正比，则对事件 $A$ 对应的区域 $G$，其概率定义为</span></span>
+<p>P(A)=\frac{\text{测度}(G)}{\text{测度}(\Omega)}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 50: …但不再要求样本点个数有限。
+
+#̲## 地铁候车问题
+
+某地铁站…" style="color:#cc0000;"><span class="cjk_fallback">这里的测度可以是长度、面积或体积。几何概型保留了“等可能性”的本质，但不再要求样本点个数有限。
+
+### 地铁候车问题
+
+某地铁站每隔 5 分钟发一班车，求乘客到站后等车时间不超过 2 分钟的概率。设乘客到站时，上次列车已开走的时长为 $x$，则</span></span>
+<p>\Omega={x\mid 0&lt;x\le 5}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">若等车时间不超过</span><span class="mord">2</span><span class="mord cjk_fallback">分钟，则意味着下班车将在</span><span class="mord">2</span><span class="mord cjk_fallback">分钟内到来，即</span></span></span></span></span>
+<p>5-x\le 2 \quad \Longleftrightarrow \quad x\ge 3</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">因此有利事件为</span></span></span></span></span>
+<p>A={x\mid 3\le x\le 5}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">按长度比计算，</span></span></span></span></span>
+<p>P(A)=\frac{5-3}{5-0}=\frac25</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 43: …，概率仍可通过测度比求得。
+
+#̲## 折棍成三角形问题
+
+将长…" style="color:#cc0000;"><span class="cjk_fallback">该问题说明：即使结果有无穷多个，只要可建立连续均匀模型，概率仍可通过测度比求得。
+
+### 折棍成三角形问题
+
+将长度为 1 的棍子任意折成 3 段，求三段能构成三角形的概率。设三段长度分别为 $x,y,z$，则</span></span>
+<p>x+y+z=1,\qquad x>0,\ y>0,\ z>0</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">三角形成立的充要条件为任两边之和大于第三边，即</span></span></span></span></span>
+<p>x+y>z,\qquad x+z>y,\qquad y+z>x</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 4: 利用 $̲z=1-x-y$ 化为二维问题…" style="color:#cc0000;"><span class="cjk_fallback">利用 $z=1-x-y$ 化为二维问题，有</span></span>
+<p>\Omega={(x,y)\mid x>0,\ y>0,\ x+y&lt;1}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">这是第一象限内的一个直角三角形区域，总面积为</span></span></span></span></span>
+<p>\frac12</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">三角形条件化简为</span></span></span></span></span>
+<p>x+y>\frac12,\qquad x&lt;\frac12,\qquad y&lt;\frac12</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 12: 于是有利区域是边长为 $̲\frac12$ 的小三角形，…" style="color:#cc0000;"><span class="cjk_fallback">于是有利区域是边长为 $\frac12$ 的小三角形，面积为</span></span>
+<p>\frac12\cdot \frac12\cdot \frac12=\frac18</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">故所求概率为</span></span></span></span></span>
+<p>P(A)=\frac{1/8}{1/2}=\frac14</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">这一问题可以用不同坐标表示。若直接在三维单纯形</span></span></span></span></span>
+<p>\Omega={(x,y,z)\mid x+y+z=1,\ x,y,z>0}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 72: …不改变事件本身的几何比例。
+
+#̲## 蒲丰针问题
+
+在平面上画…" style="color:#cc0000;"><span class="cjk_fallback">中处理，则三角形条件对应其中的中心区域；若改用断点位置作为变量，也可得到等价结论。不同建模方式改变的是坐标表达，不改变事件本身的几何比例。
+
+### 蒲丰针问题
+
+在平面上画一组间距为 $a>0$ 的平行线，将一根长度为 $l$ 的针随机投到平面上，且 $l&lt;a$。求针与平行线相交的概率。
+
+---
+
+#### 1. 用参数描述一次投针
+
+一次投针后，真正决定“是否与平行线相交”的，不是针在平面上的全部信息，而只需要两个参数：
+
+- 针的中点到最近一条平行线的距离 $x$；
+- 针与平行线的夹角 $\theta$。
+
+由于对称性，只需取</span></span>
+<p>0\le x\le \frac a2,\qquad 0\le \theta&lt;\pi</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">于是，一个样本点可以写成二元组</span></span></span></span></span>
+<p>(x,\theta)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 48: …空间中的一个点。
+
+---
+
+#̲### 2. 为什么样本空间是…" style="color:#cc0000;"><span class="cjk_fallback">这说明：一次投针的结果，不再看作“平面上的一个位置”，而看作参数空间中的一个点。
+
+---
+
+#### 2. 为什么样本空间是笛卡尔积
+
+因为 $x$ 和 $\theta$ 的取值是分别给出的：
+
+- $x\in [0,a/2]$
+- $\theta\in [0,\pi)$
+
+并且任意一个允许的 $x$，都可以和任意一个允许的 $\theta$ 配成一组结果 $(x,\theta)$。
+
+因此，样本空间就是这两个集合的==**笛卡尔积**==：
+</span></span>
+<p>\Omega=[0,a/2]\times[0,\pi)
+={(x,\theta)\mid 0\le x\le a/2,\ 0\le \theta&lt;\pi}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord cjk_fallback">这里的</span><span class="mord">“</span><span class="mord cjk_fallback">笛卡尔积</span><span class="mord">”</span><span class="mord cjk_fallback">意思是：</span></span></span></span></span>
+<p>A\times B={(a,b)\mid a\in A,\ b\in B}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 5: 
+所以 $̲[0,a/2]\times[0…" style="color:#cc0000;">
+所以 $[0,a/2]\times[0,\pi)$ 表示：  
+从第一个区间中选一个 $x$，再从第二个区间中选一个 $\theta$，把它们配成一个有序对 $(x,\theta)$。
+
+几何上，这个笛卡尔积在参数平面里正好对应一个矩形。
+
+---
+
+#### 3. 这里的“面积”到底是什么
+
+这里说的“面积”，并不是地板上的物理面积，而是参数空间 $(x,\theta)$ 上的二维测度。
+
+更严格地说，在“位置均匀、方向均匀、二者独立”的假设下，$(x,\theta)$ 在 $\Omega$ 上按均匀方式分布，因此我们使用的其实是参数空间上的乘积测度
+</span>
+<p>dx,d\theta</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord cjk_fallback">由于在当前坐标下，这个测度恰好表现成二维勒贝格测度，所以通常把它直接称作</span><span class="mord">“</span><span class="mord cjk_fallback">面积</span><span class="mord">”</span><span class="mord cjk_fallback">。因此，这里的概率本质上是：</span></span></span></span></span>
+<p>P(A)=\frac{\text{有利区域在参数空间中的测度}}{\text{样本空间在参数空间中的测度}}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 49: …起来像“面积”。
+
+---
+
+#̲### 4. 为什么样本空间的…" style="color:#cc0000;">
+也就是说，这里真正起作用的是**测度**，只是在当前参数化下它看起来像“面积”。
+
+---
+
+#### 4. 为什么样本空间的测度可以直接相乘
+
+因为 $\Omega$ 是两个区间的笛卡尔积，也就是一个矩形区域，所以它的测度等于两边长度之积：
+</span>
+<p>|\Omega|
+=\left|[0,a/2]\times[0,\pi)\right|
+=\left|[0,a/2]\right|\cdot \left|[0,\pi)\right|
+=\frac a2\cdot \pi
+=\frac{a\pi}{2}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 67: …对应的乘积测度。
+
+---
+
+#̲### 5. 相交事件对应的有…" style="color:#cc0000;">
+这一步成立的根本原因不是“有两个参数就乘起来”，而是：
+
+1. 样本空间是笛卡尔积；
+2. 使用的是对应的乘积测度。
+
+---
+
+#### 5. 相交事件对应的有利区域
+
+针与直线相交，当且仅当针在垂直方向上的半投影长度不小于中点到最近直线的距离，即
+</span>
+<p>x\le \frac l2\sin\theta</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">因此，有利区域为</span></span></span></span></span>
+<p>A=\left{(x,\theta)\mid 0\le x\le \frac l2\sin\theta,\ 0\le \theta&lt;\pi\right}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 29: …**不是笛卡尔积**了，因为 $̲x$ 的取值上界依赖于 $\t…" style="color:#cc0000;">
+这里要注意：这个集合已经**不是笛卡尔积**了，因为 $x$ 的取值上界依赖于 $\theta$。也就是说，不能把它写成某个 $x$ 区间与某个 $\theta$ 区间的简单乘积。
+
+所以它的测度不能直接用“长度乘长度”得到，而必须积分：
+</span>
+<p>|A|
+=\int_0^\pi \frac l2\sin\theta,d\theta
+=\frac l2\left[-\cos\theta\right]_0^\pi
+=l</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 7: 
+---
+
+#̲### 6. 概率计算
+
+于是…" style="color:#cc0000;">
+---
+
+#### 6. 概率计算
+
+于是所求概率为
+</span>
+<p>P(A)=\frac{|A|}{|\Omega|}
+=\frac{l}{a\pi/2}
+=\frac{2l}{a\pi}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 7: 
+---
+
+#̲### 7. 本题的理解重点
+…" style="color:#cc0000;">
+---
+
+#### 7. 本题的理解重点
+
+蒲丰针问题里最容易混淆的一点是：这里并不是在比较地板上某两块区域的普通面积，而是在比较参数空间中两个集合的测度。
+
+- 样本空间 $\Omega$ 是两个区间的笛卡尔积，所以它像一个矩形；
+- 因而它的总测度可以写成两个区间长度的乘积；
+- 有利区域 $A$ 不是笛卡尔积，所以不能直接相乘，只能积分；
+- 所谓“面积比”，本质上是参数空间中的测度比。
+
+因此，这道题真正体现的是：
+
+**连续概率模型的核心不只是几何图形，而是样本空间如何被参数化，以及其上采用什么测度。**
+
+## 3. 概率的基本性质与加法公式
+
+无论在古典概型还是几何概型中，概率都满足三个基本性质。
+
+第一，非负性：  
+</span>
+<p>0\le P(A)\le 1</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">2.</span><span class="mord cjk_fallback">归一性：</span></span></span></span></span>
+<p>P(\Omega)=1</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 15: 
+第三，有限可加性。若事件 $̲A_1,A_2,\dots,A…" style="color:#cc0000;">
+第三，有限可加性。若事件 $A_1,A_2,\dots,A_n$ 两两互不相容，则  
+</span>
+<p>P\left(\bigcup_{i=1}^n A_i\right)=\sum_{i=1}^n P(A_i)</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">由此可进一步推出一系列常用结论。空事件概率为零：</span></span></span></span></span>
+<p>P(\varnothing)=0</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">对立事件满足互补公式：</span></span></span></span></span>
+<p>P(\overline A)=1-P(A)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 4: 
+若 $̲A\subseteq B$，则…" style="color:#cc0000;">
+若 $A\subseteq B$，则  
+</span>
+<p>P(B-A)=P(B)-P(A)</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">因此概率具有单调性：</span></span></span></span></span>
+<p>A\subseteq B\quad\Longrightarrow\quad P(A)\le P(B)</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">对任意两个事件，还有加法公式</span></span></span></span></span>
+<p>P(A\cup B)=P(A)+P(B)-P(AB)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 5: 
+其中 $̲AB$ 表示 $A\cap B…" style="color:#cc0000;">
+其中 $AB$ 表示 $A\cap B$。减去交集项的原因在于：若直接把 $P(A)$ 与 $P(B)$ 相加，则同时属于 $A$ 与 $B$ 的部分被重复计算了一次。
+
+对多个事件，加法公式可推广为容斥原理：  
+</span>
+<p>P\left(\bigcup_{i=1}^n A_i\right)
+=\sum_i P(A_i)-\sum_{i&lt;j}P(A_iA_j)+\sum_{i&lt;j&lt;k}P(A_iA_jA_k)-\cdots+(-1)^{n-1}P(A_1A_2\cdots A_n)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 7: 
+右端共有 $̲2^n-1$ 项，每一项对应一…" style="color:#cc0000;">
+右端共有 $2^n-1$ 项，每一项对应一个非空交事件。符号交替出现，反映了重复计数与补偿计数的层层修正。
+
+### 整除问题
+
+从 1 到 2000 中随机取一个整数，求它能被 6 或 8 整除的概率。设  
+</span>
+<p>A={\text{能被 }6\text{ 整除}},\qquad B={\text{能被 }8\text{ 整除}}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">则</span></span></span></span></span>
+<p>P(A)=\frac{\lfloor 2000/6\rfloor}{2000}=\frac{333}{2000}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"></span></span></span>
+<p>P(B)=\frac{\lfloor 2000/8\rfloor}{2000}=\frac{250}{2000}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">同时能被</span><span class="mord">6</span><span class="mord cjk_fallback">和</span><span class="mord">8</span><span class="mord cjk_fallback">整除等价于能被它们的最小公倍数</span><span class="mord">24</span><span class="mord cjk_fallback">整除，因此</span></span></span></span></span>
+<p>P(AB)=\frac{\lfloor 2000/24\rfloor}{2000}=\frac{83}{2000}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">代入加法公式得</span></span></span></span></span>
+<p>P(A\cup B)=\frac{333+250-83}{2000}=\frac{500}{2000}=\frac14</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 2: 
+#̲## 错装信封问题与容斥原理
+…" style="color:#cc0000;">
+### 错装信封问题与容斥原理
+
+将 $n$ 封信随机装入写好地址的 $n$ 个信封，求一封也未装对的概率。设  
+</span>
+<p>A_i={\text{第 }i\text{ 封信装对}},\qquad i=1,2,\dots,n</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">并记</span></span></span></span></span>
+<p>B={\text{一封也没有装对}}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">则</span></span></span></span></span>
+<p>B=\overline{A_1\cup A_2\cup\cdots\cup A_n}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">因此</span></span></span></span></span>
+<p>P(B)=1-P(A_1\cup A_2\cup\cdots\cup A_n)</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">由容斥原理，</span></span></span></span></span>
+<p>P(B)=1-\sum_i P(A_i)+\sum_{i&lt;j}P(A_iA_j)-\cdots+(-1)^nP(A_1A_2\cdots A_n)</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">其中</span></span></span></span></span>
+<p>P(A_i)=\frac1n,\qquad
+P(A_iA_j)=\frac1{n(n-1)},\qquad
+P(A_1A_2\cdots A_n)=\frac1{n!}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">整理得</span></span></span></span></span>
+<p>P(B)=1-\frac1{1!}+\frac1{2!}-\frac1{3!}+\cdots+(-1)^n\frac1{n!}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 4: 
+当 $̲n$ 较大时，  
+" style="color:#cc0000;">
+当 $n$ 较大时，  
+</span>
+<p>P(B)\approx e^{-1}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 19: …结果即错排概率的经典近似。
+
+#̲## 若干容易误解的事实
+
+在…" style="color:#cc0000;">
+这一结果即错排概率的经典近似。
+
+### 若干容易误解的事实
+
+在连续型模型中，概率为 0 的事件未必不可能。例如在区间 $[0,1]$ 上按长度均匀取点，取到某个固定点的概率为 0，但该点仍是可能结果。同理，概率为 1 的事件未必是必然事件；在同一模型下，取到无理数的概率为 1，但取到有理数并非逻辑上不可能。
+
+严格包含关系也未必带来严格不等的概率。仍以 $[0,1]$ 上的均匀分布为例，  
+</span>
+<p>[0,1)\subset [0,1]</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 54: …的集合包含结构。
+
+---
+
+#̲# 4. 概率的公理化定义
+
+…" style="color:#cc0000;">
+但两者的概率都为 1。这说明概率所衡量的是“测度意义下的大小”，而不是纯粹的集合包含结构。
+
+---
+
+## 4. 概率的公理化定义
+
+### 公理化方法的意义
+
+直觉式概率定义能够解决大量有限或几何均匀问题，但难以支撑更一般的随机现象研究。为使概率论建立在统一而严格的数学基础上，需要用集合论与公理化方法重新定义概率。柯尔莫哥洛夫在 1933 年给出了现代概率论的公理体系，使概率成为一种特殊的测度。
+
+公理是无需再证明的基本命题；公理化方法则是从尽可能少的原始概念与基本命题出发，按照逻辑规则推出整个理论体系的方法。
+
+### $\sigma$- 代数与可测空间
+
+设 $\Omega$ 是非空集合，称为样本空间，$2^\Omega$ 表示它的幂集。若 $\mathcal F\subseteq 2^\Omega$ 满足：
+
+1. $\Omega\in \mathcal F$；
+2. 若 $A\in\mathcal F$，则 $\overline A\in\mathcal F$；
+3. 若 $A_1,A_2,\dots\in\mathcal F$，则  
+</span>
+<p>\bigcup_{i=1}^\infty A_i\in\mathcal F</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 5: 
+则称 $̲\mathcal F$ 为 $…" style="color:#cc0000;">
+则称 $\mathcal F$ 为 $\Omega$ 上的一个 $\sigma$-代数，或 $\sigma$-域，称 $(\Omega,\mathcal F)$ 为可测空间。
+
+这一定义的核心是封闭性。它保证对事件作补、作可数并等操作后，所得集合仍然是可讨论概率的对象。
+
+由定义可推出以下性质：
+
+空集属于 $\mathcal F$，因为  
+</span>
+<p>\varnothing=\overline\Omega</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 4: 
+若 $̲A_i\in\mathcal …" style="color:#cc0000;">
+若 $A_i\in\mathcal F$，则可数交也属于 $\mathcal F$，因为根据德摩根律，  </span>
+<p>\bigcap_{i=1}^\infty A_i=\overline{\bigcup_{i=1}^\infty \overline{A_i}}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 14: 
+有限并与有限交也都属于 $̲\mathcal F$。若 $…" style="color:#cc0000;">
+有限并与有限交也都属于 $\mathcal F$。若 $A,B\in\mathcal F$，则差集  
+</span>
+<p>A-B=A\cap \overline B</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 5: 也属于 $̲\mathcal F$。
+
+#…" style="color:#cc0000;"><span class="cjk_fallback">也属于 $\mathcal F$。
+
+### 概率测度与概率空间
+
+在可测空间 $(\Omega,\mathcal F)$ 上，若函数  </span></span>
+<p>P:\mathcal F\to (-\infty,+\infty)</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">满足：</span><span class="mord">1.</span><span class="mord cjk_fallback">非负性：</span></span></span></span></span>
+<p>P(A)\ge 0,\qquad \forall A\in\mathcal F</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">2.</span><span class="mord cjk_fallback">归一性：</span></span></span></span></span>
+<p>P(\Omega)=1</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 25: …：对任意两两互不相交的事件列 $̲A_1,A_2,\dots\i…" style="color:#cc0000;">
+3. 可列可加性：对任意两两互不相交的事件列 $A_1,A_2,\dots\in\mathcal F$，  </span>
+<p>P\left(\bigcup_{i=1}^\infty A_i\right)=\sum_{i=1}^\infty P(A_i)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 5: 
+则称 $̲P$ 为 $(\Omega,\…" style="color:#cc0000;">
+则称 $P$ 为 $(\Omega,\mathcal F)$ 上的概率测度，简称概率；称 $(\Omega,\mathcal F,P)$ 为概率空间；$\mathcal F$ 中的元素称为随机事件。
+
+可列可加性比有限可加性更强。有限可加性可以看作在可列可加性中把其余项都取成空事件得到的结果。又因为  
+</span>
+<p>\varnothing=\varnothing\cup\varnothing\cup\cdots</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">由可列可加性可得</span></span></span></span></span>
+<p>P(\varnothing)=P(\varnothing)+P(\varnothing)+\cdots</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">从而</span></span></span></span></span>
+<p>P(\varnothing)=0</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 31: …式等也都可由三条公理推出。
+
+#̲## 为什么不总取 $\mat…" style="color:#cc0000;">
+其余互补公式、单调性、加法公式等也都可由三条公理推出。
+
+### 为什么不总取 $\mathcal F=2^\Omega$
+
+==若对任意样本空间都直接令 $\mathcal F=2^\Omega$，则可能出现某些集合无法赋予与直觉和公理兼容的概率。==尤其在不可数样本空间中，并非每个子集都适合成为事件。为避免不可测集合问题，必须先指定一个封闭而可处理的事件集合族 $\mathcal F$。
+
+当 $\Omega$ 是有限集或可列集时，通常可以直接取  
+</span>
+<p>\mathcal F=2^\Omega</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 37: …限概率空间与可列概率空间。
+
+#̲## 公理化概率的两个实例
+
+…" style="color:#cc0000;">
+这类概率空间称为离散概率空间，其中包括有限概率空间与可列概率空间。
+
+### 公理化概率的两个实例
+
+古典概型可以写成概率空间形式。若  
+</span>
+<p>\Omega={\omega_1,\omega_2,\dots,\omega_n},\qquad \mathcal F=2^\Omega</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">并定义</span></span></span></span></span>
+<p>P(A)=\frac{|A|}{n}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 4: 
+则 $̲(\Omega,\mathca…" style="color:#cc0000;">
+则 $(\Omega,\mathcal F,P)$ 是一个概率空间。
+
+泊松概型也可写成离散概率空间。设  
+</span>
+<p>\Omega={0,1,2,\dots},\qquad \mathcal F=2^\Omega</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">并定义</span></span></span></span></span>
+<p>P(A)=\sum_{i\in A}e^{-\lambda}\frac{\lambda^i}{i!},\qquad \lambda>0</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">因为</span></span></span></span></span>
+<p>\sum_{i=0}^\infty e^{-\lambda}\frac{\lambda^i}{i!}=e^{-\lambda}e^\lambda=1</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 34: …个合法概率测度。
+
+---
+
+#̲# 5. 条件概率、乘法公式、…" style="color:#cc0000;">
+所以这一定义满足归一性，从而给出一个合法概率测度。
+
+---
+
+## 5. 条件概率、乘法公式、全概率公式与 Bayes 公式
+
+### 条件概率的含义
+
+概率总是相对于某个基本试验条件而言的。若在基本条件之外，再附加某个事件已经发生这一约束，就得到条件概率。设 $A,B\in\mathcal F$ 且 $P(A)>0$，定义  
+</span>
+<p>P(B|A)=\frac{P(AB)}{P(A)}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 9: 
+它表示在事件 $̲A$ 已经发生的前提下，事件 …" style="color:#cc0000;">
+它表示在事件 $A$ 已经发生的前提下，事件 $B$ 发生的概率。
+
+条件概率并不是一种新的不确定性概念，而是原概率在条件 $A$ 下的重新归一化。若记  
+</span>
+<p>P_A(B)=P(B|A)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 4: 
+则 $̲(\Omega,\mathca…" style="color:#cc0000;">
+则 $(\Omega,\mathcal F,P_A)$ 仍构成一个概率空间。因此条件概率也满足非负性、归一性和可加性等全部概率性质。
+
+### 条件概率的直接例子
+
+设某产品由甲、乙两厂生产。甲厂生产 2000 件，其中次品 50 件；乙厂生产 3000 件，其中次品 200 件。总产量为 5000 件，次品总数为 250 件。
+
+任取一件产品，记 $A$ 为“产品出自甲厂”，$B$ 为“产品是次品”。则  
+</span>
+<p>P(B)=\frac{250}{5000}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">若已知该产品来自甲厂，则</span></span></span></span></span>
+<p>P(B|A)=\frac{50}{2000}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">同时</span></span></span></span></span>
+<p>P(A)=\frac{2000}{5000},\qquad P(AB)=\frac{50}{5000}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">于是</span></span></span></span></span>
+<p>P(B|A)=\frac{P(AB)}{P(A)}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord cjk_fallback">这个例子显示：无条件次品率与</span><span class="mord">“</span><span class="mord cjk_fallback">已知来源后</span><span class="mord">”</span><span class="mord cjk_fallback">的次品率通常并不相同。再如某动物活到</span><span class="mord">20</span><span class="mord cjk_fallback">岁的概率为</span><span class="mord">0.8</span><span class="mord cjk_fallback">，活到</span><span class="mord">25</span><span class="mord cjk_fallback">岁的概率为</span><span class="mord">0.4</span><span class="mord cjk_fallback">。设</span></span></span></span></span>
+<p>A={\text{活到 }20\text{ 岁}},\qquad B={\text{活到 }25\text{ 岁}}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 5: 
+显然 $̲B\subseteq A$，因…" style="color:#cc0000;">
+显然 $B\subseteq A$，因此  
+</span>
+<p>P(B|A)=\frac{P(B)}{P(A)}=\frac{0.4}{0.8}=0.5</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 40: … 5 年的概率为 0.5。
+
+#̲## 乘法公式
+
+由条件概率定…" style="color:#cc0000;">
+这表示：在已知其已活到 20 岁的条件下，再活 5 年的概率为 0.5。
+
+### 乘法公式
+
+由条件概率定义直接得到  
+</span>
+<p>P(AB)=P(A)P(B|A)=P(B)P(A|B)</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord cjk_fallback">它把交事件概率分解为</span><span class="mord">“</span><span class="mord cjk_fallback">先发生一个事件，再在其条件下发生另一个事件</span><span class="mord">”</span><span class="mord cjk_fallback">的连乘形式。对多个事件，该公式可推广为</span></span></span></span></span>
+<p>P(A_1A_2\cdots A_n)
+=P(A_1),P(A_2|A_1),P(A_3|A_1A_2)\cdots P(A_n|A_1A_2\cdots A_{n-1})</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 38: …序列型概率问题的基本工具。
+
+#̲## 乘法公式的例子
+
+若某批…" style="color:#cc0000;">
+该公式适用于逐步展开一串相继发生的事件，是序列型概率问题的基本工具。
+
+### 乘法公式的例子
+
+若某批产品中甲厂生产的占 $\frac13$，且甲厂次品率为 6%，则“随机抽到一件甲厂生产的次品”的概率为  
+</span>
+<p>P(AB)=P(A)P(B|A)=\frac13\times 0.06=0.02</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 60: …回该白球并再加一个白球。求前 $̲n$ 次都未取到黑球的概率。
+…" style="color:#cc0000;">
+再考虑如下抽球问题：袋中初始有 1 个白球和 1 个黑球。每次取一球，若取到白球，则放回该白球并再加一个白球。求前 $n$ 次都未取到黑球的概率。
+
+设 $A_i$ 为“第 $i$ 次取到白球”，则所求事件为  
+</span>
+<p>A=A_1A_2\cdots A_n</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">由乘法公式，</span></span></span></span></span>
+<p>P(A)=P(A_1)P(A_2|A_1)\cdots P(A_n|A_1A_2\cdots A_{n-1})</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">各项依次为</span></span></span></span></span>
+<p>\frac12,\ \frac23,\ \frac34,\ \dots,\ \frac{n}{n+1}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">因此</span></span></span></span></span>
+<p>P(A)=\frac12\cdot\frac23\cdot\frac34\cdots\frac{n}{n+1}
+=\frac{1}{n+1}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 33: …条件概率序列中的递推结构。
+
+#̲## 全概率公式
+
+设 $B_…" style="color:#cc0000;">
+这一连乘出现了望远镜消去，体现了条件概率序列中的递推结构。
+
+### 全概率公式
+
+设 $B_1,B_2,\dots,B_n$ 构成样本空间的一个完备事件组，即满足  
+</span>
+<p>\bigcup_{i=1}^n B_i=\Omega,\qquad B_iB_j=\varnothing\ (i\ne j),\qquad P(B_i)>0</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 9: 
+则对任意事件 $̲A$，  
+" style="color:#cc0000;">
+则对任意事件 $A$，  
+</span>
+<p>A=\bigcup_{i=1}^n AB_i</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">且这些交事件两两互不相交，因此</span></span></span></span></span>
+<p>P(A)=\sum_{i=1}^n P(AB_i)=\sum_{i=1}^n P(B_i)P(A|B_i)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 16: 
+这就是全概率公式。它把事件 $̲A$ 的总概率分解为“不同原因…" style="color:#cc0000;">
+这就是全概率公式。它把事件 $A$ 的总概率分解为“不同原因路径”的加总。
+
+```mermaid
+flowchart TD
+    O[&quot;样本空间 Ω&quot;] --> B1[&quot;B1&quot;]
+    O --> B2[&quot;B2&quot;]
+    O --> B3[&quot;⋯&quot;]
+    O --> Bn[&quot;Bn&quot;]
+    B1 --> AB1[&quot;A∩B1&quot;]
+    B2 --> AB2[&quot;A∩B2&quot;]
+    Bn --> ABn[&quot;A∩Bn&quot;]
+```
+
+若完备事件组是可数无穷的，即  
+</span>
+<p>\bigcup_{i=1}^\infty B_i=\Omega,\qquad B_iB_j=\varnothing\ (i\ne j),\qquad P(B_i)>0</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">则相应有</span></span></span></span></span>
+<p>P(A)=\sum_{i=1}^\infty P(B_i)P(A|B_i)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 2: 
+#̲## Bayes 公式
+
+在上…" style="color:#cc0000;">
+### Bayes 公式
+
+在上述条件下，若 $P(A)>0$，则  
+</span>
+<p>P(B_k|A)=\frac{P(AB_k)}{P(A)}
+=\frac{P(B_k)P(A|B_k)}{\sum_{i=1}^n P(B_i)P(A|B_i)}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 29: …：先由以往经验给出各原因事件 $̲B_i$ 的先验概率，再根据结…" style="color:#cc0000;">
+Bayes 公式的含义是：先由以往经验给出各原因事件 $B_i$ 的先验概率，再根据结果事件 $A$ 的出现，对原因概率进行更新。
+
+### 工厂次品率与逆向追溯
+
+某批产品由 4 个工厂生产，产量分别占 0.3、0.2、0.25、0.25；对应次品率分别为 0.05、0.08、0.15、0.10。设 $A$ 为“抽到次品”，$B_i$ 为“产品来自第 $i$ 个工厂”。
+
+由全概率公式，  
+</span>
+<p>P(A)=0.3\times0.05+0.2\times0.08+0.25\times0.15+0.25\times0.10=0.0935</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">这就是整批产品的总体次品率。若已知抽到的是次品，则它来自</span><span class="mord">1</span><span class="mord cjk_fallback">号工厂的概率为</span></span></span></span></span>
+<p>P(B_1|A)=\frac{0.3\times0.05}{0.0935}\approx 0.16</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 5: 
+其中 $̲P(B_1)=0.3$ 是先验…" style="color:#cc0000;">
+其中 $P(B_1)=0.3$ 是先验概率，$P(B_1|A)=0.16$ 是后验概率。后验概率不再仅由工厂产量决定，还同时受该工厂次品率影响。
+
+---
+
+## 6. 事件独立性
+
+### 独立性的定义
+
+若 $P(A)>0$，由条件概率定义知  
+</span>
+<p>P(B|A)=P(B)
+\quad \Longleftrightarrow \quad
+P(AB)=P(A)P(B)</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">右侧不依赖条件概率的定义，因此可作为一般定义：若</span></span></span></span></span>
+<p>P(AB)=P(A)P(B)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 7: 
+则称事件 $̲A$ 与 $B$ 相互独立。
+…" style="color:#cc0000;">
+则称事件 $A$ 与 $B$ 相互独立。
+
+==独立性的本质在于，一个事件的发生与否不改变另一个事件的概率。它不是“两个事件没有交集”，也不是“两个事件毫无关系”的口语化说法，而是一条精确的概率等式。==
+
+### 放回与不放回抽样的比较
+
+有 10 个小球，其中 8 个红球、2 个黑球。连续取两次。记  
+</span>
+<p>A={\text{第一次取到红球}},\qquad B={\text{第二次取到红球}}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">若为放回抽样，则第二次抽样前总体组成与第一次前相同，因此</span></span></span></span></span>
+<p>P(B)=\frac{8}{10},\qquad P(B|A)=\frac{8}{10}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 5: 
+于是 $̲A$ 与 $B$ 独立。
+
+若…" style="color:#cc0000;">
+于是 $A$ 与 $B$ 独立。
+
+若为不放回抽样，则  
+</span>
+<p>P(B)=\frac{8}{10}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">但在第一次取到红球的条件下，第二次再取到红球的概率变为</span></span></span></span></span>
+<p>P(B|A)=\frac79</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">因此</span></span></span></span></span>
+<p>P(B|A)\ne P(B)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 49: …结果受到前一次结果的影响。
+
+#̲## 两名战士射击同一目标
+
+…" style="color:#cc0000;">
+说明此时两事件不独立。可见，独立性与否取决于试验机制是否使后一次结果受到前一次结果的影响。
+
+### 两名战士射击同一目标
+
+甲命中率为 0.8，乙命中率为 0.7。若两人各打一枪且命中相互独立，记  
+</span>
+<p>A={\text{甲击中}},\qquad B={\text{乙击中}}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 12: 
+目标被击中当且仅当 $̲A\cup B$ 发生，因此 …" style="color:#cc0000;">
+目标被击中当且仅当 $A\cup B$ 发生，因此  
+</span>
+<p>P(A\cup B)=P(A)+P(B)-P(AB)
+=0.8+0.7-0.8\times0.7=0.94</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 37: …也不能忽略同时命中的情况。
+
+#̲## 两事件独立性的若干结论
+…" style="color:#cc0000;">
+这说明独立事件的并概率，既不能简单相加，也不能忽略同时命中的情况。
+
+### 两事件独立性的若干结论
+
+独立性具有对称性。若 $A$ 与 $B$ 独立，则 $B$ 与 $A$ 也独立。
+
+概率为 0 或 1 的事件与任何事件都独立。若 $P(A)=0$，则  
+</span>
+<p>P(AB)=0=P(A)P(B)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 4: 
+若 $̲P(A)=1$，则  
+" style="color:#cc0000;">
+若 $P(A)=1$，则  
+</span>
+<p>P(AB)=P(B)=P(A)P(B)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 4: 
+若 $̲P(A)>0$ 且 $P(B)…" style="color:#cc0000;">
+若 $P(A)>0$ 且 $P(B)>0$，则“独立”与“互斥”不能同时成立。因为互斥意味着  
+</span>
+<p>P(AB)=0</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">而独立意味着</span></span></span></span></span>
+<p>P(AB)=P(A)P(B)>0</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 24: …独立性对取补运算保持稳定。若 $̲A$ 与 $B$ 独立，则 $…" style="color:#cc0000;">
+二者矛盾。
+
+独立性对取补运算保持稳定。若 $A$ 与 $B$ 独立，则 $A$ 与 $\overline B$、$\overline A$ 与 $B$、$\overline A$ 与 $\overline B$ 也都独立。例如  
+</span>
+<p>P(A\overline B)=P(A)-P(AB)=P(A)-P(A)P(B)=P(A)\bigl(1-P(B)\bigr)=P(A)P(\overline B)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 2: 
+#̲## 多个事件的独立性
+
+对三…" style="color:#cc0000;">
+### 多个事件的独立性
+
+对三个事件 $A,B,C$，若要称它们相互独立，必须同时满足  
+</span>
+<p>P(AB)=P(A)P(B),\qquad
+P(AC)=P(A)P(C),\qquad
+P(BC)=P(B)P(C)</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">以及</span></span></span></span></span>
+<p>P(ABC)=P(A)P(B)P(C)</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">仅有两两独立并不足以推出三者相互独立。两两独立只约束所有二重交事件，而相互独立还要求三重交事件概率也能分解。设有</span><span class="mord">4</span><span class="mord cjk_fallback">个球：红球、黄球、蓝球、花球。花球同时带有红、黄、蓝三种颜色。任取一个球，定义</span></span></span></span></span>
+<p>A={\text{有红色}},\qquad B={\text{有黄色}},\qquad C={\text{有蓝色}}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">则</span></span></span></span></span>
+<p>P(A)=P(B)=P(C)=\frac12</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">并且</span></span></span></span></span>
+<p>P(AB)=P(AC)=P(BC)=\frac14</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">因此三者两两独立。但</span></span></span></span></span>
+<p>P(ABC)=\frac14\ne \frac12\cdot\frac12\cdot\frac12=\frac18</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 42: …由低阶独立性自动推出。
+
+对 $̲n$ 个事件 $A_1,A_2…" style="color:#cc0000;">
+所以它们并不相互独立。这个例子说明，高阶交事件不能由低阶独立性自动推出。
+
+对 $n$ 个事件 $A_1,A_2,\dots,A_n$，相互独立是指：对任意整数 $k$，其中 $2\le k\le n$，以及任意指标组  
+</span>
+<p>1\le i_1&lt;i_2&lt;\cdots&lt;i_k\le n</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">都有</span></span></span></span></span>
+<p>P(A_{i_1}A_{i_2}\cdots A_{i_k})
+=P(A_{i_1})P(A_{i_2})\cdots P(A_{i_k})</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 21: …要求所有二重交、三重交，直到 $̲n$ 重交，都满足分解关系。需…" style="color:#cc0000;">
+这一定义要求所有二重交、三重交，直到 $n$ 重交，都满足分解关系。需要检验的等式总数为  
+</span>
+<p id="n-n-1">\sum_{k=2}^n \binom{n}{k}=2</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 5: 
+其中 $̲2^n$ 是全部子集个数，减去…" style="color:#cc0000;">
+其中 $2^n$ 是全部子集个数，减去空集对应的一项与 $n$ 个单事件项，就得到所有需要验证的多事件交集项数目。
+
+若 $n>2$ 个事件相互独立，则必然两两独立；但反过来不成立。若它们相互独立，则把其中若干事件替换为对立事件后，所得事件组仍相互独立。
+
+---
+
+## 7. 系统可靠性
+
+系统可靠性是指元件或系统在规定时间内正常工作的概率。一个系统通常由多个元件按某种结构连接而成，因此系统可靠性同时取决于元件本身的可靠性与连接方式。
+
+设元件 $A_k$ 的可靠性为  
+</span>
+<p>P(A_k)=r_k,\qquad k=1,2,\dots,n</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 19: …定各元件工作状态相互独立。
+
+#̲## 串联系统与并联系统
+
+串…" style="color:#cc0000;">
+并假定各元件工作状态相互独立。
+
+### 串联系统与并联系统
+
+串联系统要求所有元件都正常，系统才正常，因此  
+</span>
+<p>p_{\text{串}}=P(A_1A_2\cdots A_n)=r_1r_2\cdots r_n</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">并联系统只要求至少有一个元件正常即可，因此可先求全体失效的概率，再取补：</span></span></span></span></span>
+<p>p_{\text{并}}
+=P(A_1\cup A_2\cup\cdots\cup A_n)
+=1-P(\overline A_1\overline A_2\cdots \overline A_n)
+=1-(1-r_1)(1-r_2)\cdots(1-r_n)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 289: …件正常，系统便能维持工作。
+
+#̲## 两种冗余方案的比较
+
+设…" style="color:#cc0000;">
+```mermaid
+flowchart LR
+    subgraph 串联系统
+        S1[&quot;A1 正常&quot;] --> S2[&quot;A2 正常&quot;] --> S3[&quot;⋯&quot;] --> S4[&quot;An 正常&quot;]
+    end
+
+    subgraph 并联系统
+        P1[&quot;A1 正常&quot;]
+        P2[&quot;A2 正常&quot;]
+        P3[&quot;⋯&quot;]
+        P4[&quot;An 正常&quot;]
+    end
+```
+
+串联的特征是“短板效应”：任何一个元件失效都会导致系统失效。并联的特征是冗余保护：只要仍有至少一个元件正常，系统便能维持工作。
+
+### 两种冗余方案的比较
+
+设每个元件的可靠性都为 $r$，且相互独立。考虑两种结构。
+
+第一种方案：两条支路并联，每条支路由 $n$ 个元件串联组成。单条支路的可靠性为  
+</span>
+<p id="n">r</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">两条支路并联后的系统可靠性为</span></span></span></span></span>
+<p>p_1=1-(1-r^n)^2=r^n(2-r^n)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 12: 
+第二种方案：系统由 $̲n$ 个阶段串联，每个阶段内部…" style="color:#cc0000;">
+第二种方案：系统由 $n$ 个阶段串联，每个阶段内部有 2 个元件并联。单个阶段的可靠性为  
+</span>
+<p>1-(1-r)^2=r(2-r)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 2: 
+$̲n$ 个阶段串联后的系统可靠性…" style="color:#cc0000;">
+$n$ 个阶段串联后的系统可靠性为  
+</span>
+<p>p_2=[r(2-r)]^n=r^n(2-r)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 4: 
+当 $̲n>1$ 时，  
+" style="color:#cc0000;">
+当 $n>1$ 时，  
+</span>
+<p>p_1&lt;p_2</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 43: …体层面设置少量并联系统。若取 $̲r=0.9,\ n=10$，则…" style="color:#cc0000;">
+这说明把冗余分散到每一个串联位置，通常优于只在系统整体层面设置少量并联系统。若取 $r=0.9,\ n=10$，则  
+</span>
+<p>p_1=0.576,\qquad p_2=0.904</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 18: …者差异十分显著。
+
+---
+
+#̲# 8. 独立试验序列概型
+
+…" style="color:#cc0000;">
+两者差异十分显著。
+
+---
+
+## 8. 独立试验序列概型
+
+### 模型定义
+
+在相同条件下重复进行同一种试验 $n$ 次，且每次试验结果属于有限个可能取值，各次试验相互独立，这样的试验序列称为 $n$ 次独立试验序列。与之对应的概率模型称为独立试验序列概型。
+
+当每次试验只有两种可能结果时，这种试验称为伯努利试验，相应模型称为伯努利概型。典型例子包括反复抛硬币、重复检测零件是否合格、连续射击判断是否命中等。
+
+与古典概型相比，独立试验序列概型的核心不是“所有基本结果等可能”，而是“各次试验相互独立，且单次分布已知”。因此它更适合描述重复试验中的频数问题。
+
+### 二项概率公式
+
+设在伯努利概型中，事件 $A$ 在每次试验中发生的概率为  
+</span>
+<p>p,\qquad q=1-p</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 5: 
+则在 $̲n$ 次试验中，事件 $A$ …" style="color:#cc0000;">
+则在 $n$ 次试验中，事件 $A$ 恰好发生 $k$ 次的概率为  
+</span>
+<p>P_n(k)=\binom{n}{k}p^k q^{n-k},\qquad 0\le k\le n</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 40: …，若固定某一个具体序列中恰有 $̲k$ 次成功、$n-k$ 次失…" style="color:#cc0000;">
+这称为二项概率公式。
+
+其推导可分为两步。首先，若固定某一个具体序列中恰有 $k$ 次成功、$n-k$ 次失败，则由于各次试验独立，该序列概率为  
+</span>
+<p>p^k q^{n-k}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">其次，这样的成功位置安排共有</span></span></span></span></span>
+<p>\binom{n}{k}</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">种，因此总概率为两者之积。该式恰好是</span></span></span></span></span>
+<p>(p+q)</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 10: 
+二项展开中的第 $̲k+1$ 项，因此称为二项概率…" style="color:#cc0000;">
+二项展开中的第 $k+1$ 项，因此称为二项概率。
+
+### 放回抽样的红黑球问题
+
+袋中有 60 个红球与 40 个黑球，每次放回抽取 1 个，共抽取 5 次。设事件 $A$ 为“抽到红球”，则  
+</span>
+<p>p=P(A)=0.6,\qquad q=0.4</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">恰好取得</span><span class="mord">3</span><span class="mord cjk_fallback">个红球、</span><span class="mord">2</span><span class="mord cjk_fallback">个黑球的概率为</span></span></span></span></span>
+<p>P_5(3)=\binom{5}{3}(0.6)^3(0.4)^2=0.3456</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">取得红球个数不大于</span><span class="mord">3</span><span class="mord cjk_fallback">的概率为</span></span></span></span></span>
+<p>P_5(0)+P_5(1)+P_5(2)+P_5(3)</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord cjk_fallback">利用对立事件可写成</span></span></span></span></span>
+<p>1-P_5(4)-P_5(5)
+=1-\binom{5}{4}(0.6)^4(0.4)-(0.6)^5
+=0.66304\approx 0.6630</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Expected 'EOF', got '#' at position 39: …常适合借助补事件进行化简。
+
+#̲## 几何分布与 Pascal…" style="color:#cc0000;">
+这表明，二项分布中“至多”或“至少”类问题通常适合借助补事件进行化简。
+
+### 几何分布与 Pascal 分布
+
+在伯努利试验中，若关注事件 $A$ 第一次出现的时刻，则“第 $k$ 次试验时首次发生”的概率为  
+</span>
+<p>Q(k)=q^{k-1}p,\qquad k=1,2,\dots</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 9: 
+原因在于：前 $̲k-1$ 次必须全部失败，第 …" style="color:#cc0000;">
+原因在于：前 $k-1$ 次必须全部失败，第 $k$ 次成功。
+
+若关注事件 $A$ 第 $r$ 次出现的时刻，则“第 $k$ 次试验时第 $r$ 次发生”的概率为  
+</span>
+<p>S(k,r)=\binom{k-1}{r-1}p^r q^{k-r},\qquad k=r,r+1,\dots</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 11: 
+其结构含义为：第 $̲k$ 次必须成功；在此前的 $…" style="color:#cc0000;">
+其结构含义为：第 $k$ 次必须成功；在此前的 $k-1$ 次中恰好已有 $r-1$ 次成功；不同成功位置安排共有  
+</span>
+<p>\binom{k-1}{r-1}</p>
+<span class="katex-error" title="ParseError: KaTeX parse error: Can't use function '$' in math mode at position 33: …，Pascal 分布刻画“第 $̲r$ 次达成时间”。两者都把独…" style="color:#cc0000;">
+种。
+
+几何分布刻画“首达时间”，Pascal 分布刻画“第 $r$ 次达成时间”。两者都把独立重复试验中的次数问题转化为时刻问题。</span></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-109" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#1-概率问题中的计数基础" data-for="1-概率问题中的计数基础">1. 概率问题中的计数基础</a></li><li class="depth-1"><a href="#分组问题中的计数逻辑" data-for="分组问题中的计数逻辑">分组问题中的计数逻辑</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}container;content;isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>
