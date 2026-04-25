@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>进程线程调度</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="进程线程调度"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="进程线程调度"/><meta name="twitter:description" content="核心速览 这一讲真正要理解的，不是“背几个调度算法名字”，而是理解：操作系统如何在一堆想运行的进程/线程之间分配 CPU。 CPU 在某一瞬间只能执行有限数量的控制流。哪怕是多核系统，核心数量也远小于进程/线程数量。因此，操作系统必须像一个“调度室”一样不断做决策： 什么时候要换人？换谁上 CPU？怎么把当前进程安全地换下去、把另一个进程恢复起来？ 所以，进程/线程调度可以围绕三个问题来学： When：什么时候发生调度？ What：调度器依据什么原则选择下一个进程/线程？ How：选出来以后，操作系统如何完成上下文切换？ 这三个问题刚好对应课件里的主线：调度时机、调度算法、调度过程。 一、为..."/><meta property="og:description" content="核心速览 这一讲真正要理解的，不是“背几个调度算法名字”，而是理解：操作系统如何在一堆想运行的进程/线程之间分配 CPU。 CPU 在某一瞬间只能执行有限数量的控制流。哪怕是多核系统，核心数量也远小于进程/线程数量。因此，操作系统必须像一个“调度室”一样不断做决策： 什么时候要换人？换谁上 CPU？怎么把当前进程安全地换下去、把另一个进程恢复起来？ 所以，进程/线程调度可以围绕三个问题来学： When：什么时候发生调度？ What：调度器依据什么原则选择下一个进程/线程？ How：选出来以后，操作系统如何完成上下文切换？ 这三个问题刚好对应课件里的主线：调度时机、调度算法、调度过程。 一、为..."/><meta property="og:image:alt" content="核心速览 这一讲真正要理解的，不是“背几个调度算法名字”，而是理解：操作系统如何在一堆想运行的进程/线程之间分配 CPU。 CPU 在某一瞬间只能执行有限数量的控制流。哪怕是多核系统，核心数量也远小于进程/线程数量。因此，操作系统必须像一个“调度室”一样不断做决策： 什么时候要换人？换谁上 CPU？怎么把当前进程安全地换下去、把另一个进程恢复起来？ 所以，进程/线程调度可以围绕三个问题来学： When：什么时候发生调度？ What：调度器依据什么原则选择下一个进程/线程？ How：选出来以后，操作系统如何完成上下文切换？ 这三个问题刚好对应课件里的主线：调度时机、调度算法、调度过程。 一、为..."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/期中/进程线程调度"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/期中/进程线程调度"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="核心速览 这一讲真正要理解的，不是“背几个调度算法名字”，而是理解：操作系统如何在一堆想运行的进程/线程之间分配 CPU。 CPU 在某一瞬间只能执行有限数量的控制流。哪怕是多核系统，核心数量也远小于进程/线程数量。因此，操作系统必须像一个“调度室”一样不断做决策： 什么时候要换人？换谁上 CPU？怎么把当前进程安全地换下去、把另一个进程恢复起来？ 所以，进程/线程调度可以围绕三个问题来学： When：什么时候发生调度？ What：调度器依据什么原则选择下一个进程/线程？ How：选出来以后，操作系统如何完成上下文切换？ 这三个问题刚好对应课件里的主线：调度时机、调度算法、调度过程。 一、为..."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/期中/进程线程调度"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-207"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-207" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/期中/">期中</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>进程线程调度</a></div></nav><h1 class="article-title">进程线程调度</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-25T12:55:24.526Z">Apr 25, 2026</time><span>88 min read</span></p></div></div><article class="popover-hint"><blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>核心速览 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这一讲真正要理解的，不是“背几个调度算法名字”，而是理解：<strong>操作系统如何在一堆想运行的进程/线程之间分配 CPU</strong>。</p>
+<p>CPU 在某一瞬间只能执行有限数量的控制流。哪怕是多核系统，核心数量也远小于进程/线程数量。因此，操作系统必须像一个“调度室”一样不断做决策：</p>
+<p><strong>什么时候要换人？换谁上 CPU？怎么把当前进程安全地换下去、把另一个进程恢复起来？</strong></p>
+<p>所以，进程/线程调度可以围绕三个问题来学：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>When：什么时候发生调度？</span></span>
+<span data-line><span>What：调度器依据什么原则选择下一个进程/线程？</span></span>
+<span data-line><span>How：选出来以后，操作系统如何完成上下文切换？</span></span></code></pre></figure>
+<p>这三个问题刚好对应课件里的主线：调度时机、调度算法、调度过程。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="一为什么操作系统需要调度">一、为什么操作系统需要调度？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#一为什么操作系统需要调度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>先从最朴素的问题开始：</p>
+<p>如果只有一个 CPU，但我们同时打开了浏览器、编辑器、终端、音乐播放器，为什么它们看起来都在运行？</p>
+<p>答案不是 CPU 真的同时执行了所有程序，而是操作系统在很短的时间尺度上不断切换执行对象。每个进程或线程轮流获得 CPU，一段时间后让出 CPU，另一个进程再接上。只要切换足够快，用户就会感觉它们“同时”运行。</p>
+<p>所以，处理器调度的本质是：</p>
+<p><strong>控制和协调进程/线程对 CPU 的竞争。</strong></p>
+<p>更具体地说，调度器会按照某种调度算法，从就绪队列中选择一个进程或线程，把 CPU 的使用权交给它。如果没有任何可运行的进程，系统不会让 CPU 完全无所事事，而是会安排一个 idle 进程或 idle 线程运行。它的作用不是做业务，而是在“没人可调度”的时候维持系统的基本循环。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：调度器像食堂叫号系统 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>食堂窗口只有几个，但排队的人很多。叫号系统要决定：谁先来谁先吃？老人小孩是否优先？每个人占窗口多久？如果有人只是取个餐马上走，要不要优先处理？</p>
+<p>CPU 调度也是类似的事情。只不过“窗口”变成了 CPU，“顾客”变成了进程/线程，“叫号规则”变成了调度算法。</p>
+</div>
+</blockquote>
+<p>所以，处理器调度不是一个单纯的技术细节，而是操作系统实现并发、多任务和资源公平分配的基础。</p>
+<hr/>
+<h2 id="二调度的三个层次">二、调度的三个层次<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#二调度的三个层次" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>“调度”这个词其实有不同层次。不同层次关心的资源不一样，时间尺度也不一样。</p>
+<h3 id="1-长程调度决定谁能进入系统">1. 长程调度：决定谁能进入系统<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-长程调度决定谁能进入系统" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>长程调度也叫作业调度或宏观调度。</p>
+<p>它发生在新进程创建或新作业进入系统时，负责决定：</p>
+<p><strong>这个作业要不要进入当前活跃进程集合？</strong></p>
+<p>可以把它理解为“进校门”的决策。系统资源有限，不可能无限制地把所有作业都塞进内存和就绪队列。长程调度关心的是系统整体负载，决定多道程序的程度。</p>
+<h3 id="2-中程调度决定谁暂时换出内存">2. 中程调度：决定谁暂时换出内存<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-中程调度决定谁暂时换出内存" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>中程调度和内存压力有关。</p>
+<p>如果内存不够，操作系统可能把某些进程的部分或全部内容换出到外存；等以后需要运行时，再把它换入内存。这就是交换技术。</p>
+<p>所以，中程调度从存储资源管理的角度看问题：</p>
+<p><strong>哪些进程暂时不适合留在内存？哪些进程应该被换回来？</strong></p>
+<p>它对应的是 Ready Suspended、Blocked Suspended 这类挂起状态。</p>
+<h3 id="3-短程调度决定谁立刻上-cpu">3. 短程调度：决定谁立刻上 CPU<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-短程调度决定谁立刻上-cpu" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>短程调度也叫微观调度，是本章最核心的内容。</p>
+<p>它从处理器资源分配的角度看问题：</p>
+<p><strong>就绪队列里有一堆进程/线程，下一刻到底让谁运行？</strong></p>
+<p>短程调度的时间尺度通常是毫秒级的，而且使用非常频繁，所以它必须足够高效。一个调度算法如果理论上很漂亮，但每次选择都要耗费太多 CPU 时间，那它自己就会变成系统负担。</p>
+<p>可以先用一张状态图抓住位置：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    New[\&quot;新建 New\&quot;] -->|长程调度| Ready[\&quot;就绪 Ready\&quot;]\n    Ready -->|短程调度 Dispatch| Running[\&quot;运行 Running\&quot;]\n    Running -->|时间片用完 / 被抢占| Ready\n    Running -->|等待 I/O 或事件| Blocked[\&quot;阻塞 Blocked\&quot;]\n    Blocked -->|事件发生 / 被唤醒| Ready\n    Running -->|正常结束 / 异常终止| Exit[\&quot;结束 Exit\&quot;]\n\n    Ready &lt;-->|中程调度：换出 / 换入| ReadySuspend[\&quot;就绪挂起 Ready Suspend\&quot;]\n    Blocked &lt;-->|中程调度：换出 / 换入| BlockedSuspend[\&quot;阻塞挂起 Blocked Suspend\&quot;]\n    BlockedSuspend -->|等待事件发生| ReadySuspend&quot;">flowchart TD
+    New[&quot;新建 New&quot;] -->|长程调度| Ready[&quot;就绪 Ready&quot;]
+    Ready -->|短程调度 Dispatch| Running[&quot;运行 Running&quot;]
+    Running -->|时间片用完 / 被抢占| Ready
+    Running -->|等待 I/O 或事件| Blocked[&quot;阻塞 Blocked&quot;]
+    Blocked -->|事件发生 / 被唤醒| Ready
+    Running -->|正常结束 / 异常终止| Exit[&quot;结束 Exit&quot;]
+
+    Ready &lt;-->|中程调度：换出 / 换入| ReadySuspend[&quot;就绪挂起 Ready Suspend&quot;]
+    Blocked &lt;-->|中程调度：换出 / 换入| BlockedSuspend[&quot;阻塞挂起 Blocked Suspend&quot;]
+    BlockedSuspend -->|等待事件发生| ReadySuspend
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>小结 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>长程调度决定“谁能进来”，中程调度决定“谁暂时出去避一避”，短程调度决定“谁现在上 CPU”。</p>
+<p>我们平时说的 CPU 调度，通常主要指短程调度。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="三调度到底什么时候发生">三、调度到底什么时候发生？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#三调度到底什么时候发生" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>调度不是凭空发生的。它往往发生在某个事件改变了进程状态之后，即</p>
+<p><span class="text-highlight">内核对中断/异常/系统调用处 理后返回到用户态前最后时刻</span></p>
+<p>比如：</p>
+<ul>
+<li>一个进程执行完毕并退出；</li>
+<li>一个进程因为错误或异常终止；</li>
+<li>一个新进程被创建；</li>
+<li>当前运行进程要等待 I/O，于是进入阻塞态；</li>
+<li>某个阻塞进程因为 I/O 完成而被唤醒，重新回到就绪态；</li>
+<li>当前进程的时间片用完，被放回就绪队列；</li>
+<li>当前进程主动执行 <code>yield</code> 放弃 CPU。</li>
+</ul>
+<p>这些事件发生后，系统的就绪队列可能发生变化：有人离开了，有人回来了，有人优先级变了，有人时间片用完了。于是内核就需要重新判断：</p>
+<p><strong>现在继续运行原来的进程，还是换另一个进程上 CPU？</strong></p>
+<p>这个逻辑和中断/异常处理的关系非常紧密：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;事件发生&lt;br/>I/O 中断 / 时钟中断 / 系统调用 / 异常\&quot;] --> B[\&quot;硬件机制响应&lt;br/>进入内核\&quot;]\n    B --> C[\&quot;操作系统处理事件\&quot;]\n    C --> D[\&quot;进程状态可能发生变化&lt;br/>阻塞 / 唤醒 / 退出 / 就绪\&quot;]\n    D --> E[\&quot;就绪队列发生调整\&quot;]\n    E --> F{\&quot;是否需要重新调度？\&quot;}\n    F -->|否| G[\&quot;恢复当前进程继续运行\&quot;]\n    F -->|是| H[\&quot;调用调度器选择下一个进程\&quot;]\n    H --> I[\&quot;上下文切换\&quot;]\n    I --> J[\&quot;新进程 / 新线程开始运行\&quot;]&quot;">flowchart TD
+    A[&quot;事件发生&lt;br/>I/O 中断 / 时钟中断 / 系统调用 / 异常&quot;] --> B[&quot;硬件机制响应&lt;br/>进入内核&quot;]
+    B --> C[&quot;操作系统处理事件&quot;]
+    C --> D[&quot;进程状态可能发生变化&lt;br/>阻塞 / 唤醒 / 退出 / 就绪&quot;]
+    D --> E[&quot;就绪队列发生调整&quot;]
+    E --> F{&quot;是否需要重新调度？&quot;}
+    F -->|否| G[&quot;恢复当前进程继续运行&quot;]
+    F -->|是| H[&quot;调用调度器选择下一个进程&quot;]
+    H --> I[&quot;上下文切换&quot;]
+    I --> J[&quot;新进程 / 新线程开始运行&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：调度常常发生在“回用户态之前” </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>中断、异常、系统调用把 CPU 带进内核。内核处理完事件后，不一定马上回到原来的用户程序。</p>
+<p>它会顺手看一眼：有没有更该运行的进程？当前进程的时间片是不是用完了？有没有高优先级任务刚被唤醒？</p>
+<p>如果答案是“该换人了”，调度就发生在这个返回用户态之前的最后时刻。</p>
+</div>
+</blockquote>
+<p>所以，调度不是孤立机制。它和异常控制流、中断、系统调用共享同一条系统主线：事件进入内核，内核处理事件，处理完后决定返回原进程还是切换到另一个进程。</p>
+<hr/>
+<h2 id="四调度过程从选择进程到上下文切换">四、调度过程：从选择进程到上下文切换<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#四调度过程从选择进程到上下文切换" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>调度算法只解决“选谁”的问题。但选出来以后，操作系统还必须真正把 CPU 从一个进程交给另一个进程。</p>
+<p>这一步叫：</p>
+<p><strong>上下文切换（Context Switch）。</strong></p>
+<h3 id="1-什么是上下文">1. 什么是上下文？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-什么是上下文" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>进程运行时，它的状态不仅在内存里，也在 CPU 里。</p>
+<p>比如：</p>
+<ul>
+<li>程序计数器 PC：下一条指令在哪里；</li>
+<li>程序状态字 PSW：当前 CPU 状态、标志位、中断状态等；</li>
+<li>栈指针 SP：当前栈在哪里；</li>
+<li>通用寄存器：当前计算中间结果、函数参数、返回值；</li>
+<li>控制寄存器：例如页表相关寄存器，影响地址空间。</li>
+</ul>
+<p>当进程正在运行时，这些硬件状态保存在 CPU 寄存器中。</p>
+<p>当进程不运行时，这些状态必须保存到进程控制块 PCB 或相关内核数据结构中。否则下次恢复这个进程时，它就不知道自己运行到哪里了。</p>
+<p>所以，上下文切换就是：</p>
+<p><strong>把 CPU 当前硬件状态从进程 A 的上下文，换成进程 B 的上下文。</strong></p>
+<h3 id="2-进程-a-下-cpu进程-b-上-cpu-时发生了什么">2. 进程 A 下 CPU、进程 B 上 CPU 时发生了什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-进程-a-下-cpu进程-b-上-cpu-时发生了什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>可以把过程拆成下面几步：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1. 保存进程 A 的上下文</span></span>
+<span data-line><span>   例如 PC、PSW、SP、通用寄存器等。</span></span>
+<span data-line> </span>
+<span data-line><span>2. 更新进程 A 的 PCB</span></span>
+<span data-line><span>   记录它当前状态，并根据原因放入就绪队列、阻塞队列或退出队列。</span></span>
+<span data-line> </span>
+<span data-line><span>3. 选择进程 B</span></span>
+<span data-line><span>   调度器从就绪队列中选出下一个运行对象。</span></span>
+<span data-line> </span>
+<span data-line><span>4. 将进程 B 的状态设置为运行态</span></span>
+<span data-line><span>   它正式成为当前 CPU 上运行的进程。</span></span>
+<span data-line> </span>
+<span data-line><span>5. 从进程 B 的 PCB 中恢复上下文</span></span>
+<span data-line><span>   恢复 PC、PSW、SP、通用寄存器等。</span></span>
+<span data-line> </span>
+<span data-line><span>6. CPU 从进程 B 上次停下的位置继续执行</span></span></code></pre></figure>
+<p>用图表示就是：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;进程 A 正在运行\&quot;] --> B[\&quot;发生事件&lt;br/>时间片到 / 阻塞 / 异常 / 系统调用\&quot;]\n    B --> C[\&quot;进入内核，处理事件\&quot;]\n    C --> D{\&quot;是否需要重新调度？\&quot;}\n\n    D -->|否| E[\&quot;恢复 A 的现场\&quot;]\n    E --> F[\&quot;返回用户态，A 继续执行\&quot;]\n\n    D -->|是| G[\&quot;保存 A 的上下文到 PCB\&quot;]\n    G --> H[\&quot;更新 A 的状态并放入相应队列\&quot;]\n    H --> I[\&quot;调度器从就绪队列选择下一个进程\&quot;]\n    I --> J{\&quot;就绪队列为空？\&quot;}\n    J -->|是| K[\&quot;调度 idle 进程\&quot;]\n    J -->|否| L[\&quot;选择进程 B\&quot;]\n    K --> M[\&quot;切换上下文\&quot;]\n    L --> M\n    M --> N[\&quot;恢复新进程的上下文\&quot;]\n    N --> O[\&quot;返回用户态\&quot;]\n    O --> P[\&quot;新进程开始/继续执行\&quot;]&quot;">flowchart TD
+    A[&quot;进程 A 正在运行&quot;] --> B[&quot;发生事件&lt;br/>时间片到 / 阻塞 / 异常 / 系统调用&quot;]
+    B --> C[&quot;进入内核，处理事件&quot;]
+    C --> D{&quot;是否需要重新调度？&quot;}
+
+    D -->|否| E[&quot;恢复 A 的现场&quot;]
+    E --> F[&quot;返回用户态，A 继续执行&quot;]
+
+    D -->|是| G[&quot;保存 A 的上下文到 PCB&quot;]
+    G --> H[&quot;更新 A 的状态并放入相应队列&quot;]
+    H --> I[&quot;调度器从就绪队列选择下一个进程&quot;]
+    I --> J{&quot;就绪队列为空？&quot;}
+    J -->|是| K[&quot;调度 idle 进程&quot;]
+    J -->|否| L[&quot;选择进程 B&quot;]
+    K --> M[&quot;切换上下文&quot;]
+    L --> M
+    M --> N[&quot;恢复新进程的上下文&quot;]
+    N --> O[&quot;返回用户态&quot;]
+    O --> P[&quot;新进程开始/继续执行&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：上下文切换像两个人共用一张书桌 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>A 同学正在桌上做题。现在要换 B 同学来。</p>
+<p>A 不能直接起身就走。他要把草稿纸、书签、笔记、做到哪一步都收好，放回自己的文件夹。B 坐下时，也要把自己的文件夹打开，把书翻到上次的位置。</p>
+<p>这套“收拾和恢复现场”的过程，就是上下文切换。</p>
+</div>
+</blockquote>
+<h3 id="3-上下文切换为什么有开销">3. 上下文切换为什么有开销？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-上下文切换为什么有开销" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>上下文切换不是免费操作。</p>
+<p>它至少有两类开销。</p>
+<p>第一类是直接开销。</p>
+<p>内核要执行保存和恢复寄存器的代码，还可能切换地址空间，比如切换页表根地址或全局页目录。这些动作本身会消耗 CPU 时间。</p>
+<p>第二类是间接开销。</p>
+<p>新进程上 CPU 后，CPU Cache、Buffer Cache、TLB 中原来缓存的大量内容可能不适合新进程使用。也就是说，虽然 CPU 已经切到新进程了，但高速缓存还没有“热起来”。接下来一段时间里，Cache miss 和 TLB miss 可能增加，系统性能会下降。</p>
+<p>所以，调度不能太频繁。调度太少，交互响应差；调度太多，上下文切换成本又会把 CPU 时间吃掉。</p>
+<p>这也解释了为什么时间片大小很重要。</p>
+<hr/>
+<h2 id="五调度算法要追求什么">五、调度算法要追求什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#五调度算法要追求什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>调度算法不是越“快”越好，也不是越“公平”越好。不同系统的目标不一样。</p>
+<h3 id="1-批处理进程更关心吞吐量和周转时间">1. 批处理进程：更关心吞吐量和周转时间<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-批处理进程更关心吞吐量和周转时间" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>批处理进程通常在后台运行，不直接和用户交互。</p>
+<p>例如：</p>
+<ul>
+<li>营业额计算；</li>
+<li>利息计算；</li>
+<li>批量报表生成；</li>
+<li>大规模数据处理。</li>
+</ul>
+<p>这种系统更关心：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>单位时间完成多少任务？</span></span>
+<span data-line><span>每个任务从提交到完成平均要多久？</span></span>
+<span data-line><span>CPU 有没有被充分利用？</span></span></code></pre></figure>
+<p>所以，批处理系统常看重吞吐量、周转时间、CPU 利用率。</p>
+<h3 id="2-交互式进程更关心响应时间">2. 交互式进程：更关心响应时间<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-交互式进程更关心响应时间" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>交互式进程经常等待用户输入。</p>
+<p>例如：</p>
+<ul>
+<li>shell；</li>
+<li>文本编辑器；</li>
+<li>图形界面程序；</li>
+<li>浏览器前台页面。</li>
+</ul>
+<p>这类进程不一定一直占用 CPU，但用户一旦敲键盘、点鼠标，就希望它很快回应。课件里提到，交互式程序通常希望响应延迟足够低，大致在几十到一百多毫秒的范围内，用户才会觉得系统“跟手”。</p>
+<p>所以，交互式系统最关心响应时间和均衡性。</p>
+<h3 id="3-实时进程更关心最后期限和可预测性">3. 实时进程：更关心最后期限和可预测性<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-实时进程更关心最后期限和可预测性" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>实时进程不是单纯要求“越快越好”，而是要求：</p>
+<p><strong>必须在规定时间内完成。</strong></p>
+<p>例如：</p>
+<ul>
+<li>音视频处理；</li>
+<li>工业控制；</li>
+<li>机械控制；</li>
+<li>汽车装配线中的控制任务。</li>
+</ul>
+<p>实时系统最怕的不是平均速度慢一点，而是关键任务偶尔严重迟到。它追求的是确定性、可预测性和最后期限保障。</p>
+<h3 id="4-常见评价指标">4. 常见评价指标<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-常见评价指标" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>调度算法常见指标有：</p>
+<ul>
+<li>性能指标
+<ul>
+<li>吞吐量 Throughput：
+<ul>
+<li>单位时间完成的进程数量。</li>
+</ul>
+</li>
+<li>周转时间 Turnaround Time：
+<ul>
+<li>进程从提出请求到运行完成的总时间。</li>
+<li>T_turnaround = T_completion - T_arrival</li>
+</ul>
+</li>
+<li>响应时间 Response Time：
+<ul>
+<li>进程从提出请求到第一次得到回应的时间。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>非性能指标
+<ul>
+<li>CPU 利用率 CPU Utilization：
+<ul>
+<li>CPU 真正在做有效工作的时间比例。</li>
+</ul>
+</li>
+<li>公平性 Fairness：
+<ul>
+<li>避免某些进程长期得不到 CPU。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>特定场景考虑的指标
+<ul>
+<li>实时性：
+<ul>
+<li>任务是否能在最后期限前完成。</li>
+</ul>
+</li>
+<li>能耗：
+<ul>
+<li>移动设备、服务器集群中尤其重要。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>小结 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>调度算法的本质是折中。</p>
+<p>批处理系统想提高吞吐量和降低周转时间；交互式系统想降低响应时间；实时系统想保证最后期限；多核系统还要考虑缓存亲和性和负载均衡。</p>
+<p>所以不存在一个在所有场景中都完美的调度算法。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="六设计调度算法时要看哪些支点">六、设计调度算法时要看哪些支点？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#六设计调度算法时要看哪些支点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在进入具体算法前，先抓住几个设计支点。后面所有算法，其实都是在这些支点上做不同取舍。</p>
+<h3 id="1-pcb-里要记录调度信息">1. PCB 里要记录调度信息<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-pcb-里要记录调度信息" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>调度器要做决策，必须知道进程的状态。</p>
+<p>因此，PCB 中通常要记录和调度有关的信息，例如：</p>
+<ul>
+<li>当前进程状态；</li>
+<li>优先级或优先数；</li>
+<li>已经运行的时间；</li>
+<li>剩余估计运行时间；</li>
+<li>等待时间；</li>
+<li>所属队列；</li>
+<li>时间片或时间配额；</li>
+<li>亲和性信息；</li>
+<li>调度策略相关字段。</li>
+</ul>
+<p>调度算法越复杂，PCB 或调度实体中需要维护的信息也越多。</p>
+<h3 id="2-优先级静态还是动态">2. 优先级：静态还是动态？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-优先级静态还是动态" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>优先级可以是静态的，也可以是动态的。</p>
+<p>静态优先级在进程创建时确定，运行过程中不再改变。它简单、稳定，但可能不够灵活。</p>
+<p>动态优先级会在运行过程中变化。例如，一个进程等待太久，可以提高优先级，避免饥饿；一个 CPU 密集型进程长期占用 CPU，可以降低优先级，让交互式进程更快响应。</p>
+<p>所以，动态优先级体现的是一种策略：</p>
+<p><strong>根据进程的历史行为和当前系统状态，动态调整它获得 CPU 的机会。</strong></p>
+<h3 id="3-就绪队列如何组织">3. 就绪队列如何组织？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-就绪队列如何组织" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>最简单的方式是一个就绪队列，所有就绪进程排在一起。</p>
+<p>更复杂的方式是按优先级维护多个队列：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>高优先级队列</span></span>
+<span data-line><span>中优先级队列</span></span>
+<span data-line><span>低优先级队列</span></span></code></pre></figure>
+<p>调度时先看高优先级队列，空了再看低一级队列。同一级内部可以再使用 FCFS、RR 等策略。</p>
+<p>多级队列和多级反馈队列就是在这个基础上发展出来的。</p>
+<h3 id="4-抢占式还是非抢占式">4. 抢占式还是非抢占式？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-抢占式还是非抢占式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>非抢占式调度的规则是：</p>
+<p><strong>一个进程一旦被调度运行，除非它自己结束、阻塞或主动让出 CPU，否则就一直运行。</strong></p>
+<p>这种方式实现简单，上下文切换少，但响应时间可能很差。一个长任务上 CPU 后，短任务只能干等。</p>
+<p>抢占式调度的规则是：</p>
+<p><strong>如果出现更应该运行的进程，系统可以强行剥夺当前进程的 CPU。</strong></p>
+<p>例如时间片用完、高优先级进程被唤醒，都可能触发抢占。</p>
+<p>抢占式调度更适合交互式系统和实时系统，但它也会带来更多上下文切换和同步复杂性。</p>
+<h3 id="5-io-密集型还是-cpu-密集型">5. I/O 密集型还是 CPU 密集型？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-io-密集型还是-cpu-密集型" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>I/O 密集型进程经常发起 I/O，然后阻塞等待。</p>
+<p>CPU 密集型进程则需要长时间连续计算。</p>
+<p>这两类进程的行为差异很大：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>CPU 密集型：长 CPU burst，少 I/O 等待</span></span>
+<span data-line><span>I/O 密集型：短 CPU burst，多 I/O 等待</span></span></code></pre></figure>
+<p>现代操作系统通常会更偏爱 I/O 密集型进程。原因很简单：它们往往只需要一点 CPU 时间，就能发起 I/O，然后马上阻塞。早点让它们运行，可以让磁盘、网卡等设备尽快忙起来，从而提高整个系统的资源利用率。</p>
+<h3 id="6-时间片应该多长">6. 时间片应该多长？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-时间片应该多长" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>时间片，也叫 quantum，是调度器分配给进程的一段连续 CPU 使用时间。</p>
+<p>时间片太长，会接近先来先服务。短任务和交互式任务可能要等很久，响应时间变差。</p>
+<p>时间片太短，会频繁上下文切换。看起来大家都很公平，但大量 CPU 时间浪费在保存现场、恢复现场、Cache/TLB 重新预热上。</p>
+<p>所以，时间片不是越短越公平，也不是越长越高效。它要在响应时间和切换开销之间折中。</p>
+<hr/>
+<h2 id="七批处理系统中的经典调度算法">七、批处理系统中的经典调度算法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#七批处理系统中的经典调度算法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>批处理系统主要关心吞吐量、周转时间和 CPU 利用率。</p>
+<p>这一类算法往往先假设：任务提交后在后台运行，用户不需要立刻看到响应。</p>
+<h3 id="1-fcfs先来先服务">1. FCFS：先来先服务<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-fcfs先来先服务" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>FCFS 的规则非常朴素：</p>
+<p><strong>谁先进入就绪队列，谁先使用 CPU。</strong></p>
+<p>它是<span class="text-highlight">非抢占式调度</span>。一个进程被选中后，会一直运行，直到结束或阻塞。</p>
+<p>优点是公平、简单、开销小。</p>
+<p>缺点也很明显：如果一个长进程排在前面，后面一堆短进程都要等它。这种现象常叫“护航效应”。</p>
+<p>例如三个进程按顺序到达：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>P1: 24s</span></span>
+<span data-line><span>P2: 3s</span></span>
+<span data-line><span>P3: 3s</span></span></code></pre></figure>
+<p>如果按 FCFS 执行：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>0        24   27   30</span></span>
+<span data-line><span>|   P1   | P2 | P3 |</span></span></code></pre></figure>
+<p>P2 和 P3 都被长任务 P1 拖住了。吞吐量没有变，但平均周转时间会很差。</p>
+<p>所以，FCFS 的问题不是“不公平”，而是它太机械地公平，完全不考虑任务长短和交互体验。</p>
+<h3 id="2-sjf短作业优先">2. SJF：短作业优先<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-sjf短作业优先" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>SJF 的思路是：</p>
+<p><strong>先完成短作业，降低平均周转时间。</strong></p>
+<p>它每次选择预计完成时间最短的进程运行。非抢占式 SJF 一旦选中一个短作业，就让它运行到结束或阻塞。</p>
+<p>SJF 的优点非常突出：当所有进程同时就绪，并且我们知道它们的运行时间时，SJF 可以得到最短的平均周转时间。</p>
+<p>但它有两个大问题。</p>
+<p>第一，它不公平。源源不断的短任务可能让长任务一直等下去，造成饥饿。</p>
+<p>第二，它需要预测未来。操作系统通常不知道一个进程接下来到底要运行多久，只能根据历史行为估计。</p>
+<h3 id="3-srtn最短剩余时间优先">3. SRTN：最短剩余时间优先<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-srtn最短剩余时间优先" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>SRTN 是 SJF 的抢占式版本。</p>
+<p>它不只看“谁最短”，而是看：</p>
+<p><strong>谁剩余运行时间最短。</strong></p>
+<p>如果一个新进程到达，并且它的剩余运行时间比当前进程更短，当前进程就会被抢占。</p>
+<p>SRTN 能进一步改善短任务的响应与周转，但问题也更明显：它需要频繁比较剩余时间，也仍然可能让长任务饥饿。</p>
+<h3 id="4-hrrn最高响应比优先">4. HRRN：最高响应比优先<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-hrrn最高响应比优先" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>HRRN 是一个非常漂亮的折中算法。</p>
+<p>它给每个作业计算响应比：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0463em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">作业处理时间</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">作业周转时间</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.0463em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">处理时间</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">等待时间</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord text"><span class="mord cjk_fallback">处理时间</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.0463em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">处理时间</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">等待时间</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+<p>调度时选择响应比最高的进程。</p>
+<p>这个公式的直觉很妙：</p>
+<p>对于短作业，处理时间小，所以同样等待时间下，响应比更高。它继承了 SJF 对短作业友好的特点。</p>
+<p>对于长作业，刚开始响应比可能不高。但只要它等待足够久，等待时间不断增加，响应比也会逐渐升高。这样长作业最终也能获得 CPU，避免无限饥饿。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：HRRN 像排队时的“委屈值” </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>短任务本来就很快，插一下队能让整体效率变高。</p>
+<p>但长任务如果等得太久，它的“委屈值”会越来越高。等到一定程度，系统就必须照顾它。</p>
+<p>所以 HRRN 不是单纯偏爱短任务，而是在“短任务效率”和“长任务公平”之间折中。</p>
+</div>
+</blockquote>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Tip</p></div>
+                  
+                </div>
+<div class="callout-content">
+<ul>
+<li>HRRN 通常是非抢占式调度算法。</li>
+<li>它每次调度时计算响应比，选择响应比最高的进程运行。
+理论上可以做成抢占式版本，但需要频繁重新计算响应比和排序，开销较大，因此经典 HRRN 一般按非抢占式理解。</li>
+</ul>
+</div>
+</blockquote>
+<hr/>
+<h2 id="八交互式系统中的经典调度算法">八、交互式系统中的经典调度算法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#八交互式系统中的经典调度算法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>交互式系统最关心响应时间和公平性。</p>
+<p>用户不在乎后台任务平均周转时间少了几秒，但会非常在乎敲下一个键后，编辑器半天不响应。</p>
+<h3 id="1-rr时间片轮转">1. RR：时间片轮转<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-rr时间片轮转" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>RR 的规则是：</p>
+<p><strong>每个进程分配一个时间片，用完就回到队尾排队。</strong></p>
+<p>例如就绪队列里有 A、B、C：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>A 运行一个时间片 → B 运行一个时间片 → C 运行一个时间片 → A 再来</span></span></code></pre></figure>
+<p>RR 的核心依赖时钟中断。时间片用完时，时钟中断进入内核，内核发现当前进程该让出 CPU，于是把它放回队尾，调度下一个进程。</p>
+<p>RR 的优点是公平，适合交互式系统，短任务能较快得到第一次运行机会。</p>
+<p>但它也有问题。</p>
+<ul>
+<li>时间片太长，会退化成 FCFS。</li>
+<li>时间片太短，上下文切换次数暴增。
+<ul>
+<li>课件里的例子很直观：如果进程切换花 0.1ms，时间片是 10ms，那么切换开销大约占 1%；但如果时间片缩到 1ms，开销比例就会明显变大。</li>
+</ul>
+</li>
+</ul>
+<p>另外，RR 对 I/O 密集型进程也不一定天然公平。I/O 密集型进程常常用不完时间片就阻塞，等 I/O 完成回来后又要排队。如果不做补偿，它反而吃亏。</p>
+<h3 id="2-virtual-rr虚拟轮转法">2. Virtual RR：虚拟轮转法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-virtual-rr虚拟轮转法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>虚拟轮转法就是为了解决 RR 对 I/O 密集型进程不够友好的问题。</p>
+<p>普通 RR 中，一个进程因为等待 I/O 主动让出 CPU，回来后通常要重新排队。</p>
+<p>虚拟轮转法会给从 I/O 唤醒的进程更优先的机会。它可以设置辅助队列，让这些进程醒来后较快获得 CPU，并且只使用上次没用完的时间片。</p>
+<p>这样做的目的不是偏心，而是为了提高整体资源利用率：</p>
+<p><strong>I/O 密集型进程只需要一点 CPU 时间，就能发起下一次 I/O，让磁盘或网卡继续忙起来。</strong></p>
+<p>如果它一直排队，I/O 设备可能长期空闲，系统整体效率反而下降。</p>
+<h3 id="3-优先级调度">3. 优先级调度<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-优先级调度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>优先级调度的规则是：</p>
+<p><strong>选择优先级最高的进程运行。</strong></p>
+<p>一般来说：</p>
+<ul>
+<li>系统进程优先级高于用户进程；</li>
+<li>前台进程优先级高于后台进程；</li>
+<li>I/O 型进程常常会得到一定偏好；</li>
+<li>优先级可以是静态的，也可以动态调整。</li>
+</ul>
+<p>优先级调度的优点是表达能力强。操作系统可以明确说：“这个任务更重要，应该先运行。”</p>
+<p>但它也有一个危险：低优先级进程可能长期得不到 CPU，出现饥饿。</p>
+<h3 id="4-优先级反转">4. 优先级反转<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-优先级反转" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>优先级调度还有一个经典坑：优先级反转。</p>
+<p>假设有三个进程：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>H：高优先级</span></span>
+<span data-line><span>M：中优先级</span></span>
+<span data-line><span>L：低优先级</span></span></code></pre></figure>
+<p>现在 L 先运行，并拿到一个锁。随后 H 运行，也需要这把锁，但锁在 L 手里，所以 H 阻塞了。</p>
+<p>这时 M 就绪。因为 M 的优先级高于 L，M 会抢占 L 运行。</p>
+<p>问题来了：H 在等 L 释放锁，但 L 又被 M 压着不能运行。于是最高优先级的 H 反而被中优先级的 M 间接拖住了。</p>
+<p>这就是优先级反转：</p>
+<p><strong>高优先级任务被低优先级任务持有的资源阻塞，而低优先级任务又被中优先级任务抢占，导致高优先级任务迟迟无法继续执行。</strong></p>
+<p>解决办法主要有：</p>
+<ul>
+<li>优先级继承：
+<ul>
+<li>低优先级进程持有高优先级进程需要的锁时，临时继承高优先级，让它赶紧运行并释放锁。</li>
+</ul>
+</li>
+<li>优先级天花板：
+<ul>
+<li>为资源设置优先级上限，进程获取资源时直接提升到某个上限，减少反转风险。</li>
+</ul>
+</li>
+<li>禁止中断或关抢占：
+<ul>
+<li>在极短临界区中使用，但不能滥用，否则会影响系统响应性。</li>
+</ul>
+</li>
+</ul>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：优先级继承像“临时通行证” </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>L 本来级别低，但它手里拿着 H 必须要的钥匙。</p>
+<p>系统临时给 L 一张高级通行证，让它赶紧跑完，把钥匙还给 H。等锁释放后，L 再恢复原来的低优先级。</p>
+</div>
+</blockquote>
+<h3 id="5-多级队列调度">5. 多级队列调度<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-多级队列调度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>多级队列调度把进程分到不同队列中，每个队列可以有不同优先级和调度策略。</p>
+<p>例如：</p>
+<ul>
+<li>前台交互队列：优先级高，使用 RR</li>
+<li>后台批处理队列：优先级低，使用 FCFS</li>
+<li>系统任务队列：优先级最高</li>
+</ul>
+<p>它要回答几个问题：</p>
+<ul>
+<li>根据什么分队列？</li>
+<li>不同队列优先级怎么定？</li>
+<li>队列之间如何调度？</li>
+<li>每个队列内部用什么算法？</li>
+<li>进程能不能在队列之间移动？</li>
+</ul>
+<p>如果进程不能移动，这叫多级队列。它简单，但不够灵活。</p>
+<p>如果进程可以根据行为在队列之间移动，就进入了多级反馈队列。</p>
+<h3 id="6-多级反馈队列-mlfq">6. 多级反馈队列 MLFQ<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-多级反馈队列-mlfq" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>多级反馈队列是一个很重要的综合调度算法。</p>
+<p>它的核心思想是：</p>
+<p><strong>系统不提前预测进程类型，而是通过观察进程行为来分类。</strong></p>
+<p>基本规则可以这样理解：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1. 设置多个就绪队列，第一层优先级最高。</span></span>
+<span data-line><span>2. 高优先级队列时间片短，低优先级队列时间片长。</span></span>
+<span data-line><span>3. 新进程先进入最高优先级队列。</span></span>
+<span data-line><span>4. 如果一个进程用完整个时间片还没结束，说明它更像 CPU 密集型任务，降到下一队列。</span></span>
+<span data-line><span>5. 如果一个进程很快阻塞去等 I/O，说明它更像交互式或 I/O 密集型任务，可以保持较高优先级。</span></span>
+<span data-line><span>6. 高优先级队列为空时，才调度低一级队列。</span></span>
+<span data-line><span>7. 如果允许抢占，高优先级进程就绪时，可以抢占低优先级进程。</span></span></code></pre></figure>
+<p>可以画成这样：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    New[\&quot;新进程\&quot;] --> Q1[\&quot;队列 1：最高优先级&lt;br/>时间片最短\&quot;]\n    Q1 -->|时间片用完| Q2[\&quot;队列 2：中等优先级&lt;br/>时间片较长\&quot;]\n    Q2 -->|时间片用完| Q3[\&quot;队列 3：低优先级&lt;br/>时间片最长\&quot;]\n\n    Q1 -->|阻塞等待 I/O| IO[\&quot;等待队列\&quot;]\n    Q2 -->|阻塞等待 I/O| IO\n    Q3 -->|阻塞等待 I/O| IO\n\n    IO -->|事件发生 / 被唤醒| Return[\&quot;回到相应就绪队列\&quot;]\n    Return --> Q1&quot;">flowchart TD
+    New[&quot;新进程&quot;] --> Q1[&quot;队列 1：最高优先级&lt;br/>时间片最短&quot;]
+    Q1 -->|时间片用完| Q2[&quot;队列 2：中等优先级&lt;br/>时间片较长&quot;]
+    Q2 -->|时间片用完| Q3[&quot;队列 3：低优先级&lt;br/>时间片最长&quot;]
+
+    Q1 -->|阻塞等待 I/O| IO[&quot;等待队列&quot;]
+    Q2 -->|阻塞等待 I/O| IO
+    Q3 -->|阻塞等待 I/O| IO
+
+    IO -->|事件发生 / 被唤醒| Return[&quot;回到相应就绪队列&quot;]
+    Return --> Q1
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：MLFQ 像系统在“试探你是什么人” </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>新来的进程，系统先把你当成交互式任务照顾，给你高优先级。</p>
+<p>如果你每次拿到 CPU 都用完整个时间片，还不主动阻塞，那系统就判断你像 CPU 密集型任务，于是逐步把你放到低优先级长时间片队列。</p>
+<p>如果你经常很快去等 I/O，说明你只需要一点 CPU 来维持交互或发起 I/O，系统就愿意让你保持较高响应速度。</p>
+</div>
+</blockquote>
+<p>MLFQ 的强大之处在于，它把 FCFS、RR、优先级、动态调整、I/O 偏好都揉在了一起，是典型的折中算法。</p>
+<hr/>
+<h2 id="九几种补充调度思想">九、几种补充调度思想<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#九几种补充调度思想" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>课件还提到几种交互式系统中的其他调度思想，这里先做概念性了解。</p>
+<h3 id="1-公平共享调度">1. 公平共享调度<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-公平共享调度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>公平共享调度关心的不是单个进程公平，而是用户、组或项目之间的公平。</p>
+<p>比如用户 A 开了 100 个进程，用户 B 只开了 1 个进程。如果按进程平分 CPU，A 会占走绝大多数资源。公平共享调度会把资源先按用户或组分配，再在组内分给具体进程。</p>
+<p>它解决的是：</p>
+<p><strong>不能让“开更多进程的人”天然获得更多 CPU。</strong></p>
+<h3 id="2-保证调度">2. 保证调度<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-保证调度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>保证调度试图给进程一个明确承诺：</p>
+<p><strong>如果系统里有 n 个进程，每个进程理论上应该获得大约 1/n 的 CPU 时间。</strong></p>
+<p>调度器会记录每个进程实际获得了多少 CPU。如果某个进程低于应得份额，就优先调度它。</p>
+<p>它的核心思想是补偿偏差。</p>
+<h3 id="3-彩票调度">3. 彩票调度<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-彩票调度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>彩票调度把 CPU 时间看作抽奖。</p>
+<p>每个进程持有若干张彩票。每次调度时随机抽一张，中奖进程获得 CPU。彩票越多，被选中的概率越大。</p>
+<p>它的优点是实现简单，能表达比例份额；缺点是短期内有随机波动，不像严格优先级那样确定。</p>
+<hr/>
+<h2 id="十多核与多处理器调度">十、多核与多处理器调度<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十多核与多处理器调度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>前面讨论单核调度时，我们主要问的是：</p>
+<p><strong>就绪队列里有很多进程，下一刻谁来跑？</strong></p>
+<p>但进入多核或多处理器系统以后，问题会复杂一层。</p>
+<p>因为现在系统里不止一个 CPU 核心，调度器不仅要决定：</p>
+<p><strong>谁来跑？</strong></p>
+<p>还要决定：</p>
+<p><strong>在哪个 CPU 核上跑？</strong></p>
+<p>这看起来只是多了一个选择，但实际上会牵出一整套新问题：进程迁移会不会破坏缓存？多个核心同时访问同一份数据会不会出错？各个核心会不会忙闲不均？任务之间的数据共享会不会让跨核调度变得很贵？</p>
+<p>所以，多核调度不能只理解成“多个单核调度器并排工作”。它真正的难点在于：</p>
+<p><strong>CPU 核心变多以后，调度器不仅要分配计算资源，还要考虑缓存、内存、数据共享和负载均衡之间的关系。</strong></p>
+<hr/>
+<h3 id="1-对称多处理器中的进程分配">1. 对称多处理器中的进程分配<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-对称多处理器中的进程分配" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在对称多处理器系统，也就是 SMP 中，多个处理器在地位上是对等的。理论上，一个进程可以被安排到不同处理器上运行。</p>
+<p>这时，进程分配方式大致可以分成两类。</p>
+<p>第一类是<strong>静态进程分配</strong>。</p>
+<p>静态分配的意思是：一个进程从开始到结束都被分配到固定的处理器上执行。每个处理器有自己的就绪队列，调度器只需要在本处理器的队列里选择任务。</p>
+<p>它的好处是调度开销小，也更容易保持缓存亲和性。因为进程一直在同一个处理器上运行，这个核心的 Cache 里可能已经有它常用的数据。</p>
+<p>但缺点也很明显：各个处理器可能忙闲不均。比如 CPU 0 的队列里有一堆任务，CPU 1 却没什么事情做。如果进程不能迁移，系统整体性能就会被拖累。</p>
+<p>第二类是<strong>动态进程分配</strong>。</p>
+<p>动态分配的意思是：进程在执行过程中可以被分配到任意空闲处理器上执行。所有处理器可以共享一个公共就绪队列，哪个处理器空了，就从公共队列里取任务。</p>
+<p>它的好处是负载更均衡。只要还有可运行任务，就尽量不让处理器闲着。</p>
+<p>但它的缺点是调度开销更大。多个处理器访问共享队列需要同步，可能发生锁竞争；而且进程被迁移到另一个核心后，原来核心上的缓存内容就用不上了，可能带来额外 Cache miss。PPT 在“SMP 进程分配”部分正是用静态分配和动态分配对比了这组取舍：静态分配调度开销小但可能忙闲不均，动态分配负载均衡但调度开销大。</p>
+<hr/>
+<h3 id="2-多核处理器为什么会带来新问题">2. 多核处理器为什么会带来新问题？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-多核处理器为什么会带来新问题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>单核系统里，CPU 只有一个执行核心。虽然也有 Cache 和内存层次，但不存在多个核心同时缓存和修改同一份数据的问题。</p>
+<p>多核系统就不一样了。</p>
+<p>以 PPT 里的 ARMv8 架构示意为例，不同核心可能各自有 L1 Cache，多个核心组成 Cluster，共享更高层的 L2 / L3 Cache，再通过总线访问内存。也就是说，数据可能同时存在于多个层级、多个核心的缓存里。</p>
+<p>这就带来四类问题：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1. 缓存一致性问题</span></span>
+<span data-line><span>2. 缓存亲和性问题</span></span>
+<span data-line><span>3. 核间数据共享</span></span>
+<span data-line><span>4. 负载均衡</span></span></code></pre></figure>
+<p>这四个问题不是彼此独立的。它们之间经常互相拉扯。</p>
+<p>比如，为了缓存亲和性，我们希望进程尽量留在原来的核心；但为了负载均衡，我们又可能需要把任务迁移到空闲核心。为了共享数据，不同核心可能需要访问同一份内存；但这又会引发缓存一致性和同步开销。</p>
+<p>所以，多核调度的本质不是简单地“多开几个 CPU”，而是在这些目标之间做折中。</p>
+<hr/>
+<h3 id="3-缓存一致性问题">3. 缓存一致性问题<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-缓存一致性问题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>先看缓存一致性。</p>
+<p>假设有两个处理器 P1 和 P2，它们都读取共享变量 <code>X</code>。初始时：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>内存中 X = 0</span></span>
+<span data-line><span>P1 的 Cache 中 X = 0</span></span>
+<span data-line><span>P2 的 Cache 中 X = 0</span></span></code></pre></figure>
+<p>然后两个处理器几乎同时执行：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">X </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> X </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">+</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> 1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">;</span></span></code></pre></figure>
+<p>P1 会把自己缓存中的 <code>X</code> 改成 1。</p>
+<p>P2 也会把自己缓存中的 <code>X</code> 改成 1。</p>
+<p>但从逻辑上看，两个处理器各执行了一次加 1，最终结果应该是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>X = 2</span></span></code></pre></figure>
+<p>可是如果两个核心的缓存没有正确同步，就可能出现最终结果仍然是 1 的情况。</p>
+<p>这就是缓存一致性问题：</p>
+<p><strong>同一份共享数据在多个核心的缓存中存在副本时，系统必须保证这些副本不会互相矛盾。</strong></p>
+<p>PPT 中给出的解决方向是 MESI 协议。</p>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>MESI 协议是一种经典的<strong>缓存一致性协议</strong>，它的核心思想是给每个缓存行打上状态标记，用这些标记协调多个 CPU 核心对同一份数据的读写关系，避免各个核心长期拿着彼此矛盾的缓存副本。</p>
+<ul>
+<li><strong>M（Modified，已修改）</strong> 表示该缓存行只在当前核心中有效，并且已经被修改，内存中的值不是最新的；</li>
+<li><strong>E（Exclusive，独占）</strong> 表示该缓存行只被当前核心缓存，但还没有修改，缓存值和内存值一致，之后若要写入可以直接转为 M；</li>
+<li><strong>S（Shared，共享）</strong> 表示该缓存行可能被多个核心同时缓存，大家都可以读，但如果某个核心要写，就必须先让其他核心的副本失效；</li>
+<li><strong>I（Invalid，无效）</strong> 表示该缓存行已经失效，不能再被当前核心使用，若之后还要访问，必须重新从内存或其他核心处获取最新数据。</li>
+</ul>
+<p>简单说，MESI 的原则就是：<strong>共享时可以一起读，写入时必须独占，旧副本必须失效。</strong></p>
+</div>
+</blockquote>
+<p>这里要注意：缓存一致性协议本身主要是硬件层面的机制，不是调度器直接实现的算法。</p>
+<p>但调度器必须理解它的代价。因为如果一个进程或线程频繁在多个核心之间迁移，或者多个核心频繁读写同一份共享数据，就会导致大量缓存行失效、同步、写回、总线通信，这些都会影响性能。</p>
+<p>所以，多核调度不能只问“哪个核心空着”，还要问：</p>
+<p><strong>把这个任务迁过去，会不会带来大量缓存失效和一致性维护开销？</strong></p>
+<hr/>
+<h3 id="4-核间数据共享">4. 核间数据共享<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-核间数据共享" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>核间数据共享和缓存一致性关系很近，但关注点略有不同。</p>
+<p>缓存一致性问的是：</p>
+<p><strong>多个核心缓存同一份数据时，如何保证看到的值一致？</strong></p>
+<p>核间数据共享更关心的是：</p>
+<p><strong>任务之间是否频繁访问同一批数据？如果是，应该怎样调度它们，才能减少跨核通信和缓存失效？</strong></p>
+<p>比如，有两个线程经常访问同一个队列、同一个哈希表、同一块图像数据。如果把它们放在相距很远的核心上，它们每次修改共享数据，都可能引起缓存行在核心之间来回失效和迁移。</p>
+<p>这种现象有时候会让“看起来 CPU 都很忙”的系统反而变慢。因为 CPU 时间没有完全花在真正计算上，而是花在等待缓存一致性协议、同步锁、内存访问上。</p>
+<p>所以，核间数据共享提醒我们：</p>
+<p><strong>调度对象不是孤立的。一个线程应该跑在哪个核心上，和它访问的数据、它协作的线程、它共享的缓存层级都有关系。</strong></p>
+<p>这也是为什么现代调度器和运行时系统常常会尽量让访问相同数据的一组任务靠近运行，比如放在同一个核心、同一个 NUMA 节点或同一个处理器簇中。</p>
+<hr/>
+<h3 id="5-缓存亲和性问题">5. 缓存亲和性问题<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-缓存亲和性问题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>缓存亲和性指的是：</p>
+<p><strong>让特定进程或线程尽可能在同一个处理器核心上运行。</strong></p>
+<p>原因很直观。</p>
+<p>如果一个进程刚刚在 CPU 0 上运行过，那么 CPU 0 的 L1 / L2 Cache 中可能还保留着它的代码、栈数据、堆数据和页表相关信息。下一次继续让它在 CPU 0 上运行，它就能最大程度利用已经加载好的缓存。</p>
+<p>但如果把它迁移到 CPU 1，CPU 1 的 Cache 里未必有这些数据。于是它需要重新从更低层 Cache 或内存里取数据，造成 Cache miss，性能下降。</p>
+<p>所以，缓存亲和性的目标是：</p>
+<p><strong>尽量让进程继续在之前运行过的核心上运行，从而提高数据访问速度和系统整体性能。</strong></p>
+<p>不过，这个目标不能绝对化。</p>
+<p>如果某个核心已经排了很多任务，而另一个核心几乎空闲，还坚持“每个进程都不迁移”，那系统整体执行时间可能反而变长。</p>
+<p>因此，PPT 特别强调了一个问题：</p>
+<p><strong>缓存亲和性调度 VS 负载均衡。</strong></p>
+<p>这就是多核调度里最典型的矛盾之一。</p>
+<hr/>
+<h3 id="6-缓存亲和性-vs-负载均衡">6. 缓存亲和性 VS 负载均衡<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-缓存亲和性-vs-负载均衡" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>负载均衡的目标是：</p>
+<p><strong>让各个处理器核心尽量都有任务执行，避免有的核心过载、有的核心空闲。</strong></p>
+<p>但是，负载均衡往往需要迁移任务；而任务迁移又会破坏缓存亲和性。</p>
+<p>PPT 用了两个例子说明这个矛盾。</p>
+<p>第一个例子是多核并行计算或图像渲染任务。</p>
+<p>假设一张图像被切成几块，每个核心负责处理一块。某个核心处理的数据会被频繁访问，因此它的 Cache 会逐渐存下这部分数据，访问速度变快。</p>
+<p>但问题是，每块图像的计算量未必一样。有的区域可能很复杂，有的区域很简单。于是可能出现某个核心还在辛苦计算，另一个核心已经空闲。</p>
+<p>为了减少整体完成时间，系统可能会把负载重的核心上的一部分任务迁移到空闲核心上。</p>
+<p>这样做提高了负载均衡，但也带来了代价：被迁移的任务到了新核心上，原来的缓存数据用不上了，会产生额外缓存不命中。</p>
+<p>第二个例子是 CDN 缓存。</p>
+<p>CDN 会根据用户或地区，把热门视频、商品详情等内容缓存到对应地区的服务器上，这样用户访问更快。这个逻辑和缓存亲和性很像：让请求尽量命中“离它近、已经有数据”的缓存。</p>
+<p>但如果某个地区服务器负载太高，系统可能会把该地区用户请求路由到其他地区服务器。这可以缓解负载压力，但也可能造成内容缓存不命中，访问变慢。PPT 用这两个例子说明：亲和性和均衡性不是谁绝对正确，而是要根据整体代价折中。</p>
+<p>所以可以这样总结：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>缓存亲和性：</span></span>
+<span data-line><span>少迁移任务，尽量复用已有缓存。</span></span>
+<span data-line><span>风险：某些核心过载，某些核心空闲。</span></span>
+<span data-line> </span>
+<span data-line><span>负载均衡：</span></span>
+<span data-line><span>把任务迁移到空闲核心，让各核心都忙起来。</span></span>
+<span data-line><span>风险：破坏缓存，带来 Cache miss 和迁移开销。</span></span></code></pre></figure>
+<p>多核调度器真正难的地方就在这里：</p>
+<p><strong>它要判断什么时候值得为了负载均衡牺牲缓存亲和性，什么时候应该为了缓存亲和性忍受一点负载不均。</strong></p>
+<hr/>
+<h3 id="7-单队列与多队列">7. 单队列与多队列<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-单队列与多队列" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>从队列组织上看，多处理器调度可以粗略分成单队列和多队列。</p>
+<p>单队列调度是所有处理器共享一个公共就绪队列。</p>
+<p>它很接近前面说的动态进程分配。哪个 CPU 空了，就从公共队列中取一个任务运行。</p>
+<p>它的好处是负载天然均衡。因为所有处理器都从同一个池子里拿任务，不容易出现某个 CPU 队列空了、另一个 CPU 队列很长的情况。</p>
+<p>但它的缺点也明显：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1. 多个 CPU 同时访问公共队列，需要锁或同步机制；</span></span>
+<span data-line><span>2. 公共队列可能成为争用热点；</span></span>
+<span data-line><span>3. 任务容易在不同 CPU 之间迁移，破坏缓存亲和性。</span></span></code></pre></figure>
+<p>多队列调度则是每个 CPU 或每组 CPU 维护自己的本地就绪队列。</p>
+<p>它更接近静态进程分配，但一般会允许一定程度的任务迁移。</p>
+<p>它的好处是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1. 本地队列访问快，锁竞争少；</span></span>
+<span data-line><span>2. 任务更容易留在原来的核心上运行；</span></span>
+<span data-line><span>3. 缓存亲和性更好。</span></span></code></pre></figure>
+<p>它的问题是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1. 各个 CPU 的队列可能长短不同；</span></span>
+<span data-line><span>2. 需要额外的负载均衡机制；</span></span>
+<span data-line><span>3. 任务迁移时仍然会有缓存和同步开销。</span></span></code></pre></figure>
+<p>所以，单队列和多队列也对应着前面那组核心矛盾：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>单队列：更偏负载均衡，但牺牲扩展性和缓存亲和性</span></span>
+<span data-line><span>多队列：更偏缓存亲和性和可扩展性，但需要额外负载均衡</span></span></code></pre></figure>
+<hr/>
+<h3 id="8-work-stealing作业偷取">8. Work Stealing：作业偷取<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-work-stealing作业偷取" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Work Stealing 是多队列调度里非常常见的一种负载均衡办法。</p>
+<p>它的核心思想是：</p>
+<p><strong>平时每个处理器优先执行自己的本地队列；当某个处理器本地队列空了，再去忙碌处理器那里“偷”任务。</strong></p>
+<p>这个过程可以拆成三步：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1. 初始时，任务按照一定策略分配到多个处理器的待执行队列中。</span></span>
+<span data-line><span>2. 每个处理器优先执行自己本地队列里的任务。</span></span>
+<span data-line><span>3. 当某个处理器的本地队列为空时，它尝试从其他处理器的队列中偷取任务。</span></span></code></pre></figure>
+<p>这是一种很聪明的折中。</p>
+<p>平时不随便迁移任务，所以能保持缓存亲和性。</p>
+<p>只有当某个处理器真的没活干了，才牺牲一部分亲和性，把任务从别处偷过来，避免 CPU 空闲。</p>
+<p>可以画成这样：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    subgraph CPU0[\&quot;CPU 0\&quot;]\n        Q0[\&quot;本地队列&lt;br/>任务很多\&quot;]\n        T0[\&quot;正在执行任务\&quot;]\n    end\n\n    subgraph CPU1[\&quot;CPU 1\&quot;]\n        Q1[\&quot;本地队列为空\&quot;]\n        T1[\&quot;处理器空闲\&quot;]\n    end\n\n    Q1 --> W[\&quot;触发 Work Stealing\&quot;]\n    W --> Q0\n    Q0 -->|偷取部分任务| Q1\n    Q1 --> R[\&quot;CPU 1 执行偷来的任务\&quot;]&quot;">flowchart TD
+    subgraph CPU0[&quot;CPU 0&quot;]
+        Q0[&quot;本地队列&lt;br/>任务很多&quot;]
+        T0[&quot;正在执行任务&quot;]
+    end
+
+    subgraph CPU1[&quot;CPU 1&quot;]
+        Q1[&quot;本地队列为空&quot;]
+        T1[&quot;处理器空闲&quot;]
+    end
+
+    Q1 --> W[&quot;触发 Work Stealing&quot;]
+    W --> Q0
+    Q0 -->|偷取部分任务| Q1
+    Q1 --> R[&quot;CPU 1 执行偷来的任务&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Work Stealing 就像自习室里每个人先做自己桌上的题。</p>
+<p>如果某个人已经没题做了，他不会一开始就打乱所有人的安排，而是去题最多的人那里拿几道题过来。</p>
+<p>这样既不会频繁搬来搬去，也能避免有人闲着、有人忙死。</p>
+</div>
+</blockquote>
+<p>它的优点是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1. 平时保持本地性，缓存亲和性较好；</span></span>
+<span data-line><span>2. 空闲时才迁移任务，能改善负载均衡；</span></span>
+<span data-line><span>3. 比全局共享队列更容易扩展到多核。</span></span></code></pre></figure>
+<p>它的缺点是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1. 偷取本身有开销；</span></span>
+<span data-line><span>2. 被偷任务可能失去缓存亲和性；</span></span>
+<span data-line><span>3. 如果任务之间共享大量数据，迁移后可能增加核间通信和缓存一致性开销；</span></span>
+<span data-line><span>4. 偷多少、从谁那里偷、偷队头还是队尾，都需要设计。</span></span></code></pre></figure>
+<p>PPT 中也把 Work Stealing 定义为：让空闲处理器从忙碌处理器那里偷取任务，以达成各处理器负载的相对均衡。</p>
+<hr/>
+<h3 id="9-案例go-语言-gmp-调度器">9. 案例：Go 语言 GMP 调度器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-案例go-语言-gmp-调度器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>PPT 用 Go 的 GMP 调度器作为 Work Stealing 和缓存亲和性的例子。</p>
+<p>Go 运行时调度的是 Goroutine。虽然 Goroutine 不是操作系统进程，但 Go runtime 管理 Goroutine 的方式，和操作系统管理进程/线程有相似之处。</p>
+<p>GMP 中大致有三个角色：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>G：Goroutine，要运行的用户级任务</span></span>
+<span data-line><span>M：Machine，对应操作系统线程</span></span>
+<span data-line><span>P：Processor，Go 运行时中的调度资源，维护本地运行队列</span></span></code></pre></figure>
+<p>PPT 强调了两个点。</p>
+<p>第一，GMP 尽量把 Goroutine 调度到之前访问过相同数据的同一处理器上执行。</p>
+<p>这对应的是数据局部性和缓存亲和性。访问相同数据的任务尽量不要乱迁移，否则缓存命中率会下降。</p>
+<p>第二，GMP 尽量让 Goroutine 继续运行在之前执行它的同一处理器核心 P 所绑定的内核线程 M 上。</p>
+<p>这也是为了保持缓存亲和性。</p>
+<p>但如果某个 P 的本地 Goroutine 队列执行完了，它也不会一直空闲，而是会尝试从其他 P 的本地队列中窃取 Goroutine 来执行。这就是 Work Stealing 的思想。</p>
+<p>所以，Go GMP 体现的是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>优先本地队列 → 保持缓存亲和性</span></span>
+<span data-line><span>本地队列为空 → 从其他队列偷任务 → 改善负载均衡</span></span></code></pre></figure>
+<p>它不是单纯追求亲和性，也不是单纯追求均衡，而是在两者之间动态折中。</p>
+<hr/>
+<h3 id="10-案例yarn">10. 案例：YARN<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-案例yarn" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>PPT 还用了 Hadoop YARN 作为更高层次的资源调度案例。</p>
+<p>严格来说，YARN 不是操作系统内核里的 CPU 调度器。它是 Hadoop 生态中的资源管理和调度框架，用来在集群节点之间分配资源和任务。</p>
+<p>但它和多核调度有一个相似的思想：</p>
+<p><strong>调度时不仅要看哪里有空闲计算资源，还要看数据在哪里。</strong></p>
+<p>YARN 中，NodeManager 管理节点上的资源和容器，并与 HDFS 等分布式文件系统协作。PPT 中说它会保证数据在多个节点之间的缓存一致性，并尽量把需要处理相同数据的任务分配到存储有该数据的节点上，以提高缓存利用率。</p>
+<p>这其实就是分布式系统里的“数据本地性”。</p>
+<p>如果任务要处理某个数据块，而这个数据块就在节点 A 上，那么最好把任务调度到节点 A 上执行。这样可以减少网络传输，提升缓存和数据访问效率。</p>
+<p>但如果节点 A 已经非常忙，ResourceManager 也可能根据各个 NodeManager 上报的资源使用情况，把任务协调分配到其他节点上。</p>
+<p>这就非常像多核调度里的那组矛盾：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>数据本地性 / 缓存亲和性：</span></span>
+<span data-line><span>任务靠近数据运行，减少访问开销。</span></span>
+<span data-line> </span>
+<span data-line><span>负载均衡：</span></span>
+<span data-line><span>任务分散到不同节点，避免部分节点过载。</span></span></code></pre></figure>
+<p>YARN 还支持多队列调度，不同队列可以设置不同资源分配策略。这个思想和操作系统里的多级队列也很像：通过队列划分，把不同类型、不同优先级、不同资源需求的任务分开管理。</p>
+<p>所以，YARN 这个案例可以帮助我们把多核调度思想推广到集群层面：</p>
+<p><strong>不管是 CPU 核心之间调度线程，还是集群节点之间调度任务，本质上都在权衡“数据在哪里、资源在哪里、负载是否均衡”。</strong></p>
+<h2 id="十一实时调度">十一、实时调度<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十一实时调度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>实时系统的关键词不是“平均速度”，而是：</p>
+<p><strong>最后期限。</strong></p>
+<p>如果一个任务必须在 10ms 内完成，那么平均 1ms 完成没有意义；只要有一次拖到 20ms，就可能是严重错误。</p>
+<h3 id="1-硬实时与软实时">1. 硬实时与软实时<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-硬实时与软实时" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>硬实时系统要求某些动作必须在规定时刻或时间范围内完成。</p>
+<p>例如工业控制、汽车装配线中的关键控制环节。如果错过截止时间，可能带来严重后果。</p>
+<p>软实时系统允许偶尔错过最后期限。</p>
+<p>例如音视频播放中，偶尔一帧延迟可能影响体验，但不一定造成灾难。</p>
+<h3 id="2-周期性任务偶发性任务非周期性任务">2. 周期性任务、偶发性任务、非周期性任务<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-周期性任务偶发性任务非周期性任务" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>实时任务可以分成几类：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>周期性任务：</span></span>
+<span data-line><span>每隔固定时间到来一次，例如每 10ms 采样一次传感器。</span></span>
+<span data-line> </span>
+<span data-line><span>偶发性任务：</span></span>
+<span data-line><span>不定期发生，但相邻两次之间通常有最小间隔。</span></span>
+<span data-line> </span>
+<span data-line><span>非周期性任务：</span></span>
+<span data-line><span>没有稳定规律，随外部事件发生。</span></span></code></pre></figure>
+<p>实时调度最经典的分析对象是周期性任务。</p>
+<h3 id="3-可调度性条件">3. 可调度性条件<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-可调度性条件" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>假设系统有 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> 个周期性事件。</p>
+<p>事件 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 的周期是 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，每次处理需要 CPU 时间 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。</p>
+<p>那么它对 CPU 的利用率需求是：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.1963em;vertical-align:-0.836em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+<p>所有任务合起来的 CPU 利用率不能超过 1：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.9291em;vertical-align:-1.2777em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6514em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3603em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.836em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span></span>
+<p>这个条件的直觉是：</p>
+<p><strong>所有实时任务要求的 CPU 时间总和，不能超过 CPU 能提供的总时间。</strong></p>
+<p>如果这个基本条件都不满足，再聪明的调度算法也救不了。</p>
+<h3 id="4-rm速率单调调度">4. RM：速率单调调度<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-rm速率单调调度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>RM 是静态优先级实时调度算法。</p>
+<p>它通常假设任务是周期性的，并且执行时间已知。</p>
+<p>它的基本思想是：</p>
+<p><strong>周期越短的任务，越需要频繁响应，因此优先级越高。</strong></p>
+<p>课件中也强调，它是根据任务周期性和执行时间分配优先级，执行时间较短或周期更紧的任务具有更高优先级。</p>
+<p>RM 的优点是实现简单，优先级固定。</p>
+<p>缺点是灵活性不如动态优先级算法。</p>
+<h3 id="5-edf最早截止时间优先">5. EDF：最早截止时间优先<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-edf最早截止时间优先" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>EDF 是动态优先级实时调度算法。</p>
+<p>它的规则是：</p>
+<p><strong>谁的 deadline 最近，谁先运行。</strong></p>
+<p>如果一个任务马上要到最后期限，它就获得最高优先级。</p>
+<p>EDF 的优点是调度能力强，能很好地满足最后期限要求。</p>
+<p>缺点是实现复杂：系统需要持续跟踪每个任务的 deadline 和剩余执行时间，任务状态变化时还要重新排序和判断，带来时间和空间开销。</p>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>小结 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>普通交互系统追求“快一点响应”，实时系统追求“必须按时响应”。</p>
+<p>这两个目标不一样。实时系统的核心不是平均性能，而是确定性和可预测性。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="十二windows-线程调度">十二、Windows 线程调度<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十二windows-线程调度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>前面的算法是通用思想，真实系统会把它们组合起来。</p>
+<p>Windows 的调度单位是线程，而不是进程。</p>
+<p>这点非常重要：进程是资源容器，线程才是真正被调度到 CPU 上运行的执行流。</p>
+<h3 id="1-windows-的基本调度思想">1. Windows 的基本调度思想<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-windows-的基本调度思想" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 使用的是：</p>
+<p><strong>基于动态优先级的、抢占式线程调度。</strong></p>
+<p>基本规则是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>1. 就绪线程按照优先级进入对应就绪队列。</span></span>
+<span data-line><span>2. 系统总是选择优先级最高的就绪线程运行。</span></span>
+<span data-line><span>3. 同一优先级内部按照时间片轮转。</span></span>
+<span data-line><span>4. 多处理器系统中可以有多个线程并行运行。</span></span></code></pre></figure>
+<p>所以它本质上结合了：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>优先级调度 + 抢占式调度 + 同级 RR + 动态优先级调整</span></span></code></pre></figure>
+<h3 id="2-什么事件会触发-windows-线程调度">2. 什么事件会触发 Windows 线程调度？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-什么事件会触发-windows-线程调度" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 中可能触发线程调度的情况包括：</p>
+<ul>
+<li>线程正常终止或错误终止；</li>
+<li>新线程创建；</li>
+<li>等待线程变为就绪；</li>
+<li>线程从运行态进入阻塞态；</li>
+<li>线程从运行态变为就绪态；</li>
+<li>线程优先级改变；</li>
+<li>线程的处理器亲和性集合改变。</li>
+</ul>
+<p>这些本质上仍然是在回答 When：</p>
+<p><strong>只要线程状态、优先级或可运行 CPU 集合发生变化，调度器就可能重新决策。</strong></p>
+<h3 id="3-线程优先级结构">3. 线程优先级结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-线程优先级结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 使用 32 个线程优先级，编号 0 到 31。</p>
+<p>可以粗略分成三类：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>31 ~ 16：实时优先级</span></span>
+<span data-line><span>15 ~ 1：可变优先级</span></span>
+<span data-line><span>0：零页线程 / 空闲相关线程</span></span></code></pre></figure>
+<p>实时优先级线程通常不会被系统动态降低优先级。</p>
+<p>可变优先级线程则会根据 I/O 完成、等待事件、前后台状态、饥饿情况等因素临时提升或逐步衰减。</p>
+<p>这里要注意：</p>
+<p><strong>动态优先级不是为了“随机变动”，而是为了在响应时间、公平性和吞吐量之间做补偿。</strong></p>
+<h3 id="4-时间配额-quantum">4. 时间配额 Quantum<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-时间配额-quantum" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 中的时间片常称为时间配额。</p>
+<p>当一个线程的时间配额用完时：</p>
+<p>如果同优先级队列中还有其他就绪线程，当前线程回到原队列末尾，让同级线程运行。</p>
+<p>如果没有同优先级竞争者，系统可以给它新的时间配额，让它继续运行。</p>
+<p>对于实时优先级线程，被抢占时配额可能重置为完整配额。</p>
+<p>对于可变优先级线程，被抢占时配额通常保留；它重新获得 CPU 后继续使用剩余配额。</p>
+<p>这个设计体现了一个现实系统的特点：</p>
+<p><strong>调度器不只关心选谁，还要精细管理“这次让你跑多久”。</strong></p>
+<h3 id="5-windows-为什么要提升线程优先级">5. Windows 为什么要提升线程优先级？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-windows-为什么要提升线程优先级" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>优先级调度有潜在不公平：某些线程可能因为优先级不高而长期等不到 CPU，I/O 型线程也可能因为总是主动阻塞而吃亏。</p>
+<p>Windows 通过临时优先级提升来补偿这些情况。</p>
+<p>常见提升场景包括：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>I/O 操作完成；</span></span>
+<span data-line><span>等待事件对象或信号量结束；</span></span>
+<span data-line><span>前台进程中的线程完成等待；</span></span>
+<span data-line><span>窗口活动唤醒窗口线程；</span></span>
+<span data-line><span>线程在就绪态等待太久，出现饥饿。</span></span></code></pre></figure>
+<h3 id="6-io-完成后的优先级提升">6. I/O 完成后的优先级提升<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-io-完成后的优先级提升" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>当一个线程等待 I/O 操作，I/O 完成后被唤醒，Windows 会临时提升它的优先级，让它更快上 CPU 处理数据。</p>
+<p>提升幅度和设备响应时间要求有关。响应时间越敏感的设备，提升幅度越大。设备驱动程序完成 I/O 请求时，可以通过内核机制指定提升幅度。</p>
+<p>为了避免这种补偿过度造成不公平，I/O 完成唤醒线程时，Windows 还会把该线程的时间配额减 1。</p>
+<p>这很好地体现了调度器的折中：</p>
+<p><strong>既要让 I/O 线程快点响应，又不能让它借补偿机制无限占便宜。</strong></p>
+<h3 id="7-等待事件和信号量后的提升">7. 等待事件和信号量后的提升<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-等待事件和信号量后的提升" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>如果线程因为等待事件对象或信号量而阻塞，等待结束后，它的优先级也可能提升一级。</p>
+<p>原因是这类线程通常不是一直吃 CPU，而是等待同步事件。适当提升可以减少它们相对于 CPU 密集型线程的不利地位。</p>
+<p>但提升不是无限的。它以线程基本优先级为基准，提升后不会超过 15。之后线程会在提升后的优先级上运行剩余时间配额，再逐步降低回基本优先级。</p>
+<h3 id="8-饥饿线程的提升">8. 饥饿线程的提升<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-饥饿线程的提升" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Windows 有一个系统线程叫平衡集管理器（Balance Set Manager）。</p>
+<p>它会周期性扫描就绪队列。如果发现某个就绪线程已经等待超过一定时间还没获得 CPU，比如课件中提到超过 300 个时钟中断间隔，就会把它临时提升到优先级 15，并给它一个较长时间配额，比如正常值的 4 倍。</p>
+<p>等它用完这段配额后，优先级会衰减回原来的基本优先级。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：Windows 的优先级提升像“补偿券” </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>I/O 线程、等待锁的线程、长期饿着的线程，本来在普通优先级规则下可能吃亏。</p>
+<p>Windows 就临时发一张补偿券，让它先跑一会儿。</p>
+<p>但补偿券不是永久身份，跑完以后还要回到原来的基本优先级。</p>
+</div>
+</blockquote>
+<h3 id="9-空闲线程">9. 空闲线程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-空闲线程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>如果某个处理器上没有可运行线程，Windows 会调度该处理器对应的空闲线程。</p>
+<p>多处理器系统中，每个处理器都可以有自己的空闲线程。</p>
+<p>空闲线程的优先级为 0，只在没有其他线程要运行时才运行。它会在循环中检查是否有待处理工作，例如处理中断请求、进行电源管理等。</p>
+<hr/>
+<h2 id="十三linux-调度算法">十三、Linux 调度算法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十三linux-调度算法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Linux 的调度器经历过多次演化。每次演化都在回答同一个问题：</p>
+<p><strong>如何在公平性、交互响应、实现复杂度和多核扩展性之间取得更好的平衡？</strong></p>
+<h3 id="1-linux-中的进程分类">1. Linux 中的进程分类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-linux-中的进程分类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Linux 中可以粗略分为两类：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>实时进程：</span></span>
+<span data-line><span>对调度延迟要求最高，需要立即响应和执行。</span></span>
+<span data-line><span>调度策略包括 FIFO、Round Robin。</span></span>
+<span data-line> </span>
+<span data-line><span>普通进程：</span></span>
+<span data-line><span>包括交互式进程和批处理进程。</span></span>
+<span data-line><span>普通进程主要由 CFS 这类公平调度策略处理。</span></span></code></pre></figure>
+<p>交互式进程经常睡眠等待输入或 I/O，对响应速度要求高。</p>
+<p>批处理进程通常在后台运行，可以忍受更长延迟。</p>
+<h3 id="2-linux-调度器的演化">2. Linux 调度器的演化<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-linux-调度器的演化" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Linux 调度算法大致经历了下面几步：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Linux 2.4：</span></span>
+<span data-line><span>简单基于优先级的调度，常需要遍历进程，扩展性有限。</span></span>
+<span data-line> </span>
+<span data-line><span>Linux 2.6 O(1) 调度器：</span></span>
+<span data-line><span>使用 active / expired 双数组和优先级位图，选择任务复杂度可以做到 O(1)。</span></span>
+<span data-line> </span>
+<span data-line><span>SD / RSDL 调度器补丁：</span></span>
+<span data-line><span>试图减少复杂启发式规则，强调更直接的公平性。</span></span>
+<span data-line> </span>
+<span data-line><span>CFS：</span></span>
+<span data-line><span>完全公平调度器，引入虚拟运行时间 vruntime 和红黑树。</span></span>
+<span data-line> </span>
+<span data-line><span>Linux 6.11 EEVDF：</span></span>
+<span data-line><span>更新的调度方向，进一步围绕虚拟截止时间和延迟公平进行设计。</span></span></code></pre></figure>
+<p>这条演化线索的重点不是背版本号，而是理解痛点变化：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>从“能跑”到“能快速选择”</span></span>
+<span data-line><span>从“猜交互式任务”到“用公平模型统一处理”</span></span>
+<span data-line><span>从“单核/少核”到“多核可扩展”</span></span></code></pre></figure>
+<h3 id="3-cfs-的核心直觉">3. CFS 的核心直觉<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-cfs-的核心直觉" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>CFS，全称 Completely Fair Scheduler，完全公平调度器。</p>
+<p>它的核心直觉是：</p>
+<p><strong>理想情况下，每个可运行进程都应该像同时在一台理想 CPU 上运行一样，公平地推进。</strong></p>
+<p>现实 CPU 不能真的同时跑所有进程，所以 CFS 做了一件近似的事：</p>
+<p>它记录每个进程“已经获得了多少公平意义上的 CPU 时间”，然后总是选择最落后的那个进程运行。</p>
+<p>这个“公平意义上的运行时间”就是：</p>
+<p><strong>虚拟运行时间 vruntime。</strong></p>
+<h3 id="4-vruntime公平跑表">4. vruntime：公平跑表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-vruntime公平跑表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>可以把 CFS 想象成操场跑圈。</p>
+<p>每个进程都有一个虚拟跑表 <code>vruntime</code>。</p>
+<p>普通优先级进程现实中跑 1ms，跑表也许记 1ms。</p>
+<p>高优先级进程权重大，现实中跑 1ms，跑表可能只记 0.5ms。</p>
+<p>低优先级进程权重小，现实中跑 1ms，跑表可能记 2ms。</p>
+<p>于是调度器每次都选择 <code>vruntime</code> 最小的进程，也就是“在公平跑表上最落后的人”。</p>
+<p>核心公式可以写成：</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">u</span><span class="mord mathnormal">n</span><span class="mord mathnormal">t</span><span class="mord mathnormal">im</span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord text"><span class="mord cjk_fallback">实际运行时间</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:2.0693em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3833em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord cjk_fallback">进程权重</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.7em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord text"><span class="mord">NICE_0_LOAD</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+<p>nice 值越小，优先级越高，权重越大，<code>vruntime</code> 增长越慢。增长慢意味着它更容易长期保持在红黑树左侧，也就更容易再次被选中。</p>
+<h3 id="5-红黑树按照-vruntime-排队">5. 红黑树：按照 vruntime 排队<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-红黑树按照-vruntime-排队" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>CFS 不使用传统意义上的固定时间片队列。</p>
+<p>它把可运行进程按照 <code>vruntime</code> 作为键，放入一棵红黑树。</p>
+<p>每次调度时，选择红黑树最左边的节点。</p>
+<p>为什么是最左边？</p>
+<p>因为红黑树按 <code>vruntime</code> 排序，最左边就是 <code>vruntime</code> 最小的进程，也就是当前最“亏”的进程。</p>
+<p>流程大致是：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;进程运行\&quot;] --> B[\&quot;运行时间增加\&quot;]\n    B --> C[\&quot;更新 vruntime\&quot;]\n    C --> D[\&quot;重新插入红黑树\&quot;]\n    D --> E[\&quot;调度器选择最左节点\&quot;]\n    E --> F[\&quot;vruntime 最小者上 CPU\&quot;]&quot;">flowchart TD
+    A[&quot;进程运行&quot;] --> B[&quot;运行时间增加&quot;]
+    B --> C[&quot;更新 vruntime&quot;]
+    C --> D[&quot;重新插入红黑树&quot;]
+    D --> E[&quot;调度器选择最左节点&quot;]
+    E --> F[&quot;vruntime 最小者上 CPU&quot;]
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：CFS 不是看谁排队最久，而是看谁“公平账本”最亏 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>RR 是轮流来，优先级调度是看等级，CFS 看的是一个长期账本。</p>
+<p>谁在公平意义上拿到的 CPU 少，谁就更靠左，更容易被选中。</p>
+</div>
+</blockquote>
+<h3 id="6-min_vruntime-与睡眠补偿">6. min_vruntime 与睡眠补偿<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-min_vruntime-与睡眠补偿" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>CFS 还维护一个重要基准：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>min_vruntime</span></span></code></pre></figure>
+<p>它表示当前运行队列中的最小虚拟运行时间基准。</p>
+<p>为什么需要它？</p>
+<p>因为进程可能会睡眠，比如等待 I/O。如果一个进程睡了很久，它的 <code>vruntime</code> 长时间不变。等它醒来时，如果还保留很久以前的超小 <code>vruntime</code>，它就会显得“极度落后”，从而长期霸占 CPU。</p>
+<p>这显然不公平。</p>
+<p>所以，CFS 在唤醒进程时会调整它的 <code>vruntime</code>。大致逻辑是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>给睡眠进程一定补偿，让它醒来后能较快响应；</span></span>
+<span data-line><span>但不能让它因为睡得久就获得无限额外优势。</span></span></code></pre></figure>
+<p>课件中提到的做法是基于 <code>min_vruntime</code> 减去一个补偿值来计算，但最后会和进程原本的 <code>vruntime</code> 做比较，避免短睡眠进程通过睡眠获得额外运行时间。</p>
+<p>也就是说，CFS 的睡眠补偿不是无脑奖励，而是有边界的。</p>
+<h3 id="7-cfs-与进程状态转换">7. CFS 与进程状态转换<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-cfs-与进程状态转换" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>把 CFS 放回进程状态转换中，可以这样理解：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>fork / 新建：</span></span>
+<span data-line><span>计算新进程的 vruntime，并插入红黑树。</span></span>
+<span data-line> </span>
+<span data-line><span>schedule：</span></span>
+<span data-line><span>选择红黑树最左侧节点，也就是 vruntime 最小的进程。</span></span>
+<span data-line> </span>
+<span data-line><span>时钟中断：</span></span>
+<span data-line><span>更新当前进程的运行时间和 vruntime，检查是否满足抢占条件。</span></span>
+<span data-line> </span>
+<span data-line><span>阻塞：</span></span>
+<span data-line><span>进程离开可运行集合，不在红黑树中竞争 CPU。</span></span>
+<span data-line> </span>
+<span data-line><span>唤醒：</span></span>
+<span data-line><span>调整 vruntime，插入红黑树，并判断是否需要抢占当前进程。</span></span></code></pre></figure>
+<p>这就把 CFS 和前面的 When / What / How 串起来了：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>When：时钟中断、阻塞、唤醒、新建、退出等事件触发调度判断。</span></span>
+<span data-line><span>What：CFS 用 vruntime 和红黑树选择最“亏”的进程。</span></span>
+<span data-line><span>How：选出来以后，通过上下文切换把 CPU 交给它。</span></span></code></pre></figure>
+<h3 id="8-cfs-的思想总结">8. CFS 的思想总结<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-cfs-的思想总结" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>CFS 的厉害之处在于，它没有简单说“交互式进程优先”或“短任务优先”，而是试图建立一个统一公平模型。</p>
+<p>优先级不再直接表现为“谁排前面”，而是表现为：</p>
+<p><strong>不同权重的进程，vruntime 增长速度不同。</strong></p>
+<p>这就很优雅：</p>
+<ul>
+<li>高权重进程获得更多真实 CPU 时间；</li>
+<li>低权重进程也不会完全饿死；</li>
+<li>睡眠唤醒进程有响应补偿，但不能滥用；</li>
+<li>红黑树保证选择最小 <code>vruntime</code> 足够高效。</li>
+</ul>
+<hr/>
+<h2 id="十四机制与策略调度里的核心思想">十四、机制与策略：调度里的核心思想<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十四机制与策略调度里的核心思想" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>上一讲系统调用和中断里，我们已经见过“机制与策略分离”。</p>
+<p>调度这里也非常适合用这个思想理解。</p>
+<h3 id="1-机制回答怎么做到切换">1. 机制回答：怎么做到切换？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-机制回答怎么做到切换" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>调度机制包括：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>时钟中断如何进入内核；</span></span>
+<span data-line><span>系统调用或异常如何让进程阻塞；</span></span>
+<span data-line><span>内核如何保存和恢复上下文；</span></span>
+<span data-line><span>如何切换地址空间；</span></span>
+<span data-line><span>如何从一个内核栈切到另一个内核栈；</span></span>
+<span data-line><span>如何维护就绪队列或红黑树；</span></span>
+<span data-line><span>如何触发抢占。</span></span></code></pre></figure>
+<p>这些回答的是：</p>
+<p><strong>怎么实现调度与切换。</strong></p>
+<h3 id="2-策略回答该选谁">2. 策略回答：该选谁？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-策略回答该选谁" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>调度策略包括：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>FCFS 按到达顺序选；</span></span>
+<span data-line><span>SJF 按预计运行时间选；</span></span>
+<span data-line><span>RR 按时间片轮转；</span></span>
+<span data-line><span>优先级调度按优先级选；</span></span>
+<span data-line><span>MLFQ 根据队列层次和历史行为选；</span></span>
+<span data-line><span>CFS 按 vruntime 最小选；</span></span>
+<span data-line><span>EDF 按 deadline 最近选。</span></span></code></pre></figure>
+<p>这些回答的是：</p>
+<p><strong>在可运行对象中，具体选择谁。</strong></p>
+<h3 id="3-为什么要分离">3. 为什么要分离？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-为什么要分离" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>因为机制应当尽量稳定、高效、可靠；策略则需要根据系统目标变化。</p>
+<p>例如：</p>
+<p>同样是上下文切换机制，既可以服务 RR，也可以服务 CFS，还可以服务实时调度。</p>
+<p>同样是时钟中断，既可以用来检查 RR 的时间片，也可以用来更新 CFS 的 <code>vruntime</code>。</p>
+<p>这就是操作系统设计的优雅之处：</p>
+<p><strong>底层机制提供能力，上层策略决定取舍。</strong></p>
+<hr/>
+<h2 id="十五把整章串起来">十五、把整章串起来<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十五把整章串起来" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>最后，我们回到开头的问题。</p>
+<p><span class="text-highlight">为什么需要调度？</span></p>
+<p>因为 CPU 数量有限，而可运行进程/线程很多。操作系统必须控制和协调它们对 CPU 的竞争。</p>
+<p><span class="text-highlight">调度什么时候发生？</span></p>
+<p>调度通常发生在事件导致进程状态变化之后，例如进程退出、阻塞、唤醒、时间片用完、创建新进程、执行 <code>yield</code>、发生异常等。很多时候，它发生在内核处理完中断、异常或系统调用，准备返回用户态之前。</p>
+<p><span class="text-highlight">调度器做什么？</span></p>
+<p>调度器从就绪队列或运行队列中选择下一个进程/线程。不同系统可以使用不同策略：FCFS、SJF、SRTN、HRRN、RR、优先级、多级反馈队列、CFS、EDF 等。</p>
+<p><span class="text-highlight">上下文切换是什么？</span></p>
+<p>上下文切换是把 CPU 的硬件状态从当前进程切换到另一个进程，包括保存旧进程的 PC、PSW、寄存器、栈和地址空间信息，再恢复新进程的上下文。</p>
+<p><span class="text-highlight">调度算法好坏看什么？</span></p>
+<p>要看吞吐量、周转时间、响应时间、CPU 利用率、公平性、实时性、能耗、可预测性等指标。不同系统目标不同，不存在万能算法。</p>
+<p><span class="text-highlight">真实系统怎么做？</span></p>
+<p>Windows 使用基于动态优先级的抢占式线程调度，同级线程按时间配额轮转，并通过 I/O 完成、等待结束、饥饿检测等机制临时提升优先级。</p>
+<p>Linux 普通进程主要使用 CFS，通过 <code>vruntime</code> 和红黑树实现公平调度；实时进程使用 FIFO、RR 等实时策略；多核场景还要考虑缓存亲和性和负载均衡。</p>
+<p>一句话概括这一讲：</p>
+<p><strong>调度就是操作系统在事件驱动的内核入口处，根据系统目标选择下一个运行对象，并通过上下文切换把 CPU 从一个进程/线程安全交给另一个进程/线程。</strong></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-132" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#一为什么操作系统需要调度" data-for="一为什么操作系统需要调度">一、为什么操作系统需要调度？</a></li><li class="depth-0"><a href="#二调度的三个层次" data-for="二调度的三个层次">二、调度的三个层次</a></li><li class="depth-1"><a href="#1-长程调度决定谁能进入系统" data-for="1-长程调度决定谁能进入系统">1. 长程调度：决定谁能进入系统</a></li><li class="depth-1"><a href="#2-中程调度决定谁暂时换出内存" data-for="2-中程调度决定谁暂时换出内存">2. 中程调度：决定谁暂时换出内存</a></li><li class="depth-1"><a href="#3-短程调度决定谁立刻上-cpu" data-for="3-短程调度决定谁立刻上-cpu">3. 短程调度：决定谁立刻上 CPU</a></li><li class="depth-0"><a href="#三调度到底什么时候发生" data-for="三调度到底什么时候发生">三、调度到底什么时候发生？</a></li><li class="depth-0"><a href="#四调度过程从选择进程到上下文切换" data-for="四调度过程从选择进程到上下文切换">四、调度过程：从选择进程到上下文切换</a></li><li class="depth-1"><a href="#1-什么是上下文" data-for="1-什么是上下文">1. 什么是上下文？</a></li><li class="depth-1"><a href="#2-进程-a-下-cpu进程-b-上-cpu-时发生了什么" data-for="2-进程-a-下-cpu进程-b-上-cpu-时发生了什么">2. 进程 A 下 CPU、进程 B 上 CPU 时发生了什么？</a></li><li class="depth-1"><a href="#3-上下文切换为什么有开销" data-for="3-上下文切换为什么有开销">3. 上下文切换为什么有开销？</a></li><li class="depth-0"><a href="#五调度算法要追求什么" data-for="五调度算法要追求什么">五、调度算法要追求什么？</a></li><li class="depth-1"><a href="#1-批处理进程更关心吞吐量和周转时间" data-for="1-批处理进程更关心吞吐量和周转时间">1. 批处理进程：更关心吞吐量和周转时间</a></li><li class="depth-1"><a href="#2-交互式进程更关心响应时间" data-for="2-交互式进程更关心响应时间">2. 交互式进程：更关心响应时间</a></li><li class="depth-1"><a href="#3-实时进程更关心最后期限和可预测性" data-for="3-实时进程更关心最后期限和可预测性">3. 实时进程：更关心最后期限和可预测性</a></li><li class="depth-1"><a href="#4-常见评价指标" data-for="4-常见评价指标">4. 常见评价指标</a></li><li class="depth-0"><a href="#六设计调度算法时要看哪些支点" data-for="六设计调度算法时要看哪些支点">六、设计调度算法时要看哪些支点？</a></li><li class="depth-1"><a href="#1-pcb-里要记录调度信息" data-for="1-pcb-里要记录调度信息">1. PCB 里要记录调度信息</a></li><li class="depth-1"><a href="#2-优先级静态还是动态" data-for="2-优先级静态还是动态">2. 优先级：静态还是动态？</a></li><li class="depth-1"><a href="#3-就绪队列如何组织" data-for="3-就绪队列如何组织">3. 就绪队列如何组织？</a></li><li class="depth-1"><a href="#4-抢占式还是非抢占式" data-for="4-抢占式还是非抢占式">4. 抢占式还是非抢占式？</a></li><li class="depth-1"><a href="#5-io-密集型还是-cpu-密集型" data-for="5-io-密集型还是-cpu-密集型">5. I/O 密集型还是 CPU 密集型？</a></li><li class="depth-1"><a href="#6-时间片应该多长" data-for="6-时间片应该多长">6. 时间片应该多长？</a></li><li class="depth-0"><a href="#七批处理系统中的经典调度算法" data-for="七批处理系统中的经典调度算法">七、批处理系统中的经典调度算法</a></li><li class="depth-1"><a href="#1-fcfs先来先服务" data-for="1-fcfs先来先服务">1. FCFS：先来先服务</a></li><li class="depth-1"><a href="#2-sjf短作业优先" data-for="2-sjf短作业优先">2. SJF：短作业优先</a></li><li class="depth-1"><a href="#3-srtn最短剩余时间优先" data-for="3-srtn最短剩余时间优先">3. SRTN：最短剩余时间优先</a></li><li class="depth-1"><a href="#4-hrrn最高响应比优先" data-for="4-hrrn最高响应比优先">4. HRRN：最高响应比优先</a></li><li class="depth-0"><a href="#八交互式系统中的经典调度算法" data-for="八交互式系统中的经典调度算法">八、交互式系统中的经典调度算法</a></li><li class="depth-1"><a href="#1-rr时间片轮转" data-for="1-rr时间片轮转">1. RR：时间片轮转</a></li><li class="depth-1"><a href="#2-virtual-rr虚拟轮转法" data-for="2-virtual-rr虚拟轮转法">2. Virtual RR：虚拟轮转法</a></li><li class="depth-1"><a href="#3-优先级调度" data-for="3-优先级调度">3. 优先级调度</a></li><li class="depth-1"><a href="#4-优先级反转" data-for="4-优先级反转">4. 优先级反转</a></li><li class="depth-1"><a href="#5-多级队列调度" data-for="5-多级队列调度">5. 多级队列调度</a></li><li class="depth-1"><a href="#6-多级反馈队列-mlfq" data-for="6-多级反馈队列-mlfq">6. 多级反馈队列 MLFQ</a></li><li class="depth-0"><a href="#九几种补充调度思想" data-for="九几种补充调度思想">九、几种补充调度思想</a></li><li class="depth-1"><a href="#1-公平共享调度" data-for="1-公平共享调度">1. 公平共享调度</a></li><li class="depth-1"><a href="#2-保证调度" data-for="2-保证调度">2. 保证调度</a></li><li class="depth-1"><a href="#3-彩票调度" data-for="3-彩票调度">3. 彩票调度</a></li><li class="depth-0"><a href="#十多核与多处理器调度" data-for="十多核与多处理器调度">十、多核与多处理器调度</a></li><li class="depth-1"><a href="#1-对称多处理器中的进程分配" data-for="1-对称多处理器中的进程分配">1. 对称多处理器中的进程分配</a></li><li class="depth-1"><a href="#2-多核处理器为什么会带来新问题" data-for="2-多核处理器为什么会带来新问题">2. 多核处理器为什么会带来新问题？</a></li><li class="depth-1"><a href="#3-缓存一致性问题" data-for="3-缓存一致性问题">3. 缓存一致性问题</a></li><li class="depth-1"><a href="#4-核间数据共享" data-for="4-核间数据共享">4. 核间数据共享</a></li><li class="depth-1"><a href="#5-缓存亲和性问题" data-for="5-缓存亲和性问题">5. 缓存亲和性问题</a></li><li class="depth-1"><a href="#6-缓存亲和性-vs-负载均衡" data-for="6-缓存亲和性-vs-负载均衡">6. 缓存亲和性 VS 负载均衡</a></li><li class="depth-1"><a href="#7-单队列与多队列" data-for="7-单队列与多队列">7. 单队列与多队列</a></li><li class="depth-1"><a href="#8-work-stealing作业偷取" data-for="8-work-stealing作业偷取">8. Work Stealing：作业偷取</a></li><li class="depth-1"><a href="#9-案例go-语言-gmp-调度器" data-for="9-案例go-语言-gmp-调度器">9. 案例：Go 语言 GMP 调度器</a></li><li class="depth-1"><a href="#10-案例yarn" data-for="10-案例yarn">10. 案例：YARN</a></li><li class="depth-0"><a href="#十一实时调度" data-for="十一实时调度">十一、实时调度</a></li><li class="depth-1"><a href="#1-硬实时与软实时" data-for="1-硬实时与软实时">1. 硬实时与软实时</a></li><li class="depth-1"><a href="#2-周期性任务偶发性任务非周期性任务" data-for="2-周期性任务偶发性任务非周期性任务">2. 周期性任务、偶发性任务、非周期性任务</a></li><li class="depth-1"><a href="#3-可调度性条件" data-for="3-可调度性条件">3. 可调度性条件</a></li><li class="depth-1"><a href="#4-rm速率单调调度" data-for="4-rm速率单调调度">4. RM：速率单调调度</a></li><li class="depth-1"><a href="#5-edf最早截止时间优先" data-for="5-edf最早截止时间优先">5. EDF：最早截止时间优先</a></li><li class="depth-0"><a href="#十二windows-线程调度" data-for="十二windows-线程调度">十二、Windows 线程调度</a></li><li class="depth-1"><a href="#1-windows-的基本调度思想" data-for="1-windows-的基本调度思想">1. Windows 的基本调度思想</a></li><li class="depth-1"><a href="#2-什么事件会触发-windows-线程调度" data-for="2-什么事件会触发-windows-线程调度">2. 什么事件会触发 Windows 线程调度？</a></li><li class="depth-1"><a href="#3-线程优先级结构" data-for="3-线程优先级结构">3. 线程优先级结构</a></li><li class="depth-1"><a href="#4-时间配额-quantum" data-for="4-时间配额-quantum">4. 时间配额 Quantum</a></li><li class="depth-1"><a href="#5-windows-为什么要提升线程优先级" data-for="5-windows-为什么要提升线程优先级">5. Windows 为什么要提升线程优先级？</a></li><li class="depth-1"><a href="#6-io-完成后的优先级提升" data-for="6-io-完成后的优先级提升">6. I/O 完成后的优先级提升</a></li><li class="depth-1"><a href="#7-等待事件和信号量后的提升" data-for="7-等待事件和信号量后的提升">7. 等待事件和信号量后的提升</a></li><li class="depth-1"><a href="#8-饥饿线程的提升" data-for="8-饥饿线程的提升">8. 饥饿线程的提升</a></li><li class="depth-1"><a href="#9-空闲线程" data-for="9-空闲线程">9. 空闲线程</a></li><li class="depth-0"><a href="#十三linux-调度算法" data-for="十三linux-调度算法">十三、Linux 调度算法</a></li><li class="depth-1"><a href="#1-linux-中的进程分类" data-for="1-linux-中的进程分类">1. Linux 中的进程分类</a></li><li class="depth-1"><a href="#2-linux-调度器的演化" data-for="2-linux-调度器的演化">2. Linux 调度器的演化</a></li><li class="depth-1"><a href="#3-cfs-的核心直觉" data-for="3-cfs-的核心直觉">3. CFS 的核心直觉</a></li><li class="depth-1"><a href="#4-vruntime公平跑表" data-for="4-vruntime公平跑表">4. vruntime：公平跑表</a></li><li class="depth-1"><a href="#5-红黑树按照-vruntime-排队" data-for="5-红黑树按照-vruntime-排队">5. 红黑树：按照 vruntime 排队</a></li><li class="depth-1"><a href="#6-min_vruntime-与睡眠补偿" data-for="6-min_vruntime-与睡眠补偿">6. min_vruntime 与睡眠补偿</a></li><li class="depth-1"><a href="#7-cfs-与进程状态转换" data-for="7-cfs-与进程状态转换">7. CFS 与进程状态转换</a></li><li class="depth-1"><a href="#8-cfs-的思想总结" data-for="8-cfs-的思想总结">8. CFS 的思想总结</a></li><li class="depth-0"><a href="#十四机制与策略调度里的核心思想" data-for="十四机制与策略调度里的核心思想">十四、机制与策略：调度里的核心思想</a></li><li class="depth-1"><a href="#1-机制回答怎么做到切换" data-for="1-机制回答怎么做到切换">1. 机制回答：怎么做到切换？</a></li><li class="depth-1"><a href="#2-策略回答该选谁" data-for="2-策略回答该选谁">2. 策略回答：该选谁？</a></li><li class="depth-1"><a href="#3-为什么要分离" data-for="3-为什么要分离">3. 为什么要分离？</a></li><li class="depth-0"><a href="#十五把整章串起来" data-for="十五把整章串起来">十五、把整章串起来</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}container;content;isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>

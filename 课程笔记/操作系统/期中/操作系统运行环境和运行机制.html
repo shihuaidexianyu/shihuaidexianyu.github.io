@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>操作系统运行环境和运行机制</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="操作系统运行环境和运行机制"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="操作系统运行环境和运行机制"/><meta name="twitter:description" content="核心速览 这部分的重点在于理解：应用程序到底是如何与操作系统交互的。 整个操作系统的底层逻辑可以被概括为一句话： 操作系统是由中断、异常、事件驱动的。 应用程序不能随心所欲地操作硬件，也不能随便修改内核中的数据结构。它们如果想读文件、写屏幕、创建进程、申请内存，就必须通过 系统调用（System Call） 这扇“唯一合法的大门”进入内核态。 而这扇门之所以能打开，底层依赖的正是硬件提供的 异常控制流（ECF, Exceptional Control Flow）、中断机制 和 特权级切换机制。 操作系统的运行环境（硬件基础） 在正式理解操作系统如何运行之前，我们先要想清楚一个问题： 如果只有..."/><meta property="og:description" content="核心速览 这部分的重点在于理解：应用程序到底是如何与操作系统交互的。 整个操作系统的底层逻辑可以被概括为一句话： 操作系统是由中断、异常、事件驱动的。 应用程序不能随心所欲地操作硬件，也不能随便修改内核中的数据结构。它们如果想读文件、写屏幕、创建进程、申请内存，就必须通过 系统调用（System Call） 这扇“唯一合法的大门”进入内核态。 而这扇门之所以能打开，底层依赖的正是硬件提供的 异常控制流（ECF, Exceptional Control Flow）、中断机制 和 特权级切换机制。 操作系统的运行环境（硬件基础） 在正式理解操作系统如何运行之前，我们先要想清楚一个问题： 如果只有..."/><meta property="og:image:alt" content="核心速览 这部分的重点在于理解：应用程序到底是如何与操作系统交互的。 整个操作系统的底层逻辑可以被概括为一句话： 操作系统是由中断、异常、事件驱动的。 应用程序不能随心所欲地操作硬件，也不能随便修改内核中的数据结构。它们如果想读文件、写屏幕、创建进程、申请内存，就必须通过 系统调用（System Call） 这扇“唯一合法的大门”进入内核态。 而这扇门之所以能打开，底层依赖的正是硬件提供的 异常控制流（ECF, Exceptional Control Flow）、中断机制 和 特权级切换机制。 操作系统的运行环境（硬件基础） 在正式理解操作系统如何运行之前，我们先要想清楚一个问题： 如果只有..."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/期中/操作系统运行环境和运行机制"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/期中/操作系统运行环境和运行机制"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="核心速览 这部分的重点在于理解：应用程序到底是如何与操作系统交互的。 整个操作系统的底层逻辑可以被概括为一句话： 操作系统是由中断、异常、事件驱动的。 应用程序不能随心所欲地操作硬件，也不能随便修改内核中的数据结构。它们如果想读文件、写屏幕、创建进程、申请内存，就必须通过 系统调用（System Call） 这扇“唯一合法的大门”进入内核态。 而这扇门之所以能打开，底层依赖的正是硬件提供的 异常控制流（ECF, Exceptional Control Flow）、中断机制 和 特权级切换机制。 操作系统的运行环境（硬件基础） 在正式理解操作系统如何运行之前，我们先要想清楚一个问题： 如果只有..."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/期中/操作系统运行环境和运行机制"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-205"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-205" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/期中/">期中</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>操作系统运行环境和运行机制</a></div></nav><h1 class="article-title">操作系统运行环境和运行机制</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-25T12:55:24.519Z">Apr 25, 2026</time><span>83 min read</span></p></div></div><article class="popover-hint"><blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>核心速览 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这部分的重点在于理解：<strong>应用程序到底是如何与操作系统交互的</strong>。</p>
+<p>整个操作系统的底层逻辑可以被概括为一句话：</p>
+<p><strong>操作系统是由中断、异常、事件驱动的。</strong></p>
+<p>应用程序不能随心所欲地操作硬件，也不能随便修改内核中的数据结构。它们如果想读文件、写屏幕、创建进程、申请内存，就必须通过 <strong>系统调用（System Call）</strong> 这扇“唯一合法的大门”进入内核态。</p>
+<p>而这扇门之所以能打开，底层依赖的正是硬件提供的 <strong>异常控制流（ECF, Exceptional Control Flow）</strong>、<strong>中断机制</strong> 和 <strong>特权级切换机制</strong>。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="操作系统的运行环境硬件基础">操作系统的运行环境（硬件基础）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#操作系统的运行环境硬件基础" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在正式理解操作系统如何运行之前，我们先要想清楚一个问题：</p>
+<p>如果只有一堆 CPU、内存、磁盘、键盘、网卡这些硬件，操作系统凭什么能“管住”所有应用程序？</p>
+<p>答案是：<strong>硬件必须提供一些基础机制，让操作系统拥有比普通程序更高的权限。</strong></p>
+<p>所以操作系统设计者写代码时，首先考虑的不是“我要提供什么高级功能”，而是：</p>
+<ul>
+<li>CPU 有没有特权级？</li>
+<li>用户程序能不能执行危险指令？</li>
+<li>发生异常时 CPU 能不能自动跳进内核？</li>
+<li>能不能在进入内核时保护现场？</li>
+<li>能不能防止用户程序破坏内核？</li>
+</ul>
+<p>这些问题共同构成了操作系统的<strong>运行环境</strong>。</p>
+<hr/>
+<h3 id="1-处理器与寄存器">1. 处理器与寄存器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-处理器与寄存器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>CPU 不仅仅负责计算，它内部的 <strong>寄存器（Registers）</strong> 是维持整个系统运行状态的核心。</p>
+<p>从程序员的角度看，寄存器可以暂存数据、地址、函数参数和返回值。但从操作系统的角度看，最重要的不是普通数据寄存器，而是那些能够控制 CPU 行为的 <strong>控制和状态寄存器</strong>。</p>
+<p>常见的几类寄存器如下：</p>
+<h4 id="pc程序计数器">PC：程序计数器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#pc程序计数器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>PC 是一个通用概念，表示 CPU 接下来要执行的指令地址。不同体系结构会给它不同名字：在 x86 中，16 位叫 <code>IP</code>，32 位叫 <code>EIP</code>，x86-64 中叫 <code>RIP</code>。</p>
+<p>你可以把它理解成 CPU 手里的“书签”：CPU 执行程序时，总得知道下一条指令在哪里；发生中断或异常时，系统也必须保存这个位置，之后才能恢复执行。</p>
+<h4 id="ir指令寄存器">IR：指令寄存器<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#ir指令寄存器" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>它保存当前正在执行的指令。这个寄存器更多是处理器内部流水线和控制逻辑关心，操作系统不会像操作普通通用寄存器那样频繁直接使用它。</p>
+<h4 id="psw程序状态字">PSW：程序状态字<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#psw程序状态字" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>PSW（Program Status Word）不是某一个具体体系结构中一定叫这个名字的寄存器，而是一个比较通用的抽象概念。它表示 CPU 中用于记录当前程序运行状态的一组信息，比如运算结果标志、当前处理器状态、中断控制信息、特权级相关信息等。</p>
+<p>不同体系结构会用不同的具体寄存器来承担这个角色。在 x86 架构中，32 位下对应的是 <code>EFLAGS</code>，x86-64 下对应的是 <code>RFLAGS</code>。</p>
+<p><code>EFLAGS / RFLAGS</code> 中包含许多标志位，例如：</p>
+<ul>
+<li>条件码标志：记录上一次运算结果，比如是否为零、是否进位、是否溢出；</li>
+<li>控制标志：影响 CPU 的执行行为，比如方向标志；</li>
+<li>系统标志：与中断、调试、I/O 特权级等机制有关。</li>
+</ul>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：PSW 像 CPU 的“状态面板” </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>你可以把 PSW 理解成 CPU 的状态面板。</p>
+<p>有些灯告诉你上一次计算的结果怎么样，比如有没有进位、有没有溢出；有些开关决定 CPU 当前能不能响应中断；还有一些状态位和权限控制有关，影响当前代码能不能执行某些敏感操作。</p>
+<p>在 x86 中，这块“状态面板”的具体名字就是 <code>EFLAGS</code> 或 <code>RFLAGS</code>。</p>
+<p>普通用户程序不能随便修改其中的关键位，否则它就可能绕过操作系统的保护机制。</p>
+</div>
+</blockquote>
+<h4 id="控制寄存器cr0cr2cr3cr4">控制寄存器：CR0、CR2、CR3、CR4<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#控制寄存器cr0cr2cr3cr4" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>在 x86 中，控制寄存器负责控制处理器的一些核心机制。</p>
+<ul>
+<li><code>CR0</code> 常和保护模式、分页机制是否开启有关。</li>
+<li><code>CR2</code> 保存导致缺页异常的线性地址。也就是说，一旦发生 page fault，操作系统可以看 <code>CR2</code>，知道刚才访问的是哪个地址出问题了。</li>
+<li><code>CR3</code> 保存页表根地址。进程切换时，经常需要切换 <code>CR3</code>，因为不同进程有不同的虚拟地址空间。</li>
+<li><code>CR4</code> 控制一些扩展机制，比如 PAE、PSE、SMEP 等。</li>
+</ul>
+<p>这部分不用一开始死背每一位，但至少要知道：<strong>控制寄存器是操作系统控制内存管理、保护模式和异常处理的重要工具。</strong></p>
+<h4 id="idtrgdtrldtrtr">IDTR、GDTR、LDTR、TR<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#idtrgdtrldtrtr" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>这些寄存器和 x86 的描述符表机制有关。</p>
+<ul>
+<li><code>IDTR</code> 保存 <strong>IDT（Interrupt Descriptor Table，中断描述符表）</strong> 的位置。</li>
+<li><code>GDTR</code> 保存 <strong>GDT（Global Descriptor Table，全局描述符表）</strong> 的位置。</li>
+<li><code>LDTR</code> 保存 LDT 的相关信息，现代操作系统一般较少直接依赖它。</li>
+<li><code>TR</code> 是任务寄存器，指向当前任务状态段 TSS。在 x86 中，发生特权级切换时，CPU 可以通过 TSS 找到内核栈指针。</li>
+</ul>
+<p>这一组寄存器后面讲中断和系统调用时会反复出现。</p>
+<hr/>
+<h3 id="2-特权级别与运行模式">2. 特权级别与运行模式<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-特权级别与运行模式" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>操作系统必须保护自己。</p>
+<p>因为如果普通程序可以随便访问任意内存、随便操作磁盘、随便关中断、随便修改页表，那系统就完全失控了。</p>
+<p>所以硬件必须提供不同的 <strong>运行模式（Mode）</strong>，也就是我们常说的：</p>
+<h4 id="用户态user-mode">用户态（User Mode）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#用户态user-mode" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>普通应用程序运行在用户态。用户态权限较低，只能执行非特权指令，不能直接访问关键硬件资源，也不能随意修改内核数据。</p>
+<h4 id="内核态kernel-mode--supervisor-mode">内核态（Kernel Mode / Supervisor Mode）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#内核态kernel-mode--supervisor-mode" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>操作系统内核运行在内核态。内核态权限最高，可以执行特权指令，可以访问硬件，可以修改页表，可以管理进程和中断。</p>
+<p>在 x86 架构中，有 4 个特权环：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>R0 -> R1 -> R2 -> R3</span></span></code></pre></figure>
+<p>权限从 R0 到 R3 逐级降低。</p>
+<p>目前主流操作系统通常只使用其中两个：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>R0：内核态</span></span>
+<span data-line><span>R3：用户态</span></span></code></pre></figure>
+<p>RISC-V 的划分方式不太一样，它常见的是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>M 模式：Machine Mode，机器模式，最高权限</span></span>
+<span data-line><span>S 模式：Supervisor Mode，监管模式，操作系统内核运行在这里</span></span>
+<span data-line><span>U 模式：User Mode，用户模式，普通应用程序运行在这里</span></span></code></pre></figure>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：为什么要有用户态和内核态？ </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>你可以把计算机系统想象成一个图书馆。</p>
+<p>普通读者可以借书、还书、查询目录，但不能随便进库房、改数据库、拆监控、改门禁。</p>
+<p>应用程序就是普通读者，操作系统内核就是管理员。用户态和内核态的区分，本质上就是为了防止普通程序直接碰系统核心资源。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="3-状态转换用户态如何进入内核态">3. 状态转换：用户态如何进入内核态？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-状态转换用户态如何进入内核态" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>程序不能在用户态和内核态之间随意横跳。</p>
+<p>如果用户程序可以自己执行一条指令说“我要变成内核态”，那特权级就没有意义了。</p>
+<p>所以，从用户态进入内核态，必须通过硬件认可的受控入口。</p>
+<p>课件里给出的关键结论是：</p>
+<p><strong>用户态 → 内核态的唯一正规途径是：中断 / 异常 / 陷入机制。</strong></p>
+<p>也就是说，用户程序不能自己直接改 PSW 或 EFLAGS 把自己变成内核态。它必须通过某个事件触发 CPU 的控制流变化，例如：</p>
+<ul>
+<li>外部设备发来中断；</li>
+<li>程序执行出错产生异常；</li>
+<li>程序主动执行陷入指令，请求系统调用。</li>
+</ul>
+<p>从内核态返回用户态，则由操作系统设置好返回现场，恢复用户程序的 PC、PSW 等状态，再通过中断返回指令或类似机制返回。</p>
+<p>所以这里的流程图是：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A([用户程序在用户态运行]) --> B{{发生中断 / 异常 / 陷入}}\n    B --> C[CPU 通过硬件机制&lt;br/>受控切换到内核态]\n    C --> D[操作系统进入内核&lt;br/>处理相应事件]\n    D --> E[恢复被打断程序的现场]\n    E --> F([返回用户态&lt;br/>继续执行])\n\n    classDef startend fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef event fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef process fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n\n    class A,F startend;\n    class B event;\n    class C,D,E process;&quot;">flowchart TD
+    A([用户程序在用户态运行]) --> B{{发生中断 / 异常 / 陷入}}
+    B --> C[CPU 通过硬件机制&lt;br/>受控切换到内核态]
+    C --> D[操作系统进入内核&lt;br/>处理相应事件]
+    D --> E[恢复被打断程序的现场]
+    E --> F([返回用户态&lt;br/>继续执行])
+
+    classDef startend fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef event fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef process fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+
+    class A,F startend;
+    class B event;
+    class C,D,E process;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="中断与异常机制操作系统的引擎">中断与异常机制（操作系统的引擎）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#中断与异常机制操作系统的引擎" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>核心速览 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>如果把操作系统比作一辆车，那么中断机制就像发动机。</p>
+<p>CPU 正常执行程序时，控制流通常是一条平滑向前的线。但系统运行过程中总会出现各种事件：键盘按下、网卡收到数据、磁盘完成读写、程序除零、用户发起系统调用。</p>
+<p>一旦这些事件发生，硬件就会改变 CPU 的控制流，把 CPU 带到操作系统预先准备好的处理程序中。</p>
+<p>这就是所谓的 <strong>异常控制流 ECF</strong>。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="1-怎样理解操作系统是由中断--异常--事件驱动的">1. 怎样理解“操作系统是由中断 / 异常 / 事件驱动的”？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-怎样理解操作系统是由中断--异常--事件驱动的" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这句话一开始听起来有点玄，但其实非常直观。</p>
+<p>普通应用程序通常是“主动执行”的。比如你写一个 <code>main()</code>，它从第一行开始，一行一行往下跑。</p>
+<p>但操作系统不是这样。</p>
+<p>操作系统很多时候并不是自己一直主动运行，而是被各种事件“叫醒”。</p>
+<p>比如：</p>
+<ul>
+<li>用户敲了一下键盘，键盘控制器发出中断，操作系统被叫醒。</li>
+<li>网卡收到一个数据包，网卡发出中断，操作系统被叫醒。</li>
+<li>程序访问了一个还没映射的虚拟地址，CPU 产生缺页异常，操作系统被叫醒。</li>
+<li>程序调用 <code>write()</code> 想输出内容，执行系统调用指令，操作系统被叫醒。</li>
+<li>时钟中断到来，操作系统被叫醒，并可能决定要不要切换进程。</li>
+</ul>
+<p>所以，所谓“操作系统是中断 / 异常 / 事件驱动的”，意思是：</p>
+<p><strong>操作系统的执行经常不是凭空发生的，而是由硬件事件、程序异常或用户请求触发的。</strong></p>
+<p>事件发生后，硬件负责把 CPU 控制权转交给内核；内核处理完事件后，再把控制权交回用户程序，或者调度另一个程序运行。</p>
+<hr/>
+<h3 id="2-事件的分类中断-vs-异常">2. 事件的分类：中断 vs 异常<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-事件的分类中断-vs-异常" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>所有会打破正常执行流的事件，都可以放在“异常控制流”的大框架下理解。</p>
+<p>但为了说清楚来源，我们一般把它们分成两大类：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th style="text-align:left;">类别</th><th style="text-align:left;">概念</th><th style="text-align:left;">来源</th><th style="text-align:left;">同步 / 异步</th><th style="text-align:left;">返回行为</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>中断 Interrupt</strong></td><td style="text-align:left;">外中断，由 CPU 外部硬件信号引发</td><td style="text-align:left;">I/O 设备、时钟、网卡、键盘、磁盘等</td><td style="text-align:left;"><strong>异步</strong>，和当前指令没有直接关系</td><td style="text-align:left;">通常返回到下一条指令</td></tr><tr><td style="text-align:left;"><strong>异常 Exception</strong></td><td style="text-align:left;">内中断，由当前指令执行过程引发</td><td style="text-align:left;">除零、非法指令、缺页、保护异常、系统调用等</td><td style="text-align:left;"><strong>同步</strong>，和当前指令直接相关</td><td style="text-align:left;">取决于异常类型</td></tr></tbody></table></div>
+<p>这里最关键的区别是：</p>
+<p><strong>中断是外部来的，异常是当前指令自己引发的。</strong></p>
+<p>比如 CPU 正在执行一条普通加法指令，网卡突然收到数据包并发来中断。这和这条加法指令没有关系，所以它是异步中断。</p>
+<p>但如果 CPU 正在执行 <code>1 / 0</code>，立刻触发除零异常，这就和当前指令直接相关，所以它是同步异常。</p>
+<hr/>
+<h3 id="3-ics-中异常的经典分类">3. ICS 中异常的经典分类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-ics-中异常的经典分类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在 ICS 的异常控制流模型中，通常把异常分成四类：</p>
+<h4 id="interrupt中断">Interrupt：中断<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#interrupt中断" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>中断来自处理器外部，是异步事件。</p>
+<p>例如：</p>
+<ul>
+<li>时钟中断；</li>
+<li>键盘中断；</li>
+<li>磁盘 I/O 完成中断；</li>
+<li>网卡收到数据包中断。</li>
+</ul>
+<p>它和当前正在执行的指令没有直接关系。</p>
+<p>处理完成后，通常返回到被打断程序的下一条指令继续执行。</p>
+<h4 id="trap陷入">Trap：陷入<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#trap陷入" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>陷入是程序有意触发的异常。</p>
+<p>最典型的例子就是：</p>
+<ul>
+<li>系统调用；</li>
+<li>断点调试。</li>
+</ul>
+<p>系统调用不是错误，而是用户程序主动请求操作系统服务。比如用户程序想读文件、写屏幕、创建进程，它就通过系统调用陷入内核。</p>
+<p>陷入处理完后，通常返回到下一条指令。</p>
+<h4 id="fault故障">Fault：故障<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#fault故障" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>故障是可能被修复的错误。</p>
+<p>最典型的例子是：</p>
+<ul>
+<li>缺页异常 Page Fault。</li>
+</ul>
+<p>比如程序访问某个虚拟地址时，发现对应页面还不在内存里。CPU 触发缺页异常，进入内核。内核把需要的页面从磁盘调入内存，修好页表，然后回到原来的那条指令重新执行。</p>
+<p>所以 Fault 的特点是：</p>
+<p><strong>处理完后，往往返回到当前出错的指令重新执行。</strong></p>
+<h4 id="abort终止">Abort：终止<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#abort终止" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>终止是不可恢复的严重错误。</p>
+<p>比如严重硬件故障、机器检查异常等。</p>
+<p>这种情况下，操作系统通常无法修复问题，也就不会返回原程序继续执行。</p>
+<hr/>
+<h3 id="4-中断--异常的来源不同处理方式一样吗">4. 中断 / 异常的来源不同，处理方式一样吗？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-中断--异常的来源不同处理方式一样吗" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>大的机制相似，小的处理逻辑不同。</p>
+<p>相似之处在于：</p>
+<ul>
+<li>中断和异常都会打破当前控制流；</li>
+<li>都会让 CPU 进入内核；</li>
+<li>都需要保存现场；</li>
+<li>都需要根据事件类型查找对应处理程序；</li>
+<li>都需要在处理后恢复现场或进行调度。</li>
+</ul>
+<p>不同之处在于：</p>
+<ul>
+<li>
+<p>中断通常来自外部设备，所以它的处理程序常常和设备驱动有关。例如键盘中断要读取键盘输入，网卡中断要处理收到的数据包，磁盘中断要唤醒等待 I/O 的进程。</p>
+</li>
+<li>
+<p>异常来自当前指令执行过程，所以它更关心“这条指令为什么出问题”。比如除零异常可能导致程序收到错误信号，缺页异常可能触发页面调入，系统调用则会进入内核服务例程。</p>
+</li>
+</ul>
+<p>返回行为也不完全相同。</p>
+<ul>
+<li>中断通常返回到下一条指令。</li>
+<li>陷入通常返回到下一条指令。</li>
+<li>故障可能返回到当前指令重新执行。</li>
+<li>终止一般不返回。</li>
+</ul>
+<p>所以你可以这样记：</p>
+<p><strong>中断和异常共用一套“进入内核”的底层机制，但具体事件来源、处理目标和返回方式不一样。</strong></p>
+<hr/>
+<h2 id="软硬协同中断处理的生命周期">软硬协同：中断处理的生命周期<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#软硬协同中断处理的生命周期" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>中断机制最精妙的地方在于：它既不是纯硬件完成的，也不是纯软件完成的，而是一次非常典型的 <strong>软硬件协同</strong>。</p>
+<p>硬件负责完成最底层、最可信的控制权转移：发现事件、保存必要现场、切换状态、找到入口，并把 CPU 带进内核。</p>
+<p>软件，也就是操作系统，负责真正理解这个事件：它要判断发生了什么、应该调用哪个处理程序、是否需要唤醒进程、是否需要调度，最后再决定返回原程序还是切换到其他进程。</p>
+<p>所以可以先用一句话抓住主线：</p>
+<p><strong>硬件负责把 CPU 安全地带进内核，操作系统负责在内核里把事情处理完。</strong></p>
+<p>课件里的“中断响应流程”图，正是在说明这一点。一次中断从设备发出信号，到 CPU 进入中断处理程序，大致可以分成下面五步：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;① 设备发出中断信号\&quot;]\n    B[\&quot;② 硬件保存现场&lt;br/>保存 PC / PSW 等基本状态\&quot;]\n    C[\&quot;③ 根据中断码查表&lt;br/>查中断向量表 / IDT\&quot;]\n    D[\&quot;④ 装入中断处理程序入口&lt;br/>更新 PC / PSW 等寄存器\&quot;]\n    E[\&quot;⑤ 执行中断处理程序\&quot;]\n\n    A --> B --> C --> D --> E\n\n    classDef event fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef hardware fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;\n    classDef software fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n\n    class A event;\n    class B,C,D hardware;\n    class E software;&quot;">flowchart TD
+    A[&quot;① 设备发出中断信号&quot;]
+    B[&quot;② 硬件保存现场&lt;br/>保存 PC / PSW 等基本状态&quot;]
+    C[&quot;③ 根据中断码查表&lt;br/>查中断向量表 / IDT&quot;]
+    D[&quot;④ 装入中断处理程序入口&lt;br/>更新 PC / PSW 等寄存器&quot;]
+    E[&quot;⑤ 执行中断处理程序&quot;]
+
+    A --> B --> C --> D --> E
+
+    classDef event fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef hardware fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;
+    classDef software fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+
+    class A event;
+    class B,C,D hardware;
+    class E software;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这张图的重点不是记住每一个框，而是理解：<strong>中断发生后，CPU 的控制流会被硬件强行改道，从原来的程序切到操作系统准备好的中断处理程序。</strong></p>
+<p>原来的程序本来正在执行，PC 指向用户程序中的某个位置；中断发生后，硬件保存原来的 PC 和 PSW，再根据中断码查表，把新的入口地址装入 PC。于是下一条被执行的指令就不再是原程序的下一条指令，而是中断处理程序的第一条指令。</p>
+<p>这就是所谓的 <strong>异常控制流</strong>：控制流不再沿着普通程序顺序走，而是因为某个事件被硬件切换到了另一段处理逻辑中。</p>
+<hr/>
+<h3 id="1-硬件负责什么">1. 硬件负责什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-硬件负责什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>硬件负责的是 <strong>中断响应</strong>。</p>
+<p>所谓中断响应，就是事件发生以后，CPU 和体系结构要完成一组最低层的动作，把处理器控制权安全地交给特定的处理程序。</p>
+<p>课件里的说法可以概括为：</p>
+<p><span class="text-highlight">捕获中断源发出的中断 / 异常请求，以一定方式响应，将处理器控制权交给特定的处理程序。</span></p>
+<p>具体来说，硬件通常负责这些事情：</p>
+<ul>
+<li>检测中断或异常是否发生；</li>
+<li>确定中断向量号或异常类型；</li>
+<li>在必要时从用户态切换到内核态；</li>
+<li>在必要时从用户栈切换到内核栈；</li>
+<li>保存最基本的现场，比如 PC、PSW 等；</li>
+<li>在 x86 中，可能保存 EFLAGS、CS、EIP、SS、ESP 等返回所需信息；</li>
+<li>如果某些异常会产生错误码，硬件还会把错误码压入栈中；</li>
+<li>根据中断向量号查中断向量表，或者在 x86 保护模式下查 IDT；</li>
+<li>找到对应的处理程序入口；</li>
+<li>把 CPU 控制权转交给内核中的处理程序。</li>
+</ul>
+<p>这里要注意一个小细节：<strong>PC 和 PSW 是通用概念，EIP、RIP、EFLAGS、RFLAGS 是具体架构里的名字。</strong></p>
+<p>所以写笔记时可以这样理解：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>PC：表示“下一条指令在哪里”的抽象角色</span></span>
+<span data-line><span>EIP / RIP：x86 中承担 PC 角色的具体寄存器</span></span>
+<span data-line> </span>
+<span data-line><span>PSW：表示“程序状态字”的抽象概念</span></span>
+<span data-line><span>EFLAGS / RFLAGS：x86 中承担类似 PSW 角色的具体寄存器</span></span></code></pre></figure>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>硬件做的事情很像“门禁系统”。</p>
+<p>它不负责真正处理业务，但它负责确认事件来了，把 CPU 带到正确的入口，并且保证这个入口不能被普通用户程序随便伪造或绕过。</p>
+<p>所以硬件的任务不是“把事情办完”，而是“安全地把控制权交出去”。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="2-软件负责什么">2. 软件负责什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-软件负责什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>软件负责的是 <strong>中断处理</strong>。</p>
+<p>硬件把 CPU 带进内核以后，操作系统才真正开始干活。它要识别事件类型，并完成对应处理。</p>
+<p>课件里的说法可以概括为：</p>
+<p><span class="text-highlight">识别中断 / 异常类型并完成相应的处理。</span></p>
+<p>进入内核后，操作系统通常要做这些事情：</p>
+<ul>
+<li>继续保存更完整的现场，比如通用寄存器、段寄存器等；</li>
+<li>分析中断或异常的具体原因；</li>
+<li>调用对应的中断服务程序、异常处理程序或系统调用处理函数；</li>
+<li>如果是设备中断，就和设备驱动交互；</li>
+<li>如果是缺页异常，就处理页表、分配页面或从磁盘调入页面；</li>
+<li>如果是系统调用，就检查系统调用号、参数和权限，然后执行内核服务；</li>
+<li>必要时唤醒等待中的进程；</li>
+<li>必要时进行进程调度；</li>
+<li>恢复现场；</li>
+<li>返回原来的用户程序，或者切换到另一个进程运行。</li>
+</ul>
+<p>所以硬件和软件的分工可以这样记：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>硬件：发现事件，保存基本现场，查表，进入内核入口</span></span>
+<span data-line><span>软件：保存完整现场，判断原因，执行处理，恢复或调度</span></span></code></pre></figure>
+<p>一句话概括就是：</p>
+<p><strong>硬件负责“发现并移交”，软件负责“判断并处理”。</strong></p>
+<hr/>
+<h3 id="3-从中断响应到处理结束完整流程是什么">3. 从中断响应到处理结束，完整流程是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-从中断响应到处理结束完整流程是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>我们可以把一次中断 / 异常 / 系统调用的完整生命周期串起来看。</p>
+<p>第一步，<strong>事件发生</strong>。</p>
+<p>这个事件可能来自外部设备，比如键盘输入、磁盘 I/O 完成、网卡收到数据包；也可能来自当前指令执行过程，比如除零、缺页、非法指令；还可能来自用户程序主动执行陷入指令，比如系统调用。</p>
+<p>第二步，<strong>CPU 检测到事件</strong>。</p>
+<p>对于外部中断，CPU 通常会在当前指令执行完成后检查是否有中断请求。</p>
+<p>对于异常，CPU 往往是在执行当前指令时发现问题，比如访问了不存在的页面，或者执行了非法指令。</p>
+<p>第三步，<strong>硬件保存基本现场</strong>。</p>
+<p>CPU 不能直接跳去处理中断，否则原来的程序就不知道从哪里继续执行了。所以硬件会保存最关键的状态，例如 PC 和 PSW。在 x86 中，还会保存类似 EIP、CS、EFLAGS 等返回所需信息。</p>
+<p>第四步，<strong>发生特权级切换</strong>。</p>
+<p>如果事件发生在用户态，而处理程序位于内核态，那么 CPU 必须从用户态切换到内核态。</p>
+<p>在 x86 中，可以理解为从 R3 切换到 R0。</p>
+<p>第五步，<strong>必要时切换栈</strong>。</p>
+<p>从用户态进入内核态时，CPU 不能继续使用用户栈，因为用户栈是用户程序自己可以修改的，不可信。于是 CPU 会切换到当前进程对应的内核栈。</p>
+<p>第六步，<strong>查表找到处理程序入口</strong>。</p>
+<p>CPU 根据中断向量号去查中断向量表。在 x86 保护模式下，就是查 IDT，也就是中断描述符表。</p>
+<p>这个表的作用是告诉 CPU：不同编号的中断或异常，应该跳到哪里去处理。</p>
+<p>第七步，<strong>跳转到内核入口程序</strong>。</p>
+<p>查表之后，CPU 获得处理程序入口地址，并把控制流转移过去。</p>
+<p>比如系统调用会进入 <code>system_call()</code>，设备中断会进入对应的中断入口，缺页异常会进入缺页异常处理入口。</p>
+<p>第八步，<strong>操作系统继续保存现场</strong>。</p>
+<p>硬件只保存了最基本的信息。进入内核后，汇编入口代码还要继续保存完整上下文，比如通用寄存器等。这样内核处理完以后，才能尽量恢复原来程序的执行环境。</p>
+<p>第九步，<strong>操作系统分析原因并处理事件</strong>。</p>
+<p>如果是 I/O 中断，就调用设备驱动。</p>
+<p>如果是缺页异常，就修复页表或分配页面。</p>
+<p>如果是系统调用，就根据系统调用号查系统调用表，再调用对应的内核函数。</p>
+<p>第十步，<strong>返回前检查调度和信号</strong>。</p>
+<p>处理完成后，内核不一定立刻返回原程序。它可能还要检查：</p>
+<p>当前进程是否需要让出 CPU；</p>
+<p>是否有信号等待处理；</p>
+<p>是否有更高优先级任务需要运行。</p>
+<p>第十一步，<strong>恢复现场</strong>。</p>
+<p>如果决定返回原来的程序，操作系统就恢复之前保存的寄存器和状态。</p>
+<p>第十二步，<strong>返回用户态或切换进程</strong>。</p>
+<p>如果继续运行原进程，就通过中断返回指令回到用户态。</p>
+<p>如果调度器决定换人，就切换到另一个进程执行。</p>
+<p>完整流程可以画成这样：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;事件发生\&quot;] --> B[\&quot;CPU 检测到中断 / 异常\&quot;]\n\n    subgraph HW[\&quot;硬件响应阶段\&quot;]\n        C[\&quot;硬件保存基本现场\&quot;]\n        D[\&quot;切换到内核态&lt;br/>必要时切换到内核栈\&quot;]\n        E[\&quot;根据中断向量号查找 IDT\&quot;]\n        F[\&quot;跳转到内核处理入口\&quot;]\n    end\n\n    subgraph SW[\&quot;操作系统处理阶段\&quot;]\n        G[\&quot;操作系统保存完整现场\&quot;]\n        H[\&quot;分析原因并处理事件\&quot;]\n        I[\&quot;检查调度 / 信号等返回前事务\&quot;]\n        J[\&quot;恢复现场\&quot;]\n    end\n\n    B --> C --> D --> E --> F --> G --> H --> I --> J\n    J --> K[\&quot;返回用户态&lt;br/>或切换到其他进程\&quot;]\n\n    classDef startend fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef event fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef hardware fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;\n    classDef software fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n    classDef ret fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;\n\n    class A startend;\n    class B event;\n    class C,D,E,F hardware;\n    class G,H,I,J software;\n    class K ret;\n\n    style HW fill:#fffaf0,stroke:#d98c10,stroke-width:2px,color:#5a4300;\n    style SW fill:#f3fbf3,stroke:#67b567,stroke-width:2px,color:#1f3b1f;&quot;">flowchart TD
+    A[&quot;事件发生&quot;] --> B[&quot;CPU 检测到中断 / 异常&quot;]
+
+    subgraph HW[&quot;硬件响应阶段&quot;]
+        C[&quot;硬件保存基本现场&quot;]
+        D[&quot;切换到内核态&lt;br/>必要时切换到内核栈&quot;]
+        E[&quot;根据中断向量号查找 IDT&quot;]
+        F[&quot;跳转到内核处理入口&quot;]
+    end
+
+    subgraph SW[&quot;操作系统处理阶段&quot;]
+        G[&quot;操作系统保存完整现场&quot;]
+        H[&quot;分析原因并处理事件&quot;]
+        I[&quot;检查调度 / 信号等返回前事务&quot;]
+        J[&quot;恢复现场&quot;]
+    end
+
+    B --> C --> D --> E --> F --> G --> H --> I --> J
+    J --> K[&quot;返回用户态&lt;br/>或切换到其他进程&quot;]
+
+    classDef startend fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef event fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef hardware fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;
+    classDef software fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+    classDef ret fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;
+
+    class A startend;
+    class B event;
+    class C,D,E,F hardware;
+    class G,H,I,J software;
+    class K ret;
+
+    style HW fill:#fffaf0,stroke:#d98c10,stroke-width:2px,color:#5a4300;
+    style SW fill:#f3fbf3,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h3 id="4-操作系统初始化与中断--异常的关系">4. 操作系统初始化与中断 / 异常的关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-操作系统初始化与中断--异常的关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>操作系统不是等中断来了才临时想办法处理。</p>
+<p>恰恰相反，操作系统必须在初始化阶段就把中断和异常的入口提前布置好。否则事件真的发生时，CPU 根本不知道该跳到哪里。</p>
+<p>这就像一个学校不能等学生突然生病了才临时决定医务室在哪里，而是要提前安排好医务室、值班老师、联系电话和处理流程。</p>
+<p>操作系统初始化时通常要做这些事情：</p>
+<ul>
+<li>建立中断向量表或中断描述符表 IDT；</li>
+<li>为每一种中断和异常设置对应处理程序；</li>
+<li>初始化中断控制器，比如 PIC 或 APIC；</li>
+<li>设置系统调用入口，比如传统 x86 Linux 中的 <code>0x80</code> 号门；</li>
+<li>准备 GDT、TSS、内核栈等与特权级切换有关的数据结构；</li>
+<li>在合适的时机打开中断，让 CPU 开始响应外部事件。</li>
+</ul>
+<p>所以，操作系统初始化和中断 / 异常的关系可以这样理解：</p>
+<p><strong>初始化阶段负责“布置入口”；运行阶段事件发生时，CPU 才能“按入口进入”。</strong></p>
+<p>如果没有初始化 IDT，那么中断或异常发生后，CPU 找不到合法处理入口。轻则当前程序崩溃，重则整个系统无法继续运行。</p>
+<hr/>
+<h3 id="5-为什么-linux-要把中断处理分成上半部和下半部">5. 为什么 Linux 要把中断处理分成上半部和下半部？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-为什么-linux-要把中断处理分成上半部和下半部" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这个问题背后其实是一个矛盾：</p>
+<p><strong>中断必须及时响应，但中断处理又不能占用 CPU 太久。</strong></p>
+<p>外设发来中断以后，操作系统要尽快处理。比如网卡收到数据包，如果迟迟不处理，缓冲区可能溢出；磁盘 I/O 完成后，如果不及时响应，等待 I/O 的进程就不能继续运行。</p>
+<p>但是，操作系统又不能在中断处理程序里做太多复杂工作。因为中断处理程序运行时，系统往往处在比较特殊的上下文中。如果它执行太久，就会影响其他中断响应，也会影响整个系统的实时性和并发性。</p>
+<p>所以 Linux 把中断处理拆成两部分：</p>
+<p><strong>上半部</strong>负责立刻做、必须快的事情。</p>
+<p>比如：</p>
+<ul>
+<li>确认中断来源；</li>
+<li>读取设备状态；</li>
+<li>清除或应答中断；</li>
+<li>取走少量关键数据；</li>
+<li>把后续复杂工作登记下来，交给下半部。</li>
+</ul>
+<p>上半部的原则是：<strong>越快越好，绝不恋战。</strong></p>
+<p><strong>下半部</strong>负责稍后做、可以慢一点的事情。</p>
+<p>比如：</p>
+<ul>
+<li>进一步处理数据包；</li>
+<li>唤醒等待进程；</li>
+<li>执行协议栈处理；</li>
+<li>完成较复杂的数据整理；</li>
+<li>把数据交给更上层的内核模块。</li>
+</ul>
+<p>下半部的原则是：<strong>把不紧急但必要的工作延后处理。</strong></p>
+<p>可以这样画：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;外设发出中断\&quot;] --> B[\&quot;上半部处理&lt;br/>快速响应中断\&quot;]\n    B --> C[\&quot;确认中断来源&lt;br/>读取设备状态&lt;br/>清除 / 应答中断\&quot;]\n    C --> D[\&quot;登记后续任务&lt;br/>把复杂工作推迟\&quot;]\n    D --> E[\&quot;下半部处理&lt;br/>稍后执行复杂逻辑\&quot;]\n    E --> F[\&quot;处理数据&lt;br/>唤醒进程&lt;br/>调用协议栈或驱动后续逻辑\&quot;]\n\n    classDef event fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef top fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;\n    classDef bottom fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n\n    class A event;\n    class B,C,D top;\n    class E,F bottom;&quot;">flowchart TD
+    A[&quot;外设发出中断&quot;] --> B[&quot;上半部处理&lt;br/>快速响应中断&quot;]
+    B --> C[&quot;确认中断来源&lt;br/>读取设备状态&lt;br/>清除 / 应答中断&quot;]
+    C --> D[&quot;登记后续任务&lt;br/>把复杂工作推迟&quot;]
+    D --> E[&quot;下半部处理&lt;br/>稍后执行复杂逻辑&quot;]
+    E --> F[&quot;处理数据&lt;br/>唤醒进程&lt;br/>调用协议栈或驱动后续逻辑&quot;]
+
+    classDef event fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef top fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;
+    classDef bottom fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+
+    class A event;
+    class B,C,D top;
+    class E,F bottom;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>上半部像“先把火灭掉”：设备来中断了，先赶紧确认、止损、应答，避免问题扩大。</p>
+<p>下半部像“再慢慢收拾现场”：复杂的数据处理、唤醒进程、协议栈逻辑，可以稍后再做。</p>
+<p>这样既保证了中断响应速度，也避免中断处理程序长时间占用 CPU。</p>
+</div>
+</blockquote>
+<p>所以一句话总结：</p>
+<p><strong>中断响应流程说明了 CPU 如何从原程序跳到中断处理程序；上半部 / 下半部机制说明了 Linux 如何在“及时响应中断”和“避免中断处理过久”之间取得平衡。</strong></p>
+<hr/>
+<h2 id="x86--ia32-体系结构对中断的支持">x86 / IA32 体系结构对中断的支持<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#x86--ia32-体系结构对中断的支持" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>前面我们已经知道：发生中断或异常后，CPU 会根据某个编号去查表，然后跳转到对应的处理程序。</p>
+<p>但这里还要继续追问两个问题：</p>
+<p><strong>第一，中断向量号从哪里来？</strong></p>
+<p><strong>第二，CPU 根据中断向量号到底查的是哪张表？</strong></p>
+<p>在 IA32，也就是 32 位 x86 体系结构中，中断机制大致可以分成两层：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>外部设备发出中断信号</span></span>
+<span data-line><span>        ↓</span></span>
+<span data-line><span>中断控制器把它转换成中断向量号</span></span>
+<span data-line><span>        ↓</span></span>
+<span data-line><span>CPU 根据中断向量号查表</span></span>
+<span data-line><span>        ↓</span></span>
+<span data-line><span>找到对应的中断 / 异常处理程序入口</span></span></code></pre></figure>
+<p>所以，这一节真正要理解的是：</p>
+<p><strong>中断信号本身不是处理程序地址。中断信号要先变成中断向量号，CPU 再用这个向量号去查表。</strong></p>
+<hr/>
+<h3 id="1-中断控制器pic-或-apic">1. 中断控制器：PIC 或 APIC<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-中断控制器pic-或-apic" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>外部设备本身不会直接告诉 CPU：“请跳到某某函数执行。”</p>
+<p>它们只是发出一个硬件中断请求。</p>
+<p>比如：</p>
+<ul>
+<li>键盘按下；</li>
+<li>磁盘 I/O 完成；</li>
+<li>网卡收到数据包；</li>
+<li>时钟到达一个周期。</li>
+</ul>
+<p>这些设备发出的中断请求，需要先交给 <strong>中断控制器</strong> 处理。</p>
+<p>在 x86 系统中，中断控制器主要有两类：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>PIC：Programmable Interrupt Controller，可编程中断控制器</span></span>
+<span data-line><span>APIC：Advanced Programmable Interrupt Controller，高级可编程中断控制器</span></span></code></pre></figure>
+<p>它们的作用是：</p>
+<p><strong>负责将硬件设备发出的中断信号转换成中断向量号，并引发 CPU 中断。</strong></p>
+<p>也就是说，外部设备发出的只是“我有事”的信号；PIC / APIC 会把这个信号整理成 CPU 能理解的编号。CPU 拿到这个编号之后，才知道应该去查表找哪个处理入口。</p>
+<p>可以先画成这样：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;外部设备&lt;br/>发出中断请求\&quot;] --> B[\&quot;中断控制器&lt;br/>PIC / APIC\&quot;]\n    B --> C[\&quot;转换成中断向量号\&quot;]\n    C --> D[\&quot;CPU 根据中断向量号查表\&quot;]\n    D --> E[\&quot;进入对应的中断处理程序\&quot;]\n\n    classDef device fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef hardware fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;\n    classDef handler fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n\n    class A device;\n    class B,C,D hardware;\n    class E handler;&quot;">flowchart TD
+    A[&quot;外部设备&lt;br/>发出中断请求&quot;] --> B[&quot;中断控制器&lt;br/>PIC / APIC&quot;]
+    B --> C[&quot;转换成中断向量号&quot;]
+    C --> D[&quot;CPU 根据中断向量号查表&quot;]
+    D --> E[&quot;进入对应的中断处理程序&quot;]
+
+    classDef device fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef hardware fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;
+    classDef handler fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+
+    class A device;
+    class B,C,D hardware;
+    class E handler;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>所以，PIC / APIC 解决的是第一个问题：</p>
+<p><strong>硬件中断信号如何变成 CPU 可以用来查表的中断向量号。</strong></p>
+<hr/>
+<h3 id="2-实模式中断向量表-ivt">2. 实模式：中断向量表 IVT<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-实模式中断向量表-ivt" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在早期 x86 的 <strong>实模式（Real Mode）</strong> 下，中断处理机制比较简单。</p>
+<p>CPU 使用的是：</p>
+<p><strong>中断向量表（Interrupt Vector Table, IVT）</strong></p>
+<p>在实模式中，中断向量表里存放的是 <strong>中断服务程序的入口地址</strong>。</p>
+<p>这个入口地址由两部分组成：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>段地址 + 偏移地址</span></span></code></pre></figure>
+<p>实模式下的物理地址计算方式是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>入口地址 = 段地址左移 4 位 + 偏移地址</span></span></code></pre></figure>
+<p>也就是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>physical address = segment × 16 + offset</span></span></code></pre></figure>
+<p>所以实模式下的中断寻址逻辑可以理解为：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>中断向量号</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>查中断向量表 IVT</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>取出段地址和偏移地址</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>计算中断服务程序入口地址</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>跳转执行中断服务程序</span></span></code></pre></figure>
+<p>但是，实模式有一个很大的限制：</p>
+<p><strong>它不支持现代操作系统需要的 CPU 运行状态切换。</strong></p>
+<p>也就是说，实模式下没有我们现在熟悉的用户态 / 内核态保护隔离。中断处理更像是一次由硬件触发的过程调用，只是入口地址由中断向量表决定。</p>
+<p>所以课件里说，实模式下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>中断处理与一般的过程调用相似</span></span></code></pre></figure>
+<p>它能找到处理程序，但保护能力很弱。</p>
+<hr/>
+<h3 id="3-保护模式中断描述符表-idt">3. 保护模式：中断描述符表 IDT<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-保护模式中断描述符表-idt" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>到了 <strong>保护模式（Protected Mode）</strong>，事情就复杂了一些。</p>
+<p>现代操作系统不能只要求 CPU “跳到某个地址”，还要要求 CPU 做更多检查和保护：</p>
+<ul>
+<li>当前程序有没有资格使用这个入口？</li>
+<li>进入处理程序后是不是要切换到内核态？</li>
+<li>要不要从用户栈切换到内核栈？</li>
+<li>这个入口是中断门、陷阱门，还是任务门？</li>
+<li>进入后是否要自动关中断？</li>
+</ul>
+<p>所以在保护模式下，CPU 不再使用简单的中断向量表，而是使用：</p>
+<p><span class="text-highlight">IDT：Interrupt Descriptor Table，中断描述符表</span></p>
+<p>IDT 里的每一项不是一个简单的函数地址，而是一个：</p>
+<p><span class="text-highlight">门描述符（Gate Descriptor）</span></p>
+<p>门描述符里面会保存更多信息，例如：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>处理程序所在代码段的段选择符</span></span>
+<span data-line><span>处理程序的段内偏移量</span></span>
+<span data-line><span>门的类型</span></span>
+<span data-line><span>DPL 权限级别</span></span>
+<span data-line><span>P 位，也就是该描述符是否有效</span></span></code></pre></figure>
+<p>所以，保护模式下的中断处理不只是“找到地址然后跳过去”，而是一次 <strong>受保护的控制权转移</strong>。</p>
+<p><img src="../../../课程笔记/操作系统/期中/assets/Pasted-image-20260424201442.png" alt/></p>
+<hr/>
+<h3 id="4-实模式和保护模式的区别">4. 实模式和保护模式的区别<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-实模式和保护模式的区别" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这部分可以用下面这张表记住：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>对比项</th><th>实模式</th><th>保护模式</th></tr></thead><tbody><tr><td>使用的表</td><td>中断向量表 IVT</td><td>中断描述符表 IDT</td></tr><tr><td>表项内容</td><td>中断服务程序入口地址</td><td>门描述符</td></tr><tr><td>地址形成方式</td><td>段地址左移 4 位 + 偏移地址</td><td>段选择符 + 偏移量，再结合 GDT / LDT</td></tr><tr><td>是否支持特权级切换</td><td>不支持</td><td>支持</td></tr><tr><td>是否支持现代 OS 保护机制</td><td>较弱</td><td>较强</td></tr><tr><td>中断处理风格</td><td>类似普通过程调用</td><td>受保护的控制权转移</td></tr></tbody></table></div>
+<p>可以这样理解：</p>
+<p><strong>实模式只关心“跳到哪里”；保护模式不仅关心“跳到哪里”，还关心“能不能跳、以什么权限跳、跳过去以后状态如何变化”。</strong></p>
+<hr/>
+<h3 id="5-保护模式下的两次查表idt-与-gdt">5. 保护模式下的两次查表：IDT 与 GDT<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-保护模式下的两次查表idt-与-gdt" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在 x86 保护模式下，CPU 找中断处理程序入口，大致要经历一个“两次查表”的过程。</p>
+<p>第一张表是 <strong>IDT</strong>。</p>
+<p>它根据中断向量号，找到对应的门描述符。</p>
+<p>第二张表通常是 <strong>GDT</strong>。</p>
+<p>门描述符中包含段选择符，CPU 会根据这个段选择符去 GDT 中找到对应的段描述符，从而得到代码段的基地址。</p>
+<p>最后：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>处理程序入口地址 = 段基址 + 段内偏移量</span></span></code></pre></figure>
+<p>可以画成这样：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;产生中断向量号 i\&quot;] --> B[\&quot;通过 IDTR 找到 IDT\&quot;]\n    B --> C[\&quot;查 IDT 第 i 项&lt;br/>得到门描述符\&quot;]\n    C --> D[\&quot;从门描述符中取出&lt;br/>段选择符 + 段内偏移量\&quot;]\n    D --> E[\&quot;通过 GDTR 找到 GDT\&quot;]\n    E --> F[\&quot;根据段选择符&lt;br/>查 GDT 中的段描述符\&quot;]\n    F --> G[\&quot;从段描述符中取出段基址\&quot;]\n    G --> H[\&quot;段基址 + 段内偏移量&lt;br/>得到处理程序入口地址\&quot;]\n    H --> I[\&quot;进行权限检查&lt;br/>必要时切换特权级和栈\&quot;]\n    I --> J[\&quot;进入中断 / 异常处理程序\&quot;]\n\n    classDef vector fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef table fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef hardware fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;\n    classDef handler fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n\n    class A vector;\n    class B,C,D,E,F,G,H table;\n    class I hardware;\n    class J handler;&quot;">flowchart TD
+    A[&quot;产生中断向量号 i&quot;] --> B[&quot;通过 IDTR 找到 IDT&quot;]
+    B --> C[&quot;查 IDT 第 i 项&lt;br/>得到门描述符&quot;]
+    C --> D[&quot;从门描述符中取出&lt;br/>段选择符 + 段内偏移量&quot;]
+    D --> E[&quot;通过 GDTR 找到 GDT&quot;]
+    E --> F[&quot;根据段选择符&lt;br/>查 GDT 中的段描述符&quot;]
+    F --> G[&quot;从段描述符中取出段基址&quot;]
+    G --> H[&quot;段基址 + 段内偏移量&lt;br/>得到处理程序入口地址&quot;]
+    H --> I[&quot;进行权限检查&lt;br/>必要时切换特权级和栈&quot;]
+    I --> J[&quot;进入中断 / 异常处理程序&quot;]
+
+    classDef vector fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef table fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef hardware fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;
+    classDef handler fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+
+    class A vector;
+    class B,C,D,E,F,G,H table;
+    class I hardware;
+    class J handler;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这个过程看起来比实模式麻烦得多，但它的目的非常明确：</p>
+<p><strong>CPU 不仅要找到处理程序在哪里，还要借助描述符表完成权限检查、特权级切换和保护控制。</strong></p>
+<p>这正是现代操作系统能够把用户程序和内核隔离开的基础之一。</p>
+<hr/>
+<h3 id="6-idtrgdtridtgdt-分别是什么">6. IDTR、GDTR、IDT、GDT 分别是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-idtrgdtridtgdt-分别是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这里有几个名字很容易混，我们分开看。</p>
+<p><strong>IDTR</strong></p>
+<p>IDTR 是 <strong>中断描述符表寄存器</strong>。</p>
+<p>它保存 IDT 的基地址和界限。CPU 要查 IDT，首先要通过 IDTR 知道 IDT 放在内存哪里。</p>
+<p>可以理解为：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>IDTR：告诉 CPU，IDT 在哪里</span></span></code></pre></figure>
+<p><strong>IDT</strong></p>
+<p>IDT 是 <strong>中断描述符表</strong>。</p>
+<p>每个中断向量号对应 IDT 中的一项。比如传统 x86 Linux 中：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>int $0x80  →  查 IDT[0x80]</span></span></code></pre></figure>
+<p>IDT 第 128 项对应系统调用入口。</p>
+<p>可以理解为：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>IDT：根据中断向量号，找到对应的门描述符</span></span></code></pre></figure>
+<p><strong>GDTR</strong></p>
+<p>GDTR 是 <strong>全局描述符表寄存器</strong>。</p>
+<p>它保存 GDT 的基地址和界限。CPU 要查 GDT，首先要通过 GDTR 知道 GDT 在哪里。</p>
+<p>可以理解为：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>GDTR：告诉 CPU，GDT 在哪里</span></span></code></pre></figure>
+<p><strong>GDT</strong></p>
+<p>GDT 是 <strong>全局描述符表</strong>。</p>
+<p>它保存代码段、数据段等段描述符信息。门描述符里的段选择符会指向 GDT 中的某一项，CPU 通过这一项获得代码段的基地址、界限、权限等信息。</p>
+<p>可以理解为：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>GDT：根据段选择符，找到代码段或数据段的描述信息</span></span></code></pre></figure>
+<p><strong>门描述符</strong></p>
+<p>门描述符是 IDT 中的表项。</p>
+<p>它告诉 CPU：发生某个中断或异常时，应该通过哪个代码段、哪个偏移量进入处理程序，并且这个入口具有什么权限和门类型。</p>
+<p>可以理解为：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>门描述符：受保护的处理程序入口说明书</span></span></code></pre></figure>
+<hr/>
+<h3 id="7-门描述符的种类">7. 门描述符的种类<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-门描述符的种类" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>x86 保护模式下，IDT 表项可以使用不同类型的门描述符。不同的门对应不同的控制转移方式。</p>
+<p>常见的门有四种。</p>
+<h4 id="中断门interrupt-gate">中断门（Interrupt Gate）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#中断门interrupt-gate" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>中断门常用于硬件中断。</p>
+<p>它的一个重要特点是：</p>
+<p><span class="text-highlight">通过中断门进入处理程序时，硬件会自动清除 IF 位，也就是自动关中断。</span></p>
+<p>IF 位是 EFLAGS 中控制是否响应可屏蔽中断的标志位。</p>
+<p>为什么硬件中断常用中断门？</p>
+<p>因为当 CPU 正在处理一个硬件中断时，通常不希望立刻又被新的可屏蔽中断打断，否则中断嵌套可能变得很复杂，甚至影响系统稳定性。</p>
+<p>所以，中断门的直觉是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>先专心处理当前中断，暂时别让新的可屏蔽中断插进来</span></span></code></pre></figure>
+<h4 id="陷阱门trap-gate">陷阱门（Trap Gate）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#陷阱门trap-gate" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>陷阱门和中断门很像，也会让 CPU 跳到指定处理程序。</p>
+<p>但它和中断门的关键区别是：</p>
+<p><strong>通过陷阱门进入处理程序时，不会自动清除 IF 位。</strong></p>
+<p>也就是说，进入陷阱门后，CPU 不会自动关中断。</p>
+<p>系统调用和一些异常常用陷阱门。</p>
+<p>在早期 x86 Linux 中，<code>int $0x80</code> 对应的第 128 号门就是陷阱门。Linux 会把这个门的 DPL 设置为 3，使用户态程序可以通过它进入内核的系统调用总入口 <code>system_call()</code>。</p>
+<p>这里要注意：</p>
+<p><strong>DPL = 3 不是说 <code>system_call()</code> 运行在用户态，而是说用户态程序有资格使用这个门。</strong></p>
+<p>真正进入门以后，CPU 仍然会切换到内核态执行 <code>system_call()</code>。</p>
+<h4 id="任务门task-gate">任务门（Task Gate）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#任务门task-gate" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>任务门和 x86 的硬件任务切换机制有关。</p>
+<p>它可以让中断发生时切换到另一个任务的 TSS。但 Linux 通常不使用任务门来完成普通中断处理，因为 Linux 更倾向于用自己的软件方式管理进程切换和上下文切换。</p>
+<p>所以任务门在这部分了解即可。</p>
+<h4 id="调用门call-gate">调用门（Call Gate）<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#调用门call-gate" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>调用门用于跨特权级过程调用。</p>
+<p>它也可以实现从低特权级到高特权级的受控调用。但现代主流操作系统很少把它作为主要系统调用机制。Linux 早期使用 <code>int $0x80</code>，后来使用 <code>sysenter / sysexit</code>，x86-64 主要使用 <code>syscall / sysret</code>。</p>
+<p>所以调用门也属于了解即可。</p>
+<hr/>
+<h3 id="8-中断门和陷阱门的核心区别">8. 中断门和陷阱门的核心区别<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-中断门和陷阱门的核心区别" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这两个最容易考，也最容易混。</p>
+<p>可以用一张表记：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>对比项</th><th>中断门 Interrupt Gate</th><th>陷阱门 Trap Gate</th></tr></thead><tbody><tr><td>是否自动清 IF 位</td><td>会自动清 IF，进入后关中断</td><td>不会自动清 IF</td></tr><tr><td>常见用途</td><td>硬件中断</td><td>系统调用、调试陷阱、部分异常</td></tr><tr><td>直觉理解</td><td>先屏蔽新的可屏蔽中断，专心处理当前中断</td><td>不自动屏蔽中断，适合有意触发的陷入</td></tr></tbody></table></div>
+<p>一句话记忆：</p>
+<p><strong>中断门会自动关中断，陷阱门不会自动关中断。</strong></p>
+<hr/>
+<h3 id="9-把整个-ia32-中断支持流程串起来">9. 把整个 IA32 中断支持流程串起来<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-把整个-ia32-中断支持流程串起来" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>最后我们把这一节串成一张图：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;外部设备发出中断请求\&quot;] --> B[\&quot;PIC / APIC&lt;br/>转换成中断向量号\&quot;]\n    B --> C{\&quot;CPU 当前模式\&quot;}\n\n    C --> D[\&quot;实模式\&quot;]\n    D --> E[\&quot;查中断向量表 IVT\&quot;]\n    E --> F[\&quot;取出段地址和偏移地址\&quot;]\n    F --> G[\&quot;段地址左移 4 位 + 偏移地址\&quot;]\n    G --> H[\&quot;进入中断服务程序&lt;br/>类似普通过程调用\&quot;]\n\n    C --> I[\&quot;保护模式\&quot;]\n    I --> J[\&quot;查中断描述符表 IDT\&quot;]\n    J --> K[\&quot;取得门描述符\&quot;]\n    K --> L[\&quot;取出段选择符和段内偏移量\&quot;]\n    L --> M[\&quot;查 GDT 中的段描述符\&quot;]\n    M --> N[\&quot;段基址 + 段内偏移量\&quot;]\n    N --> O[\&quot;权限检查 / 特权级切换 / 栈切换\&quot;]\n    O --> P[\&quot;进入内核处理程序\&quot;]\n\n    classDef event fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef hardware fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;\n    classDef real fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef protected fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n    classDef decision fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;\n\n    class A,B hardware;\n    class C decision;\n    class D,E,F,G,H real;\n    class I,J,K,L,M,N,O,P protected;&quot;">flowchart TD
+    A[&quot;外部设备发出中断请求&quot;] --> B[&quot;PIC / APIC&lt;br/>转换成中断向量号&quot;]
+    B --> C{&quot;CPU 当前模式&quot;}
+
+    C --> D[&quot;实模式&quot;]
+    D --> E[&quot;查中断向量表 IVT&quot;]
+    E --> F[&quot;取出段地址和偏移地址&quot;]
+    F --> G[&quot;段地址左移 4 位 + 偏移地址&quot;]
+    G --> H[&quot;进入中断服务程序&lt;br/>类似普通过程调用&quot;]
+
+    C --> I[&quot;保护模式&quot;]
+    I --> J[&quot;查中断描述符表 IDT&quot;]
+    J --> K[&quot;取得门描述符&quot;]
+    K --> L[&quot;取出段选择符和段内偏移量&quot;]
+    L --> M[&quot;查 GDT 中的段描述符&quot;]
+    M --> N[&quot;段基址 + 段内偏移量&quot;]
+    N --> O[&quot;权限检查 / 特权级切换 / 栈切换&quot;]
+    O --> P[&quot;进入内核处理程序&quot;]
+
+    classDef event fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef hardware fill:#fdf3e7,stroke:#d98c10,stroke-width:2px,color:#5a4300;
+    classDef real fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef protected fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+    classDef decision fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;
+
+    class A,B hardware;
+    class C decision;
+    class D,E,F,G,H real;
+    class I,J,K,L,M,N,O,P protected;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这一节最后可以这样收束：</p>
+<p><strong>PIC / APIC 负责把外部硬件中断转换成中断向量号；实模式下，CPU 用中断向量号查 IVT，直接获得处理程序入口；保护模式下，CPU 用中断向量号查 IDT，通过门描述符、GDT 和权限检查，受控地进入内核处理程序。</strong></p>
+<p>所以，x86 保护模式下的中断机制并不是单纯为了“跳转”，而是为了在跳转的同时完成保护和隔离。</p>
+<hr/>
+<h2 id="系统调用system-call的底层运行机制">系统调用（System Call）的底层运行机制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#系统调用system-call的底层运行机制" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>核心速览 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>用户程序打印一句 <code>&quot;Hello World&quot;</code>，并不是直接把字符写到屏幕硬件上。</p>
+<p>它调用了 C 标准库的 <code>printf()</code>，<code>printf()</code> 可能先在用户态做格式化和缓冲，最终需要真正输出时，会触发 <code>write()</code> 系统调用。</p>
+<p>所以系统调用是应用程序请求操作系统服务的合法入口。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="1-应用程序是如何与操作系统交互的">1. 应用程序是如何与操作系统交互的？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-应用程序是如何与操作系统交互的" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>应用程序与操作系统交互，最主要的方式就是：</p>
+<p><strong>系统调用。</strong></p>
+<p>应用程序运行在用户态，不能直接访问硬件，也不能直接操作内核数据结构。</p>
+<p>但它总会需要操作系统帮忙，比如：</p>
+<ul>
+<li>读文件；</li>
+<li>写文件；</li>
+<li>创建进程；</li>
+<li>结束进程；</li>
+<li>申请内存；</li>
+<li>等待 I/O；</li>
+<li>访问设备；</li>
+<li>获取时间；</li>
+<li>发送网络数据。</li>
+</ul>
+<p>这些事情都需要操作系统参与。</p>
+<p>于是应用程序会调用 C 库或 API，例如：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">write</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;Hello</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">\n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">6</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<p>表面上看，这是一个 C 函数调用。</p>
+<p>但它内部会把系统调用号和参数准备好，然后执行特殊指令进入内核。</p>
+<p>进入内核后，操作系统完成真正的写操作，再把返回值交还给应用程序。</p>
+<p>所以应用程序和操作系统之间的关系可以画成：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[应用程序]\n    B[C 标准库或系统库]\n    C[系统调用入口]\n    D[操作系统内核]\n    E[硬件 / 文件系统 / 设备驱动]\n\n    A -->|调用 C 库 / API| B\n    B -->|封装系统调用号和参数| C\n    C --> D\n    D --> E\n\n    classDef app fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef lib fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef kernel fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n    classDef hw fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;\n\n    class A app;\n    class B,C lib;\n    class D kernel;\n    class E hw;&quot;">flowchart TD
+    A[应用程序]
+    B[C 标准库或系统库]
+    C[系统调用入口]
+    D[操作系统内核]
+    E[硬件 / 文件系统 / 设备驱动]
+
+    A -->|调用 C 库 / API| B
+    B -->|封装系统调用号和参数| C
+    C --> D
+    D --> E
+
+    classDef app fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef lib fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef kernel fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+    classDef hw fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;
+
+    class A app;
+    class B,C lib;
+    class D kernel;
+    class E hw;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>一句话总结：</p>
+<p><strong>应用程序通过系统调用请求操作系统服务，系统调用通过异常 / 陷入机制实现用户态到内核态的受控切换。</strong></p>
+<hr/>
+<h3 id="2-系统调用-vs-c-函数调用">2. 系统调用 vs C 函数调用<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-系统调用-vs-c-函数调用" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这是一个非常经典的易混点。</p>
+<p>普通 C 函数调用，比如：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> y </span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">=</span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;"> add</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">2</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<p>它只是用户态内部的一次跳转。</p>
+<p>它不会进入内核，不会切换特权级，不会查 IDT，也不会触发硬件异常机制。</p>
+<p>系统调用就不一样了。</p>
+<p>系统调用虽然在 C 代码里也常常表现得像一个函数，比如：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">write</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, buf, len);</span></span></code></pre></figure>
+<p>但它底层会触发一次从用户态到内核态的切换。</p>
+<p>可以这样对比：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th style="text-align:left;">对比项</th><th style="text-align:left;">C 函数调用</th><th style="text-align:left;">系统调用</th></tr></thead><tbody><tr><td style="text-align:left;">是否切换特权级</td><td style="text-align:left;">不切换</td><td style="text-align:left;">从用户态进入内核态</td></tr><tr><td style="text-align:left;">是否进入内核</td><td style="text-align:left;">不一定，通常不进入</td><td style="text-align:left;">一定进入内核</td></tr><tr><td style="text-align:left;">是否触发异常 / 陷入机制</td><td style="text-align:left;">不触发</td><td style="text-align:left;">触发</td></tr><tr><td style="text-align:left;">调用方式</td><td style="text-align:left;">普通 <code>call</code> 指令</td><td style="text-align:left;"><code>int 0x80</code>、<code>sysenter</code>、<code>syscall</code> 等</td></tr><tr><td style="text-align:left;">开销</td><td style="text-align:left;">较小</td><td style="text-align:left;">较大</td></tr><tr><td style="text-align:left;">能否访问内核资源</td><td style="text-align:left;">不能</td><td style="text-align:left;">可以请求内核代为访问</td></tr></tbody></table></div>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>C 函数调用像你在自己房间里找东西。</p>
+<p>系统调用像你要进入学校档案室。你不能自己推门进去，必须走登记、验证、交申请单这一整套流程。</p>
+<p>这个流程更慢，但它保证了安全。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="3-系统调用库函数api内核函数的关系">3. 系统调用、库函数、API、内核函数的关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-系统调用库函数api内核函数的关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这几个词很容易混在一起，我们拆开看。</p>
+<p><strong>API</strong></p>
+<p>API 是程序员看到的<span class="text-highlight">接口规范</span>。</p>
+<p>例如 POSIX 规定了 <code>read()</code>、<code>write()</code>、<code>open()</code> 这些接口应该怎么用。</p>
+<p><strong>库函数</strong></p>
+<p>库函数是 API 的具体封装实现。</p>
+<p>比如 C 标准库或 glibc 提供 <code>printf()</code>、<code>write()</code> 等函数。它们运行在用户态。</p>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>API 是逻辑层面的接口描述，库函数是代码层面的接口实现或封装。</p>
+<p>更进一步说：</p>
+<ul>
+<li>API：规定“有什么功能、怎么调用、输入输出是什么、行为语义是什么”</li>
+<li>库函数：用具体代码把这个接口做出来，或者把这个接口转接到更底层机制</li>
+</ul>
+</div>
+</blockquote>
+<p><strong>系统调用</strong></p>
+<p>系统调用是内核提供的服务入口。</p>
+<p>它不是普通函数调用，而是通过特殊指令触发陷入，进入内核。</p>
+<p><strong>内核函数</strong></p>
+<p>内核函数是真正在内核态执行的函数。</p>
+<p>比如早期 Linux 中，<code>write</code> 系统调用最后可能会分派到 <code>sys_write()</code>。</p>
+<p>它们的关系可以这样画：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    subgraph U[用户态]\n        A[应用程序]\n        B[API / C 库函数]\n        C[系统调用封装]\n        D[陷入指令进入内核]\n    end\n\n    subgraph K[内核态]\n        E[\&quot;系统调用总入口&lt;br/>system_call()\&quot;]\n        F[系统调用表&lt;br/>sys_call_table]\n        G[具体内核函数&lt;br/>sys_read / sys_write / sys_fork ...]\n    end\n\n    A --> B --> C --> D --> E --> F --> G\n\n    classDef user fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef kernel fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n\n    class A,B,C,D user;\n    class E,F,G kernel;&quot;">flowchart TD
+    subgraph U[用户态]
+        A[应用程序]
+        B[API / C 库函数]
+        C[系统调用封装]
+        D[陷入指令进入内核]
+    end
+
+    subgraph K[内核态]
+        E[&quot;系统调用总入口&lt;br/>system_call()&quot;]
+        F[系统调用表&lt;br/>sys_call_table]
+        G[具体内核函数&lt;br/>sys_read / sys_write / sys_fork ...]
+    end
+
+    A --> B --> C --> D --> E --> F --> G
+
+    classDef user fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef kernel fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+
+    class A,B,C,D user;
+    class E,F,G kernel;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>所以不能简单说 API 就是系统调用。</p>
+<p>更准确的说法是：</p>
+<p><strong>API 是给程序员看的接口，系统调用是内核真正提供服务的入口，库函数负责把两者连接起来。</strong></p>
+<hr/>
+<h3 id="4-什么是软件异常它是如何工作的">4. 什么是软件异常？它是如何工作的？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-什么是软件异常它是如何工作的" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>软件异常就是：</p>
+<p><strong>由程序主动执行某条特殊指令触发的异常。</strong></p>
+<p>最典型的软件异常就是系统调用。</p>
+<p>比如在 x86 早期 Linux 中，用户程序会执行：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="asm" data-theme="github-light github-dark"><code data-language="asm" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $0x80</span></span></code></pre></figure>
+<p>这条指令的意思不是普通跳转，而是主动触发 0x80 号陷入。</p>
+<p>CPU 看到这条指令后，会去 IDT 中查第 128 项，找到系统调用入口 <code>system_call()</code>，然后切换到内核态执行。</p>
+<p>软件异常的基本流程是：</p>
+<ul>
+<li>用户程序把系统调用号放入指定寄存器；</li>
+<li>用户程序把参数放入指定寄存器；</li>
+<li>执行陷入指令；</li>
+<li>硬件切换到内核态；</li>
+<li>硬件根据向量号进入系统调用总入口；</li>
+<li>内核保存现场；</li>
+<li>内核查系统调用表；</li>
+<li>执行具体系统调用；</li>
+<li>返回用户态。</li>
+</ul>
+<p>所以软件异常和硬件中断最大的区别在于：</p>
+<p><strong>软件异常是程序主动触发的，硬件中断是外部设备触发的。</strong></p>
+<hr/>
+<h2 id="linux-x86-系统调用的具体执行过程">Linux x86 系统调用的具体执行过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#linux-x86-系统调用的具体执行过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>下面以传统 x86 Linux 的 <code>int $0x80</code> 为例，把系统调用完整拆开。</p>
+<hr/>
+<h3 id="1-为什么选择-int-0x80">1. 为什么选择 <code>int $0x80</code>？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-为什么选择-int-0x80" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在早期 x86 Linux 中，系统调用通过：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="asm" data-theme="github-light github-dark"><code data-language="asm" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $0x80</span></span></code></pre></figure>
+<p>触发。</p>
+<p><code>0x80</code> 十进制是 128。</p>
+<p>操作系统初始化时，会在 IDT 的第 128 项设置一个门描述符。这个门描述符指向系统调用总入口：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>system_call()</span></span></code></pre></figure>
+<p>也就是说：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>int $0x80</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>查 IDT[128]</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>进入 system_call()</span></span></code></pre></figure>
+<p>这里要特别注意：</p>
+<p><code>system_call()</code> 不是某个具体系统调用，比如不是 <code>read()</code>，也不是 <code>write()</code>。</p>
+<p>它是所有系统调用共同的总入口。</p>
+<p>真正要执行哪个系统调用，要进入 <code>system_call()</code> 后再看系统调用号。</p>
+<hr/>
+<h3 id="2-system_call-与-idt-和系统调用表的关系">2. <code>system_call()</code> 与 IDT 和系统调用表的关系<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-system_call-与-idt-和系统调用表的关系" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这里是系统调用机制里最容易混的地方，因为它涉及两张不同的表：</p>
+<p>一张是 <strong>IDT，中断描述符表</strong>；</p>
+<p>另一张是 <strong>系统调用表 <code>sys_call_table</code></strong>。</p>
+<p>这两张表都和系统调用有关，但它们解决的问题完全不同。</p>
+<p>简单说：</p>
+<p><strong>IDT 负责“怎么进入内核”；系统调用表负责“进入内核后具体执行哪个系统调用”。</strong></p>
+<hr/>
+<p>先看 <code>system_call()</code> 和 IDT 的关系。</p>
+<p>在传统 x86 Linux 中，用户程序如果想发起系统调用，会执行一条特殊指令：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="asm" data-theme="github-light github-dark"><code data-language="asm" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $0x80</span></span></code></pre></figure>
+<p>这里的 <code>0x80</code> 是一个 <strong>中断向量号</strong>，十进制就是 128。</p>
+<p>CPU 执行到 <code>int $0x80</code> 后，会认为当前发生了一次编号为 <code>0x80</code> 的软件异常 / 陷入。于是 CPU 会根据这个编号去查 <strong>IDT 的第 128 项</strong>。</p>
+<p>也就是说：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>int $0x80</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>CPU 查 IDT[0x80]</span></span></code></pre></figure>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>IDT 存放的是不同中断 / 异常 / 陷入处理入口的信息；<span class="text-highlight">系统调用</span>是一种特殊的陷入，也就是软件异常，所以它在 IDT 里也有一个对应入口。</p>
+</div>
+</blockquote>
+<p>IDT 第 128 项中保存的并不是某个具体系统调用函数，比如 <code>sys_read()</code> 或 <code>sys_write()</code>，而是系统调用的统一入口地址：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>system_call()</span></span></code></pre></figure>
+<p>所以第一层关系是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>IDT[0x80] → system_call()</span></span></code></pre></figure>
+<p>这一步的意义是：</p>
+<p><strong>CPU 通过 IDT 找到系统调用总入口，并完成从用户态到内核态的受控切换。</strong></p>
+<p>也就是说，IDT 关心的不是“你要 read 还是 write”，而是“你要通过 0x80 这个入口进入内核”。</p>
+<hr/>
+<p>再看 <code>system_call()</code> 和系统调用表的关系。</p>
+<p>CPU 进入 <code>system_call()</code> 之后，只是到了一个统一入口。这个时候内核还不知道用户程序具体想干什么。</p>
+<p>用户程序到底想执行 <code>read()</code>、<code>write()</code>、<code>fork()</code> 还是 <code>exit()</code>，需要靠 <strong>系统调用号</strong> 来说明。</p>
+<p>在传统 x86 Linux 中，系统调用号通常放在 <code>eax</code> 寄存器中。</p>
+<p>例如：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>eax = 1  表示 exit</span></span>
+<span data-line><span>eax = 3  表示 read</span></span>
+<span data-line><span>eax = 4  表示 write</span></span></code></pre></figure>
+<p>所以，进入 <code>system_call()</code> 后，内核会先查看 <code>eax</code> 中的系统调用号。</p>
+<p>如果这个系统调用号合法，<code>system_call()</code> 就会用它作为索引，去查系统调用表：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>sys_call_table</span></span></code></pre></figure>
+<p>比如，如果此时：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>eax = 4</span></span></code></pre></figure>
+<p>那么内核就会查：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>sys_call_table[4]</span></span></code></pre></figure>
+<p>而这个表项中保存的就是 <code>write</code> 系统调用对应的内核函数入口：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>sys_call_table[4] → sys_write()</span></span></code></pre></figure>
+<p>所以第二层关系是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>system_call()</span></span>
+<span data-line><span>  ↓ 根据 eax 查 sys_call_table</span></span>
+<span data-line><span>sys_call_table[eax]</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>具体内核函数</span></span></code></pre></figure>
+<hr/>
+<p>把整个过程串起来，就是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>用户程序</span></span>
+<span data-line><span>  ↓ 执行 int $0x80</span></span>
+<span data-line><span>CPU 根据 0x80 查 IDT</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>IDT[0x80] 指向 system_call()</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>CPU 进入内核态，执行 system_call()</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>system_call() 读取 eax 中的系统调用号</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>根据 eax 查 sys_call_table</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>找到具体内核函数</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>执行 sys_read / sys_write / sys_fork / ...</span></span></code></pre></figure>
+<p>如果用 <code>write()</code> 举例，大致就是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>用户程序调用 write()</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>库函数把 write 的系统调用号 4 放入 eax</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>执行 int $0x80</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>CPU 查 IDT[0x80]</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>进入 system_call()</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>system_call() 发现 eax = 4</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>查 sys_call_table[4]</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>进入 sys_write()</span></span></code></pre></figure>
+<p>这里一定要注意两个编号不要混：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>0x80：中断向量号，用来查 IDT，作用是进入系统调用总入口 system_call()</span></span>
+<span data-line> </span>
+<span data-line><span>4：系统调用号，用来查 sys_call_table，作用是选择具体的 write 系统调用</span></span></code></pre></figure>
+<p>所以，<code>int $0x80</code> 并不是直接进入 <code>sys_write()</code>。</p>
+<p>它只是把 CPU 带到系统调用总入口 <code>system_call()</code>。</p>
+<p>真正决定执行 <code>sys_read()</code>、<code>sys_write()</code> 还是 <code>sys_fork()</code> 的，是 <code>eax</code> 中保存的系统调用号，以及 <code>system_call()</code> 对 <code>sys_call_table</code> 的查询结果。</p>
+<p>一句话总结：</p>
+<p><strong>IDT 把 CPU 带到 <code>system_call()</code>；<code>system_call()</code> 再根据系统调用号查 <code>sys_call_table</code>，找到真正要执行的内核函数。</strong></p>
+<hr/>
+<h3 id="3-系统调用号和参数如何传递">3. 系统调用号和参数如何传递？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-系统调用号和参数如何传递" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>用户态和内核态之间不能随便共享控制权，所以必须有一套约定：</p>
+<ul>
+<li>系统调用号放在哪里？</li>
+<li>参数放在哪里？</li>
+<li>返回值放在哪里？</li>
+</ul>
+<p>在传统 x86 Linux 中，常见约定是：</p>
+<ul>
+<li><code>eax</code>：保存系统调用号，返回时也保存返回值；</li>
+<li><code>ebx</code>：第一个参数；</li>
+<li><code>ecx</code>：第二个参数；</li>
+<li><code>edx</code>：第三个参数；</li>
+<li><code>esi</code>：第四个参数；</li>
+<li><code>edi</code>：第五个参数；</li>
+<li><code>ebp</code>：有时可用于更多参数，具体实现和版本有关。</li>
+</ul>
+<p>课件里重点强调的是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>eax：系统调用号 / 返回值</span></span>
+<span data-line><span>ebx、ecx、edx、esi、edi：系统调用参数</span></span></code></pre></figure>
+<p>比如执行：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="c" data-theme="github-light github-dark"><code data-language="c" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">write</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">(</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, string, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">7</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">);</span></span></code></pre></figure>
+<p>它大致会被转换成类似这样的寄存器准备过程：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="asm" data-theme="github-light github-dark"><code data-language="asm" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">$4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">eax</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        # 4 是 write 的系统调用号</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">$1</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ebx</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        # 第一个参数：文件描述符 1，表示标准输出</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl $string, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">ecx</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">   # 第二个参数：字符串地址</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">movl </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">$7</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">edx</span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;">        # 第三个参数：写入长度</span></span>
+<span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">int</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> $0x80           </span><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"> # 进入内核</span></span></code></pre></figure>
+<hr/>
+<h3 id="4-执行-int-0x80-后硬件做了什么">4. 执行 <code>int $0x80</code> 后，硬件做了什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-执行-int-0x80-后硬件做了什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>当 CPU 执行 <code>int $0x80</code> 时，它不是简单跳转。</p>
+<p>因为此时发生了特权级变化：从用户态 R3 进入内核态 R0。</p>
+<p>硬件需要完成一系列关键动作。</p>
+<p>第一，检查权限。</p>
+<p>IDT 第 128 项的门描述符必须允许用户态程序调用。Linux 会把这个门的 DPL 设置为 3，使用户态程序可以通过它进入内核。</p>
+<blockquote class="callout note" data-callout="note">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Note</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>DPL 是 <strong>Descriptor Privilege Level</strong>，中文一般叫 <strong>描述符特权级</strong>，是写在“门描述符 / 段描述符”里的权限门槛，用来规定“什么特权级的代码可以访问这个入口”。</p>
+</div>
+</blockquote>
+<p>第二，切换栈。</p>
+<p>用户态使用用户栈，内核态使用内核栈。</p>
+<p>从用户态进入内核态时，CPU 会通过 TSS 找到当前进程的内核栈指针，然后切换到内核栈。</p>
+<p>第三，保存返回所需的信息。</p>
+<p>硬件会把用户态的一些关键信息压入内核栈，比如：</p>
+<ul>
+<li>用户态 <code>SS:ESP</code>；</li>
+<li><code>EFLAGS</code>；</li>
+<li>用户态 <code>CS</code>；</li>
+<li>用户态 <code>EIP</code>。</li>
+</ul>
+<p>这些信息非常重要，因为内核处理完后，需要靠它们返回用户程序。</p>
+<p>第四，查 IDT。</p>
+<p>CPU 用 0x80 查 IDT，找到第 128 项门描述符。</p>
+<p>第五，定位 <code>system_call()</code>。</p>
+<p>根据门描述符里的段选择符和偏移量，再结合 GDT 中的段描述符，找到系统调用总入口 <code>system_call()</code>。</p>
+<p>于是控制流进入内核。</p>
+<hr/>
+<h3 id="5-进入-system_call-后软件做了什么">5. 进入 <code>system_call()</code> 后，软件做了什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-进入-system_call-后软件做了什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>硬件已经把 CPU 安全带进内核了，但它只保存了最基本的现场。接下来，内核入口代码要继续保存完整上下文。这就是课件里的 <code>SAVE_ALL</code>。</p>
+<p><code>SAVE_ALL</code> 会把一批寄存器压入内核栈，比如：</p>
+<ul>
+<li><code>es</code>、<code>ds</code>；</li>
+<li><code>eax</code>；</li>
+<li><code>ebp</code>；</li>
+<li><code>edi</code>；</li>
+<li><code>esi</code>；</li>
+<li><code>edx</code>；</li>
+<li><code>ecx</code>；</li>
+<li><code>ebx</code></li>
+</ul>
+<p>为什么要保存这些？</p>
+<p>因为系统调用处理过程中会使用这些寄存器。如果不保存，返回用户态后，用户程序原来的寄存器状态就被破坏了。</p>
+<p>保存现场后，<code>system_call()</code> 会检查 <code>eax</code> 中的系统调用号。</p>
+<p>如果系统调用号非法，就返回错误，例如 <code>-ENOSYS</code>。</p>
+<p>如果合法，就执行类似这样的逻辑：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="asm" data-theme="github-light github-dark"><code data-language="asm" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">call</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> *sys_call_table(, %</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">eax</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">, </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">4</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
+<span data-line><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># 偏移量(基址寄存器, 索引寄存器, 比例因子)</span></span></code></pre></figure>
+<p>意思是：</p>
+<p>用 <code>eax</code> 作为索引，到系统调用表里找对应函数地址，然后调用它。</p>
+<hr/>
+<h3 id="6-系统调用处理结束后处理器转去哪里">6. 系统调用处理结束后，处理器转去哪里？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-系统调用处理结束后处理器转去哪里" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>具体内核函数，比如 <code>sys_write()</code>，执行完之后，不是直接回到用户程序。</p>
+<p>它会进入统一的返回路径：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>ret_from_sys_call</span></span></code></pre></figure>
+<p>这个模块会做返回前检查。</p>
+<p>例如：</p>
+<ul>
+<li>是否需要重新调度进程；</li>
+<li>是否有未处理信号；</li>
+<li>是否要进入信号处理流程。</li>
+</ul>
+<p>如果发现 <code>need_resched</code> 不为 0，说明当前进程可能需要让出 CPU，内核就会进入调度相关流程。</p>
+<p>如果发现 <code>sigpending</code> 不为 0，说明有信号等待处理，内核就会处理信号。</p>
+<p>如果都没有问题，就执行恢复现场的逻辑。</p>
+<p>最后通过类似 <code>iret</code> 的返回机制，恢复用户态的 <code>EIP</code>、<code>CS</code>、<code>EFLAGS</code>、<code>SS:ESP</code>，回到用户程序继续运行。</p>
+<p>所以完整路径是：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    subgraph K[内核态：系统调用执行阶段]\n        A[\&quot;system_call()\&quot;]\n        B[\&quot;sys_write() / sys_read() / ...\&quot;]\n    end\n\n    subgraph R[内核态：返回前处理阶段]\n        C[ret_from_sys_call]\n        D[检查调度与信号]\n        E[restore_all]\n    end\n\n    F([iret 返回用户态])\n\n    A --> B --> C --> D --> E --> F\n\n    classDef entry fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef kernel fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n    classDef return fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n\n    class A entry;\n    class B,C,D,E kernel;\n    class F return;&quot;">flowchart TD
+    subgraph K[内核态：系统调用执行阶段]
+        A[&quot;system_call()&quot;]
+        B[&quot;sys_write() / sys_read() / ...&quot;]
+    end
+
+    subgraph R[内核态：返回前处理阶段]
+        C[ret_from_sys_call]
+        D[检查调度与信号]
+        E[restore_all]
+    end
+
+    F([iret 返回用户态])
+
+    A --> B --> C --> D --> E --> F
+
+    classDef entry fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef kernel fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+    classDef return fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+
+    class A entry;
+    class B,C,D,E kernel;
+    class F return;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h3 id="7-linux-响应-int-0x80-的完整流程图">7. Linux 响应 <code>int $0x80</code> 的完整流程图<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-linux-响应-int-0x80-的完整流程图" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    UserApp[\&quot;① 应用程序调用 API / C 库函数\&quot;] --> Lib[\&quot;② C 库准备系统调用号和参数\&quot;]\n    Lib --> Reg[\&quot;③ eax 放系统调用号&lt;br/>ebx / ecx / edx 等放参数\&quot;]\n    Reg --> Trap[\&quot;④ 执行 int 0x80\&quot;]\n\n    subgraph HW[\&quot;硬件响应阶段\&quot;]\n        Trap --> StackSwitch[\&quot;⑤ 特权级从 R3 切到 R0&lt;br/>用户栈切到内核栈\&quot;]\n        StackSwitch --> PushBasic[\&quot;⑥ 硬件压入 SS:ESP、EFLAGS、CS、EIP\&quot;]\n        PushBasic --> IDT[\&quot;⑦ 查 IDT 第 128 项\&quot;]\n        IDT --> Entry[\&quot;⑧ 定位 system_call 入口\&quot;]\n    end\n\n    subgraph SW[\&quot;软件处理阶段\&quot;]\n        Entry --> Save[\&quot;⑨ SAVE_ALL 保存通用寄存器\&quot;]\n        Save --> Check[\&quot;⑩ 检查 eax 中的系统调用号\&quot;]\n        Check --> Table[\&quot;⑪ 根据 eax 查 sys_call_table\&quot;]\n        Table --> Exec[\&quot;⑫ 执行 sys_write / sys_read 等内核函数\&quot;]\n        Exec --> Ret[\&quot;⑬ ret_from_sys_call\&quot;]\n        Ret --> Signal[\&quot;⑭ 检查调度 need_resched&lt;br/>和信号 sigpending\&quot;]\n        Signal --> Restore[\&quot;⑮ RESTORE_ALL 恢复寄存器\&quot;]\n    end\n\n    Restore --> Iret[\&quot;⑯ iret 返回用户态\&quot;]\n    Iret --> UserReturn[\&quot;⑰ 用户程序继续执行\&quot;]\n\n    classDef user fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef hardware fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef software fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n    classDef ret fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;\n\n    class UserApp,Lib,Reg,Trap user;\n    class StackSwitch,PushBasic,IDT,Entry hardware;\n    class Save,Check,Table,Exec,Ret,Signal,Restore software;\n    class Iret,UserReturn ret;&quot;">flowchart TD
+    UserApp[&quot;① 应用程序调用 API / C 库函数&quot;] --> Lib[&quot;② C 库准备系统调用号和参数&quot;]
+    Lib --> Reg[&quot;③ eax 放系统调用号&lt;br/>ebx / ecx / edx 等放参数&quot;]
+    Reg --> Trap[&quot;④ 执行 int 0x80&quot;]
+
+    subgraph HW[&quot;硬件响应阶段&quot;]
+        Trap --> StackSwitch[&quot;⑤ 特权级从 R3 切到 R0&lt;br/>用户栈切到内核栈&quot;]
+        StackSwitch --> PushBasic[&quot;⑥ 硬件压入 SS:ESP、EFLAGS、CS、EIP&quot;]
+        PushBasic --> IDT[&quot;⑦ 查 IDT 第 128 项&quot;]
+        IDT --> Entry[&quot;⑧ 定位 system_call 入口&quot;]
+    end
+
+    subgraph SW[&quot;软件处理阶段&quot;]
+        Entry --> Save[&quot;⑨ SAVE_ALL 保存通用寄存器&quot;]
+        Save --> Check[&quot;⑩ 检查 eax 中的系统调用号&quot;]
+        Check --> Table[&quot;⑪ 根据 eax 查 sys_call_table&quot;]
+        Table --> Exec[&quot;⑫ 执行 sys_write / sys_read 等内核函数&quot;]
+        Exec --> Ret[&quot;⑬ ret_from_sys_call&quot;]
+        Ret --> Signal[&quot;⑭ 检查调度 need_resched&lt;br/>和信号 sigpending&quot;]
+        Signal --> Restore[&quot;⑮ RESTORE_ALL 恢复寄存器&quot;]
+    end
+
+    Restore --> Iret[&quot;⑯ iret 返回用户态&quot;]
+    Iret --> UserReturn[&quot;⑰ 用户程序继续执行&quot;]
+
+    classDef user fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef hardware fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef software fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+    classDef ret fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;
+
+    class UserApp,Lib,Reg,Trap user;
+    class StackSwitch,PushBasic,IDT,Entry hardware;
+    class Save,Check,Table,Exec,Ret,Signal,Restore software;
+    class Iret,UserReturn ret;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h2 id="更快的系统调用sysenter--sysexit-与-syscall--sysret">更快的系统调用：<code>sysenter / sysexit</code> 与 <code>syscall / sysret</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#更快的系统调用sysenter--sysexit-与-syscall--sysret" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>早期 x86 Linux 使用 <code>int $0x80</code> 进行系统调用。</p>
+<p>但这个机制有一个问题：</p>
+<p><strong>它太通用了，所以不够快。</strong></p>
+<p><code>int $0x80</code> 走的是通用中断 / 异常机制，需要查 IDT，完成较复杂的门描述符处理和返回现场恢复。</p>
+<p>系统调用是非常频繁的操作。如果每次读写文件、获取时间、网络通信都走这么重的流程，开销就会很明显。</p>
+<p>所以 Intel 在后来的处理器中提供了更快的系统调用指令：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>sysenter / sysexit</span></span></code></pre></figure>
+<p>它们的作用是：</p>
+<p>快速从用户态进入内核态；</p>
+<p>快速从内核态返回用户态。</p>
+<p>它和 <code>int 0x80 / iret</code> 的区别可以这样理解：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th style="text-align:left;">对比项</th><th style="text-align:left;"><code>int 0x80 / iret</code></th><th style="text-align:left;"><code>sysenter / sysexit</code></th></tr></thead><tbody><tr><td style="text-align:left;">定位入口方式</td><td style="text-align:left;">通过 IDT 查门描述符</td><td style="text-align:left;">通过专门 MSR 寄存器保存入口</td></tr><tr><td style="text-align:left;">机制性质</td><td style="text-align:left;">通用中断 / 异常机制</td><td style="text-align:left;">专门为系统调用优化</td></tr><tr><td style="text-align:left;">灵活性</td><td style="text-align:left;">更通用</td><td style="text-align:left;">更专门</td></tr><tr><td style="text-align:left;">性能</td><td style="text-align:left;">较慢</td><td style="text-align:left;">更快</td></tr><tr><td style="text-align:left;">返回方式</td><td style="text-align:left;"><code>iret</code></td><td style="text-align:left;"><code>sysexit</code></td></tr></tbody></table></div>
+<p>到了 x86-64，主流系统调用机制变成：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>syscall / sysret</span></span></code></pre></figure>
+<p>所以可以这样记：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[\&quot;早期 x86&lt;br/>int 0x80 / iret\&quot;]\n    B[\&quot;32 位快速系统调用&lt;br/>sysenter / sysexit\&quot;]\n    C[\&quot;x86-64&lt;br/>syscall / sysret\&quot;]\n\n    A --> B --> C\n\n    classDef old fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef fast fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef modern fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n\n    class A old;\n    class B fast;\n    class C modern;&quot;">flowchart LR
+    A[&quot;早期 x86&lt;br/>int 0x80 / iret&quot;]
+    B[&quot;32 位快速系统调用&lt;br/>sysenter / sysexit&quot;]
+    C[&quot;x86-64&lt;br/>syscall / sysret&quot;]
+
+    A --> B --> C
+
+    classDef old fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef fast fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef modern fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+
+    class A old;
+    class B fast;
+    class C modern;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p><code>int 0x80</code> 像走普通安检通道，流程完整但慢。</p>
+<p><code>sysenter</code> / <code>syscall</code> 像专门为高频通行设计的快速通道，规则更固定，但速度更快。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="机制与策略的分离">机制与策略的分离<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#机制与策略的分离" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>操作系统设计中有一个非常重要的思想：<span class="text-highlight">机制与策略分离</span>。</p>
+<p>这句话听起来抽象，但放在系统调用和中断里非常好理解。</p>
+<p><strong>机制</strong>回答的是：</p>
+<p>“我怎么做到这件事？”</p>
+<p>比如：</p>
+<ul>
+<li>怎么从用户态切换到内核态；</li>
+<li>怎么保存现场；</li>
+<li>怎么查 IDT；</li>
+<li>怎么进入 <code>system_call()</code>；</li>
+<li>怎么从内核返回用户态。</li>
+</ul>
+<p>这些属于机制，通常由硬件和操作系统底层共同完成。</p>
+<p><strong>策略</strong>回答的是：</p>
+<p>“进入之后具体怎么处理？”</p>
+<p>比如：</p>
+<ul>
+<li>这个系统调用是否合法；</li>
+<li>这个文件能不能写；</li>
+<li>这个进程要不要被调度走；</li>
+<li>这个缺页异常应该分配新页，还是直接杀掉进程；</li>
+<li>这个设备中断应该唤醒哪个等待队列。</li>
+</ul>
+<p>这些属于策略，通常由操作系统内核根据具体情况决定。</p>
+<p>放到系统调用中，就是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>机制：int 0x80 / syscall 让程序进入内核</span></span>
+<span data-line><span>策略：内核根据系统调用号和参数决定具体执行什么</span></span></code></pre></figure>
+<p>放到中断中，就是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>机制：硬件发现中断并跳转到中断处理入口</span></span>
+<span data-line><span>策略：操作系统决定如何处理这个设备事件</span></span></code></pre></figure>
+<p>这个思想后面学调度、内存管理、文件系统时还会反复出现。</p>
+<hr/>
+<h2 id="把所有问题串起来">把所有问题串起来<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#把所有问题串起来" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>最后，我们回到课件开头那两页问题，把它们统一串成一条主线。</p>
+<p><span class="text-highlight">应用程序如何与操作系统交互？</span></p>
+<p>答案是：</p>
+<p><strong>通过系统调用，也可能通过异常、信号等机制间接与操作系统发生交互。系统调用是最核心、最正式的接口。</strong></p>
+<p><span class="text-highlight">为什么说操作系统是中断 / 异常 / 事件驱动的？</span></p>
+<p>答案是：</p>
+<p><strong>因为操作系统很多时候是被事件唤醒的。外设中断、程序异常、系统调用、时钟中断都会改变 CPU 控制流，让 CPU 进入内核。</strong></p>
+<p><span class="text-highlight">中断和异常来源有什么不同？</span></p>
+<p>答案是：</p>
+<p><strong>中断来自 CPU 外部，通常异步；异常来自当前指令执行过程，通常同步。</strong></p>
+<p><span class="text-highlight">处理方式一样吗？</span></p>
+<p>答案是：</p>
+<p><strong>底层进入内核的机制类似，都要保存现场、查表、进入处理程序；但具体处理逻辑、返回位置和恢复方式不同。</strong></p>
+<p><span class="text-highlight">中断 / 异常处理中，硬件负责什么？</span></p>
+<p>答案是：</p>
+<p><strong>硬件负责检测事件、保存基本现场、切换特权级和栈、查 IDT、跳转到处理程序入口。</strong></p>
+<p><span class="text-highlight">软件负责什么？</span></p>
+<p>答案是：</p>
+<p><strong>操作系统负责保存完整上下文、分析原因、执行具体处理、调度、处理信号、恢复现场和返回。</strong></p>
+<p><span class="text-highlight">操作系统初始化与中断 / 异常有什么关系？</span></p>
+<p>答案是：</p>
+<p><strong>OS 启动时必须先设置 IDT、GDT、TSS、中断控制器、系统调用入口等结构，否则事件发生时 CPU 不知道该进入哪里。</strong></p>
+<p><span class="text-highlight">什么是软件异常？</span></p>
+<p>答案是：</p>
+<p><strong>程序主动执行特殊指令触发的异常，比如系统调用。它通过陷入机制进入内核。</strong></p>
+<p><span class="text-highlight">x86 有哪些关键控制和状态寄存器？</span></p>
+<p>答案是：</p>
+<p><strong>EIP/RIP、EFLAGS/RFLAGS、CR0/CR2/CR3/CR4、IDTR、GDTR、TR 等。它们分别负责执行位置、状态控制、分页和保护、中断描述符表定位、全局描述符表定位和内核栈切换支持。</strong></p>
+<p>==<code>system_call()</code> 和 IDT 是什么关系？==</p>
+<p>答案是：</p>
+<p><strong>IDT 第 128 项门描述符指向 <code>system_call()</code>，所以 <code>int $0x80</code> 通过 IDT 进入系统调用总入口。</strong></p>
+<p>==<code>system_call()</code> 和系统调用表是什么关系？==</p>
+<p>答案是：</p>
+<p><strong><code>system_call()</code> 根据 <code>eax</code> 中的系统调用号索引 <code>sys_call_table</code>，找到真正的内核函数。</strong></p>
+<p><span class="text-highlight">系统调用结束后处理器去哪里？</span></p>
+<p>答案是：</p>
+<p><strong>具体系统调用函数执行完后，会进入 <code>ret_from_sys_call</code>，检查调度和信号，然后恢复现场返回用户态。</strong></p>
+<p><span class="text-highlight">系统调用与函数调用有什么区别？</span></p>
+<p>答案是：</p>
+<p><strong>函数调用通常不切换特权级，只是在用户态内部跳转；系统调用会通过陷入机制进入内核态，开销更大，但能请求内核服务。</strong></p>
+<p><span class="text-highlight">系统调用与 API 是什么关系？</span></p>
+<p>答案是：</p>
+<p><strong>API 是程序员看到的接口，系统调用是内核真正提供服务的入口，C 库负责把 API 调用封装成系统调用。</strong></p>
+<hr/>
+<h2 id="总结这一讲真正要掌握的主线">总结：这一讲真正要掌握的主线<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#总结这一讲真正要掌握的主线" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>这一讲最重要的不是背一堆寄存器名字，而是理解这条控制流：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[\&quot;应用程序在用户态运行\&quot;]\n    B[\&quot;需要操作系统服务&lt;br/>或发生异常 / 外部事件到来\&quot;]\n    C[\&quot;系统调用 / 异常 / 中断\&quot;]\n\n    subgraph HW[\&quot;硬件响应阶段\&quot;]\n        D[\&quot;硬件保存基本现场\&quot;]\n        E[\&quot;切换特权级、查 IDT\&quot;]\n        F[\&quot;进入内核入口程序\&quot;]\n    end\n\n    subgraph SW[\&quot;操作系统处理阶段\&quot;]\n        G[\&quot;操作系统保存完整现场&lt;br/>分析原因、查表分派\&quot;]\n        H[\&quot;执行系统调用 / 异常处理 / 中断处理\&quot;]\n        I[\&quot;检查调度和信号\&quot;]\n        J[\&quot;恢复现场\&quot;]\n    end\n\n    K[\&quot;返回用户态&lt;br/>或切换到另一个进程\&quot;]\n\n    A --> B --> C --> D --> E --> F --> G --> H --> I --> J --> K&quot;">flowchart TD
+    A[&quot;应用程序在用户态运行&quot;]
+    B[&quot;需要操作系统服务&lt;br/>或发生异常 / 外部事件到来&quot;]
+    C[&quot;系统调用 / 异常 / 中断&quot;]
+
+    subgraph HW[&quot;硬件响应阶段&quot;]
+        D[&quot;硬件保存基本现场&quot;]
+        E[&quot;切换特权级、查 IDT&quot;]
+        F[&quot;进入内核入口程序&quot;]
+    end
+
+    subgraph SW[&quot;操作系统处理阶段&quot;]
+        G[&quot;操作系统保存完整现场&lt;br/>分析原因、查表分派&quot;]
+        H[&quot;执行系统调用 / 异常处理 / 中断处理&quot;]
+        I[&quot;检查调度和信号&quot;]
+        J[&quot;恢复现场&quot;]
+    end
+
+    K[&quot;返回用户态&lt;br/>或切换到另一个进程&quot;]
+
+    A --> B --> C --> D --> E --> F --> G --> H --> I --> J --> K
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>如果用一句话概括：</p>
+<p><strong>用户程序本来只能在用户态老老实实运行；一旦发生中断、异常或系统调用，硬件就会受控地把 CPU 带进内核；内核保存现场、判断原因、执行处理、再恢复现场或调度其他进程。这就是操作系统真正“运行起来”的底层机制。</strong></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-130" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#操作系统的运行环境硬件基础" data-for="操作系统的运行环境硬件基础">操作系统的运行环境（硬件基础）</a></li><li class="depth-1"><a href="#1-处理器与寄存器" data-for="1-处理器与寄存器">1. 处理器与寄存器</a></li><li class="depth-1"><a href="#2-特权级别与运行模式" data-for="2-特权级别与运行模式">2. 特权级别与运行模式</a></li><li class="depth-1"><a href="#3-状态转换用户态如何进入内核态" data-for="3-状态转换用户态如何进入内核态">3. 状态转换：用户态如何进入内核态？</a></li><li class="depth-0"><a href="#中断与异常机制操作系统的引擎" data-for="中断与异常机制操作系统的引擎">中断与异常机制（操作系统的引擎）</a></li><li class="depth-1"><a href="#1-怎样理解操作系统是由中断--异常--事件驱动的" data-for="1-怎样理解操作系统是由中断--异常--事件驱动的">1. 怎样理解“操作系统是由中断 / 异常 / 事件驱动的”？</a></li><li class="depth-1"><a href="#2-事件的分类中断-vs-异常" data-for="2-事件的分类中断-vs-异常">2. 事件的分类：中断 vs 异常</a></li><li class="depth-1"><a href="#3-ics-中异常的经典分类" data-for="3-ics-中异常的经典分类">3. ICS 中异常的经典分类</a></li><li class="depth-1"><a href="#4-中断--异常的来源不同处理方式一样吗" data-for="4-中断--异常的来源不同处理方式一样吗">4. 中断 / 异常的来源不同，处理方式一样吗？</a></li><li class="depth-0"><a href="#软硬协同中断处理的生命周期" data-for="软硬协同中断处理的生命周期">软硬协同：中断处理的生命周期</a></li><li class="depth-1"><a href="#1-硬件负责什么" data-for="1-硬件负责什么">1. 硬件负责什么？</a></li><li class="depth-1"><a href="#2-软件负责什么" data-for="2-软件负责什么">2. 软件负责什么？</a></li><li class="depth-1"><a href="#3-从中断响应到处理结束完整流程是什么" data-for="3-从中断响应到处理结束完整流程是什么">3. 从中断响应到处理结束，完整流程是什么？</a></li><li class="depth-1"><a href="#4-操作系统初始化与中断--异常的关系" data-for="4-操作系统初始化与中断--异常的关系">4. 操作系统初始化与中断 / 异常的关系</a></li><li class="depth-1"><a href="#5-为什么-linux-要把中断处理分成上半部和下半部" data-for="5-为什么-linux-要把中断处理分成上半部和下半部">5. 为什么 Linux 要把中断处理分成上半部和下半部？</a></li><li class="depth-0"><a href="#x86--ia32-体系结构对中断的支持" data-for="x86--ia32-体系结构对中断的支持">x86 / IA32 体系结构对中断的支持</a></li><li class="depth-1"><a href="#1-中断控制器pic-或-apic" data-for="1-中断控制器pic-或-apic">1. 中断控制器：PIC 或 APIC</a></li><li class="depth-1"><a href="#2-实模式中断向量表-ivt" data-for="2-实模式中断向量表-ivt">2. 实模式：中断向量表 IVT</a></li><li class="depth-1"><a href="#3-保护模式中断描述符表-idt" data-for="3-保护模式中断描述符表-idt">3. 保护模式：中断描述符表 IDT</a></li><li class="depth-1"><a href="#4-实模式和保护模式的区别" data-for="4-实模式和保护模式的区别">4. 实模式和保护模式的区别</a></li><li class="depth-1"><a href="#5-保护模式下的两次查表idt-与-gdt" data-for="5-保护模式下的两次查表idt-与-gdt">5. 保护模式下的两次查表：IDT 与 GDT</a></li><li class="depth-1"><a href="#6-idtrgdtridtgdt-分别是什么" data-for="6-idtrgdtridtgdt-分别是什么">6. IDTR、GDTR、IDT、GDT 分别是什么？</a></li><li class="depth-1"><a href="#7-门描述符的种类" data-for="7-门描述符的种类">7. 门描述符的种类</a></li><li class="depth-1"><a href="#8-中断门和陷阱门的核心区别" data-for="8-中断门和陷阱门的核心区别">8. 中断门和陷阱门的核心区别</a></li><li class="depth-1"><a href="#9-把整个-ia32-中断支持流程串起来" data-for="9-把整个-ia32-中断支持流程串起来">9. 把整个 IA32 中断支持流程串起来</a></li><li class="depth-0"><a href="#系统调用system-call的底层运行机制" data-for="系统调用system-call的底层运行机制">系统调用（System Call）的底层运行机制</a></li><li class="depth-1"><a href="#1-应用程序是如何与操作系统交互的" data-for="1-应用程序是如何与操作系统交互的">1. 应用程序是如何与操作系统交互的？</a></li><li class="depth-1"><a href="#2-系统调用-vs-c-函数调用" data-for="2-系统调用-vs-c-函数调用">2. 系统调用 vs C 函数调用</a></li><li class="depth-1"><a href="#3-系统调用库函数api内核函数的关系" data-for="3-系统调用库函数api内核函数的关系">3. 系统调用、库函数、API、内核函数的关系</a></li><li class="depth-1"><a href="#4-什么是软件异常它是如何工作的" data-for="4-什么是软件异常它是如何工作的">4. 什么是软件异常？它是如何工作的？</a></li><li class="depth-0"><a href="#linux-x86-系统调用的具体执行过程" data-for="linux-x86-系统调用的具体执行过程">Linux x86 系统调用的具体执行过程</a></li><li class="depth-1"><a href="#1-为什么选择-int-0x80" data-for="1-为什么选择-int-0x80">1. 为什么选择 int $0x80？</a></li><li class="depth-1"><a href="#2-system_call-与-idt-和系统调用表的关系" data-for="2-system_call-与-idt-和系统调用表的关系">2. system_call() 与 IDT 和系统调用表的关系</a></li><li class="depth-1"><a href="#3-系统调用号和参数如何传递" data-for="3-系统调用号和参数如何传递">3. 系统调用号和参数如何传递？</a></li><li class="depth-1"><a href="#4-执行-int-0x80-后硬件做了什么" data-for="4-执行-int-0x80-后硬件做了什么">4. 执行 int $0x80 后，硬件做了什么？</a></li><li class="depth-1"><a href="#5-进入-system_call-后软件做了什么" data-for="5-进入-system_call-后软件做了什么">5. 进入 system_call() 后，软件做了什么？</a></li><li class="depth-1"><a href="#6-系统调用处理结束后处理器转去哪里" data-for="6-系统调用处理结束后处理器转去哪里">6. 系统调用处理结束后，处理器转去哪里？</a></li><li class="depth-1"><a href="#7-linux-响应-int-0x80-的完整流程图" data-for="7-linux-响应-int-0x80-的完整流程图">7. Linux 响应 int $0x80 的完整流程图</a></li><li class="depth-0"><a href="#更快的系统调用sysenter--sysexit-与-syscall--sysret" data-for="更快的系统调用sysenter--sysexit-与-syscall--sysret">更快的系统调用：sysenter / sysexit 与 syscall / sysret</a></li><li class="depth-0"><a href="#机制与策略的分离" data-for="机制与策略的分离">机制与策略的分离</a></li><li class="depth-0"><a href="#把所有问题串起来" data-for="把所有问题串起来">把所有问题串起来</a></li><li class="depth-0"><a href="#总结这一讲真正要掌握的主线" data-for="总结这一讲真正要掌握的主线">总结：这一讲真正要掌握的主线</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}container;content;isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>
