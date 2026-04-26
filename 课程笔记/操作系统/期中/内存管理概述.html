@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><title>内存管理概述</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="hw"/><meta property="og:title" content="内存管理概述"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="内存管理概述"/><meta name="twitter:description" content="核心观点与演进脉络 这部分的重点不是一上来就学“虚拟内存”，而是先理解：操作系统为什么需要管理内存，以及内存管理是怎样一步步从简单方案演化到复杂方案的。 课件一开始就提醒我们：内存管理不等于虚拟内存管理。虚拟内存只是内存管理发展到后期的一种重要方案，而在它之前，操作系统已经遇到并解决了很多基本问题：程序装到哪里？地址怎么转换？进程之间怎么隔离？空闲内存怎么分配？内存不够时怎么办？ 整条主线可以这样看： 早期物理内存直接使用 ↓ 多道程序设计：多个程序同时进入内存 ↓ 分时共享：多个用户 / 多个进程共享系统 ↓ 地址空间抽象：每个进程都有自己的“内存世界” ↓ 页式、段式、段页式等管理方案 ..."/><meta property="og:description" content="核心观点与演进脉络 这部分的重点不是一上来就学“虚拟内存”，而是先理解：操作系统为什么需要管理内存，以及内存管理是怎样一步步从简单方案演化到复杂方案的。 课件一开始就提醒我们：内存管理不等于虚拟内存管理。虚拟内存只是内存管理发展到后期的一种重要方案，而在它之前，操作系统已经遇到并解决了很多基本问题：程序装到哪里？地址怎么转换？进程之间怎么隔离？空闲内存怎么分配？内存不够时怎么办？ 整条主线可以这样看： 早期物理内存直接使用 ↓ 多道程序设计：多个程序同时进入内存 ↓ 分时共享：多个用户 / 多个进程共享系统 ↓ 地址空间抽象：每个进程都有自己的“内存世界” ↓ 页式、段式、段页式等管理方案 ..."/><meta property="og:image:alt" content="核心观点与演进脉络 这部分的重点不是一上来就学“虚拟内存”，而是先理解：操作系统为什么需要管理内存，以及内存管理是怎样一步步从简单方案演化到复杂方案的。 课件一开始就提醒我们：内存管理不等于虚拟内存管理。虚拟内存只是内存管理发展到后期的一种重要方案，而在它之前，操作系统已经遇到并解决了很多基本问题：程序装到哪里？地址怎么转换？进程之间怎么隔离？空闲内存怎么分配？内存不够时怎么办？ 整条主线可以这样看： 早期物理内存直接使用 ↓ 多道程序设计：多个程序同时进入内存 ↓ 分时共享：多个用户 / 多个进程共享系统 ↓ 地址空间抽象：每个进程都有自己的“内存世界” ↓ 页式、段式、段页式等管理方案 ..."/><meta property="og:image" content="https://localhost/static/og-image.png"/><meta property="og:image:url" content="https://localhost/static/og-image.png"/><meta name="twitter:image" content="https://localhost/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="localhost"/><meta property="og:url" content="https://localhost/课程笔记/操作系统/期中/内存管理概述"/><meta property="twitter:url" content="https://localhost/课程笔记/操作系统/期中/内存管理概述"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="核心观点与演进脉络 这部分的重点不是一上来就学“虚拟内存”，而是先理解：操作系统为什么需要管理内存，以及内存管理是怎样一步步从简单方案演化到复杂方案的。 课件一开始就提醒我们：内存管理不等于虚拟内存管理。虚拟内存只是内存管理发展到后期的一种重要方案，而在它之前，操作系统已经遇到并解决了很多基本问题：程序装到哪里？地址怎么转换？进程之间怎么隔离？空闲内存怎么分配？内存不够时怎么办？ 整条主线可以这样看： 早期物理内存直接使用 ↓ 多道程序设计：多个程序同时进入内存 ↓ 分时共享：多个用户 / 多个进程共享系统 ↓ 地址空间抽象：每个进程都有自己的“内存世界” ↓ 页式、段式、段页式等管理方案 ..."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button {
+  position: absolute;
+  display: flex;
+  float: right;
+  padding: 0.4rem;
+  margin: 0.3rem;
+  right: 0;
+  color: var(--gray);
+  border-color: var(--dark);
+  background-color: var(--light);
+  border: 1px solid;
+  border-radius: 5px;
+  opacity: 0;
+  transition: 0.2s;
+}
+.expand-button > svg {
+  fill: var(--light);
+  filter: contrast(0.3);
+}
+.expand-button:hover {
+  cursor: pointer;
+  border-color: var(--secondary);
+}
+.expand-button:focus {
+  outline: 0;
+}
+
+pre:hover > .expand-button {
+  opacity: 1;
+  transition: 0.2s;
+}
+
+#mermaid-container {
+  position: fixed;
+  contain: layout;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: none;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+#mermaid-container.active {
+  display: inline-block;
+}
+#mermaid-container > #mermaid-space {
+  border: 1px solid var(--lightgray);
+  background-color: var(--light);
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  width: 80vw;
+  overflow: hidden;
+}
+#mermaid-container > #mermaid-space > .mermaid-content {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.1s ease;
+  overflow: visible;
+  min-height: 200px;
+  min-width: 200px;
+}
+#mermaid-container > #mermaid-space > .mermaid-content pre {
+  margin: 0;
+  border: none;
+}
+#mermaid-container > #mermaid-space > .mermaid-content svg {
+  max-width: none;
+  height: auto;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--lightgray);
+  background: var(--light);
+  color: var(--dark);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: var(--bodyFont);
+  transition: all 0.2s ease;
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover {
+  background: var(--lightgray);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active {
+  transform: translateY(1px);
+}
+#mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) {
+  width: auto;
+  padding: 0 12px;
+  font-size: 14px;
+}
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUlKO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zZm9ybS1vcmlnaW46IDAgMDtcbiAgICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjFzIGVhc2U7XG4gICAgICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgICAgIG1pbi1oZWlnaHQ6IDIwMHB4O1xuICAgICAgbWluLXdpZHRoOiAyMDBweDtcblxuICAgICAgcHJlIHtcbiAgICAgICAgbWFyZ2luOiAwO1xuICAgICAgICBib3JkZXI6IG5vbmU7XG4gICAgICB9XG5cbiAgICAgIHN2ZyB7XG4gICAgICAgIG1heC13aWR0aDogbm9uZTtcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xuICAgICAgfVxuICAgIH1cblxuICAgICYgPiAubWVybWFpZC1jb250cm9scyB7XG4gICAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgICBib3R0b206IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBnYXA6IDhweDtcbiAgICAgIHBhZGRpbmc6IDhweDtcbiAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0KTtcbiAgICAgIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICBib3JkZXItcmFkaXVzOiA2cHg7XG4gICAgICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLCAwLCAwLCAwLjEpO1xuICAgICAgei1pbmRleDogMjtcblxuICAgICAgLm1lcm1haWQtY29udHJvbC1idXR0b24ge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgd2lkdGg6IDMycHg7XG4gICAgICAgIGhlaWdodDogMzJweDtcbiAgICAgICAgcGFkZGluZzogMDtcbiAgICAgICAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgICBjb2xvcjogdmFyKC0tZGFyayk7XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDRweDtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1ib2R5Rm9udCk7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG5cbiAgICAgICAgJjpob3ZlciB7XG4gICAgICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHRncmF5KTtcbiAgICAgICAgfVxuXG4gICAgICAgICY6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgJjpudGgtY2hpbGQoMikge1xuICAgICAgICAgIHdpZHRoOiBhdXRvO1xuICAgICAgICAgIHBhZGRpbmc6IDAgMTJweDtcbiAgICAgICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICAgIH1cbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cbiJdfQ== */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://localhost/index.xml"/></head><body data-slug="课程笔记/操作系统/期中/内存管理概述"><div id="quartz-root" class="page"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../../..">hw</a></h2><div class="spacer mobile-only"></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 1rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Search</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Search for something" placeholder="Search for something"/><div class="search-layout" data-preview="true"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dark mode"><title>Dark mode</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Light mode"><title>Light mode</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Reader mode"><title>Reader mode</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a,b)=>!a.isFolder&amp;&amp;!b.isFolder||a.isFolder&amp;&amp;b.isFolder?a.displayName.localeCompare(b.displayName,void 0,{numeric:!0,sensitivity:\&quot;base\&quot;}):!a.isFolder&amp;&amp;b.isFolder?1:-1&quot;,&quot;filterFn&quot;:&quot;node=>node.slugSegment!==\&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;node=>node&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-204"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-204" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#"></a></li></template><template id="template-folder"><li><div class="folder-container"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/">课程笔记</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/">操作系统</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../../课程笔记/操作系统/期中/">期中</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>内存管理概述</a></div></nav><h1 class="article-title">内存管理概述</h1><p show-comma="true" class="content-meta"><time datetime="2026-04-26T05:30:48.299Z">Apr 26, 2026</time><span>103 min read</span></p></div></div><article class="popover-hint"><blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>核心观点与演进脉络 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这部分的重点不是一上来就学“虚拟内存”，而是先理解：<strong>操作系统为什么需要管理内存，以及内存管理是怎样一步步从简单方案演化到复杂方案的。</strong></p>
+<p>课件一开始就提醒我们：<strong>内存管理不等于虚拟内存管理</strong>。虚拟内存只是内存管理发展到后期的一种重要方案，而在它之前，操作系统已经遇到并解决了很多基本问题：程序装到哪里？地址怎么转换？进程之间怎么隔离？空闲内存怎么分配？内存不够时怎么办？</p>
+<p>整条主线可以这样看：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>早期物理内存直接使用</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>多道程序设计：多个程序同时进入内存</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>分时共享：多个用户 / 多个进程共享系统</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>地址空间抽象：每个进程都有自己的“内存世界”</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>页式、段式、段页式等管理方案</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>覆盖、交换、虚拟内存等内存扩充技术</span></span></code></pre></figure>
+<p>所以这节课真正想让我们理解的是：<strong>地址空间是对内存的抽象，地址转换是连接抽象世界和物理世界的桥，存储保护是让多个进程安全共存的边界。</strong></p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="一为什么需要内存管理">一、为什么需要内存管理？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#一为什么需要内存管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>一个现在看起来已经成为常识的前提是：<strong>程序必须装载到内存中才能运行。</strong></p>
+<p>程序平时是以可执行文件的形式保存在磁盘上的。磁盘可以长期保存数据，但 CPU 不能直接从普通磁盘文件中一条条取指令执行。程序要真正运行，必须先经过编译、链接、装载，最后把指令和数据放到内存里。</p>
+<p>在最早的单道程序时代，这件事还比较简单：内存里除了操作系统，基本只有一个用户程序。程序装进去以后，独占剩下的大部分内存，操作系统只需要保证它能跑起来就行。</p>
+<p>但多道程序设计出现以后，事情一下子复杂了。</p>
+<p>因为这时内存里可能同时放着多个程序：进程 A、进程 B、进程 C 可能都在内存中等待运行。于是操作系统必须回答几个新问题：</p>
+<ul>
+<li>一个程序到底应该装到物理内存的哪里？</li>
+<li>程序中的地址，能不能直接当成物理内存地址？</li>
+<li>进程 A 能不能访问进程 B 的内存？</li>
+<li>用户程序能不能访问操作系统自己的内存？</li>
+<li>内存里空出来的小块空间，应该怎么组织和再利用？</li>
+<li>如果内存不够，能不能把一部分内容临时挪到磁盘？</li>
+</ul>
+<p>这就是内存管理出现的原因。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：为什么多道程序会逼出内存管理？ </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>如果房间里只有一个人，他东西爱放哪里就放哪里，问题不大。</p>
+<p>但如果房间里同时住了很多人，每个人都有自己的书、电脑、衣服和隐私，这时就必须划分区域，规定谁能用哪块地方，谁不能乱翻别人的东西。</p>
+<p>多道程序设计也是这样。只要多个程序同时进入内存，操作系统就必须解决“放哪里”和“别乱碰”的问题。</p>
+</div>
+</blockquote>
+<p>所以，多道程序设计对内存管理提出了两个最基础的要求：</p>
+<p>第一，<strong>地址重定位</strong>。</p>
+<p>程序中的地址不一定是最终的物理地址。因为程序运行前，操作系统并不知道它会被加载到物理内存的哪个位置。程序自己写的地址通常只是逻辑上的地址，必须在某个时刻转换成真正的物理地址。</p>
+<p>第二，<strong>地址保护</strong>。</p>
+<p>进程之间不能互相访问对方的内存，用户进程也不能随便访问操作系统内核。否则一个程序出错，就可能破坏另一个程序，甚至拖垮整个系统。</p>
+<p>一句话概括：</p>
+<p><strong>多道程序设计让多个程序同时进入内存，于是操作系统必须同时解决地址重定位和存储保护问题。</strong></p>
+<hr/>
+<h2 id="二地址空间对内存的抽象">二、地址空间：对内存的抽象<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#二地址空间对内存的抽象" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>在理解具体算法之前，我们先要抓住本节课最重要的概念：</p>
+<p><strong>地址空间（Address Space）是对内存的抽象。</strong></p>
+<p>这句话一开始可能有点抽象。可以先这样理解：</p>
+<p>物理内存是真实存在的硬件空间，比如一台机器有 8GB 或 16GB 内存。但进程并不是直接面对这块物理内存。进程看到的是一个由操作系统和硬件共同制造出来的“自己的内存世界”。这个世界就是它的地址空间。</p>
+<p>在进程看来，它好像拥有一片从低地址到高地址连续展开的内存区域。它可以把代码放在低地址，把数据放在某个位置，把堆放在中间，把栈放在高地址。但这些逻辑上连续的地址，未必在物理内存中也是连续的。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：地址空间像一张“个人地图” </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>物理内存像真实城市里的土地，可能很碎、很乱、被不同人占用。</p>
+<p>地址空间像操作系统发给每个进程的一张个人地图。进程只看这张地图，以为自己的房间、仓库、楼梯都是连续规划好的。</p>
+<p>至于地图上的“仓库”在真实物理内存里到底在哪一块地，甚至是不是被拆成好几块放，进程不需要直接关心。</p>
+</div>
+</blockquote>
+<p>这里有一个非常重要的转变：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>进程不再直接使用物理内存地址</span></span>
+<span data-line><span>而是使用自己的逻辑地址 / 虚拟地址</span></span>
+<span data-line><span>再由操作系统和硬件把它映射到物理内存</span></span></code></pre></figure>
+<p>这就是“地址空间是内存抽象”的含义。</p>
+<hr/>
+<h3 id="1-地址空间要解决什么问题">1. 地址空间要解决什么问题？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-地址空间要解决什么问题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>地址空间至少要解决三类矛盾。</p>
+<p>第一，<strong>一个物理内存，要支撑很多进程的地址空间。</strong></p>
+<p>物理内存只有一份，但系统里可以有进程 A、进程 B、进程 C，一直到进程 Z。每个进程都希望自己有独立的地址空间。操作系统要做的事情，就是把多个进程的逻辑地址空间映射到同一份物理内存上。</p>
+<p>第二，<strong>逻辑上连续的地址空间，不一定要物理上连续。</strong></p>
+<p>进程看到自己的 Page1、Page2、Page3、Page4 是连续的，但这些页在物理内存中可以分散存放。也就是说，逻辑连续性和物理连续性可以分离。</p>
+<p>第三，<strong>进程的全部地址空间，不一定一次性全部驻留在内存中。</strong></p>
+<p>有些页面正在内存中，叫驻留；有些页面可以暂时放在外存中，等需要时再调入。这就引出了后面的交换技术和虚拟内存技术。</p>
+<p>课件里把这个矛盾概括成三组关系：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>连续性 — 离散性</span></span>
+<span data-line><span>驻留性 — 交换性</span></span>
+<span data-line><span>一次性 — 多次性</span></span></code></pre></figure>
+<p>也就是说，进程看到的地址空间可以是连续的，但物理存放可以是离散的；进程需要的内容可以部分驻留在内存，也可以在内存和外存之间交换；程序也不一定非要一次性全部装入，可以分批、多次进入内存。</p>
+<hr/>
+<h3 id="2-进程地址空间里有什么">2. 进程地址空间里有什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-进程地址空间里有什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>一个进程的地址空间不是一大块没有结构的空间，而是有内部布局的。</p>
+<p>经典的进程地址空间通常包含：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>高地址</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>内核地址空间</span></span>
+<span data-line><span>用户栈 stack</span></span>
+<span data-line><span>共享库 / 内存映射文件区域</span></span>
+<span data-line><span>运行时堆 heap</span></span>
+<span data-line><span>读写数据段 data / bss</span></span>
+<span data-line><span>只读代码和只读数据 text / rodata</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>低地址</span></span></code></pre></figure>
+<p>更具体地说：</p>
+<p><strong>代码段（text）</strong> 保存程序的机器指令，通常是只读的。这样可以防止程序运行时随便修改自己的代码，也方便多个进程共享同一份只读代码。</p>
+<p><strong>数据段（data）和 BSS 段</strong> 保存全局变量、静态变量。data 通常对应已经初始化的数据，BSS 通常对应未初始化但需要分配空间的数据。</p>
+<p><strong>堆（heap）</strong> 是运行时动态分配的区域，比如 C 语言中的 <code>malloc</code>，C++ 中的 <code>new</code>，很多时候都来自堆。堆一般向高地址方向增长。</p>
+<p><strong>用户栈（stack）</strong> 保存函数调用过程中的返回地址、局部变量、参数、现场信息等。栈通常向低地址方向增长。程序执行时，SP 栈指针会指向当前栈顶，PC 程序计数器会指向当前或下一条要执行的指令。</p>
+<p><strong>共享库和内存映射文件区域</strong> 用来放动态链接库，或者通过 <code>mmap</code> 映射进来的文件内容。</p>
+<p><strong>内核地址空间</strong> 位于高地址部分，普通用户程序不能随意访问。它让进程陷入内核时能够访问内核相关映射，但依然依靠权限机制保护。</p>
+<p>在一些 32 位 Linux 的经典布局中，可以看到类似这样的地址边界：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>0x00000000      低地址</span></span>
+<span data-line><span>0x08048000      程序代码和数据常见起始附近</span></span>
+<span data-line><span>0x40000000      共享库 / 映射区域附近</span></span>
+<span data-line><span>0xc0000000      用户空间和内核空间分界附近</span></span>
+<span data-line><span>0xffffffff      高地址</span></span></code></pre></figure>
+<p>这里不用死背具体数值，因为不同系统、不同架构、不同配置下布局会变化。真正重要的是理解：<strong>进程地址空间内部有代码、数据、堆、栈、共享库、映射文件和内核映射等不同区域。</strong></p>
+<hr/>
+<h3 id="3-xv6-的地址空间布局">3. xv6 的地址空间布局<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-xv6-的地址空间布局" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>xv6 的地址空间布局比较简单，很适合帮助我们建立直觉。</p>
+<p>在 xv6 中，用户进程地址空间从低地址到高地址大致是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>text</span></span>
+<span data-line><span>original data and bss</span></span>
+<span data-line><span>fixed-size stack</span></span>
+<span data-line><span>expandable heap</span></span>
+<span data-line><span>...</span></span>
+<span data-line><span>trapframe</span></span>
+<span data-line><span>trampoline</span></span></code></pre></figure>
+<p>也就是说，低地址处依次放代码段、数据段和 BSS、栈、堆等内容。高地址处有两个很关键的结构：</p>
+<p><strong>trapframe</strong> 用来保存从用户态陷入内核时需要保存的寄存器现场。</p>
+<p><strong>trampoline</strong> 是用户态和内核态切换时使用的一小段特殊代码。它被映射到用户态和内核态都能看到的位置，从而帮助完成陷入和返回。</p>
+<p>课件中特别强调：高地址处的 <code>trampoline</code> 和 <code>trapframe</code> 是用户态和内核态都映射的。这说明地址空间不仅仅是“程序数据怎么放”，它还和系统调用、中断、异常、用户态/内核态切换有关。</p>
+<hr/>
+<h3 id="4-地址空间管理到底在管什么">4. 地址空间管理到底在管什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-地址空间管理到底在管什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>有了地址空间以后，操作系统要管理的事情就很多了。</p>
+<p>第一，要决定<strong>地址空间里有什么内容</strong>。</p>
+<p>比如代码段从可执行文件加载，数据段从可执行文件加载并初始化，BSS 段需要清零，堆和栈在运行时创建，共享库由动态链接器加载，内存映射文件由 <code>mmap</code> 建立映射。</p>
+<p>第二，要决定<strong>这些内容放在地址空间的什么位置</strong>。</p>
+<p>代码、堆、栈、共享库、内核映射不能乱放。不同区域要有大致固定的布局，否则程序执行、链接、调用和保护都会变得混乱。</p>
+<p>第三，要管理<strong>地址空间中的空闲空间</strong>。</p>
+<p>比如堆增长时要不要扩展？栈增长时能不能继续向下？内存映射区域怎么安排？空闲区域如何组织、分配、回收、分割、合并？</p>
+<p>第四，要关心<strong>哪些页面真的在内存中活跃</strong>。</p>
+<p>这里有三个概念容易混：</p>
+<p><strong>活跃页面</strong>，指近期正在被访问或很可能继续被访问的页面。</p>
+<p><strong>工作集</strong>，指一个进程在某段时间内实际频繁使用的一组页面。它反映了程序运行时的局部性。</p>
+<p><strong>常驻集</strong>，指当前真正驻留在物理内存中的页面集合。</p>
+<p>这三个概念都和后面的虚拟内存、页面置换有关。现在先记住一句话就够了：</p>
+<p><strong>地址空间是进程看到的完整世界，但真正活跃并驻留在物理内存中的，通常只是其中一部分。</strong></p>
+<hr/>
+<h2 id="三程序执行前地址什么时候绑定到内存">三、程序执行前：地址什么时候绑定到内存？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#三程序执行前地址什么时候绑定到内存" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>要理解地址重定位，必须先看程序从源代码到运行的过程。</p>
+<p>一个程序运行前通常要经历：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>源程序</span></span>
+<span data-line><span>  ↓ 编译</span></span>
+<span data-line><span>目标文件</span></span>
+<span data-line><span>  ↓ 链接：和其他目标文件、系统库组合</span></span>
+<span data-line><span>装载模块（磁盘中）</span></span>
+<span data-line><span>  ↓ 装载</span></span>
+<span data-line><span>装载模块（内存中）</span></span>
+<span data-line><span>  ↓ 运行</span></span>
+<span data-line><span>进程执行</span></span></code></pre></figure>
+<p>这里最关键的问题是：</p>
+<p><strong>指令和数据到底在什么时候绑定到内存地址？</strong></p>
+<p>课件中列出了几个可能时机：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>Compile time：编译时</span></span>
+<span data-line><span>Linking time：链接时</span></span>
+<span data-line><span>Load time：装载时</span></span>
+<span data-line><span>Run time：运行时</span></span></code></pre></figure>
+<p>不同绑定时机，对应不同的地址重定位方式。</p>
+<hr/>
+<h2 id="四地址重定位从逻辑地址到物理地址">四、地址重定位：从逻辑地址到物理地址<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#四地址重定位从逻辑地址到物理地址" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>程序中的地址，通常不是一开始就写死的物理地址。</p>
+<p>用户程序经过编译、汇编后形成目标代码，目标代码通常采用相对地址形式。也就是说，程序会假设自己的首地址是 0，后面指令里的地址都相对于这个首地址来编号。</p>
+<p>这种地址叫：</p>
+<p><strong>逻辑地址</strong>，也叫相对地址、虚拟地址。</p>
+<p>但内存芯片实际能访问的是：</p>
+<p><strong>物理地址</strong>，也叫绝对地址、实地址。</p>
+<p>物理地址就是内存中真实存储单元的地址，可以被机器直接寻址。</p>
+<p>因此，地址重定位就是：</p>
+<p><strong>将用户程序中的逻辑地址转换为运行时机器可以直接寻址的物理地址的过程。</strong></p>
+<p>它的目的很明确：</p>
+<p><strong>保证 CPU 执行指令时，能够正确访问真正的内存单元。</strong></p>
+<hr/>
+<h3 id="1-静态地址重定位">1. 静态地址重定位<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-静态地址重定位" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>静态地址重定位是在程序装载到内存时，一次性完成逻辑地址到物理地址的转换。</p>
+<p>假设程序原来认为自己从地址 0 开始，里面有一条指令访问逻辑地址 120。如果装载器把程序放到物理地址 1000 开始的位置，那么它可以直接把这条访问地址改成 1120。</p>
+<p>也就是说：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>逻辑地址 120</span></span>
+<span data-line><span>  ↓ 装载时加上装入起始地址 1000</span></span>
+<span data-line><span>物理地址 1120</span></span></code></pre></figure>
+<p>静态重定位通常可以由软件完成，比如由装载器修改程序中的地址。</p>
+<p>它的优点是机制简单，运行时不需要每条指令都做复杂地址转换。</p>
+<p>但它有一个明显缺点：</p>
+<p><strong>程序一旦装入某个位置，就不方便再移动。</strong></p>
+<p>因为地址已经被改成了具体物理地址。如果运行过程中想把程序搬到别的内存位置，就要重新修改大量地址，非常麻烦。</p>
+<p>所以静态重定位适合比较简单的内存管理环境，不适合需要频繁移动、交换、保护和虚拟化的现代系统。</p>
+<hr/>
+<h3 id="2-动态地址重定位">2. 动态地址重定位<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-动态地址重定位" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>动态地址重定位是在进程执行过程中进行地址变换。</p>
+<p>也就是说，程序装入内存以后，代码中仍然保留逻辑地址。CPU 每次执行访存指令时，硬件再把逻辑地址转换成物理地址。</p>
+<p>它的关键特点是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>不是装载时一次性改完</span></span>
+<span data-line><span>而是运行时逐条指令进行地址映射</span></span></code></pre></figure>
+<p>这样做需要硬件支持，最典型的硬件就是 MMU。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：静态重定位像提前改门牌，动态重定位像实时导航 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>静态重定位像你搬家前，把所有文件里的地址都提前改成新家的真实门牌号。</p>
+<p>动态重定位像你文件里仍然写“从我家出发往东 100 米”，但每次真正出门时，导航系统会根据你现在住在哪里，实时算出真实位置。</p>
+<p>前者简单，但搬家麻烦；后者复杂，但灵活。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="3-mmu-如何实现动态重定位">3. MMU 如何实现动态重定位？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-mmu-如何实现动态重定位" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>MMU 是 Memory Management Unit，也就是内存管理单元。</p>
+<p>在最简单的动态重定位模型中，可以用一个<strong>重定位寄存器</strong>保存当前进程在物理内存中的基地址。</p>
+<p>假设：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>重定位寄存器 = 12000</span></span>
+<span data-line><span>CPU 发出的逻辑地址 = 456</span></span></code></pre></figure>
+<p>那么 MMU 会计算：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>物理地址 = 12000 + 456 = 12456</span></span></code></pre></figure>
+<p>流程可以理解为：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[CPU 发出逻辑地址 456] --> B[MMU]\n    C[重定位寄存器 12000] --> B\n    B --> D[物理地址 12456]\n    D --> E[访问物理内存]\n\n    classDef cpu fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef mmu fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef mem fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n\n    class A cpu;\n    class B,C,D mmu;\n    class E mem;&quot;">flowchart LR
+    A[CPU 发出逻辑地址 456] --> B[MMU]
+    C[重定位寄存器 12000] --> B
+    B --> D[物理地址 12456]
+    D --> E[访问物理内存]
+
+    classDef cpu fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef mmu fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef mem fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+
+    class A cpu;
+    class B,C,D mmu;
+    class E mem;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这只是最简模型。后面的分页、分段、段页式也都是更复杂的地址映射机制。</p>
+<p>但思想是一致的：</p>
+<p><strong>CPU 发出逻辑地址，MMU 负责把它翻译成物理地址。</strong></p>
+<hr/>
+<h2 id="五地址保护不能让进程乱访问">五、地址保护：不能让进程乱访问<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#五地址保护不能让进程乱访问" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>地址重定位解决的是“访问哪里”的问题。</p>
+<p>地址保护解决的是“能不能访问”的问题。</p>
+<p>在多道程序环境中，每个进程都应该有独立的地址空间。进程 A 不能随便访问进程 B 的内存，更不能越界访问操作系统内核区域。</p>
+<p>最简单的保护方式可以用两个寄存器实现：</p>
+<p><strong>基地址寄存器</strong>，保存进程合法物理区域的起始位置。</p>
+<p><strong>界限寄存器</strong>，保存进程可以访问的范围大小。</p>
+<p>每次 CPU 发出地址时，硬件先检查这个地址是否合法。如果地址超过界限，就触发地址越界异常，陷入操作系统。</p>
+<p>可以画成这样：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[CPU 发出逻辑地址] --> B{地址是否在合法范围内}\n    B -->|否| C[地址越界]\n    C --> D[陷入操作系统]\n    B -->|是| E[加上基地址]\n    E --> F[形成物理地址]\n    F --> G[访问内存]\n\n    classDef check fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef trap fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;\n    classDef ok fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n\n    class B check;\n    class C,D trap;\n    class E,F,G ok;&quot;">flowchart TD
+    A[CPU 发出逻辑地址] --> B{地址是否在合法范围内}
+    B -->|否| C[地址越界]
+    C --> D[陷入操作系统]
+    B -->|是| E[加上基地址]
+    E --> F[形成物理地址]
+    F --> G[访问内存]
+
+    classDef check fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef trap fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;
+    classDef ok fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+
+    class B check;
+    class C,D trap;
+    class E,F,G ok;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>这里有一个细节非常重要：</p>
+<p><strong>基地址寄存器和界限寄存器必须由操作系统通过特殊的特权指令加载。</strong></p>
+<p>普通用户程序不能自己修改这些寄存器。否则它只要把界限改大，或者把基地址改到内核区域，就可以绕过保护机制了。</p>
+<p>所以，地址保护依赖两件事：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>硬件检查每次访问是否合法</span></span>
+<span data-line><span>操作系统在特权态下设置保护边界</span></span></code></pre></figure>
+<p>一句话总结：</p>
+<p><strong>地址重定位让程序找到正确的物理位置，地址保护防止程序访问不该访问的位置。</strong></p>
+<hr/>
+<h2 id="六内存管理的基本功能">六、内存管理的基本功能<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#六内存管理的基本功能" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>到这里，我们可以把内存管理的基本功能整理出来。</p>
+<p>操作系统做内存管理，至少要完成这些事情：</p>
+<ol>
+<li><strong>给进程分配内存，也就是为进程建立地址空间。</strong></li>
+<li><strong>往内存加载内容，把进程地址空间映射到物理内存。</strong></li>
+<li><strong>进行存储保护，包括地址越界保护和权限保护。</strong></li>
+<li><strong>管理共享内存，让多个进程在受控条件下共享某些区域。</strong></li>
+<li><strong>最小化存储访问时间，尽量让程序访问内存的过程足够高效。</strong></li>
+</ol>
+<p>这些目标背后其实对应操作系统虚拟化内存的三个核心要求：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>透明性：进程不需要关心真实物理内存怎么安排</span></span>
+<span data-line><span>效率：地址转换和内存分配不能太慢</span></span>
+<span data-line><span>保护：进程之间、用户态和内核态之间必须隔离</span></span></code></pre></figure>
+<p>这三个词非常重要：<strong>透明性、效率、保护。</strong></p>
+<p>操作系统的内存管理方案基本都在这三个目标之间做平衡。</p>
+<hr/>
+<h2 id="七存储体系与局部性原理">七、存储体系与局部性原理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#七存储体系与局部性原理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>课件里还把“存储体系”和“局部性原理”列为重要背景。</p>
+<p>现代计算机不是只有一种存储设备，而是一个层级结构：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>寄存器</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>高速缓存 L1</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>高速缓存 L2</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>高速缓存 L3</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>内存</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>本地磁盘</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>远程磁盘</span></span></code></pre></figure>
+<p>越靠上，速度越快、容量越小、价格越贵；越靠下，速度越慢、容量越大、价格越便宜。</p>
+<p>操作系统和硬件之所以能用缓存、分页、交换、虚拟内存这些机制，很大程度上依赖<strong>局部性原理</strong>。</p>
+<p>局部性原理大致可以分成两类：</p>
+<p><strong>时间局部性</strong>：一个数据刚刚被访问过，接下来很可能还会被访问。</p>
+<p><strong>空间局部性</strong>：一个地址刚刚被访问过，它附近的地址接下来也很可能被访问。</p>
+<p>所以，系统不一定要把所有内容都放在最快的存储里。只要把近期最可能使用的内容放在更快层级，就能获得不错的性能。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：存储体系像书桌、书架和仓库 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>正在看的书放在手边，常用的书放在书架，不常用的书放在仓库。</p>
+<p>你并不需要把所有书都摊在桌面上，只要把最近常看的书放在手边，就能大幅提高效率。</p>
+<p>内存管理也是类似思路：真正活跃的内容放在更快、更近的位置，暂时不用的内容可以放远一些。</p>
+</div>
+</blockquote>
+<hr/>
+<h2 id="八物理空闲内存管理空地怎么管">八、物理空闲内存管理：空地怎么管？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#八物理空闲内存管理空地怎么管" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>有了地址空间和地址转换以后，还要面对一个很现实的问题：</p>
+<p><strong>物理内存中哪些地方是空闲的？操作系统怎么知道？</strong></p>
+<p>物理内存管理的核心，就是管理空闲空间。</p>
+<p>课件列出了三类常见数据结构：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>位图</span></span>
+<span data-line><span>空闲区表 / 已分配区表</span></span>
+<span data-line><span>空闲块链表</span></span></code></pre></figure>
+<p>同时还要配合不同的分配算法，比如首次适配、下次适配、最佳适配、最差适配。</p>
+<hr/>
+<h3 id="1-衡量指标利用率和性能">1. 衡量指标：利用率和性能<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-衡量指标利用率和性能" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>评价一个物理内存分配方案，主要看两个指标。</p>
+<p>第一，<strong>内存资源利用率</strong>。</p>
+<p>也就是尽可能减少资源浪费。这里最常见的浪费就是碎片。</p>
+<p>第二，<strong>性能</strong>。</p>
+<p>也就是尽可能降低分配延迟，节约 CPU 资源。一个分配算法如果每次都要扫描很长的表，虽然可能节省一点内存，但也会消耗大量 CPU 时间。</p>
+<p>所以内存分配不是只看“省不省空间”，还要看“找得快不快”。</p>
+<hr/>
+<h3 id="2-内碎片与外碎片">2. 内碎片与外碎片<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-内碎片与外碎片" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>碎片是内存管理里非常核心的概念。</p>
+<p><strong>内碎片</strong>是分配出去的区域内部没有用完的空间。</p>
+<p>比如进程只需要 6KB，但系统只能按 8KB 分配，那么多出来的 2KB 在这个分配块内部浪费掉了。这部分不能再分给别人用，所以叫内碎片。</p>
+<p><strong>外碎片</strong>是分散在已分配区域之间的小空闲区。</p>
+<p>比如系统总共有 30KB 空闲内存，但分散成了 5KB、6KB、4KB、15KB 好几块。如果现在有一个进程需要连续 20KB，就无法分配。总量够，但没有足够大的连续空间，这就是外碎片。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：内碎片和外碎片 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>内碎片像你买了一个大盒子，东西只装了一半，盒子里面剩下的空间别人用不了。</p>
+<p>外碎片像停车场里还有很多空位，但都零散分布，没有一排连续空位能停一辆大车。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="3-位图法">3. 位图法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-位图法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>位图法是用一串 bit 来表示内存分配情况。</p>
+<blockquote class="callout tip" data-callout="tip">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Important</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>这里的“一位对应一个分配单元”并不意味着一位固定对应 1 字节或 1KB。</p>
+<p>分配单元大小由系统设计决定。</p>
+<ul>
+<li>如果用于管理物理页框，那么常见情况是 1 bit 对应 1 个页框，例如页面大小为 4KB 时，1 bit 就表示 4KB 物理内存是否空闲。</li>
+<li>分配单元越小，管理越精细但位图越大；分配单元越大，位图越小但可能带来更多内碎片。</li>
+</ul>
+</div>
+</blockquote>
+<p>每个<span class="text-highlight">分配单元</span>对应位图中的一位。比如可以约定：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>0 表示空闲</span></span>
+<span data-line><span>1 表示占用</span></span></code></pre></figure>
+<p>当然也可以反过来约定，关键是系统内部保持一致。</p>
+<p>位图法适合按固定大小单元管理内存，比如页框管理。它的优点是结构紧凑，一个 bit 就能表示一个分配单元。</p>
+<p>它的缺点是查找连续空闲区域时可能要扫描位图。如果要找一大段连续空闲空间，扫描成本可能比较高。</p>
+<hr/>
+<h3 id="4-空闲区表和已分配区表">4. 空闲区表和已分配区表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-空闲区表和已分配区表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>空闲区表会记录每一块空闲区域的信息。</p>
+<p>每个表项通常包括：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>起始地址</span></span>
+<span data-line><span>长度</span></span>
+<span data-line><span>标志</span></span></code></pre></figure>
+<p>已分配区表则记录已经分配给进程的区域，比如哪个进程占用了哪个起始地址、长度是多少。</p>
+<p><img src="../../../课程笔记/操作系统/期中/assets/Pasted-image-20260426124613.png" alt/></p>
+<p>课件示例中，物理内存里既有 P1、P2、P3、P4、P5、P6 等已分配区，也有若干未分配区。空闲区表记录未分配区域的始址和长度，已分配区表记录进程占用区域的始址和长度。</p>
+<p>这种方式的直觉很简单：</p>
+<p><strong>操作系统维护一张“空地清单”和一张“已出租清单”。</strong></p>
+<p>当进程申请内存时，从空地清单里找一块合适的区域；当进程释放内存时，把对应区域重新放回空地清单，并和相邻空闲区合并。</p>
+<hr/>
+<h3 id="5-空闲块链表">5. 空闲块链表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-空闲块链表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>除了表，操作系统还可以用链表管理空闲块（ICS重点）。</p>
+<p>常见形式包括：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>隐式空闲链表</span></span>
+<span data-line><span>显式空闲链表</span></span>
+<span data-line><span>分离空闲链表</span></span></code></pre></figure>
+<p><strong>隐式空闲链表</strong>通常把块大小、是否空闲等信息放在内存块头部，通过遍历所有块来找到空闲块。</p>
+<p><strong>显式空闲链表</strong>只把空闲块串成链表，查找时不用遍历所有已分配块。</p>
+<p><strong>分离空闲链表</strong>会按照大小类别维护多个链表，比如小块一条链、大块一条链。这样分配时可以更快找到合适大小的块。</p>
+<p>这里可以先记主线：</p>
+<p><strong>位图适合固定大小单元；空闲区表适合记录连续空闲区域；空闲链表适合动态组织空闲块，分离链表可以加快按大小查找。</strong></p>
+<hr/>
+<h2 id="九内存分配算法">九、内存分配算法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#九内存分配算法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>当系统知道有哪些空闲区以后，下一个问题就是：</p>
+<p><strong>进程申请一块空间时，应该选哪一块空闲区？</strong></p>
+<p>课件列出了四种经典算法。</p>
+<hr/>
+<h3 id="1-首次适配-first-fit">1. 首次适配 First Fit<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-首次适配-first-fit" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>首次适配的规则是：</p>
+<p><strong>从空闲区表开头开始找，找到第一个能满足需求的空闲区就分配。</strong></p>
+<p>它的优点是简单、速度较快，因为不需要扫描完整张表。</p>
+<p>缺点是前面的空闲区容易被反复切割，可能在低地址处留下很多小碎片。</p>
+<hr/>
+<h3 id="2-下次适配-next-fit">2. 下次适配 Next Fit<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-下次适配-next-fit" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>下次适配是首次适配的一个变体。</p>
+<p>它不是每次都从头开始找，而是：</p>
+<p><strong>从上次找到空闲区的位置继续往后找。</strong></p>
+<p>这样可以避免总是集中消耗低地址区域，让分配更均匀一点。</p>
+<p>不过它也可能跳过前面刚释放出来的合适空间，整体效果不一定总是比首次适配好。</p>
+<hr/>
+<h3 id="3-最佳适配-best-fit">3. 最佳适配 Best Fit<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-最佳适配-best-fit" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>最佳适配的规则是：</p>
+<p><strong>扫描整个空闲区表，找到能满足需求的最小空闲区。</strong></p>
+<p>它听起来很美，因为每次都尽量不浪费大块空间。</p>
+<p>但问题是，它很容易留下很多非常小的空闲区。这些小空闲区之后可能很难再被利用，于是外碎片反而变严重。</p>
+<p>所以最佳适配不是“绝对最好”，它只是局部看起来最贴合申请大小。</p>
+<hr/>
+<h3 id="4-最差适配-worst-fit">4. 最差适配 Worst Fit<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-最差适配-worst-fit" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>最差适配的规则是：</p>
+<p><strong>总是选择满足需求的最大空闲区。</strong></p>
+<p>它的想法是：既然要切，就切最大的那块，这样剩下的部分还比较大，未来可能继续被使用。</p>
+<p>但它也有问题：大空闲区会被不断切割，可能导致系统失去真正的大块空间。</p>
+<hr/>
+<h3 id="5-分配后的分割">5. 分配后的分割<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-分配后的分割" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>不管使用哪种适配算法，找到空闲区以后通常都要分割。</p>
+<p>比如某块空闲区有 30KB，进程申请 12KB，那么系统会把它分成两部分：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>12KB：分配给进程</span></span>
+<span data-line><span>18KB：形成新的空闲区</span></span></code></pre></figure>
+<p>然后更新空闲区表和已分配区表。</p>
+<p>所以分配算法不仅要“找”，还要“切”和“更新数据结构”。</p>
+<hr/>
+<h2 id="十内存回收释放后怎么合并">十、内存回收：释放后怎么合并？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十内存回收释放后怎么合并" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>内存释放不是简单地把一块区域标为空闲就结束了。</p>
+<p>因为释放出来的区域可能和前后空闲区相邻。如果不合并，空闲区会越来越碎，外碎片会越来越严重。</p>
+<p>课件把回收时的情况分成四种：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>上相邻</span></span>
+<span data-line><span>下相邻</span></span>
+<span data-line><span>上下都相邻</span></span>
+<span data-line><span>上下都不相邻</span></span></code></pre></figure>
+<p>这里的“上”和“下”可以理解为内存地址上的前后相邻区域。</p>
+<p><strong>上相邻</strong>：释放区和前一个空闲区挨着，需要和前面的空闲区合并。</p>
+<p><strong>下相邻</strong>：释放区和后一个空闲区挨着，需要和后面的空闲区合并。</p>
+<p><strong>上下都相邻</strong>：释放区夹在两个空闲区之间，需要把三个区域合并成一个更大的空闲区。</p>
+<p><strong>上下都不相邻</strong>：释放区前后都是已分配区，不能合并，只能新增一个空闲区表项。</p>
+<p>一句话记住：</p>
+<p><strong>分配时要分割，回收时要合并。</strong></p>
+<hr/>
+<h2 id="十一伙伴系统按-2-的幂管理物理内存">十一、伙伴系统：按 2 的幂管理物理内存<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十一伙伴系统按-2-的幂管理物理内存" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>伙伴系统是一种经典的内存分配方案，也是 Linux 底层物理内存管理的重要思想之一。</p>
+<p>课件里说，Linux 底层内存管理采用一种特殊的“分离适配”算法。伙伴系统就是这种思想的典型代表。</p>
+<p>它的核心思想是：</p>
+<p><strong>把内存按 2 的幂次大小进行划分，组成若干空闲块链表；分配时找能满足需求的最佳匹配块；释放时尽量和自己的伙伴合并。</strong></p>
+<hr/>
+<h3 id="1-伙伴系统的分配过程">1. 伙伴系统的分配过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-伙伴系统的分配过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>假设整个可用空间大小是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>2^U</span></span></code></pre></figure>
+<p>进程申请空间大小为 <code>s</code>。</p>
+<p>如果：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>2^(U-1) &lt; s &lt;= 2^U</span></span></code></pre></figure>
+<p>那么说明这个申请已经超过一半，无法再切成更小的半块满足它，所以直接分配整个 <code>2^U</code> 大小的块。</p>
+<p>否则，就把这个块分成两个大小相等的伙伴：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>2^(U-1) 和 2^(U-1)</span></span></code></pre></figure>
+<p>然后继续判断，继续切分，直到产生一个大于或等于 <code>s</code> 的最小块。</p>
+<p>比如申请 100KB，系统可能分配 128KB；申请 240KB，系统可能分配 256KB。</p>
+<hr/>
+<h3 id="2-为什么叫伙伴">2. 为什么叫伙伴？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-为什么叫伙伴" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>因为每次一个大块被一分为二，得到的两个小块就是一对伙伴。</p>
+<blockquote>
+<p>相邻不一定是伙伴；伙伴一定相邻。</p>
+</blockquote>
+<p>释放时，如果某个块的伙伴也正好空闲，就可以把这两个伙伴重新合并成原来的大块。</p>
+<p>这个合并过程可以不断向上进行。</p>
+<p>比如：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>两个 128KB 伙伴空闲 → 合并成 256KB</span></span>
+<span data-line><span>两个 256KB 伙伴空闲 → 合并成 512KB</span></span>
+<span data-line><span>两个 512KB 伙伴空闲 → 合并成 1MB</span></span></code></pre></figure>
+<p>伙伴系统的好处是合并规则非常清楚，不用像可变分区那样到处判断复杂的相邻关系。</p>
+<hr/>
+<h3 id="3-伙伴系统的例子">3. 伙伴系统的例子<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-伙伴系统的例子" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p><img src="../../../课程笔记/操作系统/期中/assets/ChatGPT-Image-2026年4月26日-13_03_34.png" alt/></p>
+<p>这个例子想说明的不是某个具体颜色块，而是伙伴系统的两条主线：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>申请时：不够精确，就向上取 2 的幂大小</span></span>
+<span data-line><span>释放时：伙伴都空闲，就不断向上合并</span></span></code></pre></figure>
+<hr/>
+<h3 id="4-伙伴系统的优缺点">4. 伙伴系统的优缺点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-伙伴系统的优缺点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>伙伴系统的优点是：</p>
+<ul>
+<li>分配和回收规则清晰；</li>
+<li>合并速度快；</li>
+<li>能比较好地减少外碎片；</li>
+<li>很适合管理以页为单位的大块物理内存。</li>
+</ul>
+<p>它的缺点是：</p>
+<ul>
+<li>只能按 2 的幂分配，可能产生内碎片；</li>
+<li>申请 129KB 时可能要分配 256KB，浪费比较明显；</li>
+<li>对非常小的频繁对象分配不够合适。</li>
+</ul>
+<p>所以 Linux 内核通常会让伙伴系统负责较大的物理页面分配，再用 SLAB / SLUB 这类分配器处理小对象。</p>
+<hr/>
+<h2 id="十二slab-分配器内核小对象怎么分配">十二、SLAB 分配器：内核小对象怎么分配？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十二slab-分配器内核小对象怎么分配" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>伙伴系统适合管理大块页面，但内核运行时经常需要分配很多小对象。</p>
+<p>比如文件系统、网络协议栈、进程管理等模块中，会频繁创建和销毁各种结构体。如果每次都向伙伴系统申请一整页，再从里面用一点点，就会造成严重浪费。</p>
+<p>这就引出了 SLAB 分配器。</p>
+<hr/>
+<h3 id="1-为什么引入-slab">1. 为什么引入 SLAB？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-为什么引入-slab" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>SLAB 分配器最早由 Jeff Bonwick 在 20 世纪 90 年代为 Solaris 2.4 设计并实现。</p>
+<p>Linux 内核中也使用类似思想的内存分配器，用于在运行时动态管理内核内存的分配和释放，目标是可靠性和高性能。</p>
+<p>它主要解决的是：<strong>操作系统频繁分配小对象的问题。</strong></p>
+<p>SLAB 会把从底层拿到的大块内存进一步细分成固定大小的小块，用来满足内核模块的频繁小对象分配需求。</p>
+<p>这些固定大小的内存块通常是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>2^n 字节，其中 3 &lt;= n &lt; 12</span></span></code></pre></figure>
+<p>也就是从比较小的几十字节，到小于一页的若干大小类别。</p>
+<blockquote class="callout intuition" data-callout="intuition">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>直觉解释：伙伴系统像批发商，SLAB 像零售商 </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>伙伴系统按页或大块发货，像批发商。</p>
+<p>但内核经常只想要一个几十字节的小结构体，如果每次都批发一大箱，就太浪费。</p>
+<p>SLAB 像零售商，它先从伙伴系统那里拿一大块，再切成许多同规格的小格子，专门分给内核小对象。</p>
+</div>
+</blockquote>
+<hr/>
+<h3 id="2-slab-的实现方法">2. SLAB 的实现方法<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-slab-的实现方法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>SLAB 的基本做法是：</p>
+<p>第一，将可用内存按照对象大小划分为不同区域。
+第二，每个区域维护一个空闲对象列表。
+第三，需要分配内存时，就在合适大小的空闲对象列表中找一个与请求相符的空闲对象。
+第四，释放内存时，把该对象放回对应的空闲对象列表。</p>
+<p>此外，SLAB 分配器还有 <strong>slab cache</strong>。</p>
+<p>对象释放时，可以优先放入本地高速缓存中。这样下次如果又需要同类型对象，就可以很快复用，避免反复初始化和销毁。</p>
+<p>SLAB 广泛用于许多 Linux 内核模块，比如文件系统、网络协议栈等，能够满足大多数内核模块的小对象分配需求。</p>
+<p>在 Linux 中，可以通过：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="bash" data-theme="github-light github-dark"><code data-language="bash" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">cat</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> /proc/slabinfo</span></span></code></pre></figure>
+<p>查看当前系统的 slab 缓存信息。</p>
+<hr/>
+<h3 id="3-slab-的问题">3. SLAB 的问题<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-slab-的问题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>SLAB 虽然好用，但后来也暴露出一些问题。</p>
+<p>课件总结了几个：</p>
+<ul>
+<li>维护了太多队列；</li>
+<li>实现日趋复杂；</li>
+<li>存储开销增大；</li>
+<li>在高并发环境下容易出现锁竞争；</li>
+<li>多核系统中可能出现性能问题。</li>
+</ul>
+<p>也就是说，SLAB 在单核或并发不高时很好，但随着多核和 NUMA 系统普及，它的复杂队列和锁机制会变成性能瓶颈。</p>
+<hr/>
+<h3 id="4-slub">4. SLUB<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-slub" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>SLUB 是对 SLAB 的改进。</p>
+<p>它由 Pekka Enberg 在 2007 年开发，并合入 Linux 2.6.22。</p>
+<p>SLUB 的目标是提高性能和可伸缩性。</p>
+<p>它的做法包括：</p>
+<ul>
+<li>使用更简单的数据结构；</li>
+<li>减少锁竞争；</li>
+<li>提高多核系统下的并发性能；</li>
+<li>针对多核、多节点 NUMA 的本地性进行优化。</li>
+</ul>
+<p>可以这样理解：</p>
+<p><strong>SLUB 不是改变“小对象缓存”这个大方向，而是把 SLAB 原来复杂、容易锁竞争的实现简化和现代化。</strong></p>
+<hr/>
+<h3 id="5-slob">5. SLOB<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-slob" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>SLOB 是另一种改进方向。</p>
+<p>它不是追求大型服务器上的高并发性能，而是追求简单和紧凑。</p>
+<p>SLOB 的设计目标是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>尽可能简单</span></span>
+<span data-line><span>尽可能节省代码大小和内存开销</span></span></code></pre></figure>
+<p>因此它适合小型嵌入式系统和资源受限环境。</p>
+<p>课件中提到，SLOB 最早出现在 Linux 2.2 版本。</p>
+<p>所以三者可以这样对比：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>分配器</th><th>主要目标</th><th>适合场景</th></tr></thead><tbody><tr><td>SLAB</td><td>小对象缓存，高性能分配</td><td>经典通用内核对象分配</td></tr><tr><td>SLUB</td><td>简化结构，减少锁竞争，提高多核可伸缩性</td><td>现代多核 / NUMA 系统</td></tr><tr><td>SLOB</td><td>简单紧凑，减少开销</td><td>嵌入式 / 资源受限系统</td></tr></tbody></table></div>
+<hr/>
+<h2 id="十三基本内存管理方案总览">十三、基本内存管理方案总览<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十三基本内存管理方案总览" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>前面我们分别讲了几个“零件”：</p>
+<ul>
+<li><strong>地址空间</strong>：进程看到的抽象内存；</li>
+<li><strong>地址重定位 / 地址转换</strong>：把逻辑地址变成物理地址；</li>
+<li><strong>存储保护</strong>：防止进程越界或非法访问；</li>
+<li><strong>空闲内存管理</strong>：用位图、空闲区表、链表等结构记录哪些物理内存可用；</li>
+<li><strong>分配算法</strong>：用首次适配、最佳适配、最差适配、伙伴系统等方法选择具体分配哪块内存。</li>
+</ul>
+<p>接下来讲的“单一连续区、固定分区、可变分区、页式、段式、段页式”，不是又一批孤立概念，而是几种完整的<strong>内存管理方案</strong>。</p>
+<p>也就是说，它们是在回答：</p>
+<blockquote>
+<p>操作系统到底采用什么整体制度，把进程的地址空间映射到真实物理内存，并完成分配、保护和回收？</p>
+</blockquote>
+<p>所以可以把关系理解为：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>地址空间 / 地址转换 / 分配算法 / 空闲区管理  </span></span>
+<span data-line><span>↓  </span></span>
+<span data-line><span>被不同方式组合起来  </span></span>
+<span data-line><span>↓  </span></span>
+<span data-line><span>形成不同的内存管理方案</span></span></code></pre></figure>
+<p>它们可以看作一条演化路线：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>整个程序连续放</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>内存提前切成固定分区</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>按进程需要动态切分区</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>把进程打散成页</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>按程序逻辑划分成段</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>逻辑上分段，物理上分页</span></span></code></pre></figure>
+<hr/>
+<h3 id="1-单一连续区">1. 单一连续区<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-单一连续区" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>单一连续区是最简单的内存管理方式。</p>
+<p>它的特点是：</p>
+<p><strong>一段时间内只有一个用户进程在内存中。</strong></p>
+<p>内存中通常一部分放操作系统，另一部分放用户程序。某些早期系统中，设备驱动程序也可能放在 ROM 中。</p>
+<p>这种方案的优点是非常简单，几乎不需要复杂的分配算法和地址映射。</p>
+<p>但缺点也很明显：</p>
+<p><strong>内存利用率很低。</strong></p>
+<p>因为一次只能运行一个用户程序，无法充分利用 CPU 和内存，也不适合多道程序设计。</p>
+<p>一句话总结：</p>
+<p><strong>单一连续区简单，但只能适应非常早期、非常简单的系统。</strong></p>
+<hr/>
+<h3 id="2-固定分区">2. 固定分区<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-固定分区" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>固定分区比单一连续区前进了一步。</p>
+<p>它的思想是：</p>
+<p><strong>把可分配的内存空间预先分割成若干个连续区域，每个区域叫一个分区。</strong></p>
+<p>每个分区的大小可以相同，也可以不同。</p>
+<p>但一旦系统划分好了，分区大小就固定不变。</p>
+<p>每个分区：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>装一个且只能装一个进程</span></span></code></pre></figure>
+<p>固定分区可以支持多个程序同时进入内存，所以比单一连续区更适合多道程序设计。</p>
+<p>课件图里还出现了两种队列方式：</p>
+<p><strong>多个输入队列</strong>：每个分区可以对应自己的等待队列，程序按大小或类别排队。</p>
+<p><strong>单个输入队列</strong>：所有程序在一个总队列中等待，哪个分区空出来，就从队列中选择合适的程序装入。</p>
+<p>固定分区的问题是内碎片。</p>
+<p>比如某个分区大小是 100KB，但进程只需要 60KB，那么剩下 40KB 在这个分区内部浪费了，不能再装另一个进程。</p>
+<p>所以固定分区的核心矛盾是：</p>
+<p><strong>支持了多道程序，但因为分区大小固定，容易浪费分区内部空间。</strong></p>
+<hr/>
+<h3 id="3-可变分区">3. 可变分区<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-可变分区" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>可变分区继续改进固定分区的问题。</p>
+<p>它不再提前把内存切死，而是：</p>
+<p><strong>根据进程的实际需求，从空闲内存中切出一个分区分配给它。</strong></p>
+<p>比如进程需要 14MB，就切出 14MB；进程需要 8MB，就切出 8MB。剩余部分继续作为新的空闲区。</p>
+<p>这样看起来比固定分区更灵活，因为分区大小正好按进程需求来。</p>
+<p>但可变分区会产生外碎片。</p>
+<p>随着进程不断进入、退出，内存中会出现很多小洞。它们单独看太小，不容易再利用，最终导致内存利用率下降。</p>
+<p>课件图里把这些小空闲区域标成“洞”，这正是外碎片的直观表现。</p>
+<hr/>
+<h3 id="4-紧缩技术">4. 紧缩技术<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-紧缩技术" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>为了解决可变分区中的外碎片，可以使用紧缩技术。</p>
+<p>紧缩技术也叫：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>memory compaction</span></span>
+<span data-line><span>压缩技术</span></span>
+<span data-line><span>紧致技术</span></span>
+<span data-line><span>搬家技术</span></span></code></pre></figure>
+<p>它的做法是：</p>
+<p><strong>在内存中移动程序，把分散的小空闲区合并成较大的空闲区。</strong></p>
+<p>比如把所有已分配区尽量挪到一边，把空闲区集中到另一边，这样原来零散的小洞就变成了一块大空闲区。</p>
+<p>但紧缩技术有两个问题要考虑：</p>
+<p>第一，<strong>系统开销</strong>。</p>
+<p>移动程序需要复制内存内容，修改地址映射，可能还要暂停进程，成本很高。</p>
+<p>第二，<strong>移动时机</strong>。</p>
+<p>什么时候紧缩？每次释放就紧缩太慢；等到完全无法分配时再紧缩，又可能导致系统突然卡顿。</p>
+<p>所以紧缩技术虽然能解决外碎片，但代价不小。</p>
+<hr/>
+<h2 id="十四页式内存管理">十四、页式内存管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十四页式内存管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>连续分配方案的共同问题是：</p>
+<p><strong>它们都不同程度地要求进程或段在物理内存中连续存放。</strong></p>
+<p>页式内存管理的关键突破是：</p>
+<p><strong>把连续性从物理内存中拿掉。</strong></p>
+<hr/>
+<h3 id="1-页式管理的设计思想">1. 页式管理的设计思想<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-页式管理的设计思想" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>页式管理把用户程序地址空间划分为大小相等的区域，每个区域叫一个：</p>
+<p><strong>页（page）</strong>。</p>
+<p>同时，物理内存也按照同样的页面大小划分成大小相等的区域，叫：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>内存块</span></span>
+<span data-line><span>物理页面</span></span>
+<span data-line><span>页框 page frame</span></span>
+<span data-line><span>页帧</span></span></code></pre></figure>
+<p>这些词在不同教材里叫法不同，但意思基本一致。</p>
+<p>页式管理的分配规则是：</p>
+<p><strong>以页为单位进行分配，并按照进程需要的页数来分配。逻辑上相邻的页，物理上不一定相邻。</strong></p>
+<p>这句话非常关键。</p>
+<p>比如进程逻辑地址空间中第 0 页、第 1 页、第 2 页是连续的，但物理内存中它们可能分别放在第 5 个页框、第 13 个页框、第 2 个页框。</p>
+<p>操作系统只要用页表记录映射关系即可。</p>
+<p>典型页面大小包括：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>4KB</span></span>
+<span data-line><span>4MB</span></span></code></pre></figure>
+<p>其中 4KB 是非常常见的基本页面大小，大页机制中也可能出现更大的页面。</p>
+<p><img src="../../../课程笔记/操作系统/期中/assets/ChatGPT-Image-2026年4月26日-13_17_10.png" alt/></p>
+<hr/>
+<h3 id="2-页式地址结构">2. 页式地址结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-页式地址结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>在页式管理中，逻辑地址会被划分成两部分：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>页号 + 页内偏移</span></span></code></pre></figure>
+<p>以 32 位地址、4KB 页面为例：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>31           12 11           0</span></span>
+<span data-line><span>+-------------+---------------+</span></span>
+<span data-line><span>|    页号      |    页内偏移    |</span></span>
+<span data-line><span>+-------------+---------------+</span></span></code></pre></figure>
+<p>因为 4KB = 2^12，所以低 12 位表示页内偏移，范围是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>0 ~ 4095</span></span></code></pre></figure>
+<p>高 20 位表示页号，范围是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>0 ~ 1048575</span></span></code></pre></figure>
+<p>这也说明，页的划分是系统自动完成的，对用户程序是透明的。</p>
+<p>用户程序只是在使用一个地址，硬件会自动把它拆成页号和页内偏移。</p>
+<hr/>
+<h3 id="3-页表">3. 页表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-页表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>页式管理需要一个关键数据结构：</p>
+<p><strong>页表（page table）。</strong></p>
+<p>页表项记录的是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>逻辑页号 → 物理页框号</span></span></code></pre></figure>
+<p>每个进程都有自己的页表，页表通常存放在内存中。</p>
+<p>课件问了一个很重要的问题：</p>
+<p><strong>页表起始地址保存在何处？</strong></p>
+<p>一般来说，页表起始地址会保存在专门的页表基址寄存器中。在 x86 中，常见的是由 <code>CR3</code> 保存当前页表根地址；在更抽象的操作系统教材里，常称为 PTBR，也就是 Page Table Base Register。</p>
+<p>进程切换时，操作系统需要切换页表基址寄存器，让 CPU 使用新进程的页表。</p>
+<hr/>
+<h3 id="4-页式地址转换过程">4. 页式地址转换过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-页式地址转换过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>页式地址转换由硬件支持。</p>
+<p>流程如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>CPU 取到逻辑地址</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>自动划分为页号和页内偏移</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>用页号查页表</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>得到物理页框号</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>物理页框号 + 页内偏移</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>形成物理地址</span></span></code></pre></figure>
+<p>可以画成这样：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart LR\n    A[逻辑地址] --> B[页号 p]\n    A --> C[页内偏移 d]\n    B --> D[查页表]\n    D --> E[页框号 f]\n    E --> F[物理地址高位]\n    C --> G[物理地址低位]\n    F --> H[物理地址]\n    G --> H\n\n    classDef logic fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef table fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef phys fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n\n    class A,B,C logic;\n    class D table;\n    class E,F,G,H phys;&quot;">flowchart LR
+    A[逻辑地址] --> B[页号 p]
+    A --> C[页内偏移 d]
+    B --> D[查页表]
+    D --> E[页框号 f]
+    E --> F[物理地址高位]
+    C --> G[物理地址低位]
+    F --> H[物理地址]
+    G --> H
+
+    classDef logic fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef table fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef phys fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+
+    class A,B,C logic;
+    class D table;
+    class E,F,G,H phys;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>如果页面大小是 <code>page_size</code>，物理页框号是 <code>f</code>，页内偏移是 <code>d</code>，那么物理地址可以理解为：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>物理地址 = f × page_size + d</span></span></code></pre></figure>
+<p>更直观地说：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>页号负责查“这一页放在哪个页框”</span></span>
+<span data-line><span>页内偏移在转换过程中保持不变</span></span></code></pre></figure>
+<hr/>
+<h3 id="5-页式管理的特点">5. 页式管理的特点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-页式管理的特点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>页式管理的优点是：</p>
+<ul>
+<li>不要求进程物理连续存放；</li>
+<li>基本消除了外碎片；</li>
+<li>空闲内存可以按页框统一管理；</li>
+<li>很适合和虚拟内存结合。</li>
+</ul>
+<p>但页式管理也会产生内碎片。</p>
+<p>因为分配单位是页。如果进程最后一页只用了 100 字节，剩下的页内空间仍然浪费在这一页内部。</p>
+<p>不过这种内碎片通常比连续分配中的外碎片更容易控制。</p>
+<p>一句话总结：</p>
+<p><strong>分页用固定大小的页和页框，把逻辑连续性和物理连续性解耦。</strong></p>
+<hr/>
+<h2 id="十五段式内存管理">十五、段式内存管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十五段式内存管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>页式内存管理解决了连续分配的一个大问题：进程不再需要被放在一整块连续的物理内存中。操作系统只要把进程地址空间切成大小相等的页，再把这些页映射到任意空闲页框即可。</p>
+<p>但分页也带来一个特点：<strong>页是操作系统为了管理方便而切出来的固定大小单位，它本身并不反映程序的逻辑结构。</strong></p>
+<p>也就是说，页 0、页 1、页 2、页 3 只是机械划分出来的编号。它们可能分别包含一部分代码、一部分数据、一部分栈内容。对操作系统来说，这样很好管理；但对程序员来说，程序并不是按“第几页”来组织和理解的。</p>
+<p>程序员理解一个程序时，通常会按照逻辑模块来理解：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>主程序</span></span>
+<span data-line><span>子程序</span></span>
+<span data-line><span>函数库</span></span>
+<span data-line><span>数组</span></span>
+<span data-line><span>栈</span></span>
+<span data-line><span>堆</span></span>
+<span data-line><span>符号表</span></span>
+<span data-line><span>共享代码</span></span>
+<span data-line><span>工作区</span></span></code></pre></figure>
+<p>这些模块大小不一定相同，访问权限也可能不同。有的段适合只读，比如代码段；有的段需要读写，比如数据段和堆；有的段可能需要被多个进程共享，比如共享库代码。</p>
+<p>于是就出现了另一种思路：</p>
+<p><strong>能不能不按固定大小的页来划分地址空间，而是按照程序本身的逻辑结构来划分？</strong></p>
+<p>这就是段式内存管理。</p>
+<p>段式管理的核心思想是：<strong>用户程序地址空间不是被机械地切成等大的页，而是按照程序的逻辑关系划分成若干个段。每个段代表一个相对完整的逻辑部分。</strong></p>
+<hr/>
+<h3 id="1-段式管理的设计思想">1. 段式管理的设计思想<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-段式管理的设计思想" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段式管理把用户程序地址空间按程序自身的逻辑关系划分为若干程序段。</p>
+<p>每个段都有自己的段名或段号，比如：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>主程序段 M</span></span>
+<span data-line><span>子程序段 X</span></span>
+<span data-line><span>子程序段 Y</span></span>
+<span data-line><span>数组 A</span></span>
+<span data-line><span>工作区段 B</span></span></code></pre></figure>
+<p>物理内存则被动态划分为若干长度不相同的区域，称为物理段。</p>
+<p>每个物理段由两个信息确定：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>起始地址</span></span>
+<span data-line><span>长度</span></span></code></pre></figure>
+<p>段式管理的分配规则是：</p>
+<p><strong>以段为单位分配内存，每一段在内存中占据连续空间，但各段之间可以不连续存放。</strong></p>
+<p>这和分页很不一样。</p>
+<p>分页中，每一页大小固定；分段中，每一段大小可以不同。</p>
+<p>分页中，页是系统自动切的；分段中，段对应程序的逻辑结构。</p>
+<hr/>
+<h3 id="2-段式地址结构">2. 段式地址结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-段式地址结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段式逻辑地址由两部分组成：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>段号 + 段内地址</span></span></code></pre></figure>
+<p>段号说明要访问哪个逻辑段，段内地址说明在这个段里的偏移位置。</p>
+<p>比如：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>(段号 = 2, 段内地址 = 116)</span></span></code></pre></figure>
+<p>意思是访问第 2 段中偏移为 116 的位置。</p>
+<hr/>
+<h3 id="3-段表">3. 段表<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-段表" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段式管理需要段表。</p>
+<p>段表记录的是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>段号</span></span>
+<span data-line><span>段首地址</span></span>
+<span data-line><span>段长度</span></span></code></pre></figure>
+<p>每个进程有一个段表，段表存放在内存中。</p>
+<p>课件同样问了一个问题：</p>
+<p><strong>段表起始地址保存在何处？</strong></p>
+<p>一般来说，会由段表基址寄存器保存当前进程段表的起始地址，同时可能还有段表长度寄存器用于检查段号是否越界。</p>
+<hr/>
+<h3 id="4-段式地址转换过程">4. 段式地址转换过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-段式地址转换过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段式地址转换也需要硬件支持。</p>
+<p>流程如下：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>CPU 取到逻辑地址</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>分解出段号和段内偏移</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>用段号查段表</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>得到该段的起始地址和长度</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>检查段内偏移是否超过段长</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>如果合法：物理地址 = 段起始地址 + 段内偏移</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>如果越界：陷入操作系统</span></span></code></pre></figure>
+<p>可以画成这样：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[逻辑地址：段号 s + 段内偏移 d] --> B[用段号 s 查段表]\n    B --> C[得到段基址 base 和段长 limit]\n    C --> D{d 是否小于 limit}\n    D -->|否| E[段内地址越界]\n    E --> F[陷入操作系统]\n    D -->|是| G[base + d]\n    G --> H[物理地址]\n\n    classDef logic fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef table fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef trap fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;\n    classDef phys fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n\n    class A logic;\n    class B,C,D table;\n    class E,F trap;\n    class G,H phys;&quot;">flowchart TD
+    A[逻辑地址：段号 s + 段内偏移 d] --> B[用段号 s 查段表]
+    B --> C[得到段基址 base 和段长 limit]
+    C --> D{d 是否小于 limit}
+    D -->|否| E[段内地址越界]
+    E --> F[陷入操作系统]
+    D -->|是| G[base + d]
+    G --> H[物理地址]
+
+    classDef logic fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef table fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef trap fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;
+    classDef phys fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+
+    class A logic;
+    class B,C,D table;
+    class E,F trap;
+    class G,H phys;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<hr/>
+<h3 id="5-段式管理的特点">5. 段式管理的特点<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-段式管理的特点" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段式管理的优点是符合程序逻辑结构。</p>
+<p>比如代码段可以只读，数据段可读写，不同段可以设置不同权限；共享某个段也比较自然，比如多个进程共享同一段代码。</p>
+<p>但段式管理的缺点也很明显：</p>
+<p><strong>它的物理内存管理类似可变分区，因此会产生外碎片。</strong></p>
+<p>因为每个段大小不同，又要求段内部连续存放，时间一长就容易出现零散空洞。</p>
+<p>一句话总结：</p>
+<p><strong>分段对用户更有逻辑意义，但物理管理上容易遇到可变分区的外碎片问题。</strong></p>
+<hr/>
+<h2 id="十六段页式内存管理">十六、段页式内存管理<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十六段页式内存管理" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>前面我们分别看了页式管理和段式管理。</p>
+<p>页式管理很适合操作系统管理物理内存。因为页和页框大小固定，进程的各个页可以分散放到不同页框中，所以物理内存不再要求连续，外碎片问题也大大减轻。</p>
+<p>但分页的问题是：<strong>页只是系统为了管理方便切出来的固定大小单位，它并不对应程序的逻辑结构。</strong> 对程序员来说，“页 0、页 1、页 2”并不天然代表主程序、数据区、栈、共享库这些逻辑部分。</p>
+<p>段式管理正好反过来。</p>
+<p>分段很符合程序的逻辑结构。代码段、数据段、栈段、堆段、共享库段都可以作为相对独立的段来管理，不同段还可以设置不同权限，也更方便共享。</p>
+<p>但分段的问题是：<strong>每个段内部仍然要求在物理内存中连续存放。</strong> 段的长度又不固定，所以它在物理内存管理上很像可变分区，时间一长就容易产生外碎片。</p>
+<p>于是就出现了一个很自然的问题：</p>
+<blockquote>
+<p>能不能让用户眼里的地址空间仍然按“段”组织，但让物理内存分配时仍然按“页”来做？</p>
+</blockquote>
+<p>这就是段页式内存管理。</p>
+<hr/>
+<h3 id="1-段页式的设计思想">1. 段页式的设计思想<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-段页式的设计思想" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段页式的基本思路是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>用户程序地址空间：按段式划分</span></span>
+<span data-line><span>每个段内部：再按页划分</span></span>
+<span data-line><span>物理内存：按页式管理</span></span>
+<span data-line><span>内存分配：以页为单位分配</span></span></code></pre></figure>
+<p>也就是说，对用户来说，程序仍然是按逻辑段组织的；但对系统来说，每个段再被切成页，最终以内存页框为单位进行分配。</p>
+<p>这样既保留了段的逻辑结构，又避免了段必须连续放入物理内存带来的外碎片。</p>
+<hr/>
+<h3 id="2-段页式地址结构">2. 段页式地址结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-段页式地址结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段页式逻辑地址可以理解为：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>段号 + 段内地址</span></span></code></pre></figure>
+<p>而段内地址又可以进一步拆成：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>页号 + 页内偏移</span></span></code></pre></figure>
+<p>所以整体上就是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>段号 + 页号 + 页内偏移</span></span></code></pre></figure>
+<hr/>
+<h3 id="3-段页式的数据结构">3. 段页式的数据结构<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-段页式的数据结构" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段页式需要两级结构。</p>
+<p>第一，<strong>段表</strong>。</p>
+<p>段表记录每一段对应的页表始址和页表长度。</p>
+<p>第二，<strong>页表</strong>。</p>
+<p>每一段都有自己的页表。页表记录该段内部的逻辑页号与物理内存块号之间的对应关系。</p>
+<p>所以，一个程序可能有多个页表。</p>
+<p>空闲区管理、分配、回收则和页式管理类似，因为物理内存最终仍然按页框分配。</p>
+<hr/>
+<h3 id="4-段页式地址转换过程">4. 段页式地址转换过程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-段页式地址转换过程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>段页式地址转换可以分三步：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>先用段号查段表</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>找到该段对应的页表</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>用页号查该段的页表</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>得到物理页框号</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>页框号 + 页内偏移</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>形成物理地址</span></span></code></pre></figure>
+<p>可以画成这样：</p>
+<pre><button class="expand-button" aria-label="Expand mermaid diagram" data-view-component="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 1.06L2.56 7h10.88l-2.22-2.22a.75.75 0 011.06-1.06l3.5 3.5a.75.75 0 010 1.06l-3.5 3.5a.75.75 0 11-1.06-1.06l2.22-2.22H2.56l2.22 2.22a.75.75 0 11-1.06 1.06l-3.5-3.5a.75.75 0 010-1.06l3.5-3.5z"></path></svg></button><code class="mermaid" data-clipboard="&quot;flowchart TD\n    A[逻辑地址：段号 s + 页号 p + 页内偏移 d] --> B[用段号 s 查段表]\n    B --> C[得到该段页表始址和页表长度]\n    C --> D[用页号 p 查该段页表]\n    D --> E[得到物理页框号 f]\n    E --> F[拼接 f 和 d]\n    F --> G[物理地址]\n\n    classDef logic fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;\n    classDef seg fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;\n    classDef page fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;\n    classDef phys fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;\n\n    class A logic;\n    class B,C seg;\n    class D,E page;\n    class F,G phys;&quot;">flowchart TD
+    A[逻辑地址：段号 s + 页号 p + 页内偏移 d] --> B[用段号 s 查段表]
+    B --> C[得到该段页表始址和页表长度]
+    C --> D[用页号 p 查该段页表]
+    D --> E[得到物理页框号 f]
+    E --> F[拼接 f 和 d]
+    F --> G[物理地址]
+
+    classDef logic fill:#eef3ff,stroke:#5b8def,stroke-width:2px,color:#1f2d3d;
+    classDef seg fill:#fff7e6,stroke:#f0ad4e,stroke-width:2px,color:#5a4300;
+    classDef page fill:#edf8ed,stroke:#67b567,stroke-width:2px,color:#1f3b1f;
+    classDef phys fill:#f8f0ff,stroke:#9b6bcb,stroke-width:2px,color:#3d2a54;
+
+    class A logic;
+    class B,C seg;
+    class D,E page;
+    class F,G phys;
+</code><div id="mermaid-container" role="dialog"><div id="mermaid-space"><div class="mermaid-content"></div></div></div></pre>
+<p>一句话总结：</p>
+<p><strong>段页式让用户按段理解程序，让系统按页管理内存。</strong></p>
+<hr/>
+<h2 id="十七几种内存管理方案对比">十七、几种内存管理方案对比<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十七几种内存管理方案对比" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>可以用一张表把这些方案串起来。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container"><table><thead><tr><th>方案</th><th>基本思想</th><th>分配单位</th><th>是否要求连续</th><th>主要问题</th></tr></thead><tbody><tr><td>单一连续区</td><td>一次只运行一个用户程序</td><td>整个用户程序</td><td>用户程序连续</td><td>内存利用率低</td></tr><tr><td>固定分区</td><td>预先把内存切成固定分区</td><td>分区</td><td>每个进程在一个分区内连续</td><td>内碎片</td></tr><tr><td>可变分区</td><td>按进程大小动态切分区</td><td>分区</td><td>每个进程连续</td><td>外碎片</td></tr><tr><td>页式</td><td>逻辑空间切页，物理内存切页框</td><td>页</td><td>不要求进程连续</td><td>内碎片、页表开销</td></tr><tr><td>段式</td><td>按程序逻辑划分为段</td><td>段</td><td>每段内部连续</td><td>外碎片</td></tr><tr><td>段页式</td><td>逻辑上分段，段内分页</td><td>页</td><td>不要求段整体连续</td><td>结构复杂、查表开销</td></tr></tbody></table></div>
+<p>这张表背后的主线是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>越早期的方案越简单，但连续性要求越强，利用率越差；</span></span>
+<span data-line><span>越后期的方案越灵活，但地址转换和数据结构也越复杂。</span></span></code></pre></figure>
+<hr/>
+<h2 id="十八内存扩充空间不够怎么办">十八、内存“扩充”：空间不够怎么办？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十八内存扩充空间不够怎么办" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>前面的内容主要是在讲：物理内存怎么分配、怎么映射、怎么保护。</p>
+<p>但还有一个更现实的问题：</p>
+<p><strong>如果内存就是不够怎么办？</strong></p>
+<p>课件列出了几种处理思路：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>内存紧凑</span></span>
+<span data-line><span>覆盖技术</span></span>
+<span data-line><span>交换技术</span></span>
+<span data-line><span>虚存技术</span></span></code></pre></figure>
+<p>它们共同面对的问题是：</p>
+<p><strong>如何在较小的存储空间中运行较大的程序，或者容纳更多进程。</strong></p>
+<hr/>
+<h3 id="1-内存紧凑">1. 内存紧凑<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-内存紧凑" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>内存紧凑前面已经讲过，主要用于解决可变分区中的外碎片。</p>
+<p>它通过移动内存中的程序，把分散的小空闲区合并成大的空闲区。</p>
+<p>但它不能真正让内存变大，只是把碎片整理得更可用。</p>
+<p>所以紧凑技术解决的是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>空间总量够，但连续空间不够</span></span></code></pre></figure>
+<p>而不是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>物理内存总量真的不够</span></span></code></pre></figure>
+<hr/>
+<h3 id="2-覆盖技术-overlaying">2. 覆盖技术 Overlaying<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-覆盖技术-overlaying" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>覆盖技术要解决的问题是：</p>
+<p><strong>程序大小超过物理内存总和。</strong></p>
+<p>它的基本思想是：</p>
+<p><strong>程序执行过程中，不同部分在内存中相互替代。</strong></p>
+<p>如果两个模块不会同时执行，就可以让它们共享同一块内存区域。</p>
+<p>比如一个程序有 A、B、C、D、E、F 几个模块。A 是主模块，必须常驻；B 和 C 不会同时执行，就可以放在同一个覆盖区；D、E、F 也不会同时执行，就可以放在另一个覆盖区。</p>
+<p>课件中的例子是：</p>
+<p>程序 X 的完整调用结构总大小是 54KB。</p>
+<p>如果全部装入，需要 54KB 内存。</p>
+<p>但通过覆盖结构，可以让：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>常驻区：A，8KB</span></span>
+<span data-line><span>覆盖区 0：B 或 C，大小取两者最大，为 10KB</span></span>
+<span data-line><span>覆盖区 1：D 或 E 或 F，大小取最大，为 12KB</span></span></code></pre></figure>
+<p>于是实际内存占用只需要：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>8KB + 10KB + 12KB = 30KB</span></span></code></pre></figure>
+<p>这就是覆盖技术的空间节省效果。</p>
+<p><img src="../../../课程笔记/操作系统/期中/assets/Pasted-image-20260426132536.png" alt/></p>
+<hr/>
+<h3 id="3-覆盖技术的条件和不足">3. 覆盖技术的条件和不足<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-覆盖技术的条件和不足" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>覆盖技术要求程序各模块之间有明确的调用结构。</p>
+<p>而且，覆盖结构通常需要程序员声明，操作系统再完成自动覆盖。</p>
+<p>这带来几个问题。</p>
+<p>第一，<strong>对用户不透明。</strong></p>
+<p>程序员必须知道哪些模块不会同时执行，必须手动划分功能模块，并确定覆盖关系。</p>
+<p>第二，<strong>增加编程困难。</strong></p>
+<p>程序结构本来只要考虑功能，现在还要考虑内存覆盖关系，复杂度明显上升。</p>
+<p>第三，<strong>增加执行时间。</strong></p>
+<p>因为覆盖模块需要从外存装入。程序运行到某个模块时，如果它当前不在内存，就要从磁盘读入。这是典型的时间换空间。</p>
+<p>所以覆盖技术主要用于早期操作系统。</p>
+<p>一句话总结：</p>
+<p><strong>覆盖技术通过让互斥执行的模块共用内存来节省空间，但它不透明，增加程序员负担，也会增加运行时间。</strong></p>
+<hr/>
+<h3 id="4-交换技术-swapping">4. 交换技术 Swapping<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-交换技术-swapping" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>交换技术最早用于小型分时系统，也叫：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>roll out / roll in</span></span></code></pre></figure>
+<p>它的基本思想是：</p>
+<p><strong>内存空间紧张时，系统把内存中某些进程暂时移到外存；再把外存中某些进程换进内存，使用前者腾出来的区域。</strong></p>
+<p>这是一种进程在内存和外存之间的动态调度。</p>
+<p>可以这样理解：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>roll out：把进程从内存换出到磁盘</span></span>
+<span data-line><span>roll in：把进程从磁盘换入到内存</span></span></code></pre></figure>
+<p>交换技术和覆盖技术的区别在于：</p>
+<p>覆盖主要发生在一个程序内部的模块之间；</p>
+<p>交换主要发生在不同进程和内外存之间。</p>
+<hr/>
+<h3 id="5-交换技术实现时的问题">5. 交换技术实现时的问题<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-交换技术实现时的问题" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>交换技术听起来简单，但实现时有很多细节。</p>
+<h4 id="51-交换进程的什么部分">5.1 交换进程的什么部分？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#51-交换进程的什么部分" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>程序中有些内容来自可执行文件，比如只读代码段。如果需要，可以之后重新从可执行文件读入。</p>
+<p>但运行时创建或修改的内容必须保存，比如：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>栈</span></span>
+<span data-line><span>堆</span></span>
+<span data-line><span>数据段中被修改的内容</span></span></code></pre></figure>
+<p>课件中特别强调了运行时创建或修改的内容：栈和堆。</p>
+<h4 id="52-换出的进程放在磁盘哪里">5.2 换出的进程放在磁盘哪里？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#52-换出的进程放在磁盘哪里" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>一般系统会指定一块特殊磁盘区域作为交换空间，也就是：</p>
+<p><strong>swap space。</strong></p>
+<p>交换区通常会尽量使用连续磁道，操作系统可以用底层磁盘读写操作高效访问。</p>
+<p>它不一定像普通文件系统那样一层层走复杂路径，而是更偏向为交换读写优化。</p>
+<h4 id="53-什么时候发生交换">5.3 什么时候发生交换？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#53-什么时候发生交换" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>理论上，只要进程暂时不用就可以换出。</p>
+<p>但如果太频繁地换出换入，系统会把大量时间花在磁盘 I/O 上，性能会很差。</p>
+<p>所以实际中通常是在：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>内存空间不够</span></span>
+<span data-line><span>或者有不够的危险时</span></span></code></pre></figure>
+<p>才触发交换。</p>
+<p>交换还要和调度器结合。因为换出哪个进程，本质上和“近期谁不运行”“谁优先级低”“谁占用大”这些调度信息有关。</p>
+<h4 id="54-如何选择被换出的进程">5.4 如何选择被换出的进程？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#54-如何选择被换出的进程" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>选择换出对象时，需要考虑进程的各种属性。</p>
+<p>一个重要原则是：</p>
+<p><strong>不应该换出处于等待 I/O 状态的进程。</strong></p>
+<p>因为如果一个进程正在等待 I/O，而设备可能会直接把数据写入它的内存区域，那么把它换出会带来麻烦。除非系统有额外机制处理 I/O 缓冲，否则可能导致数据写错位置或状态混乱。</p>
+<h4 id="55-换出后再换入是否回到原处">5.5 换出后再换入，是否回到原处？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#55-换出后再换入是否回到原处" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>不一定。</p>
+<p>如果采用动态重定位，进程换回内存时可以放到新的物理位置。只要更新相关地址映射或重定位寄存器，进程仍然可以继续运行。</p>
+<p>所以交换技术往往需要动态重定位支持。</p>
+<p>如果只能静态重定位，要求进程必须回到原来的物理位置，交换就会非常不灵活。</p>
+<h4 id="56-如何处理进程空间增长">5.6 如何处理进程空间增长？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#56-如何处理进程空间增长" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h4>
+<p>进程运行时，堆可能增长，栈也可能增长。</p>
+<p>如果一个进程刚好被紧紧塞在两个进程之间，没有预留增长空间，那么它想扩展堆或栈时就会很困难。</p>
+<p>课件图里用 Room for growth 表示预留增长空间。</p>
+<p>常见思路是：</p>
+<ul>
+<li>给数据段或堆预留向上增长空间；</li>
+<li>给栈预留向下增长空间；</li>
+<li>必要时通过移动、交换或重新映射解决空间增长问题。</li>
+</ul>
+<p>一句话总结：</p>
+<p><strong>交换技术用磁盘临时保存进程，为内存腾空间；它依赖调度策略、交换区管理、动态重定位和对进程增长的处理。</strong></p>
+<hr/>
+<h3 id="6-虚存技术">6. 虚存技术<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-虚存技术" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>这节课只是把虚存技术放在“内存扩充”的大框架中提出来，后面通常会单独详细讲。</p>
+<p>这里先抓住它和覆盖、交换的关系。</p>
+<p>覆盖技术需要程序员手动设计模块覆盖关系，对用户不透明。</p>
+<p>交换技术通常以进程为单位，把整个进程换入换出，粒度比较粗。</p>
+<p>虚拟内存技术则更进一步：</p>
+<p><strong>它让进程以为自己拥有很大的连续地址空间，但实际只把当前需要的部分放在物理内存中，其余部分可以暂时放在外存。</strong></p>
+<p>它通常以页为单位进行调入和换出，比整个进程交换更细粒度，也更加透明。</p>
+<p>所以可以先这样理解：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>覆盖：程序员手动安排模块共用内存</span></span>
+<span data-line><span>交换：操作系统按进程把内容在内外存之间搬动</span></span>
+<span data-line><span>虚拟内存：操作系统按页等更小粒度自动管理“看起来很大”的地址空间</span></span></code></pre></figure>
+<hr/>
+<h2 id="十九回到开头这节课的几个问题怎么回答">十九、回到开头：这节课的几个问题怎么回答？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#十九回到开头这节课的几个问题怎么回答" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>这一节课开头其实已经把主线问题列出来了。学完整章之后，我们可以把它们逐个收束一下。</p>
+<hr/>
+<h3 id="1-内存管理从简单到复杂的演化过程是什么">1. 内存管理从简单到复杂的演化过程是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-内存管理从简单到复杂的演化过程是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>内存管理的演化，本质上是从“直接使用物理内存”走向“通过地址空间抽象来管理内存”。</p>
+<p>最早的方案很简单：一段时间内只运行一个用户程序，程序连续地放在物理内存中，这就是<strong>单一连续区</strong>。它实现简单，但内存利用率很低。</p>
+<p>后来进入多道程序设计，内存中需要同时放多个程序，于是出现了<strong>固定分区</strong>：提前把内存切成若干块，每个分区放一个进程。它支持了多个程序共存，但会产生明显的内碎片。</p>
+<p>为了减少固定分区带来的浪费，又出现了<strong>可变分区</strong>：根据进程实际需要动态切出一块空间。它更灵活，但由于进程不断进入和退出，内存中会出现很多小洞，也就是外碎片。</p>
+<p>再后来，操作系统开始把进程地址空间打散成大小相等的页，把物理内存也切成大小相等的页框，于是有了<strong>页式管理</strong>。分页让逻辑上连续的进程地址空间，可以映射到物理上离散的页框中，极大降低了连续分配的压力。</p>
+<p>但分页是从系统管理角度切出来的，逻辑意义不强。于是又有了<strong>段式管理</strong>：按照程序自身的逻辑结构划分为代码段、数据段、栈段、堆段等。分段符合程序逻辑，但每个段内部仍然要求连续存放，容易产生外碎片。</p>
+<p>最后，为了兼顾段式的逻辑表达能力和页式的物理管理能力，又出现了<strong>段页式管理</strong>：逻辑上先分段，段内再分页，最终物理内存仍然按页框分配。</p>
+<p>所以这条演化路线可以概括为：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>单一连续区</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>固定分区</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>可变分区</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>页式管理</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>段式管理</span></span>
+<span data-line><span>  ↓</span></span>
+<span data-line><span>段页式管理</span></span></code></pre></figure>
+<p>一句话说：<strong>内存管理越来越复杂，是因为操作系统既想提高内存利用率，又想支持多进程隔离、灵活映射、共享和保护。</strong></p>
+<hr/>
+<h3 id="2-怎样理解地址空间是对内存的抽象">2. 怎样理解“地址空间是对内存的抽象”？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-怎样理解地址空间是对内存的抽象" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>物理内存是真实存在的硬件资源，但进程并不是直接面对这块物理内存。</p>
+<p>进程看到的是一个从低地址到高地址展开的、相对独立的逻辑空间。这个空间里有代码段、数据段、堆、栈、共享库、内存映射文件等内容。进程在运行时使用的是逻辑地址或虚拟地址，而不是直接使用真实物理地址。</p>
+<p>这就是地址空间的含义。</p>
+<p>所谓“地址空间是对内存的抽象”，意思是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>进程看到的是自己的逻辑内存世界；</span></span>
+<span data-line><span>物理内存是真实硬件；</span></span>
+<span data-line><span>操作系统和硬件负责把逻辑地址映射到物理地址。</span></span></code></pre></figure>
+<p>这样做有几个好处。</p>
+<p>第一，进程不需要知道自己真实装入到了物理内存的哪个位置。</p>
+<p>第二，多个进程可以各自拥有看起来独立的地址空间，互不干扰。</p>
+<p>第三，逻辑上连续的地址空间，不要求物理上连续存放。</p>
+<p>第四，操作系统可以通过地址空间实现保护、共享、交换和虚拟内存。</p>
+<p>所以可以这样记：</p>
+<p><strong>地址空间让每个进程“以为”自己拥有一片连续、独立的内存；而真实物理内存怎么安排，由操作系统和硬件在背后完成。</strong></p>
+<hr/>
+<h3 id="3-内存管理追求的目标有哪些">3. 内存管理追求的目标有哪些？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-内存管理追求的目标有哪些" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>内存管理追求的目标可以概括成三个关键词：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>透明性</span></span>
+<span data-line><span>效率</span></span>
+<span data-line><span>保护</span></span></code></pre></figure>
+<p><strong>透明性</strong>是说，进程不需要关心真实物理内存的细节。程序只需要使用自己的逻辑地址空间，不需要知道自己被装到物理内存哪里，也不需要知道某一页是否和另一页物理相邻。</p>
+<p><strong>效率</strong>是说，内存管理不能太慢。地址转换、内存分配、内存回收、页面调入调出都不能产生过大的开销。否则即使机制正确，程序运行也会很慢。</p>
+<p><strong>保护</strong>是说，操作系统必须防止进程之间互相破坏。进程不能访问别的进程的内存，用户程序不能随便访问内核空间，也不能对只读代码段进行写操作。</p>
+<p>如果从具体功能角度看，内存管理还要完成：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>给进程分配地址空间</span></span>
+<span data-line><span>把程序内容加载到内存</span></span>
+<span data-line><span>建立进程地址空间到物理内存的映射</span></span>
+<span data-line><span>进行地址越界和权限保护</span></span>
+<span data-line><span>管理共享内存</span></span>
+<span data-line><span>尽量减少存储访问时间</span></span></code></pre></figure>
+<p>一句话总结：<strong>内存管理要把有限的物理内存，包装成对进程透明、访问高效、彼此隔离又能受控共享的地址空间。</strong></p>
+<hr/>
+<h3 id="4-程序什么时候进入内存">4. 程序什么时候进入内存？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-程序什么时候进入内存" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>程序平时以可执行文件的形式保存在磁盘上，只有被装载后才会进入内存并运行。</p>
+<p>从源代码到运行，一般会经历：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>源程序</span></span>
+<span data-line><span>  ↓ 编译</span></span>
+<span data-line><span>目标文件</span></span>
+<span data-line><span>  ↓ 链接</span></span>
+<span data-line><span>装载模块 / 可执行文件</span></span>
+<span data-line><span>  ↓ 装载</span></span>
+<span data-line><span>进入内存</span></span>
+<span data-line><span>  ↓ 运行</span></span>
+<span data-line><span>进程执行</span></span></code></pre></figure>
+<p>所以，程序真正进入内存发生在<strong>装载阶段</strong>。</p>
+<p>不过要注意，现代系统中“进入内存”不一定意味着整个程序一次性全部进入物理内存。</p>
+<p>在简单内存管理方案中，程序可能会一次性整体装入内存。</p>
+<p>但在支持虚拟内存的系统中，程序的地址空间可以先被建立起来，真正的代码页、数据页可能按需调入。也就是说，程序逻辑上已经有了地址空间，但物理内存中可能只驻留当前需要的部分。</p>
+<p>所以更准确地说：</p>
+<p><strong>程序在装载时建立运行所需的地址空间和映射关系；至于内容是否全部进入物理内存，取决于具体内存管理方案。</strong></p>
+<hr/>
+<h3 id="5-进程空间与物理内存空间怎么对应">5. 进程空间与物理内存空间怎么对应？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-进程空间与物理内存空间怎么对应" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>进程空间指的是进程的逻辑地址空间，物理内存空间指的是真实 RAM 中的物理地址空间。</p>
+<p>二者之间的对应关系由<strong>地址映射 / 地址转换 / 地址重定位</strong>完成。</p>
+<p>在最简单的动态重定位模型中，可以用基地址寄存器和界限寄存器实现：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>物理地址 = 基地址 + 逻辑地址</span></span></code></pre></figure>
+<p>同时用界限寄存器检查逻辑地址是否越界。</p>
+<p>在页式管理中，进程地址空间被划分为页，物理内存被划分为页框。页表记录：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>页号 → 页框号</span></span></code></pre></figure>
+<p>CPU 发出逻辑地址后，硬件把它拆成页号和页内偏移，用页号查页表得到页框号，再和页内偏移组合成物理地址。</p>
+<p>在段式管理中，逻辑地址由段号和段内地址组成。段表记录：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>段号 → 段基址 + 段长度</span></span></code></pre></figure>
+<p>CPU 用段号查段表，得到段在物理内存中的起始地址，再加上段内偏移形成物理地址，同时检查是否超过段长。</p>
+<p>在段页式管理中，则是先通过段号找到对应段的页表，再通过页号找到页框号，最后加上页内偏移。</p>
+<p>所以这道题可以这样答：</p>
+<p><strong>进程空间和物理内存空间不是直接一一对应的，而是通过页表、段表或重定位寄存器等机制建立映射；进程使用逻辑地址，硬件和操作系统负责把它翻译成物理地址。</strong></p>
+<hr/>
+<h3 id="6-物理内存空闲空间怎么管理有哪些数据结构和算法">6. 物理内存空闲空间怎么管理？有哪些数据结构和算法？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-物理内存空闲空间怎么管理有哪些数据结构和算法" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>物理内存空闲空间管理要解决的问题是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>哪些物理内存是空闲的？</span></span>
+<span data-line><span>新来一个请求时分配哪一块？</span></span>
+<span data-line><span>释放后怎么回收和合并？</span></span></code></pre></figure>
+<p>常见的数据结构有三类。</p>
+<p>第一，<strong>位图</strong>。</p>
+<p>位图用一个 bit 表示一个分配单元是否空闲。比如在按页框管理时，可以让 1 bit 对应 1 个物理页框。它结构紧凑，适合固定大小单元管理，但查找连续空闲区域时可能需要扫描。</p>
+<p>第二，<strong>空闲区表 / 已分配区表</strong>。</p>
+<p>空闲区表记录每块空闲区的起始地址、长度和状态；已分配区表记录已经分配出去的区域。它适合连续分配场景，比如可变分区管理。</p>
+<p>第三，<strong>空闲块链表</strong>。</p>
+<p>空闲块链表把空闲块串起来，可以是隐式空闲链表、显式空闲链表，也可以按照不同大小类别组织成分离空闲链表。</p>
+<p>常见的分配算法包括：</p>
+<p><strong>首次适配 first fit</strong>：找到第一个满足要求的空闲区就分配。</p>
+<p><strong>下次适配 next fit</strong>：从上次查找结束的位置继续找。</p>
+<p><strong>最佳适配 best fit</strong>：找能满足请求的最小空闲区。</p>
+<p><strong>最差适配 worst fit</strong>：找最大的空闲区进行分割。</p>
+<p>释放内存时，还要考虑和相邻空闲区合并，通常有四种情况：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>上相邻</span></span>
+<span data-line><span>下相邻</span></span>
+<span data-line><span>上下都相邻</span></span>
+<span data-line><span>上下都不相邻</span></span></code></pre></figure>
+<p>如果是页式物理内存管理，还常用伙伴系统来管理页框块。</p>
+<p>一句话总结：<strong>物理内存空闲空间管理，就是用位图、表或链表记录空闲状态，再用适配算法或伙伴系统决定如何分配和回收。</strong></p>
+<hr/>
+<h3 id="7-怎样扩充内存">7. 怎样“扩充”内存？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-怎样扩充内存" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>“扩充”内存不一定是真的增加物理内存条，而是通过操作系统技术，让有限的内存看起来能运行更大的程序或更多的进程。</p>
+<p>主要方法有四类。</p>
+<p>第一，<strong>内存紧凑</strong>。</p>
+<p>它通过移动内存中的程序，把分散的小空闲区合并成更大的连续空闲区。它解决的是外碎片问题，但开销较大，需要考虑移动时机。</p>
+<p>第二，<strong>覆盖技术</strong>。</p>
+<p>覆盖技术用于程序大小超过物理内存的情况。它让不会同时执行的程序模块共享同一块内存区域。这样可以减少实际占用的内存，但需要程序员划分覆盖结构，对用户不透明，增加编程复杂度，也会增加从外存装入模块的时间。</p>
+<p>第三，<strong>交换技术</strong>。</p>
+<p>交换技术是在内存紧张时，把某些暂时不用的进程换出到磁盘交换区，再把需要运行的进程换入内存。它通常以进程为单位进行 roll out / roll in，需要考虑换出对象、交换时机、交换区位置、进程是否等待 I/O、换入后是否回到原处等问题。</p>
+<p>第四，<strong>虚拟内存技术</strong>。</p>
+<p>虚拟内存让进程拥有比实际物理内存更大的地址空间，只把当前需要的部分放入物理内存，暂时不用的部分放在外存中。它通常以页为单位按需调入和换出，比整个进程交换更细粒度，也更加透明。</p>
+<p>所以可以这样理解：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>紧凑：整理碎片</span></span>
+<span data-line><span>覆盖：模块之间共享内存</span></span>
+<span data-line><span>交换：进程在内存和外存之间换入换出</span></span>
+<span data-line><span>虚存：按需把地址空间的一部分放入物理内存</span></span></code></pre></figure>
+<p>一句话总结：<strong>内存扩充的本质，是用外存、重定位和按需装入等机制，把有限物理内存包装成更大的可用空间。</strong></p>
+<hr/>
+<h3 id="8-linux-的伙伴系统的作用是什么">8. Linux 的伙伴系统的作用是什么？<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-linux-的伙伴系统的作用是什么" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>Linux 的伙伴系统主要用于<strong>底层物理内存页框管理</strong>。</p>
+<p>它的作用是管理大块连续物理页框的分配和回收。</p>
+<p>伙伴系统的核心思想是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>按 2 的幂划分内存块</span></span>
+<span data-line><span>分配时不断二分，直到找到大于等于请求大小的最小块</span></span>
+<span data-line><span>释放时如果伙伴块也空闲，就合并成更大的块</span></span></code></pre></figure>
+<p>比如进程或内核需要一块连续物理内存时，伙伴系统会从合适大小的空闲链表中寻找块。如果没有刚好合适的块，就把更大的块不断切成两个等大的伙伴，直到得到合适大小。</p>
+<p>释放时，如果某块的真正伙伴也空闲，就把它们合并回上一级大块。这个合并过程可以一直向上进行。</p>
+<p>伙伴系统的优点是：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>分配和回收规则清晰</span></span>
+<span data-line><span>合并速度快</span></span>
+<span data-line><span>能缓解外碎片</span></span>
+<span data-line><span>适合管理物理页框</span></span></code></pre></figure>
+<p>它的缺点是按 2 的幂分配，可能产生一定内碎片。</p>
+<p>在 Linux 中，可以这样理解它的位置：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>伙伴系统：负责较大粒度的物理页框分配</span></span>
+<span data-line><span>SLAB / SLUB：在伙伴系统提供的页框基础上，进一步管理内核小对象</span></span></code></pre></figure>
+<p>一句话总结：</p>
+<p><strong>Linux 的伙伴系统是底层物理内存分配器，用来高效管理和合并以 2 的幂为大小的连续页框块，为内核和更上层分配器提供物理页面。</strong></p>
+<h2 id="二十本节重点小结">二十、本节重点小结<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#二十本节重点小结" class="internal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>这节课的知识点很多，但主线其实非常清楚。</p>
+<p>第一，<strong>内存管理不等于虚拟内存管理。</strong></p>
+<p>虚拟内存只是后期方案。内存管理还包括地址重定位、地址保护、物理内存分配、各种基本内存管理方案、覆盖和交换等内容。</p>
+<p>第二，<strong>地址空间是对内存的抽象。</strong></p>
+<p>进程看到的是自己的逻辑地址空间，而不是直接面对物理内存。操作系统和硬件负责把地址空间映射到物理内存。</p>
+<p>第三，<strong>地址重定位解决逻辑地址到物理地址的转换问题。</strong></p>
+<p>逻辑地址也叫相对地址或虚拟地址；物理地址也叫绝对地址或实地址。静态重定位在装载时完成，动态重定位在运行时完成，需要硬件支持。</p>
+<p>第四，<strong>地址保护保证进程只能访问自己的合法地址范围。</strong></p>
+<p>基地址寄存器和界限寄存器可以实现简单保护，越界访问会陷入操作系统，这些寄存器只能由操作系统通过特权指令加载。</p>
+<p>第五，<strong>物理内存管理要解决空闲空间如何表示、分配和回收。</strong></p>
+<p>常见数据结构包括位图、空闲区表 / 已分配区表、空闲块链表。分配算法包括首次适配、下次适配、最佳适配、最差适配。回收时要处理上相邻、下相邻、上下都相邻、上下都不相邻四种情况。</p>
+<p>第六，<strong>碎片问题贯穿很多方案。</strong></p>
+<p>内碎片是分配块内部浪费，外碎片是分配块之间的小空闲洞。固定分区容易产生内碎片，可变分区和段式容易产生外碎片，页式主要产生内碎片。</p>
+<p>第七，<strong>伙伴系统按 2 的幂分配和合并物理内存。</strong></p>
+<p>它适合管理大块物理页面，Linux 底层内存管理采用这种特殊的分离适配思想。</p>
+<p>第八，<strong>SLAB / SLUB / SLOB 解决内核小对象分配问题。</strong></p>
+<p>SLAB 面向频繁小对象分配，SLUB 简化结构并优化多核可伸缩性，SLOB 面向资源受限的嵌入式系统。</p>
+<p>第九，<strong>基本内存管理方案从连续走向离散。</strong></p>
+<p>单一连续区最简单但利用率低；固定分区支持多道但有内碎片；可变分区更灵活但有外碎片；页式通过固定大小页框消除外碎片；段式符合程序逻辑但仍有外碎片；段页式则逻辑上分段、物理上分页。</p>
+<p>第十，<strong>内存扩充技术解决内存不足问题。</strong></p>
+<p>紧凑技术整理外碎片；覆盖技术让不会同时执行的模块共享内存；交换技术把进程在内存和外存之间换入换出；虚拟内存则进一步提供更透明、更细粒度的内存扩充机制。</p>
+<p>最后用一句话收束：</p>
+<p><strong>内存管理的本质，是让有限、真实、容易碎片化的物理内存，看起来像每个进程都独占的一片连续、安全、可扩展的地址空间。</strong></p></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>Graph View</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc desktop-only"><button type="button" class="toc-header" aria-controls="toc-129" aria-expanded="true"><h3>Table of Contents</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-1" class="toc-content overflow"><li class="depth-0"><a href="#一为什么需要内存管理" data-for="一为什么需要内存管理">一、为什么需要内存管理？</a></li><li class="depth-0"><a href="#二地址空间对内存的抽象" data-for="二地址空间对内存的抽象">二、地址空间：对内存的抽象</a></li><li class="depth-1"><a href="#1-地址空间要解决什么问题" data-for="1-地址空间要解决什么问题">1. 地址空间要解决什么问题？</a></li><li class="depth-1"><a href="#2-进程地址空间里有什么" data-for="2-进程地址空间里有什么">2. 进程地址空间里有什么？</a></li><li class="depth-1"><a href="#3-xv6-的地址空间布局" data-for="3-xv6-的地址空间布局">3. xv6 的地址空间布局</a></li><li class="depth-1"><a href="#4-地址空间管理到底在管什么" data-for="4-地址空间管理到底在管什么">4. 地址空间管理到底在管什么？</a></li><li class="depth-0"><a href="#三程序执行前地址什么时候绑定到内存" data-for="三程序执行前地址什么时候绑定到内存">三、程序执行前：地址什么时候绑定到内存？</a></li><li class="depth-0"><a href="#四地址重定位从逻辑地址到物理地址" data-for="四地址重定位从逻辑地址到物理地址">四、地址重定位：从逻辑地址到物理地址</a></li><li class="depth-1"><a href="#1-静态地址重定位" data-for="1-静态地址重定位">1. 静态地址重定位</a></li><li class="depth-1"><a href="#2-动态地址重定位" data-for="2-动态地址重定位">2. 动态地址重定位</a></li><li class="depth-1"><a href="#3-mmu-如何实现动态重定位" data-for="3-mmu-如何实现动态重定位">3. MMU 如何实现动态重定位？</a></li><li class="depth-0"><a href="#五地址保护不能让进程乱访问" data-for="五地址保护不能让进程乱访问">五、地址保护：不能让进程乱访问</a></li><li class="depth-0"><a href="#六内存管理的基本功能" data-for="六内存管理的基本功能">六、内存管理的基本功能</a></li><li class="depth-0"><a href="#七存储体系与局部性原理" data-for="七存储体系与局部性原理">七、存储体系与局部性原理</a></li><li class="depth-0"><a href="#八物理空闲内存管理空地怎么管" data-for="八物理空闲内存管理空地怎么管">八、物理空闲内存管理：空地怎么管？</a></li><li class="depth-1"><a href="#1-衡量指标利用率和性能" data-for="1-衡量指标利用率和性能">1. 衡量指标：利用率和性能</a></li><li class="depth-1"><a href="#2-内碎片与外碎片" data-for="2-内碎片与外碎片">2. 内碎片与外碎片</a></li><li class="depth-1"><a href="#3-位图法" data-for="3-位图法">3. 位图法</a></li><li class="depth-1"><a href="#4-空闲区表和已分配区表" data-for="4-空闲区表和已分配区表">4. 空闲区表和已分配区表</a></li><li class="depth-1"><a href="#5-空闲块链表" data-for="5-空闲块链表">5. 空闲块链表</a></li><li class="depth-0"><a href="#九内存分配算法" data-for="九内存分配算法">九、内存分配算法</a></li><li class="depth-1"><a href="#1-首次适配-first-fit" data-for="1-首次适配-first-fit">1. 首次适配 First Fit</a></li><li class="depth-1"><a href="#2-下次适配-next-fit" data-for="2-下次适配-next-fit">2. 下次适配 Next Fit</a></li><li class="depth-1"><a href="#3-最佳适配-best-fit" data-for="3-最佳适配-best-fit">3. 最佳适配 Best Fit</a></li><li class="depth-1"><a href="#4-最差适配-worst-fit" data-for="4-最差适配-worst-fit">4. 最差适配 Worst Fit</a></li><li class="depth-1"><a href="#5-分配后的分割" data-for="5-分配后的分割">5. 分配后的分割</a></li><li class="depth-0"><a href="#十内存回收释放后怎么合并" data-for="十内存回收释放后怎么合并">十、内存回收：释放后怎么合并？</a></li><li class="depth-0"><a href="#十一伙伴系统按-2-的幂管理物理内存" data-for="十一伙伴系统按-2-的幂管理物理内存">十一、伙伴系统：按 2 的幂管理物理内存</a></li><li class="depth-1"><a href="#1-伙伴系统的分配过程" data-for="1-伙伴系统的分配过程">1. 伙伴系统的分配过程</a></li><li class="depth-1"><a href="#2-为什么叫伙伴" data-for="2-为什么叫伙伴">2. 为什么叫伙伴？</a></li><li class="depth-1"><a href="#3-伙伴系统的例子" data-for="3-伙伴系统的例子">3. 伙伴系统的例子</a></li><li class="depth-1"><a href="#4-伙伴系统的优缺点" data-for="4-伙伴系统的优缺点">4. 伙伴系统的优缺点</a></li><li class="depth-0"><a href="#十二slab-分配器内核小对象怎么分配" data-for="十二slab-分配器内核小对象怎么分配">十二、SLAB 分配器：内核小对象怎么分配？</a></li><li class="depth-1"><a href="#1-为什么引入-slab" data-for="1-为什么引入-slab">1. 为什么引入 SLAB？</a></li><li class="depth-1"><a href="#2-slab-的实现方法" data-for="2-slab-的实现方法">2. SLAB 的实现方法</a></li><li class="depth-1"><a href="#3-slab-的问题" data-for="3-slab-的问题">3. SLAB 的问题</a></li><li class="depth-1"><a href="#4-slub" data-for="4-slub">4. SLUB</a></li><li class="depth-1"><a href="#5-slob" data-for="5-slob">5. SLOB</a></li><li class="depth-0"><a href="#十三基本内存管理方案总览" data-for="十三基本内存管理方案总览">十三、基本内存管理方案总览</a></li><li class="depth-1"><a href="#1-单一连续区" data-for="1-单一连续区">1. 单一连续区</a></li><li class="depth-1"><a href="#2-固定分区" data-for="2-固定分区">2. 固定分区</a></li><li class="depth-1"><a href="#3-可变分区" data-for="3-可变分区">3. 可变分区</a></li><li class="depth-1"><a href="#4-紧缩技术" data-for="4-紧缩技术">4. 紧缩技术</a></li><li class="depth-0"><a href="#十四页式内存管理" data-for="十四页式内存管理">十四、页式内存管理</a></li><li class="depth-1"><a href="#1-页式管理的设计思想" data-for="1-页式管理的设计思想">1. 页式管理的设计思想</a></li><li class="depth-1"><a href="#2-页式地址结构" data-for="2-页式地址结构">2. 页式地址结构</a></li><li class="depth-1"><a href="#3-页表" data-for="3-页表">3. 页表</a></li><li class="depth-1"><a href="#4-页式地址转换过程" data-for="4-页式地址转换过程">4. 页式地址转换过程</a></li><li class="depth-1"><a href="#5-页式管理的特点" data-for="5-页式管理的特点">5. 页式管理的特点</a></li><li class="depth-0"><a href="#十五段式内存管理" data-for="十五段式内存管理">十五、段式内存管理</a></li><li class="depth-1"><a href="#1-段式管理的设计思想" data-for="1-段式管理的设计思想">1. 段式管理的设计思想</a></li><li class="depth-1"><a href="#2-段式地址结构" data-for="2-段式地址结构">2. 段式地址结构</a></li><li class="depth-1"><a href="#3-段表" data-for="3-段表">3. 段表</a></li><li class="depth-1"><a href="#4-段式地址转换过程" data-for="4-段式地址转换过程">4. 段式地址转换过程</a></li><li class="depth-1"><a href="#5-段式管理的特点" data-for="5-段式管理的特点">5. 段式管理的特点</a></li><li class="depth-0"><a href="#十六段页式内存管理" data-for="十六段页式内存管理">十六、段页式内存管理</a></li><li class="depth-1"><a href="#1-段页式的设计思想" data-for="1-段页式的设计思想">1. 段页式的设计思想</a></li><li class="depth-1"><a href="#2-段页式地址结构" data-for="2-段页式地址结构">2. 段页式地址结构</a></li><li class="depth-1"><a href="#3-段页式的数据结构" data-for="3-段页式的数据结构">3. 段页式的数据结构</a></li><li class="depth-1"><a href="#4-段页式地址转换过程" data-for="4-段页式地址转换过程">4. 段页式地址转换过程</a></li><li class="depth-0"><a href="#十七几种内存管理方案对比" data-for="十七几种内存管理方案对比">十七、几种内存管理方案对比</a></li><li class="depth-0"><a href="#十八内存扩充空间不够怎么办" data-for="十八内存扩充空间不够怎么办">十八、内存“扩充”：空间不够怎么办？</a></li><li class="depth-1"><a href="#1-内存紧凑" data-for="1-内存紧凑">1. 内存紧凑</a></li><li class="depth-1"><a href="#2-覆盖技术-overlaying" data-for="2-覆盖技术-overlaying">2. 覆盖技术 Overlaying</a></li><li class="depth-1"><a href="#3-覆盖技术的条件和不足" data-for="3-覆盖技术的条件和不足">3. 覆盖技术的条件和不足</a></li><li class="depth-1"><a href="#4-交换技术-swapping" data-for="4-交换技术-swapping">4. 交换技术 Swapping</a></li><li class="depth-1"><a href="#5-交换技术实现时的问题" data-for="5-交换技术实现时的问题">5. 交换技术实现时的问题</a></li><li class="depth-1"><a href="#6-虚存技术" data-for="6-虚存技术">6. 虚存技术</a></li><li class="depth-0"><a href="#十九回到开头这节课的几个问题怎么回答" data-for="十九回到开头这节课的几个问题怎么回答">十九、回到开头：这节课的几个问题怎么回答？</a></li><li class="depth-1"><a href="#1-内存管理从简单到复杂的演化过程是什么" data-for="1-内存管理从简单到复杂的演化过程是什么">1. 内存管理从简单到复杂的演化过程是什么？</a></li><li class="depth-1"><a href="#2-怎样理解地址空间是对内存的抽象" data-for="2-怎样理解地址空间是对内存的抽象">2. 怎样理解“地址空间是对内存的抽象”？</a></li><li class="depth-1"><a href="#3-内存管理追求的目标有哪些" data-for="3-内存管理追求的目标有哪些">3. 内存管理追求的目标有哪些？</a></li><li class="depth-1"><a href="#4-程序什么时候进入内存" data-for="4-程序什么时候进入内存">4. 程序什么时候进入内存？</a></li><li class="depth-1"><a href="#5-进程空间与物理内存空间怎么对应" data-for="5-进程空间与物理内存空间怎么对应">5. 进程空间与物理内存空间怎么对应？</a></li><li class="depth-1"><a href="#6-物理内存空闲空间怎么管理有哪些数据结构和算法" data-for="6-物理内存空闲空间怎么管理有哪些数据结构和算法">6. 物理内存空闲空间怎么管理？有哪些数据结构和算法？</a></li><li class="depth-1"><a href="#7-怎样扩充内存" data-for="7-怎样扩充内存">7. 怎样“扩充”内存？</a></li><li class="depth-1"><a href="#8-linux-的伙伴系统的作用是什么" data-for="8-linux-的伙伴系统的作用是什么">8. Linux 的伙伴系统的作用是什么？</a></li><li class="depth-0"><a href="#二十本节重点小结" data-for="二十本节重点小结">二十、本节重点小结</a></li><li class="overflow-end"></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v4.5.2</a> © 2026</p><ul></ul></footer></div></div></body><script type="application/javascript" data-persist="true">function n(){let t=this.parentElement;t.classList.toggle("is-collapsed");let e=t.getElementsByClassName("callout-content")[0];if(!e)return;let l=t.classList.contains("is-collapsed");e.style.gridTemplateRows=l?"0fr":"1fr"}function c(){let t=document.getElementsByClassName("callout is-collapsible");for(let e of t){let l=e.getElementsByClassName("callout-title")[0],s=e.getElementsByClassName("callout-content")[0];if(!l||!s)continue;l.addEventListener("click",n),window.addCleanup(()=>l.removeEventListener("click",n));let o=e.classList.contains("is-collapsed");s.style.gridTemplateRows=o?"0fr":"1fr"}}document.addEventListener("nav",c);
+</script><script type="module" data-persist="true">function E(a,e){if(!a)return;function t(o){o.target===this&&(o.preventDefault(),o.stopPropagation(),e())}function n(o){o.key.startsWith("Esc")&&(o.preventDefault(),e())}a?.addEventListener("click",t),window.addCleanup(()=>a?.removeEventListener("click",t)),document.addEventListener("keydown",n),window.addCleanup(()=>document.removeEventListener("keydown",n))}function f(a){for(;a.firstChild;)a.removeChild(a.firstChild)}var m=class{constructor(e,t){this.container=e;this.content=t;this.setupEventListeners(),this.setupNavigationControls(),this.resetTransform()}container;content;isDragging=!1;startPan={x:0,y:0};currentPan={x:0,y:0};scale=1;MIN_SCALE=.5;MAX_SCALE=3;cleanups=[];setupEventListeners(){let e=this.onMouseDown.bind(this),t=this.onMouseMove.bind(this),n=this.onMouseUp.bind(this),o=this.onTouchStart.bind(this),r=this.onTouchMove.bind(this),i=this.onTouchEnd.bind(this),s=this.resetTransform.bind(this);this.container.addEventListener("mousedown",e),document.addEventListener("mousemove",t),document.addEventListener("mouseup",n),this.container.addEventListener("touchstart",o,{passive:!1}),document.addEventListener("touchmove",r,{passive:!1}),document.addEventListener("touchend",i),window.addEventListener("resize",s),this.cleanups.push(()=>this.container.removeEventListener("mousedown",e),()=>document.removeEventListener("mousemove",t),()=>document.removeEventListener("mouseup",n),()=>this.container.removeEventListener("touchstart",o),()=>document.removeEventListener("touchmove",r),()=>document.removeEventListener("touchend",i),()=>window.removeEventListener("resize",s))}cleanup(){for(let e of this.cleanups)e()}setupNavigationControls(){let e=document.createElement("div");e.className="mermaid-controls";let t=this.createButton("+",()=>this.zoom(.1)),n=this.createButton("-",()=>this.zoom(-.1)),o=this.createButton("Reset",()=>this.resetTransform());e.appendChild(n),e.appendChild(o),e.appendChild(t),this.container.appendChild(e)}createButton(e,t){let n=document.createElement("button");return n.textContent=e,n.className="mermaid-control-button",n.addEventListener("click",t),window.addCleanup(()=>n.removeEventListener("click",t)),n}onMouseDown(e){e.button===0&&(this.isDragging=!0,this.startPan={x:e.clientX-this.currentPan.x,y:e.clientY-this.currentPan.y},this.container.style.cursor="grabbing")}onMouseMove(e){this.isDragging&&(e.preventDefault(),this.currentPan={x:e.clientX-this.startPan.x,y:e.clientY-this.startPan.y},this.updateTransform())}onMouseUp(){this.isDragging=!1,this.container.style.cursor="grab"}onTouchStart(e){if(e.touches.length!==1)return;this.isDragging=!0;let t=e.touches[0];this.startPan={x:t.clientX-this.currentPan.x,y:t.clientY-this.currentPan.y}}onTouchMove(e){if(!this.isDragging||e.touches.length!==1)return;e.preventDefault();let t=e.touches[0];this.currentPan={x:t.clientX-this.startPan.x,y:t.clientY-this.startPan.y},this.updateTransform()}onTouchEnd(){this.isDragging=!1}zoom(e){let t=Math.min(Math.max(this.scale+e,this.MIN_SCALE),this.MAX_SCALE),n=this.content.getBoundingClientRect(),o=n.width/2,r=n.height/2,i=t-this.scale;this.currentPan.x-=o*i,this.currentPan.y-=r*i,this.scale=t,this.updateTransform()}updateTransform(){this.content.style.transform=`translate(${this.currentPan.x}px, ${this.currentPan.y}px) scale(${this.scale})`}resetTransform(){let t=this.content.querySelector("svg").getBoundingClientRect(),n=t.width/this.scale,o=t.height/this.scale;this.scale=1,this.currentPan={x:(this.container.clientWidth-n)/2,y:(this.container.clientHeight-o)/2},this.updateTransform()}},T=["--secondary","--tertiary","--gray","--light","--lightgray","--highlight","--dark","--darkgray","--codeFont"],y;document.addEventListener("nav",async()=>{let e=document.querySelector(".center").querySelectorAll("code.mermaid");if(e.length===0)return;y||=await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.esm.min.mjs");let t=y.default,n=new WeakMap;for(let r of e)n.set(r,r.innerText);async function o(){for(let s of e){s.removeAttribute("data-processed");let c=n.get(s);c&&(s.innerHTML=c)}let r=T.reduce((s,c)=>(s[c]=window.getComputedStyle(document.documentElement).getPropertyValue(c),s),{}),i=document.documentElement.getAttribute("saved-theme")==="dark";t.initialize({startOnLoad:!1,securityLevel:"loose",theme:i?"dark":"base",themeVariables:{fontFamily:r["--codeFont"],primaryColor:r["--light"],primaryTextColor:r["--darkgray"],primaryBorderColor:r["--tertiary"],lineColor:r["--darkgray"],secondaryColor:r["--secondary"],tertiaryColor:r["--tertiary"],clusterBkg:r["--light"],edgeLabelBackground:r["--highlight"]}}),await t.run({nodes:e})}await o(),document.addEventListener("themechange",o),window.addCleanup(()=>document.removeEventListener("themechange",o));for(let r=0;r<e.length;r++){let v=function(){let g=l.querySelector("#mermaid-space"),h=l.querySelector(".mermaid-content");if(!h)return;f(h);let w=i.querySelector("svg").cloneNode(!0);h.appendChild(w),l.classList.add("active"),g.style.cursor="grab",u=new m(g,h)},M=function(){l.classList.remove("active"),u?.cleanup(),u=null},i=e[r],s=i.parentElement,c=s.querySelector(".clipboard-button"),d=s.querySelector(".expand-button"),p=window.getComputedStyle(c),L=c.offsetWidth+parseFloat(p.marginLeft||"0")+parseFloat(p.marginRight||"0");d.style.right=`calc(${L}px + 0.3rem)`,s.prepend(d);let l=s.querySelector("#mermaid-container");if(!l)return;let u=null;d.addEventListener("click",v),E(l,M),window.addCleanup(()=>{u?.cleanup(),d.removeEventListener("click",v)})}});
+</script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../../postscript.js" type="module" data-persist="true"></script></html>
