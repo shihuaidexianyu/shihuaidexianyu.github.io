@@ -319,10 +319,6 @@ a:hover {
 
 /* Skills */
 .skill-group {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 0.75rem 1.25rem;
-  align-items: baseline;
   margin-bottom: 0.9rem;
 }
 
@@ -331,7 +327,7 @@ a:hover {
 }
 
 .skill-name {
-  margin: 0;
+  margin: 0 0 0.2rem;
   font-size: 1rem;
   font-weight: 600;
   color: var(--text);
@@ -348,10 +344,12 @@ a:hover {
 }
 
 /* Courses */
-.courses-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
+.course-group {
+  margin-bottom: 1.25rem;
+}
+
+.course-group:last-child {
+  margin-bottom: 0;
 }
 
 .course-category {
@@ -362,13 +360,13 @@ a:hover {
   font-family: var(--font-sans);
 }
 
-.course-items {
+.course-list {
   margin: 0;
+  padding: 0;
+  list-style: none;
   color: var(--text-secondary);
   font-size: 1rem;
   line-height: 1.7;
-  max-width: 70ch;
-  text-wrap: pretty;
 }
 
 /* Lists */
@@ -444,13 +442,7 @@ a:hover {
   }
 
   .skill-group {
-    grid-template-columns: 1fr;
-    gap: 0.2rem;
-  }
-
-  .courses-grid {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
+    margin-bottom: 0.75rem;
   }
 }
 

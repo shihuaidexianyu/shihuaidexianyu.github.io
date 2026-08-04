@@ -25,16 +25,6 @@ npx serve .
 
 Then open `http://localhost:8000` in a browser.
 
-### Compile the CV
-
-`cv.tex` is a Chinese résumé that requires XeLaTeX and the `ctex` package:
-
-```bash
-xelatex cv.tex
-```
-
-On Windows with MiKTeX/TeX Live installed, this should resolve the `ctex` dependency automatically. The file uses `fontset=windows`, so compilation on non-Windows systems may need adjustment or a different fontset.
-
 ### Validate markup
 
 There is no project-level test or lint script. To sanity-check changes:
@@ -70,7 +60,7 @@ The page is a single scrolling document with no top navigation:
 3. Research & Education
 4. Selected Projects
 5. Technical Skills
-6. Selected Coursework
+6. Selected Courses
 7. Footer
 
 ### Styling conventions
@@ -81,6 +71,7 @@ The page is a single scrolling document with no top navigation:
 - The desktop layout is a two-column sidebar + main content grid; it collapses to a single column on smaller screens.
 - Section titles are uppercase with a subtle bottom border.
 - Content is presented as plain text and simple lists with minimal decoration.
+- The Skills and Courses sections both use stacked groups: a category heading on its own line, with items below (comma-separated for skills, one per line for courses via `.course-list`).
 - There are no cards, shadows, gradients, icons, or large decorative numbers.
 - The layout is responsive at breakpoints `800px` and `480px`.
 - Reduced-motion preferences are honored via `@media (prefers-reduced-motion: reduce)`.
@@ -93,9 +84,7 @@ The page is a single scrolling document with no top navigation:
 
 ### CV
 
-- `cv.tex` is maintained separately from the web page and is written in Chinese.
-- It uses the `ctex` package with `fontset=windows` and is compiled with XeLaTeX.
-- Keep content dates and project metrics in sync with `index.html` when either file changes.
+The LaTeX résumé (`cv.tex`) was removed from the repository; the web page is now the only CV. Do not recreate it unless asked.
 
 ## Deployment
 
