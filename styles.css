@@ -164,7 +164,16 @@ a:hover {
 }
 
 .contact-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   color: var(--text-secondary);
+}
+
+.contact-icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
 }
 
 .contact-list a:hover {

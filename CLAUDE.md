@@ -72,7 +72,7 @@ The page is a single scrolling document with no top navigation:
 - Section titles are uppercase with a subtle bottom border.
 - Content is presented as plain text and simple lists with minimal decoration.
 - The Skills and Courses sections both use stacked groups: a category heading on its own line, with items below (comma-separated for skills, one per line for courses via `.course-list`).
-- There are no cards, shadows, gradients, icons, or large decorative numbers.
+- There are no cards, shadows, gradients, or large decorative numbers. The only icons are the small inline SVGs (mail, GitHub) in the sidebar contact list.
 - The layout is responsive at breakpoints `800px` and `480px`.
 - Reduced-motion preferences are honored via `@media (prefers-reduced-motion: reduce)`.
 
